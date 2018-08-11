@@ -1,0 +1,104 @@
+import org.jetbrains.grammarkit.tasks.GenerateLexer
+import org.jetbrains.grammarkit.tasks.GenerateParser
+
+plugins {
+    id 'maven'
+    id "org.jetbrains.grammarkit" version "2018.1.6"
+    id "org.jetbrains.intellij" version "0.3.4"
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.atlassian.com/3rdparty' }
+}
+
+group 'org.github._1c_syntax.intellij.bsl'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'org.jetbrains.grammarkit'
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+
+intellij {
+    version 'IC-2017.3' //Corresponds to 173. branch from plugin.xml; for a full list of IntelliJ IDEA releases please see https://www.jetbrains.com/intellij-repository/releases
+}
+
+dependencies {
+    //compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // dependencies for grammarkit
+    // https://mvnrepository.com/artifact/org.picocontainer/picocontainer
+//    compile group: 'org.picocontainer', name: 'picocontainer', version: '1.2'
+    // https://mvnrepository.com/artifact/gnu.trove/trove4j
+//    compile group: 'gnu.trove', name: 'trove4j', version: 'idea-7.0.2'
+    // https://mvnrepository.com/artifact/cglib/cglib
+//    compile group: 'cglib', name: 'cglib', version: '2.2.2'
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java', 'src/main/gen']
+        resources.srcDirs = ['src/main/resources']
+    }
+    test {
+        java.srcDirs = ['src/test/java']
+        resources.srcDirs = ['src/test/resources']
+    }
+}
+
+idea {
+    module {
+        // Marks the already(!) added srcDir as "generated"
+        generatedSourceDirs += file('src/main/gen')
+    }
+}
+
+task generateParser(type: GenerateParser) {
+    // source bnf file
+    source = "src/main/resources/org/github/_1c_syntax/parser/BSL.bnf"
+
+    // optional, task-specific root for the generated files. Default: none
+    targetRoot = 'src/main/gen'
+
+    // path to a parser file, relative to the targetRoot
+    pathToParser = '/org/github/_1c_syntax/parser/BSLParser.java'
+
+    // path to a directory with generated psi files, relative to the targetRoot
+    pathToPsiRoot = '/org/github/_1c_syntax/parser/psi'
+
+    // if set, plugin will remove a parser output file and psi output directory before generating new ones. Default: false
+    purgeOldFiles = true
+}
+
+task generateLexer(type: GenerateLexer) {
+    // source flex file
+    source = "src/main/resources/org/github/_1c_syntax/parser/BSL.flex"
+
+    // target directory for lexer
+    targetDir = "src/main/gen/org/github/_1c_syntax/parser/"
+
+    // target classname, target file will be targetDir/targetClass.java
+    targetClass = "BSLLexer"
+
+    // optional, path to the task-specific skeleton file. Default: none
+    // skeleton = '/idea-flex.skeleton'
+
+    // if set, plugin will remove a lexer output file before generating new one. Default: false
+    purgeOldFiles = true
+
+    systemProperty "file.encoding", "utf-8"
+
+}
+
+task generateSources() {
+    dependsOn generateParser, generateLexer
+}
+
+clean.doFirst {
+    delete 'src/main/gen', 'out'
+}
+
+compileJava {
+    dependsOn generateSources
+}
