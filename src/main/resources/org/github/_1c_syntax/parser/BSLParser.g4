@@ -1,4 +1,4 @@
-parser grammar BSL;
+parser grammar BSLParser;
 
 options {
     tokenVocab = BSLLexer;
@@ -35,7 +35,7 @@ const_value      : numeric | string_constant | TRUE | FALSE | UNDEFINED | NULL |
 string_constant  : (STRING | (STRINGSTART STRINGPART* STRINGTAIL))+;
 endOfSub         : ENDPROCEDURE_KEYWORD | ENDFUNCTION_KEYWORD;
 command          : (assignment | construction);
-assignment       : complexIDENTIFIER (ASSIGN expression)?;
+assignment       : complexIdentifier (ASSIGN expression)?;
 call_param_list  : call_param (COMMA call_param)*;
 call_param       : expression?;
 expression       : member (operation member)*;

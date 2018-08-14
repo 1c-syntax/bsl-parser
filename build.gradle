@@ -26,6 +26,7 @@ sourceSets {
     main {
         java.srcDirs = ['src/main/java', 'src/main/gen']
         resources.srcDirs = ['src/main/resources']
+        antlr.srcDirs = ['src/main/resources']
     }
     test {
         java.srcDirs = ['src/test/java']
@@ -38,6 +39,11 @@ idea {
         // Marks the already(!) added srcDir as "generated"
         generatedSourceDirs += file('src/main/gen')
     }
+}
+
+generateGrammarSource {
+    arguments += ["-visitor", "-package", "org.github._1c_syntax.parser",  "org/github/_1c_syntax/parser/BSLLexer.g4", "org/github/_1c_syntax/parser/BSLParser.g4"]
+    outputDirectory = file("src/main/gen/org/github/_1c_syntax/parser")
 }
 
 clean.doFirst {
