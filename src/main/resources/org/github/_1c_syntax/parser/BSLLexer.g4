@@ -78,6 +78,9 @@ NOT_KEYWORD: 'не'|'not';
 OR_KEYWORD: 'или'|'or';
 AND_KEYWORD: 'и'|'and';
 NEW_KEYWORD: 'новый'|'new';
+GOTO_KEYWORD: 'перейти'|'goto';
+BREAK_KEYWORD: 'прервать'|'break';
+EXECUTE_KEYWORD: 'выполнить'|'execute';
 
 fragment LETTER: [\p{Letter}] | '_';   
 IDENTIFIER : LETTER ( LETTER | DIGIT )*;
