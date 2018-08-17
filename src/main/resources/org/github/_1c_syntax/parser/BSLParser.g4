@@ -5,7 +5,7 @@ options {
 }
 
 //file: shebang? LINE_COMMENT* preproceccor* using* moduleVars? subs? codeBlock? EOF;
-file: LINE_COMMENT* moduleVars? subs? codeBlock? EOF;
+file: moduleVars? subs? codeBlock? EOF;
 
 //shebang          : HASH '!' ~WHITE_SPACE*;
 //preproceccor     : HASH ~WHITE_SPACE*;

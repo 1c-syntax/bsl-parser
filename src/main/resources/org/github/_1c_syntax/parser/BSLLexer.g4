@@ -2,9 +2,8 @@ lexer grammar BSLLexer;
 
 // commons
 fragment DIGIT: [0-9];
-WHITE_SPACE: [ \n\t\f] -> skip;
-LINE_COMMENT: '//' ~[\r\n]*;
-NEWLINE: '\r'? '\n';
+LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
+WHITE_SPACE: [ \n\r\t\f] -> channel(HIDDEN);
 
 // separators
 DOT: '.';
