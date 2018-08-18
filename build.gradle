@@ -15,6 +15,8 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'antlr'
 
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
 dependencies {
     //compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -42,7 +44,7 @@ idea {
 }
 
 generateGrammarSource {
-    arguments += ["-visitor", "-package", "org.github._1c_syntax.parser",  "org/github/_1c_syntax/parser/BSLLexer.g4", "org/github/_1c_syntax/parser/BSLParser.g4"]
+    arguments += ["-visitor", "-package", "org.github._1c_syntax.parser",  "org/github/_1c_syntax/parser/BSLLexer.g4", "org/github/_1c_syntax/parser/BSLParser.g4", "-encoding", "utf8" ]
     outputDirectory = file("src/main/gen/org/github/_1c_syntax/parser")
 }
 
