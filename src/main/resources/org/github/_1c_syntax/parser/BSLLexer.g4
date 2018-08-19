@@ -88,7 +88,7 @@ fragment Y: 'Y' | 'y';
 TRUE: И С Т И Н А | T R U E;
 FALSE: Л О Ж Ь | F A L S E;
 UNDEFINED: Н Е О П Р Е Д Е Л Е Н О | U N D E F I N E D;
-NULL:'null';
+NULL: N U L L;
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
