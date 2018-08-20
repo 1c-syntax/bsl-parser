@@ -26,9 +26,9 @@ dependencies {
 
 sourceSets {
     main {
-        java.srcDirs = ['src/main/java', 'build']
+        java.srcDirs = ['src/main/java', 'src/main/gen']
         resources.srcDirs = ['src/main/resources']
-//        antlr.srcDirs = ['gen']
+//        antlr.srcDirs = ['src/main/resources/org/github/_1c_syntax/parser']
     }
     test {
         java.srcDirs = ['src/test/java']
@@ -45,7 +45,7 @@ idea {
 
 generateGrammarSource {
     arguments += ["-visitor", "-package", "org.github._1c_syntax.parser", "-encoding", "utf8" ]
-//    outputDirectory = file("gen")
+    outputDirectory = file("src/main/gen")
 }
 
 clean.doFirst {
