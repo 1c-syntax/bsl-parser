@@ -1,6 +1,7 @@
 
 plugins {
     id 'maven'
+    id "com.github.hierynomus.license"
 }
 
 repositories {
@@ -46,6 +47,18 @@ idea {
 generateGrammarSource {
     arguments += ["-visitor", "-package", "org.github._1c_syntax.parser", "-encoding", "utf8" ]
     outputDirectory = file("src/main/gen")
+}
+
+generateGrammarSource.doLast {
+    licenseFormatMain.execute()
+}
+
+license {
+    header = rootProject.file("license/HEADER.txt")
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+    ext.name = 'Alexey Sosnoviy <labotamy@yandex.ru>, Nikita Gryzlov <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>'
+    ext.project = "BSL Parser"
+    strictCheck = true
 }
 
 clean.doFirst {
