@@ -46,7 +46,7 @@ idea {
 
 generateGrammarSource {
     arguments += ["-visitor", "-package", "org.github._1c_syntax.parser", "-encoding", "utf8" ]
-    outputDirectory = file("src/main/gen")
+    outputDirectory = file("src/main/gen/org/github/_1c_syntax/parser")
 }
 
 generateGrammarSource.doLast {
