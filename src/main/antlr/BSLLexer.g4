@@ -24,7 +24,7 @@ lexer grammar BSLLexer;
 // commons
 fragment DIGIT: [0-9];
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
-WHITE_SPACE: [ \n\r\t\f] -> skip;
+WHITE_SPACE: [ \n\r\t\f] -> channel(HIDDEN);
 
 // separators
 DOT: '.';
@@ -48,7 +48,7 @@ QUOTIENT: '/';
 MODULO: '%';
 QUESTION: '?';
 AMPERSAND: '&';
-HASH: '#';
+HASH: '#';// -> pushMode(PREPROCESSOR);
 
 QUOTE: '"';
 SQUOTE: '\'';
@@ -162,3 +162,9 @@ USE_KEYWORD: RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_S
 
 fragment LETTER: [\p{Letter}] | '_';   
 IDENTIFIER : LETTER ( LETTER | DIGIT )*;
+
+UNKNOWN: . -> skip;
+
+//mode PREPROCESSOR;
+//
+//PREPROC_TILLENDOFLINE: ~[\r\n]+ -> popMode;
