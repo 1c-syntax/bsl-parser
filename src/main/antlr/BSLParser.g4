@@ -49,7 +49,6 @@ annotationParam  : (paramName (ASSIGN const_value)?) | const_value;
 annotationParams : LPAREN annotationParam (COMMA annotationParam)* RPAREN;
 annotation       : AMPERSAND annotationName annotationParams?;
 annotationName   : IDENTIFIER;
-subdeclaration   : annotation* (PROCEDURE_KEYWORD | FUNCTION_KEYWORD) subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
 subName          : IDENTIFIER;
 codeBlock        : (command SEMICOLON*)*;
 numeric          : FLOAT | DECIMAL;
