@@ -26,11 +26,11 @@ options {
 }
 
 //file: shebang? LINE_COMMENT* preproceccor* using* moduleVars? subs? codeBlock? EOF;
-file: moduleVars? subs? codeBlock? EOF;
+file: use* moduleVars? subs? codeBlock? EOF;
 
 //shebang          : HASH '!' ~WHITE_SPACE*;
 //preproceccor     : HASH ~WHITE_SPACE*;
-//using            : HASH ('use'|'использовать') (STRING | IDENTIFIER);
+use              : HASH USE_KEYWORD (STRING | IDENTIFIER);
 moduleVars       : (VAR_KEYWORD moduleVarsList SEMICOLON?)+;
 moduleVarsList   : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
 moduleVarDeclaration: var_name EXPORT_KEYWORD?;
