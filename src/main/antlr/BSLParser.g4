@@ -23,6 +23,7 @@ parser grammar BSLParser;
 
 options {
     tokenVocab = BSLLexer;
+    contextSuperClass = 'org.github._1c_syntax.parser.BSLParserRuleContext';
 }
 
 //file: shebang? LINE_COMMENT* preproceccor* using* moduleVars? subs? codeBlock? EOF;
