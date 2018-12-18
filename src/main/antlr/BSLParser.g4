@@ -27,9 +27,9 @@ options {
 }
 
 //file: shebang? LINE_COMMENT* preproceccor* using* moduleVars? subs? codeBlock? EOF;
-file: use* moduleVars? subs? codeBlock? EOF;
+file: shebang? use* moduleVars? subs? codeBlock? EOF;
 
-//shebang          : HASH '!' ~WHITE_SPACE*;
+shebang          : HASH EXCLAMATION_MARK ~WHITE_SPACE*;
 //preproceccor     : HASH ~WHITE_SPACE*;
 use              : HASH USE_KEYWORD (STRING | IDENTIFIER);
 moduleVars       : (VAR_KEYWORD moduleVarsList SEMICOLON?)+;
