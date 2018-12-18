@@ -52,7 +52,9 @@ tasks.generateGrammarSource {
 }
 
 tasks.generateGrammarSource {
-    finalizedBy(tasks.licenseFormatMain)
+    doLast {
+        tasks.licenseFormatMain.get().actions[0].execute(tasks.licenseFormatMain.get())
+    }
 }
 
 license {
