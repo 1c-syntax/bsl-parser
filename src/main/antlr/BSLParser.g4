@@ -27,48 +27,60 @@ options {
 }
 
 // ROOT
-file: shebang? use* moduleVars? subs? codeBlock? EOF;
+file: shebang? preprocessor* moduleVars? preprocessor* subs? codeBlock? EOF;
 
 // preprocessor
 shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
 
 usedLib          : (PREPROC_STRING | PREPROC_IDENTIFIER);
-use              : HASH PREPROC_USE_KEYWORD usedLib;
+use              : PREPROC_USE_KEYWORD usedLib;
 
+regionStart      : PREPROC_REGION regionName;
+regionEnd        : PREPROC_END_REGION;
 regionName       : PREPROC_IDENTIFIER;
-regionStart      : HASH PREPROC_REGION regionName;
-regionEnd        : HASH PREPROC_END_REGION;
 
-preprocCommand   : (use | regionStart | regionEnd);
+preprocessor     : HASH (use | regionStart | regionEnd);
 
-// main
-moduleVars       : (VAR_KEYWORD moduleVarsList SEMICOLON?)+;
+// vars
+var_name         : IDENTIFIER;
+
+moduleVars       : moduleVar+;
+moduleVar        : VAR_KEYWORD moduleVarsList SEMICOLON?;
 moduleVarsList   : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
 moduleVarDeclaration: var_name EXPORT_KEYWORD?;
+
+subVars          : subVar;
+subVar           : VAR_KEYWORD subVarsList SEMICOLON?;
+subVarsList      : subVarDeclaration (COMMA subVarDeclaration)*;
+subVarDeclaration: var_name;
+
+// subs
+subName          : IDENTIFIER;
+
 subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
 procDeclaration  : annotation* PROCEDURE_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
 funcDeclaration  : annotation* FUNCTION_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
-subCodeBlock     : (subVarDeclaration SEMICOLON?)* codeBlock;
-subVarDeclaration: VAR_KEYWORD subVarsList;
-subVarsList      : var_name (COMMA var_name)*;
-var_name         : IDENTIFIER;
-paramName        : IDENTIFIER;
-annotationParam  : (paramName (ASSIGN const_value)?) | const_value;
+subCodeBlock     : subVars? codeBlock;
+
+// annotations
+annotationParamName : IDENTIFIER;
+annotationParam  : (annotationParamName (ASSIGN const_value)?) | const_value;
 annotationParams : LPAREN annotationParam (COMMA annotationParam)* RPAREN;
 annotation       : AMPERSAND annotationName annotationParams?;
 annotationName   : IDENTIFIER;
-subName          : IDENTIFIER;
-codeBlock        : (command)*;
+
+// main
+codeBlock        : (command | preprocessor)*;
 numeric          : FLOAT | DECIMAL;
 param_list       : param (COMMA param)*;
 param            : VAL_KEYWORD? IDENTIFIER (ASSIGN default_value)?;
 default_value    : const_value;
 const_value      : numeric | string_constant | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 string_constant  : (STRING | (STRINGSTART STRINGPART* STRINGTAIL))+;
-command          : (assignment | construction | preprocCommand)? SEMICOLON;
+command          : (assignment | construction | preprocessor)? SEMICOLON;
 assignment       : complexIdentifier (ASSIGN expression)?;
 call_param_list  : call_param (COMMA call_param)*;
 call_param       : expression;
