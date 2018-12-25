@@ -27,7 +27,7 @@ options {
 }
 
 // ROOT
-file: shebang? preprocessor* moduleVars? preprocessor* subs? codeBlock? EOF;
+file: shebang? preprocessor* moduleVars? preprocessor* subs? codeBlock EOF;
 
 // preprocessor
 shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
@@ -80,7 +80,7 @@ param            : VAL_KEYWORD? IDENTIFIER (ASSIGN default_value)?;
 default_value    : const_value;
 const_value      : numeric | string_constant | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 string_constant  : (STRING | (STRINGSTART STRINGPART* STRINGTAIL))+;
-command          : (assignment | construction | preprocessor)? SEMICOLON;
+command          : (assignment | construction | preprocessor) SEMICOLON?;
 assignment       : complexIdentifier (ASSIGN expression)?;
 call_param_list  : call_param (COMMA call_param)*;
 call_param       : expression;
