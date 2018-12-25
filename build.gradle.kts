@@ -20,8 +20,8 @@ tasks.withType<JavaCompile> {
 }
 
 dependencies {
-    compile("org.antlr:antlr4:4.7.1")
-    antlr("org.antlr:antlr4:4.7.1")
+    compile("org.antlr", "antlr4", "4.7.2")
+    antlr("org.antlr", "antlr4", "4.7.2")
 }
 
 sourceSets {
