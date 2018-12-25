@@ -48,13 +48,14 @@ QUOTIENT: '/';
 MODULO: '%';
 QUESTION: '?';
 AMPERSAND: '&';
-HASH: '#';// -> pushMode(PREPROCESSOR);
+HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 
 QUOTE: '"';
 SQUOTE: '\'';
 BAR: '|';
 
 fragment RU_A: 'А' | 'а';
+fragment RU_B: 'Б' | 'б';
 fragment RU_V: 'В' | 'в';
 fragment RU_G: 'Г' | 'г';
 fragment RU_D: 'Д' | 'д';
@@ -118,7 +119,6 @@ NULL: N U L L;
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
-//FLOAT_EXPONENT : [eE] [+-]? {DIGIT}+; экспонента? в 1С?
 FLOAT : DIGIT+ '.' DIGIT*;
 STRINGSTART: QUOTE(~["\n\r])*;
 STRING: QUOTE(~["\n\r])*QUOTE;
@@ -165,6 +165,23 @@ IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
 UNKNOWN: . -> channel(HIDDEN);
 
-//mode PREPROCESSOR;
-//
-//PREPROC_TILLENDOFLINE: ~[\r\n]+ -> popMode;
+mode PREPROCESSOR_MODE;
+
+PREPROC_EXCLAMATION_MARK: '!';
+
+PREPROC_STRINGSTART: QUOTE(~["\n\r])*;
+PREPROC_STRING: QUOTE(~["\n\r])*QUOTE;
+PREPROC_STRINGTAIL: BAR(~["\n\r])*QUOTE;
+PREPROC_STRINGPART: BAR(~["\n\r])*;
+
+PREPROC_USE_KEYWORD: RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_SOFT_SIGN | U S E;
+
+PREPROC_REGION: (RU_O RU_B RU_L RU_A RU_S RU_T RU_SOFT_SIGN | R E G I O N);
+PREPROC_END_REGION: (RU_K RU_O RU_N RU_E RU_C RU_O RU_B RU_L RU_A RU_S RU_T RU_I| E N D R E G I O N);
+
+PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
+
+PREPROC_WHITE_SPACE: [ \t\f] -> channel(HIDDEN);
+PREPROC_NEWLINE: [\r\n] -> popMode, channel(HIDDEN);
+
+PREPROC_ANY: ~[\r\n];

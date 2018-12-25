@@ -26,12 +26,22 @@ options {
     contextSuperClass = 'org.github._1c_syntax.parser.BSLParserRuleContext';
 }
 
-//file: shebang? LINE_COMMENT* preproceccor* using* moduleVars? subs? codeBlock? EOF;
+// ROOT
 file: shebang? use* moduleVars? subs? codeBlock? EOF;
 
-shebang          : HASH EXCLAMATION_MARK ~WHITE_SPACE*;
-//preproceccor     : HASH ~WHITE_SPACE*;
-use              : HASH USE_KEYWORD (STRING | IDENTIFIER);
+// preprocessor
+shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
+
+usedLib          : (PREPROC_STRING | PREPROC_IDENTIFIER);
+use              : HASH PREPROC_USE_KEYWORD usedLib;
+
+regionName       : PREPROC_IDENTIFIER;
+regionStart      : HASH PREPROC_REGION regionName;
+regionEnd        : HASH PREPROC_END_REGION;
+
+preprocCommand   : (use | regionStart | regionEnd);
+
+// main
 moduleVars       : (VAR_KEYWORD moduleVarsList SEMICOLON?)+;
 moduleVarsList   : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
 moduleVarDeclaration: var_name EXPORT_KEYWORD?;
@@ -58,7 +68,7 @@ param            : VAL_KEYWORD? IDENTIFIER (ASSIGN default_value)?;
 default_value    : const_value;
 const_value      : numeric | string_constant | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 string_constant  : (STRING | (STRINGSTART STRINGPART* STRINGTAIL))+;
-command          : (assignment | construction);
+command          : (assignment | construction | preprocCommand);
 assignment       : complexIdentifier (ASSIGN expression)?;
 call_param_list  : call_param (COMMA call_param)*;
 call_param       : expression;
