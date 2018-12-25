@@ -61,8 +61,8 @@ subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : annotation* PROCEDURE_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : annotation* FUNCTION_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
+procDeclaration  : preprocessor* annotation* PROCEDURE_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : preprocessor* annotation* FUNCTION_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
 subCodeBlock     : subVars? codeBlock;
 
 // annotations
