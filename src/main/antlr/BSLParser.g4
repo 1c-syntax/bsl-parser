@@ -67,7 +67,7 @@ operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | comp
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;
 unaryModifier    : NOT_KEYWORD | MINUS;
-member           : unaryModifier? (const_value | complexIdentifier | ( LPAREN expression RPAREN ) | questionOperator);
+member           : unaryModifier? (const_value | complexIdentifier | ( LPAREN expression RPAREN ) | ternaryOperator);
 newExpression    : NEW_KEYWORD typeName do_call? | NEW_KEYWORD do_call;
 typeName         : IDENTIFIER;
 complexIdentifier: (IDENTIFIER | newExpression) modifier*;
@@ -87,7 +87,4 @@ countable_for_expression: FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD ex
 for_each_expression: FOR_KEYWORD EACH_KEYWORD IDENTIFIER FROM_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 try_expression    : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
 return_expression: RETURN_KEYWORD expression?;
-questionOperator : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
-
-
-
+ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
