@@ -163,7 +163,7 @@ USE_KEYWORD: RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_S
 fragment LETTER: [\p{Letter}] | '_';   
 IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
-UNKNOWN: . -> skip;
+UNKNOWN: . -> channel(HIDDEN);
 
 //mode PREPROCESSOR;
 //
