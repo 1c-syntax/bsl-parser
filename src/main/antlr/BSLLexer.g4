@@ -21,6 +21,14 @@
  */
 lexer grammar BSLLexer;
 
+@lexer::members {
+    int lastTokenType = 0;
+    public void emit(Token token) {
+        super.emit(token);
+        lastTokenType = token.getType();
+    }
+}
+
 // commons
 fragment DIGIT: [0-9];
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
@@ -157,7 +165,7 @@ AND_KEYWORD: RU_I | A N D;
 NEW_KEYWORD: RU_N RU_O RU_V RU_Y RU_J| N E W;
 GOTO_KEYWORD: RU_P RU_E RU_R RU_E RU_J RU_T RU_I | G O T O;
 BREAK_KEYWORD: RU_P RU_R RU_E RU_R RU_V RU_A RU_T RU_SOFT_SIGN | B R E A K;
-EXECUTE_KEYWORD: RU_V RU_Y RU_P RU_O RU_L RU_N RU_I RU_T RU_SOFT_SIGN | E X E C U T E;
+EXECUTE_KEYWORD: (RU_V RU_Y RU_P RU_O RU_L RU_N RU_I RU_T RU_SOFT_SIGN | E X E C U T E) { if (lastTokenType == DOT) { setType(IDENTIFIER); } };
 
 fragment LETTER: [\p{Letter}] | '_';   
 IDENTIFIER : LETTER ( LETTER | DIGIT )*;
