@@ -61,6 +61,7 @@ HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 QUOTE: '"';
 SQUOTE: '\'';
 BAR: '|';
+TILDA: '~';
 
 fragment RU_A: 'А' | 'а';
 fragment RU_B: 'Б' | 'б';

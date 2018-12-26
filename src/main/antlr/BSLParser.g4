@@ -73,6 +73,7 @@ annotation       : AMPERSAND annotationName annotationParams?;
 annotationName   : IDENTIFIER;
 
 // statements
+labelName         : IDENTIFIER;
 continueStatement :CONTINUE_KEYWORD;
 raiseStatement    : RAISE_KEYWORD expression?;
 ifStatement       : IF_KEYWORD expression THEN_KEYWORD codeBlock
@@ -83,6 +84,7 @@ forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER FROM_KEYWORD expression 
 tryStatement      : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
+gotoStatement     : GOTO_KEYWORD TILDA labelName;
 
 // main
 codeBlock        : (command | preprocessor)*;
@@ -110,4 +112,4 @@ access_index     : LBRACK expression RBRACK;
 access_property  : DOT IDENTIFIER;
 do_call          : LPAREN call_param_list? RPAREN;
 construction     : ifStatement | whileStatement | forStatement | forEachStatement
-    | tryStatement | returnStatement | continueStatement | raiseStatement;
+    | tryStatement | returnStatement | continueStatement | raiseStatement | gotoStatement;
