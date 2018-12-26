@@ -75,6 +75,7 @@ annotationName   : IDENTIFIER;
 // statements
 labelName         : IDENTIFIER;
 continueStatement :CONTINUE_KEYWORD;
+breakStatement    : BREAK_KEYWORD;
 raiseStatement    : RAISE_KEYWORD expression?;
 ifStatement       : IF_KEYWORD expression THEN_KEYWORD codeBlock
     (ELSEIF_KEYWORD expression THEN_KEYWORD codeBlock)* (ELSE_KEYWORD codeBlock)? ENDIF_KEYWORD;
@@ -112,4 +113,4 @@ access_index     : LBRACK expression RBRACK;
 access_property  : DOT IDENTIFIER;
 do_call          : LPAREN call_param_list? RPAREN;
 construction     : ifStatement | whileStatement | forStatement | forEachStatement
-    | tryStatement | returnStatement | continueStatement | raiseStatement | gotoStatement;
+    | tryStatement | returnStatement | continueStatement | breakStatement | raiseStatement | gotoStatement;
