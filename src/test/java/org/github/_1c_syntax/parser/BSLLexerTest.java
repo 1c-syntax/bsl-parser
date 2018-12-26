@@ -65,4 +65,14 @@ class BSLLexerTest {
     assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать lib", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER);
     assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать \"lib\"", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_STRING);
   }
+
+  @Test
+  void testString() throws IOException {
+    assertMatch("\"строка\"", BSLLexer.STRING);
+    assertMatch("\"", BSLLexer.STRINGSTART);
+    assertMatch("|aaa", BSLLexer.STRINGPART);
+    assertMatch("|", BSLLexer.BAR);
+    assertMatch("|\"", BSLLexer.STRINGTAIL);
+    assertMatch("|aaa\"", BSLLexer.STRINGTAIL);
+  }
 }

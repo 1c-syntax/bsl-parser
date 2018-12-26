@@ -58,7 +58,6 @@ QUESTION: '?';
 AMPERSAND: '&';
 HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 
-QUOTE: '"';
 SQUOTE: '\'';
 BAR: '|';
 TILDA: '~';
@@ -129,9 +128,9 @@ DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
 FLOAT : DIGIT+ '.' DIGIT*;
-STRING: QUOTE ~["\n\r]* QUOTE;
-STRINGSTART: QUOTE ~["\n\r]*;
-STRINGTAIL: BAR ~["\n\r]* QUOTE;
+STRING: '"' ~["\n\r]* '"';
+STRINGSTART: '"' ~["\n\r]*;
+STRINGTAIL: BAR ~["\n\r]* '"';
 STRINGPART: BAR ~["\n\r]*;
 
 // keywords
@@ -185,10 +184,10 @@ mode PREPROCESSOR_MODE;
 
 PREPROC_EXCLAMATION_MARK: '!';
 
-PREPROC_STRINGSTART: QUOTE(~["\n\r])*;
-PREPROC_STRING: QUOTE(~["\n\r])*QUOTE;
-PREPROC_STRINGTAIL: BAR(~["\n\r])*QUOTE;
-PREPROC_STRINGPART: BAR(~["\n\r])*;
+PREPROC_STRINGSTART: '"' (~["\n\r])*;
+PREPROC_STRING: '"' (~["\n\r])* '"';
+PREPROC_STRINGTAIL: BAR (~["\n\r])* '"';
+PREPROC_STRINGPART: BAR (~["\n\r])*;
 
 PREPROC_USE_KEYWORD: RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_SOFT_SIGN | U S E;
 

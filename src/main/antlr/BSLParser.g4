@@ -147,7 +147,7 @@ param_list       : param (COMMA param)*;
 param            : VAL_KEYWORD? IDENTIFIER (ASSIGN default_value)?;
 default_value    : const_value;
 const_value      : numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
-multilineString  : (STRINGSTART | QUOTE) STRINGPART* STRINGTAIL;
+multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
 string           : (STRING | multilineString)+;
 statement        : label? (assignment | compoundStatement | preprocessor) SEMICOLON?;
 assignment       : complexIdentifier (ASSIGN expression)?;
