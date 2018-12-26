@@ -129,10 +129,10 @@ DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
 FLOAT : DIGIT+ '.' DIGIT*;
-STRINGSTART: QUOTE(~["\n\r])*;
-STRING: QUOTE(~["\n\r])*QUOTE;
-STRINGTAIL: BAR(~["\n\r])*QUOTE;
-STRINGPART: BAR(~["\n\r])*;
+STRING: QUOTE ~["\n\r]* QUOTE;
+STRINGSTART: QUOTE ~["\n\r]*;
+STRINGTAIL: BAR ~["\n\r]* QUOTE;
+STRINGPART: BAR ~["\n\r]*;
 
 // keywords
 PROCEDURE_KEYWORD: RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_A | P R O C E D U R E;
