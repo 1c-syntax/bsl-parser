@@ -3,6 +3,7 @@ import java.util.Calendar
 plugins {
     maven
     idea
+    jacoco
     java
     antlr
     id("com.github.hierynomus.license")
@@ -22,7 +23,14 @@ tasks.withType<JavaCompile> {
 dependencies {
     compile("org.antlr", "antlr4", "4.7.2")
     antlr("org.antlr", "antlr4", "4.7.2")
+
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
+    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
+
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    testImplementation("commons-io", "commons-io", "2.6")
 }
+
 
 sourceSets {
     main {
@@ -54,6 +62,24 @@ tasks.generateGrammarSource {
 tasks.generateGrammarSource {
     doLast {
         tasks.licenseFormatMain.get().actions[0].execute(tasks.licenseFormatMain.get())
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+
+    reports {
+        html.setEnabled(true)
+    }
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.setEnabled(true)
     }
 }
 
