@@ -72,6 +72,18 @@ annotationParams : LPAREN annotationParam (COMMA annotationParam)* RPAREN;
 annotation       : AMPERSAND annotationName annotationParams?;
 annotationName   : IDENTIFIER;
 
+// statements
+continueStatement :CONTINUE_KEYWORD;
+raiseStatement    : RAISE_KEYWORD expression?;
+ifStatement       : IF_KEYWORD expression THEN_KEYWORD codeBlock
+    (ELSEIF_KEYWORD expression THEN_KEYWORD codeBlock)* (ELSE_KEYWORD codeBlock)? ENDIF_KEYWORD;
+whileStatement    : WHILE_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
+forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
+forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER FROM_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
+tryStatement      : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
+returnStatement   : RETURN_KEYWORD expression?;
+ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
+
 // main
 codeBlock        : (command | preprocessor)*;
 numeric          : FLOAT | DECIMAL;
@@ -97,16 +109,5 @@ modifier         : access_property | access_index | do_call;
 access_index     : LBRACK expression RBRACK;
 access_property  : DOT IDENTIFIER;
 do_call          : LPAREN call_param_list? RPAREN;
-construction     : if_expression | while_expression | for_expression
-    | try_expression | return_expression | continue_expression | raise_expression;
-continue_expression: CONTINUE_KEYWORD;
-raise_expression : RAISE_KEYWORD expression?;
-if_expression    : IF_KEYWORD expression THEN_KEYWORD codeBlock
-    (ELSEIF_KEYWORD expression THEN_KEYWORD codeBlock)* (ELSE_KEYWORD codeBlock)? ENDIF_KEYWORD;
-while_expression : WHILE_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-for_expression   : countable_for_expression | for_each_expression;
-countable_for_expression: FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-for_each_expression: FOR_KEYWORD EACH_KEYWORD IDENTIFIER FROM_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-try_expression    : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
-return_expression: RETURN_KEYWORD expression?;
-ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
+construction     : ifStatement | whileStatement | forStatement | forEachStatement
+    | tryStatement | returnStatement | continueStatement | raiseStatement;
