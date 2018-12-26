@@ -39,7 +39,43 @@ regionStart      : PREPROC_REGION regionName;
 regionEnd        : PREPROC_END_REGION;
 regionName       : PREPROC_IDENTIFIER;
 
-preprocessor     : HASH (use | regionStart | regionEnd);
+preproc_if       : PREPROC_IF_KEYWORD preproc_logicalExpression PREPROC_THEN_KEYWORD;
+preproc_elsif    : PREPROC_ELSIF_KEYWORD preproc_logicalExpression PREPROC_THEN_KEYWORD;
+preproc_else     : PREPROC_ELSE_KEYWORD;
+preproc_endif    : PREPROC_ENDIF_KEYWORD;
+
+preproc_logicalExpression
+    : PREPROC_NOT_KEYWORD? preproc_symbol (preproc_boolOperation PREPROC_NOT_KEYWORD? preproc_symbol)*;
+preproc_symbol
+    : PREPROC_CLIENT_SYMBOL
+    | PREPROC_ATCLIENT_SYMBOL
+    | PREPROC_SERVER_SYMBOL
+    | PREPROC_ATSERVER_SYMBOL
+    | PREPROC_MOBILEAPPCLIENT_SYMBOL
+    | PREPROC_MOBILEAPPSERVER_SYMBOL
+    | PREPROC_MOBILECLIENT_SYMBOL
+    | PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
+    | PREPROC_THICKCLIENTMANAGEDAPPLICATION_SYMBOL
+    | PREPROC_EXTERNALCONNECTION_SYMBOL
+    | PREPROC_THINCLIENT_SYMBOL
+    | PREPROC_WEBCLIENT_SYMBOL
+    ;
+preproc_boolOperation
+    : PREPROC_OR_KEYWORD
+    | PREPROC_AND_KEYWORD
+    ;
+
+preprocessor
+    : HASH
+        (regionStart
+        | regionEnd
+        | preproc_if
+        | preproc_elsif
+        | preproc_else
+        | preproc_endif
+        | use
+        )
+    ;
 
 // vars
 var_name         : IDENTIFIER;
