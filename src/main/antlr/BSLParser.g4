@@ -87,6 +87,21 @@ returnStatement   : RETURN_KEYWORD expression?;
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
 gotoStatement     : GOTO_KEYWORD TILDA labelName;
+
+event
+    : expression
+    ;
+
+handler
+    : expression
+    ;
+addHandlerStatement
+    : ADDHANDLER_KEYWORD event handler
+    ;
+removeHandlerStatement
+    : REMOVEHANDLER_KEYWORD event handler
+    ;
+
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
 
 // main
@@ -126,4 +141,6 @@ compoundStatement
     | breakStatement
     | raiseStatement
     | gotoStatement
+    | addHandlerStatement
+    | removeHandlerStatement
     ;
