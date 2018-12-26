@@ -152,7 +152,7 @@ string           : (STRING | multilineString)+;
 statement        : label? (assignment | compoundStatement | preprocessor) SEMICOLON?;
 assignment       : complexIdentifier (ASSIGN expression)?;
 call_param_list  : call_param (COMMA call_param)*;
-call_param       : expression;
+call_param       : expression?;
 expression       : member (operation member)*;
 operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | compareOperation;
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
@@ -165,7 +165,7 @@ complexIdentifier: (IDENTIFIER | newExpression) modifier*;
 modifier         : access_property | access_index | do_call;
 access_index     : LBRACK expression RBRACK;
 access_property  : DOT IDENTIFIER;
-do_call          : LPAREN call_param_list? RPAREN;
+do_call          : LPAREN call_param_list RPAREN;
 compoundStatement
     : ifStatement
     | whileStatement
