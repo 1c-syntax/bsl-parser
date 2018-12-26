@@ -73,7 +73,6 @@ annotation       : AMPERSAND annotationName annotationParams?;
 annotationName   : IDENTIFIER;
 
 // statements
-labelName         : IDENTIFIER;
 continueStatement : CONTINUE_KEYWORD;
 breakStatement    : BREAK_KEYWORD;
 raiseStatement    : RAISE_KEYWORD expression?;
@@ -84,12 +83,14 @@ forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expressi
 forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER FROM_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 tryStatement      : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
+
+labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
 gotoStatement     : GOTO_KEYWORD TILDA labelName;
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
 
 // main
-codeBlock        : (command | preprocessor)*;
+codeBlock        : (statement | preprocessor)*;
 numeric          : FLOAT | DECIMAL;
 param_list       : param (COMMA param)*;
 param            : VAL_KEYWORD? IDENTIFIER (ASSIGN default_value)?;
@@ -97,7 +98,7 @@ default_value    : const_value;
 const_value      : numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 multilineString  : (STRINGSTART | QUOTE) STRINGPART* STRINGTAIL;
 string           : (STRING | multilineString)+;
-command          : label? (assignment | construction | preprocessor) SEMICOLON?;
+statement        : label? (assignment | compoundStatement | preprocessor) SEMICOLON?;
 assignment       : complexIdentifier (ASSIGN expression)?;
 call_param_list  : call_param (COMMA call_param)*;
 call_param       : expression;
@@ -114,5 +115,15 @@ modifier         : access_property | access_index | do_call;
 access_index     : LBRACK expression RBRACK;
 access_property  : DOT IDENTIFIER;
 do_call          : LPAREN call_param_list? RPAREN;
-construction     : ifStatement | whileStatement | forStatement | forEachStatement
-    | tryStatement | returnStatement | continueStatement | breakStatement | raiseStatement | gotoStatement;
+compoundStatement
+    : ifStatement
+    | whileStatement
+    | forStatement
+    | forEachStatement
+    | tryStatement
+    | returnStatement
+    | continueStatement
+    | breakStatement
+    | raiseStatement
+    | gotoStatement
+    ;
