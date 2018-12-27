@@ -119,6 +119,7 @@ forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expressi
 forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER FROM_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 tryStatement      : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
+executeStatement  : EXECUTE_KEYWORD do_call;
 
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
@@ -176,6 +177,7 @@ compoundStatement
     | continueStatement
     | breakStatement
     | raiseStatement
+    | executeStatement
     | gotoStatement
     | addHandlerStatement
     | removeHandlerStatement

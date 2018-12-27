@@ -43,6 +43,7 @@ class BSLParserTest {
   private void setInput(String inputString) throws IOException {
     setInput(inputString, BSLLexer.DEFAULT_MODE);
   }
+
   private void setInput(String inputString, int mode) throws IOException {
     InputStream inputStream = IOUtils.toInputStream(inputString, Charset.forName("UTF-8"));
     CharStream input = CharStreams.fromStream(inputStream, Charset.forName("UTF-8"));
@@ -78,7 +79,7 @@ class BSLParserTest {
   }
 
   private void assertNotMatches(ParseTree tree) {
-      assertThrows(RecognitionException.class, () -> assertMatches(tree));
+    assertThrows(RecognitionException.class, () -> assertMatches(tree));
   }
 
   @Test
@@ -91,5 +92,17 @@ class BSLParserTest {
 
     setInput("Использовать 1", BSLLexer.PREPROCESSOR_MODE);
     assertNotMatches(parser.use());
+  }
+
+  @Test
+  void testExecute() throws IOException {
+    setInput("Выполнить(\"\")");
+    assertMatches(parser.executeStatement());
+
+    setInput("Выполнить(\"строка\")");
+    assertMatches(parser.executeStatement());
+
+    setInput("Выполнить(Переменная)");
+    assertMatches(parser.executeStatement());
   }
 }
