@@ -92,4 +92,10 @@ class BSLLexerTest {
       BSLLexer.AMPERSAND, BSLLexer.ANNOTATION_ATSERVER_SYMBOL
     );
   }
+
+  @Test
+  void testExecute() throws IOException {
+    assertMatch("Выполнить", BSLLexer.EXECUTE_KEYWORD);
+    assertMatch("Запрос.Выполнить", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+  }
 }

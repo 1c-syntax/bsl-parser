@@ -152,6 +152,20 @@ class BSLParserTest {
 
     setInput("&Аннотация(П = 0, П2, Истина, \"строка\", П3)");
     assertMatches(parser.annotation());
+  }
 
+  @Test
+  void testExecuteStatement() throws IOException {
+    setInput("Выполнить(А)");
+    assertMatches(parser.executeStatement());
+  }
+
+  @Test
+  void testComplexIdentifier() throws IOException {
+    setInput("Запрос.Пустой()");
+    assertMatches(parser.complexIdentifier());
+
+    setInput("Запрос.Выполнить()");
+    assertMatches(parser.complexIdentifier());
   }
 }
