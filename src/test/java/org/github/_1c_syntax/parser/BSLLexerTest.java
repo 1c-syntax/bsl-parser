@@ -75,4 +75,9 @@ class BSLLexerTest {
     assertMatch("|\"", BSLLexer.STRINGTAIL);
     assertMatch("|aaa\"", BSLLexer.STRINGTAIL);
   }
+
+  @Test
+  void testAnnotation() throws IOException {
+    assertMatch("&Аннотация", BSLLexer.AMPERSAND, BSLLexer.IDENTIFIER);
+  }
 }

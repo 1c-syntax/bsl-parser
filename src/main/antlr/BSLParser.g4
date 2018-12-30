@@ -81,12 +81,12 @@ preprocessor
 var_name         : IDENTIFIER;
 
 moduleVars       : moduleVar+;
-moduleVar        : VAR_KEYWORD moduleVarsList SEMICOLON?;
+moduleVar        : (preprocessor | annotation)* VAR_KEYWORD moduleVarsList SEMICOLON?;
 moduleVarsList   : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
 moduleVarDeclaration: var_name EXPORT_KEYWORD?;
 
 subVars          : subVar;
-subVar           : VAR_KEYWORD subVarsList SEMICOLON?;
+subVar           : (preprocessor | annotation)* VAR_KEYWORD subVarsList SEMICOLON?;
 subVarsList      : subVarDeclaration (COMMA subVarDeclaration)*;
 subVarDeclaration: var_name;
 
@@ -97,8 +97,8 @@ subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : preprocessor* annotation* PROCEDURE_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : preprocessor* annotation* FUNCTION_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
+procDeclaration  : (preprocessor | annotation)* PROCEDURE_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : (preprocessor | annotation)* FUNCTION_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
 subCodeBlock     : subVars? codeBlock;
 
 // annotations

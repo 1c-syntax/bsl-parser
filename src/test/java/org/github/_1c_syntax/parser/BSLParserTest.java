@@ -105,4 +105,29 @@ class BSLParserTest {
     setInput("Выполнить(Переменная)");
     assertMatches(parser.executeStatement());
   }
+
+  @Test
+  void moduleVar() throws IOException {
+    setInput("Перем ИмяПерем");
+    assertMatches(parser.moduleVar());
+
+    setInput("Перем ИмяПерем Экспорт");
+    assertMatches(parser.moduleVar());
+
+    setInput("Перем ИмяПерем1, ИмяПерем2");
+    assertMatches(parser.moduleVar());
+
+    setInput("Перем ИмяПерем1 Экспорт, ИмяПерем2 Экспорт");
+    assertMatches(parser.moduleVar());
+
+    setInput("&Аннотация\nПерем ИмяПерем");
+    assertMatches(parser.moduleVar());
+
+    setInput("&Аннотация\n&ВтораяАннотация\nПерем ИмяПерем");
+    assertMatches(parser.moduleVar());
+
+    setInput("&Аннотация\n#Область ИмяОбласти\n&ВтораяАннотация\nПерем ИмяПерем");
+    assertMatches(parser.moduleVar());
+
+  }
 }
