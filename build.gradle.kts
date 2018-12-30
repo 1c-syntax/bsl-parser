@@ -89,6 +89,9 @@ license {
     ext["year"] = Calendar.getInstance().get(Calendar.YEAR)
     ext["name"] = "Alexey Sosnoviy <labotamy@yandex.ru>, Nikita Gryzlov <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>"
     ext["project"] = "BSL Parser"
+    exclude("**/*.tokens")
+    exclude("**/*.interp")
+    exclude("**/*.g4")
     strictCheck = true
     mapping("java", "SLASHSTAR_STYLE")
 }
