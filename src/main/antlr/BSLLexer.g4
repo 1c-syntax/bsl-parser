@@ -23,6 +23,8 @@ lexer grammar BSLLexer;
 
 @lexer::members {
     int lastTokenType = 0;
+
+    @Override
     public void emit(Token token) {
         super.emit(token);
         lastTokenType = token.getType();
