@@ -77,16 +77,52 @@ preprocessor
         )
     ;
 
+// compiler directives
+compilerDirectiveSymbol
+    : ANNOTATION_ATSERVERNOCONTEXT_SYMBOL
+    | ANNOTATION_ATCLIENTATSERVERNOCONTEXT_SYMBOL
+    | ANNOTATION_ATCLIENTATSERVER_SYMBOL
+    | ANNOTATION_ATCLIENT_SYMBOL
+    | ANNOTATION_ATSERVER_SYMBOL
+    ;
+
+compilerDirective
+    : AMPERSAND compilerDirectiveSymbol
+    ;
+
+// annotations
+annotationName
+    : ANNOTATION_CUSTOM_SYMBOL
+    ;
+annotationParamName
+    : IDENTIFIER
+    ;
+annotation
+    : AMPERSAND annotationName annotationParams?
+    ;
+annotationParams
+    : LPAREN
+      (
+        annotationParam
+        (COMMA annotationParam)*
+      )?
+      RPAREN
+    ;
+annotationParam
+    : (annotationParamName (ASSIGN const_value)?)
+    | const_value
+    ;
+
 // vars
 var_name         : IDENTIFIER;
 
 moduleVars       : moduleVar+;
-moduleVar        : (preprocessor | annotation)* VAR_KEYWORD moduleVarsList SEMICOLON?;
+moduleVar        : (preprocessor | compilerDirective | annotation)* VAR_KEYWORD moduleVarsList SEMICOLON?;
 moduleVarsList   : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
 moduleVarDeclaration: var_name EXPORT_KEYWORD?;
 
 subVars          : subVar;
-subVar           : (preprocessor | annotation)* VAR_KEYWORD subVarsList SEMICOLON?;
+subVar           : (preprocessor | compilerDirective | annotation)* VAR_KEYWORD subVarsList SEMICOLON?;
 subVarsList      : subVarDeclaration (COMMA subVarDeclaration)*;
 subVarDeclaration: var_name;
 
@@ -97,16 +133,9 @@ subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : (preprocessor | annotation)* PROCEDURE_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : (preprocessor | annotation)* FUNCTION_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
+procDeclaration  : (preprocessor | compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : (preprocessor | compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
 subCodeBlock     : subVars? codeBlock;
-
-// annotations
-annotationParamName : IDENTIFIER;
-annotationParam  : (annotationParamName (ASSIGN const_value)?) | const_value;
-annotationParams : LPAREN annotationParam (COMMA annotationParam)* RPAREN;
-annotation       : AMPERSAND annotationName annotationParams?;
-annotationName   : IDENTIFIER;
 
 // statements
 continueStatement : CONTINUE_KEYWORD;

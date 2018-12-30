@@ -55,7 +55,7 @@ MUL: '*';
 QUOTIENT: '/';
 MODULO: '%';
 QUESTION: '?';
-AMPERSAND: '&';
+AMPERSAND: '&' -> pushMode(ANNOTATION_MODE);
 HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 
 SQUOTE: '\'';
@@ -310,3 +310,64 @@ PREPROC_WHITE_SPACE: [ \t\f] -> channel(HIDDEN);
 PREPROC_NEWLINE: [\r\n] -> popMode, channel(HIDDEN);
 
 PREPROC_ANY: ~[\r\n];
+
+mode ANNOTATION_MODE;
+
+ANNOTATION_ATSERVERNOCONTEXT_SYMBOL
+    : (
+      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+      RU_B RU_E RU_Z RU_K RU_O RU_N RU_T RU_E RU_K RU_S RU_T RU_A
+    | A T S E R V E R
+      N O C O N T E X T
+    ) -> popMode
+    ;
+
+ANNOTATION_ATCLIENTATSERVERNOCONTEXT_SYMBOL
+    : (
+      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
+      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+      RU_B RU_E RU_Z RU_K RU_O RU_N RU_T RU_E RU_K RU_S RU_T RU_A
+    | A T C L I E N T
+      A T S E R V E R
+      N O C O N T E X T
+    ) -> popMode
+    ;
+
+ANNOTATION_ATCLIENTATSERVER_SYMBOL
+    : (
+      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
+      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+    | A T C L I E N T
+      A T S E R V E R
+    ) -> popMode
+    ;
+
+ANNOTATION_ATCLIENT_SYMBOL
+    : (
+      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
+    | A T C L I E N T
+    ) -> popMode
+    ;
+
+ANNOTATION_ATSERVER_SYMBOL
+    : ( RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+    | A T S E R V E R
+    ) -> popMode
+    ;
+
+ANNOTATION_CUSTOM_SYMBOL
+    : (
+    { lastTokenType == AMPERSAND }?
+    LETTER ( LETTER | DIGIT )*
+    ) -> popMode
+    ;
+
+ANNOTATION_WHITE_SPACE
+    : [ \n\r\t\f]
+    -> channel(HIDDEN)
+    ;
+
+ANNOTATION_UKNOWN
+    : .
+    -> channel(HIDDEN)
+    ;

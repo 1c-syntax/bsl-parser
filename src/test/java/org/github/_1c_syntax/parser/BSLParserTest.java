@@ -128,6 +128,30 @@ class BSLParserTest {
 
     setInput("&Аннотация\n#Область ИмяОбласти\n&ВтораяАннотация\nПерем ИмяПерем");
     assertMatches(parser.moduleVar());
+  }
+
+  @Test
+  void testAnnotation() throws IOException {
+    setInput("&Аннотация");
+    assertMatches(parser.annotation());
+
+    setInput("&Аннотация()");
+    assertMatches(parser.annotation());
+
+    setInput("&Аннотация(П)");
+    assertMatches(parser.annotation());
+
+    setInput("&Аннотация(П = 0)");
+    assertMatches(parser.annotation());
+
+    setInput("&Аннотация(П = 0, П2 = Истина)");
+    assertMatches(parser.annotation());
+
+    setInput("&Аннотация(Истина, Ложь)");
+    assertMatches(parser.annotation());
+
+    setInput("&Аннотация(П = 0, П2, Истина, \"строка\", П3)");
+    assertMatches(parser.annotation());
 
   }
 }
