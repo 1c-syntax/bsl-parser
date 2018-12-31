@@ -6,7 +6,8 @@ plugins {
     jacoco
     java
     antlr
-    id("com.github.hierynomus.license")
+    id("com.github.hierynomus.license") version "0.14.0"
+    id("org.sonarqube") version "2.6.2"
 }
 
 repositories {
@@ -30,7 +31,6 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-io/commons-io
     testImplementation("commons-io", "commons-io", "2.6")
 }
-
 
 sourceSets {
     main {
@@ -99,5 +99,15 @@ license {
 tasks.clean {
     doFirst {
         delete("src/main/gen", "out")
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.sourceEncoding", "UTF-8")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.organization", "1c-syntax")
+        property("sonar.projectKey", "1c-syntax_bsl-parser")
+        property("sonar.exclusions", "**/gen/**/*.*")
     }
 }
