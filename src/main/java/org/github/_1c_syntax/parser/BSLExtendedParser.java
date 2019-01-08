@@ -35,6 +35,10 @@ public class BSLExtendedParser extends BSLParser {
 
   private BSLLexer lexer = new BSLLexer(null);
 
+  public BSLExtendedParser() {
+    super(null);
+  }
+
   public BSLExtendedParser(TokenStream input) {
     super(input);
   }
