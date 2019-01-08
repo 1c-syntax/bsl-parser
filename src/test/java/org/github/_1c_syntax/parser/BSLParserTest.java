@@ -84,13 +84,13 @@ class BSLParserTest {
 
   @Test
   void testUse() throws IOException {
-    setInput("�?спользовать lib", BSLLexer.PREPROCESSOR_MODE);
+    setInput("Использовать lib", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.use());
 
-    setInput("�?спользовать \"./lib\"", BSLLexer.PREPROCESSOR_MODE);
+    setInput("Использовать \"./lib\"", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.use());
 
-    setInput("�?спользовать 1", BSLLexer.PREPROCESSOR_MODE);
+    setInput("Использовать 1", BSLLexer.PREPROCESSOR_MODE);
     assertNotMatches(parser.use());
   }
 
@@ -108,25 +108,25 @@ class BSLParserTest {
 
   @Test
   void moduleVar() throws IOException {
-    setInput("Перем �?мяПерем");
+    setInput("Перем ИмяПерем");
     assertMatches(parser.moduleVar());
 
-    setInput("Перем �?мяПерем Экспорт");
+    setInput("Перем ИмяПерем Экспорт");
     assertMatches(parser.moduleVar());
 
-    setInput("Перем �?мяПерем1, �?мяПерем2");
+    setInput("Перем ИмяПерем1, ИмяПерем2");
     assertMatches(parser.moduleVar());
 
-    setInput("Перем �?мяПерем1 Экспорт, �?мяПерем2 Экспорт");
+    setInput("Перем ИмяПерем1 Экспорт, ИмяПерем2 Экспорт");
     assertMatches(parser.moduleVar());
 
-    setInput("&Аннотация\nПерем �?мяПерем");
+    setInput("&Аннотация\nПерем ИмяПерем");
     assertMatches(parser.moduleVar());
 
-    setInput("&Аннотация\n&ВтораяАннотация\nПерем �?мяПерем");
+    setInput("&Аннотация\n&ВтораяАннотация\nПерем ИмяПерем");
     assertMatches(parser.moduleVar());
 
-    setInput("&Аннотация\n#Область �?мяОбласти\n&ВтораяАннотация\nПерем �?мяПерем");
+    setInput("&Аннотация\n#Область ИмяОбласти\n&ВтораяАннотация\nПерем ИмяПерем");
     assertMatches(parser.moduleVar());
   }
 
@@ -144,13 +144,13 @@ class BSLParserTest {
     setInput("&Аннотация(П = 0)");
     assertMatches(parser.annotation());
 
-    setInput("&Аннотация(П = 0, П2 = �?стина)");
+    setInput("&Аннотация(П = 0, П2 = Истина)");
     assertMatches(parser.annotation());
 
-    setInput("&Аннотация(�?стина, Ложь)");
+    setInput("&Аннотация(Истина, Ложь)");
     assertMatches(parser.annotation());
 
-    setInput("&Аннотация(П = 0, П2, �?стина, \"строка\", П3)");
+    setInput("&Аннотация(П = 0, П2, Истина, \"строка\", П3)");
     assertMatches(parser.annotation());
   }
 

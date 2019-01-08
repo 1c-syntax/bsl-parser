@@ -62,8 +62,8 @@ class BSLLexerTest {
 
   @Test
   void testUse() throws IOException {
-    assertMatch(BSLLexer.PREPROCESSOR_MODE, "�?спользовать lib", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER);
-    assertMatch(BSLLexer.PREPROCESSOR_MODE, "�?спользовать \"lib\"", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_STRING);
+    assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать lib", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER);
+    assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать \"lib\"", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_STRING);
   }
 
   @Test
