@@ -109,8 +109,8 @@ annotationParams
       RPAREN
     ;
 annotationParam
-    : (annotationParamName (ASSIGN const_value)?)
-    | const_value
+    : (annotationParamName (ASSIGN constValue)?)
+    | constValue
     ;
 
 // vars
@@ -133,8 +133,8 @@ subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : (preprocessor | compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : (preprocessor | compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN param_list? RPAREN EXPORT_KEYWORD?;
+procDeclaration  : (preprocessor | compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : (preprocessor | compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
 subCodeBlock     : subVars? codeBlock;
 
 // statements
@@ -148,7 +148,7 @@ forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expressi
 forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER FROM_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 tryStatement      : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
-executeStatement  : EXECUTE_KEYWORD (do_call | call_param_list);
+executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
 
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
@@ -173,29 +173,29 @@ ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression
 // main
 codeBlock        : (statement | preprocessor)*;
 numeric          : FLOAT | DECIMAL;
-param_list       : param (COMMA param)*;
-param            : VAL_KEYWORD? IDENTIFIER (ASSIGN default_value)?;
-default_value    : const_value;
-const_value      : numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
+paramList        : param (COMMA param)*;
+param            : VAL_KEYWORD? IDENTIFIER (ASSIGN defaultValue)?;
+defaultValue     : constValue;
+constValue       : numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
 string           : (STRING | multilineString)+;
 statement        : label? ((assignment | compoundStatement | preprocessor) SEMICOLON? | SEMICOLON);
 assignment       : complexIdentifier preprocessor* (ASSIGN preprocessor* expression)?;
-call_param_list  : call_param (COMMA call_param)*;
-call_param       : expression?;
+callParamList    : callParam (COMMA callParam)*;
+callParam        : expression?;
 expression       : member (preprocessor* operation preprocessor* member)*;
 operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | compareOperation;
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;
 unaryModifier    : NOT_KEYWORD | MINUS;
-member           : unaryModifier? (const_value | complexIdentifier | ( LPAREN expression RPAREN ));
-newExpression    : NEW_KEYWORD typeName do_call? | NEW_KEYWORD do_call;
+member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ));
+newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
 typeName         : IDENTIFIER;
 complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator) modifier*;
-modifier         : access_property | access_index | do_call;
+modifier         : access_property | access_index | doCall;
 access_index     : LBRACK expression RBRACK;
 access_property  : DOT IDENTIFIER;
-do_call          : LPAREN call_param_list RPAREN;
+doCall           : LPAREN callParamList RPAREN;
 compoundStatement
     : ifStatement
     | whileStatement
