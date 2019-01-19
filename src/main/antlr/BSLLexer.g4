@@ -158,7 +158,7 @@ TRY_KEYWORD
     :
     { lastTokenType != DOT }?
     ( RU_P RU_O RU_P RU_Y RU_T RU_K RU_A
-    | T R Y)
+    | T R Y )
     ;
 EXCEPT_KEYWORD: RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E | E X C E P T;
 ENDTRY_KEYWORD: RU_K RU_O RU_N RU_E RU_C RU_P RU_O RU_P RU_Y RU_T RU_K RU_I | E N D T R Y;
@@ -176,7 +176,7 @@ EXECUTE_KEYWORD
     :
     { lastTokenType != DOT }?
     ( RU_V RU_Y RU_P RU_O RU_L RU_N RU_I RU_T RU_SOFT_SIGN
-    | E X E C U T E)
+    | E X E C U T E )
     ;
 ADDHANDLER_KEYWORD
     : RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
