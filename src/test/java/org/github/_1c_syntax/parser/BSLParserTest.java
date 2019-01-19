@@ -158,6 +158,9 @@ class BSLParserTest {
   void testExecuteStatement() throws IOException {
     setInput("Выполнить(А)");
     assertMatches(parser.executeStatement());
+
+    setInput("Выполнить А");
+    assertMatches(parser.executeStatement());
   }
 
   @Test
