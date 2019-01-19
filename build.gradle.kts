@@ -8,6 +8,7 @@ plugins {
     antlr
     id("com.github.hierynomus.license") version "0.14.0"
     id("org.sonarqube") version "2.6.2"
+    id("com.github.gradle-git-version-calculator") version "1.1.0"
 }
 
 repositories {
@@ -15,7 +16,7 @@ repositories {
 }
 
 group = "org.github._1c_syntax"
-version = "1.0"
+version = gitVersionCalculator.calculateVersion("v")
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
