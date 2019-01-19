@@ -179,7 +179,7 @@ default_value    : const_value;
 const_value      : numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
 string           : (STRING | multilineString)+;
-statement        : label? (assignment | compoundStatement | preprocessor) SEMICOLON?;
+statement        : label? ((assignment | compoundStatement | preprocessor) SEMICOLON? | SEMICOLON);
 assignment       : complexIdentifier (ASSIGN expression)?;
 call_param_list  : call_param (COMMA call_param)*;
 call_param       : expression?;

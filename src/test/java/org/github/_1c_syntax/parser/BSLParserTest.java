@@ -168,4 +168,15 @@ class BSLParserTest {
     setInput("Запрос.Выполнить()");
     assertMatches(parser.complexIdentifier());
   }
+
+  @Test
+  void testStatement() throws IOException {
+    setInput("A = 0;");
+    assertMatches(parser.statement());
+
+    setInput(";");
+    assertMatches(parser.statement());
+  }
+
+
 }
