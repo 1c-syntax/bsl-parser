@@ -40,13 +40,18 @@ class BSLParserTest {
   private BSLParser parser = new BSLParser(null);
   private BSLLexer lexer = new BSLLexer(null);
 
-  private void setInput(String inputString) throws IOException {
+  private void setInput(String inputString) {
     setInput(inputString, BSLLexer.DEFAULT_MODE);
   }
 
-  private void setInput(String inputString, int mode) throws IOException {
+  private void setInput(String inputString, int mode) {
     InputStream inputStream = IOUtils.toInputStream(inputString, Charset.forName("UTF-8"));
-    CharStream input = CharStreams.fromStream(inputStream, Charset.forName("UTF-8"));
+    CharStream input;
+    try {
+      input = CharStreams.fromStream(inputStream, Charset.forName("UTF-8"));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     lexer.setInputStream(input);
     lexer.mode(mode);
 
@@ -83,7 +88,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testUse() throws IOException {
+  void testUse() {
     setInput("Использовать lib", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.use());
 
@@ -95,7 +100,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testExecute() throws IOException {
+  void testExecute() {
     setInput("Выполнить(\"\")");
     assertMatches(parser.executeStatement());
 
@@ -107,7 +112,7 @@ class BSLParserTest {
   }
 
   @Test
-  void moduleVar() throws IOException {
+  void moduleVar() {
     setInput("Перем ИмяПерем");
     assertMatches(parser.moduleVar());
 
@@ -131,7 +136,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testAnnotation() throws IOException {
+  void testAnnotation() {
     setInput("&Аннотация");
     assertMatches(parser.annotation());
 
@@ -155,7 +160,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testExecuteStatement() throws IOException {
+  void testExecuteStatement() {
     setInput("Выполнить(А)");
     assertMatches(parser.executeStatement());
 
@@ -164,7 +169,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testComplexIdentifier() throws IOException {
+  void testComplexIdentifier() {
     setInput("Запрос.Пустой()");
     assertMatches(parser.complexIdentifier());
 
@@ -176,7 +181,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testStatement() throws IOException {
+  void testStatement() {
     setInput("A = 0;");
     assertMatches(parser.statement());
 
@@ -185,7 +190,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testAssignment() throws IOException {
+  void testAssignment() {
     setInput("A = \n" +
       "#Region Name\n" +
       "0 +\n" +
@@ -203,7 +208,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testDefaultValue() throws IOException {
+  void testDefaultValue() {
     setInput("0");
     assertMatches(parser.defaultValue());
 
@@ -218,7 +223,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testPreproc_symbol() throws IOException {
+  void testPreproc_symbol() {
     setInput("Клиент", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
@@ -231,7 +236,7 @@ class BSLParserTest {
   }
 
   @Test
-  void testExpression() throws IOException {
+  void testExpression() {
     setInput("A = 0");
     assertMatches(parser.expression());
 
