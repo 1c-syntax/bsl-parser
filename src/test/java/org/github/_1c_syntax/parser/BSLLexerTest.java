@@ -39,13 +39,18 @@ class BSLLexerTest {
 
   private BSLLexer lexer = new BSLLexer(null);
 
-  private void assertMatch(String inputString, Integer... expectedTokens) throws IOException {
+  private void assertMatch(String inputString, Integer... expectedTokens) {
     assertMatch(BSLLexer.DEFAULT_MODE, inputString, expectedTokens);
   }
 
-  private void assertMatch(int mode, String inputString, Integer... expectedTokens) throws IOException {
+  private void assertMatch(int mode, String inputString, Integer... expectedTokens) {
     InputStream inputStream = IOUtils.toInputStream(inputString, Charset.forName("UTF-8"));
-    CharStream input = CharStreams.fromStream(inputStream, Charset.forName("UTF-8"));
+    CharStream input;
+    try {
+      input = CharStreams.fromStream(inputStream, Charset.forName("UTF-8"));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     lexer.setInputStream(input);
     lexer.mode(mode);
 
@@ -61,13 +66,13 @@ class BSLLexerTest {
   }
 
   @Test
-  void testUse() throws IOException {
+  void testUse() {
     assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать lib", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER);
     assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать \"lib\"", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_STRING);
   }
 
   @Test
-  void testString() throws IOException {
+  void testString() {
     assertMatch("\"строка\"", BSLLexer.STRING);
     assertMatch("\"", BSLLexer.STRINGSTART);
     assertMatch("|aaa", BSLLexer.STRINGPART);
@@ -77,7 +82,7 @@ class BSLLexerTest {
   }
 
   @Test
-  void testAnnotation() throws IOException {
+  void testAnnotation() {
     assertMatch("&НаСервере", BSLLexer.AMPERSAND, BSLLexer.ANNOTATION_ATSERVER_SYMBOL);
     assertMatch("&НаКлиентеНаСервере", BSLLexer.AMPERSAND, BSLLexer.ANNOTATION_ATCLIENTATSERVER_SYMBOL);
     assertMatch("&Аннотация", BSLLexer.AMPERSAND, BSLLexer.ANNOTATION_CUSTOM_SYMBOL);
@@ -94,43 +99,43 @@ class BSLLexerTest {
   }
 
   @Test
-  void testProcedure() throws IOException {
+  void testProcedure() {
     assertMatch("Процедура", BSLLexer.PROCEDURE_KEYWORD);
     assertMatch("Поле.Процедура", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
-  void testFunction() throws IOException {
+  void testFunction() {
     assertMatch("Функция", BSLLexer.FUNCTION_KEYWORD);
     assertMatch("Поле.Функция", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
-  void testTo() throws IOException {
+  void testTo() {
     assertMatch("По", BSLLexer.TO_KEYWORD);
     assertMatch("Поле.По", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
-  void testExecute() throws IOException {
+  void testExecute() {
     assertMatch("Выполнить", BSLLexer.EXECUTE_KEYWORD);
     assertMatch("Запрос.Выполнить", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
-  void testTry() throws IOException {
+  void testTry() {
     assertMatch("Попытка", BSLLexer.TRY_KEYWORD);
     assertMatch("Поле.Попытка", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
-  void testBreak() throws IOException {
+  void testBreak() {
     assertMatch("Прервать", BSLLexer.BREAK_KEYWORD);
     assertMatch("Поле.Прервать", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
-  void testNew() throws IOException {
+  void testNew() {
     assertMatch("Новый", BSLLexer.NEW_KEYWORD);
     assertMatch("Поле.Новый", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
