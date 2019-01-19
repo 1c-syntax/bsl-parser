@@ -94,11 +94,22 @@ class BSLLexerTest {
   }
 
   @Test
+  void testProcedure() throws IOException {
+    assertMatch("Процедура", BSLLexer.PROCEDURE_KEYWORD);
+    assertMatch("Поле.Процедура", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+  }
+
+  @Test
+  void testFunction() throws IOException {
+    assertMatch("Функция", BSLLexer.FUNCTION_KEYWORD);
+    assertMatch("Поле.Функция", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+  }
+
+  @Test
   void testTo() throws IOException {
     assertMatch("По", BSLLexer.TO_KEYWORD);
     assertMatch("Поле.По", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
-
 
   @Test
   void testExecute() throws IOException {
