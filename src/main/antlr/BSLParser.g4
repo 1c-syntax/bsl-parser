@@ -59,6 +59,10 @@ preproc_symbol
     | PREPROC_EXTERNALCONNECTION_SYMBOL
     | PREPROC_THINCLIENT_SYMBOL
     | PREPROC_WEBCLIENT_SYMBOL
+    | preproc_unknownSymbol
+    ;
+preproc_unknownSymbol
+    : PREPROC_IDENTIFIER
     ;
 preproc_boolOperation
     : PREPROC_OR_KEYWORD
@@ -176,7 +180,7 @@ numeric          : FLOAT | DECIMAL;
 paramList        : param (COMMA param)*;
 param            : VAL_KEYWORD? IDENTIFIER (ASSIGN defaultValue)?;
 defaultValue     : constValue;
-constValue       : numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
+constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
 string           : (STRING | multilineString)+;
 statement        : label? ((assignment | compoundStatement | preprocessor) SEMICOLON? | SEMICOLON);

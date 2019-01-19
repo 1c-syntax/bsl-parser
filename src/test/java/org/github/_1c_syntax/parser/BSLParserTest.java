@@ -217,5 +217,17 @@ class BSLParserTest {
     assertMatches(parser.defaultValue());
   }
 
+  @Test
+  void testPreproc_symbol() throws IOException {
+    setInput("Клиент", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("ТолстыйКлиентОбычноеПриложение", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+  }
 
 }
