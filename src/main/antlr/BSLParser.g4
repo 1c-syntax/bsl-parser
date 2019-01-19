@@ -121,7 +121,7 @@ moduleVar        : (preprocessor | compilerDirective | annotation)* VAR_KEYWORD 
 moduleVarsList   : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
 moduleVarDeclaration: var_name EXPORT_KEYWORD?;
 
-subVars          : subVar;
+subVars          : subVar+;
 subVar           : (preprocessor | compilerDirective | annotation)* VAR_KEYWORD subVarsList SEMICOLON?;
 subVarsList      : subVarDeclaration (COMMA subVarDeclaration)*;
 subVarDeclaration: var_name;
