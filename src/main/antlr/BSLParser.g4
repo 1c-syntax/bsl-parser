@@ -188,10 +188,10 @@ operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | comp
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;
 unaryModifier    : NOT_KEYWORD | MINUS;
-member           : unaryModifier? (const_value | complexIdentifier | ( LPAREN expression RPAREN ) | ternaryOperator);
+member           : unaryModifier? (const_value | complexIdentifier | ( LPAREN expression RPAREN ));
 newExpression    : NEW_KEYWORD typeName do_call? | NEW_KEYWORD do_call;
 typeName         : IDENTIFIER;
-complexIdentifier: (IDENTIFIER | newExpression) modifier*;
+complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator) modifier*;
 modifier         : access_property | access_index | do_call;
 access_index     : LBRACK expression RBRACK;
 access_property  : DOT IDENTIFIER;
