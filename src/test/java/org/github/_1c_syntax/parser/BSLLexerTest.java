@@ -123,10 +123,15 @@ class BSLLexerTest {
     assertMatch("Поле.Попытка", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
-
   @Test
   void testBreak() throws IOException {
     assertMatch("Прервать", BSLLexer.BREAK_KEYWORD);
     assertMatch("Поле.Прервать", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+  }
+
+  @Test
+  void testNew() throws IOException {
+    assertMatch("Новый", BSLLexer.NEW_KEYWORD);
+    assertMatch("Поле.Новый", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 }
