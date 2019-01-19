@@ -180,10 +180,10 @@ const_value      : numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME
 multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
 string           : (STRING | multilineString)+;
 statement        : label? ((assignment | compoundStatement | preprocessor) SEMICOLON? | SEMICOLON);
-assignment       : complexIdentifier (ASSIGN expression)?;
+assignment       : complexIdentifier preprocessor* (ASSIGN preprocessor* expression)?;
 call_param_list  : call_param (COMMA call_param)*;
 call_param       : expression?;
-expression       : member (operation member)*;
+expression       : member (preprocessor* operation preprocessor* member)*;
 operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | compareOperation;
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;

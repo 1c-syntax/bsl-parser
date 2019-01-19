@@ -178,5 +178,23 @@ class BSLParserTest {
     assertMatches(parser.statement());
   }
 
+  @Test
+  void testAssignment() throws IOException {
+    setInput("A = \n" +
+      "#Region Name\n" +
+      "0 +\n" +
+      "#EndRegion\n" +
+      "1\n" +
+      "#Region Name2\n" +
+      "#Region Name2\n" +
+      "+\n" +
+      "#EndRegion\n" +
+      "0\n" +
+      ";\n" +
+      "\n" +
+      "#EndRegion");
+    assertMatches(parser.expression());
+  }
+
 
 }
