@@ -94,6 +94,13 @@ class BSLLexerTest {
   }
 
   @Test
+  void testTo() throws IOException {
+    assertMatch("По", BSLLexer.TO_KEYWORD);
+    assertMatch("Поле.По", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+  }
+
+
+  @Test
   void testExecute() throws IOException {
     assertMatch("Выполнить", BSLLexer.EXECUTE_KEYWORD);
     assertMatch("Запрос.Выполнить", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
