@@ -230,4 +230,31 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void testExpression() throws IOException {
+    setInput("A = 0");
+    assertMatches(parser.expression());
+
+    setInput("A = A + 1");
+    assertMatches(parser.expression());
+
+    setInput("A = +0");
+    assertMatches(parser.expression());
+
+    setInput("A = -0");
+    assertMatches(parser.expression());
+
+    setInput("A = 1 ++ 2");
+    assertMatches(parser.expression());
+
+    setInput("A = 1 -- 2");
+    assertMatches(parser.expression());
+
+    setInput("A = 1 +- 2");
+    assertMatches(parser.expression());
+
+    setInput("A = 1 -+ 2");
+    assertMatches(parser.expression());
+  }
+
 }
