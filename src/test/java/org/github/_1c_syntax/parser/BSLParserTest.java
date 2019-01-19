@@ -202,5 +202,20 @@ class BSLParserTest {
     assertMatches(parser.expression());
   }
 
+  @Test
+  void testDefaultValue() throws IOException {
+    setInput("0");
+    assertMatches(parser.defaultValue());
+
+    setInput("-1");
+    assertMatches(parser.defaultValue());
+
+    setInput("+1");
+    assertMatches(parser.defaultValue());
+
+    setInput("ИСТИНА");
+    assertMatches(parser.defaultValue());
+  }
+
 
 }
