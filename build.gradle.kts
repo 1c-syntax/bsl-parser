@@ -54,10 +54,10 @@ idea {
 tasks.generateGrammarSource {
     arguments = arguments + "-visitor"
     arguments = arguments + "-package"
-    arguments = arguments + "org.github._1c_syntax.parser"
+    arguments = arguments + "org.github._1c_syntax.bsl.parser"
     arguments = arguments + "-encoding"
     arguments = arguments + "utf8"
-    outputDirectory = file("src/main/gen/org/github/_1c_syntax/parser")
+    outputDirectory = file("src/main/gen/org/github/_1c_syntax/bsl/parser")
 }
 
 tasks.generateGrammarSource {

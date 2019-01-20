@@ -23,7 +23,7 @@ parser grammar BSLParser;
 
 options {
     tokenVocab = BSLLexer;
-    contextSuperClass = 'org.github._1c_syntax.parser.BSLParserRuleContext';
+    contextSuperClass = 'BSLParserRuleContext';
 }
 
 // ROOT
