@@ -110,6 +110,6 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_bsl-parser")
         property("sonar.projectName", "BSL Parser")
-        property("sonar.exclusions", "**/gen/**/*.*")
+        //property("sonar.exclusions", "**/gen/**/*.*")
     }
 }
