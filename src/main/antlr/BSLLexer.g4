@@ -122,10 +122,29 @@ fragment X: 'X' | 'x';
 fragment Y: 'Y' | 'y';   
 
 // literals
-TRUE: RU_I RU_S RU_T RU_I RU_N RU_A | T R U E;
-FALSE: RU_L RU_O RU_ZH RU_SOFT_SIGN | F A L S E;
-UNDEFINED: RU_N RU_E RU_O RU_P RU_R RU_E RU_D RU_E RU_L RU_E RU_N RU_O | U N D E F I N E D;
-NULL: N U L L;
+TRUE
+    :
+    { lastTokenType != DOT }?
+    ( RU_I RU_S RU_T RU_I RU_N RU_A
+    | T R U E )
+    ;
+FALSE
+    :
+    { lastTokenType != DOT }?
+    ( RU_L RU_O RU_ZH RU_SOFT_SIGN
+    | F A L S E )
+    ;
+UNDEFINED
+    :
+    { lastTokenType != DOT }?
+    ( RU_N RU_E RU_O RU_P RU_R RU_E RU_D RU_E RU_L RU_E RU_N RU_O
+    | U N D E F I N E D )
+    ;
+NULL
+    :
+    { lastTokenType != DOT }?
+    N U L L
+    ;
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
@@ -148,49 +167,172 @@ FUNCTION_KEYWORD
     ( RU_F RU_U RU_N RU_K RU_C RU_I RU_YA
     | F U N C T I O N)
     ;
-ENDPROCEDURE_KEYWORD: RU_K RU_O RU_N RU_E RU_C RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_Y | E N D P R O C E D U R E;
-ENDFUNCTION_KEYWORD: RU_K RU_O RU_N RU_E RU_C RU_F RU_U RU_N RU_K RU_C RU_I RU_I | E N D F U N C T I O N;
-EXPORT_KEYWORD: RU_EH RU_K RU_S RU_P RU_O RU_R RU_T | E X P O R T;
-VAL_KEYWORD: RU_Z RU_N RU_A RU_CH | V A L;
-ENDIF_KEYWORD: RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I | E N D I F;
-ENDDO_KEYWORD: RU_K RU_O RU_N RU_E RU_C RU_C RU_I RU_K RU_L RU_A | E N D D O;
-IF_KEYWORD: RU_E RU_S RU_L RU_I | I F;
-ELSIF_KEYWORD: RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I | E L S I F;
-ELSE_KEYWORD: RU_I RU_N RU_A RU_CH RU_E | E L S E;
-THEN_KEYWORD: RU_T RU_O RU_G RU_D RU_A | T H E N;
-WHILE_KEYWORD: RU_P RU_O RU_K RU_A | W H I L E;
-DO_KEYWORD: RU_C RU_I RU_K RU_L | D O;
-FOR_KEYWORD: RU_D RU_L RU_YA | F O R;
+ENDPROCEDURE_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_K RU_O RU_N RU_E RU_C RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_Y
+    | E N D P R O C E D U R E )
+    ;
+ENDFUNCTION_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_K RU_O RU_N RU_E RU_C RU_F RU_U RU_N RU_K RU_C RU_I RU_I
+    | E N D F U N C T I O N )
+    ;
+EXPORT_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_EH RU_K RU_S RU_P RU_O RU_R RU_T
+    | E X P O R T )
+    ;
+VAL_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_Z RU_N RU_A RU_CH
+    | V A L)
+    ;
+ENDIF_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
+    | E N D I F )
+    ;
+ENDDO_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_K RU_O RU_N RU_E RU_C RU_C RU_I RU_K RU_L RU_A
+    | E N D D O )
+    ;
+IF_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_E RU_S RU_L RU_I
+    | I F )
+    ;
+ELSIF_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
+    | E L S I F )
+    ;
+ELSE_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_I RU_N RU_A RU_CH RU_E
+    | E L S E )
+    ;
+THEN_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_T RU_O RU_G RU_D RU_A
+    | T H E N )
+    ;
+WHILE_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_P RU_O RU_K RU_A
+    | W H I L E )
+    ;
+DO_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_C RU_I RU_K RU_L
+    | D O )
+    ;
+FOR_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_D RU_L RU_YA
+    | F O R );
 TO_KEYWORD
     :
     { lastTokenType != DOT }?
     ( RU_P RU_O
     | T O )
     ;
-EACH_KEYWORD: RU_K RU_A RU_ZH RU_D RU_O RU_G RU_O | E A C H;
-FROM_KEYWORD: RU_I RU_Z | F R O M;
+EACH_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_K RU_A RU_ZH RU_D RU_O RU_G RU_O
+    | E A C H )
+    ;
+FROM_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_I RU_Z
+    | F R O M )
+    ;
 TRY_KEYWORD
     :
     { lastTokenType != DOT }?
     ( RU_P RU_O RU_P RU_Y RU_T RU_K RU_A
     | T R Y )
     ;
-EXCEPT_KEYWORD: RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E | E X C E P T;
-ENDTRY_KEYWORD: RU_K RU_O RU_N RU_E RU_C RU_P RU_O RU_P RU_Y RU_T RU_K RU_I | E N D T R Y;
-RETURN_KEYWORD: RU_V RU_O RU_Z RU_V RU_R RU_A RU_T | R E T U R N;
-CONTINUE_KEYWORD: RU_P RU_R RU_O RU_D RU_O RU_L RU_ZH RU_I RU_T RU_SOFT_SIGN | C O N T I N U E;
-RAISE_KEYWORD: RU_V RU_Y RU_Z RU_V RU_A RU_T RU_SOFT_SIGN RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E | R A I S E;
-VAR_KEYWORD: RU_P RU_E RU_R RU_E RU_M | V A R;
-NOT_KEYWORD: RU_N RU_E| N O T;
-OR_KEYWORD: RU_I RU_L RU_I | O R;
-AND_KEYWORD: RU_I | A N D;
+EXCEPT_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E
+    | E X C E P T )
+    ;
+ENDTRY_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_K RU_O RU_N RU_E RU_C RU_P RU_O RU_P RU_Y RU_T RU_K RU_I
+    | E N D T R Y )
+    ;
+RETURN_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_V RU_O RU_Z RU_V RU_R RU_A RU_T
+    | R E T U R N )
+    ;
+CONTINUE_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_P RU_R RU_O RU_D RU_O RU_L RU_ZH RU_I RU_T RU_SOFT_SIGN
+    | C O N T I N U E )
+    ;
+RAISE_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_V RU_Y RU_Z RU_V RU_A RU_T RU_SOFT_SIGN RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E
+    | R A I S E )
+    ;
+VAR_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_P RU_E RU_R RU_E RU_M
+    | V A R );
+NOT_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_N RU_E
+    | N O T )
+    ;
+OR_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_I RU_L RU_I
+    | O R )
+    ;
+AND_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_I
+    | A N D )
+    ;
 NEW_KEYWORD
     :
     { lastTokenType != DOT }?
     ( RU_N RU_O RU_V RU_Y RU_J
     | N E W )
     ;
-GOTO_KEYWORD: RU_P RU_E RU_R RU_E RU_J RU_T RU_I | G O T O;
+GOTO_KEYWORD
+    :
+    { lastTokenType != DOT }?
+    ( RU_P RU_E RU_R RU_E RU_J RU_T RU_I
+    | G O T O )
+    ;
 BREAK_KEYWORD
     :
     { lastTokenType != DOT }?
@@ -204,12 +346,16 @@ EXECUTE_KEYWORD
     | E X E C U T E )
     ;
 ADDHANDLER_KEYWORD
-    : RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
-    | A D D H A N D L E R
+    :
+    { lastTokenType != DOT }?
+    ( RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
+    | A D D H A N D L E R )
     ;
 REMOVEHANDLER_KEYWORD
-    : RU_U RU_D RU_A RU_L RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
-    | R E M O V E H A N D L E R
+    :
+    { lastTokenType != DOT }?
+    ( RU_U RU_D RU_A RU_L RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
+    | R E M O V E H A N D L E R )
     ;
 
 fragment LETTER: [\p{Letter}] | '_';   
