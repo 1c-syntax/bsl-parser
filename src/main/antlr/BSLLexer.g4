@@ -490,6 +490,7 @@ PREPROC_SERVER_SYMBOL
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
 PREPROC_WHITE_SPACE: [ \t\f] -> channel(HIDDEN);
+PREPROC_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 PREPROC_NEWLINE: [\r\n] -> popMode, channel(HIDDEN);
 
 PREPROC_ANY: ~[\r\n];

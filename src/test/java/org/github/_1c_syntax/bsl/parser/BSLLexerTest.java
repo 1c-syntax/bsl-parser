@@ -72,6 +72,11 @@ class BSLLexerTest {
   }
 
   @Test
+  void testPreproc_LineComment() {
+    assertMatch("#КонецОбласти // Концевой комментарий", BSLLexer.HASH, BSLLexer.PREPROC_END_REGION);
+  }
+
+  @Test
   void testString() {
     assertMatch("\"строка\"", BSLLexer.STRING);
     assertMatch("\"", BSLLexer.STRINGSTART);
@@ -96,6 +101,7 @@ class BSLLexerTest {
       BSLLexer.AMPERSAND, BSLLexer.ANNOTATION_CUSTOM_SYMBOL,
       BSLLexer.AMPERSAND, BSLLexer.ANNOTATION_ATSERVER_SYMBOL
     );
+    assertMatch("&НаСервере", BSLLexer.AMPERSAND, BSLLexer.ANNOTATION_ATSERVER_SYMBOL);
   }
 
   @Test
