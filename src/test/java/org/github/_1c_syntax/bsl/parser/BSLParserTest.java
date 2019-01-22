@@ -100,6 +100,11 @@ class BSLParserTest {
   }
 
   @Test
+  void testPreproc_Expression() {
+    setInput("((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент))))", BSLLexer.PREPROCESSOR_MODE);
+  }
+
+  @Test
   void testExecute() {
     setInput("Выполнить(\"\")");
     assertMatches(parser.executeStatement());

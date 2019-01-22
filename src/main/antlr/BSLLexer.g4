@@ -366,6 +366,8 @@ UNKNOWN: . -> channel(HIDDEN);
 mode PREPROCESSOR_MODE;
 
 PREPROC_EXCLAMATION_MARK: '!';
+PREPROC_LPAREN: '(';
+PREPROC_RPAREN: ')';
 
 PREPROC_STRINGSTART: '"' (~["\n\r])*;
 PREPROC_STRING: '"' (~["\n\r])* '"';

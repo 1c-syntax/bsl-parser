@@ -39,13 +39,21 @@ regionStart      : PREPROC_REGION regionName;
 regionEnd        : PREPROC_END_REGION;
 regionName       : PREPROC_IDENTIFIER;
 
-preproc_if       : PREPROC_IF_KEYWORD preproc_logicalExpression PREPROC_THEN_KEYWORD;
-preproc_elsif    : PREPROC_ELSIF_KEYWORD preproc_logicalExpression PREPROC_THEN_KEYWORD;
+preproc_if       : PREPROC_IF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
+preproc_elsif    : PREPROC_ELSIF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
 preproc_else     : PREPROC_ELSE_KEYWORD;
 preproc_endif    : PREPROC_ENDIF_KEYWORD;
 
+preproc_expression
+    : ( PREPROC_LPAREN preproc_expression PREPROC_RPAREN )
+    | preproc_logicalExpression
+    ;
+preproc_logicalOperand
+    : (PREPROC_LPAREN PREPROC_NOT_KEYWORD? preproc_logicalOperand PREPROC_RPAREN)
+    | ( PREPROC_NOT_KEYWORD? preproc_symbol )
+    ;
 preproc_logicalExpression
-    : PREPROC_NOT_KEYWORD? preproc_symbol (preproc_boolOperation PREPROC_NOT_KEYWORD? preproc_symbol)*;
+    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*;
 preproc_symbol
     : PREPROC_CLIENT_SYMBOL
     | PREPROC_ATCLIENT_SYMBOL
