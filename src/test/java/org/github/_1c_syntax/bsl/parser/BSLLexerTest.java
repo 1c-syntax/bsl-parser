@@ -77,6 +77,12 @@ class BSLLexerTest {
   }
 
   @Test
+  void testPreproc_Region() {
+    assertMatch("#Область ИмяОбласти", BSLLexer.HASH, BSLLexer.PREPROC_REGION, BSLLexer.PREPROC_IDENTIFIER);
+    assertMatch("#Область МобильныйКлиент", BSLLexer.HASH, BSLLexer.PREPROC_REGION, BSLLexer.PREPROC_IDENTIFIER);
+  }
+
+  @Test
   void testString() {
     assertMatch("\"строка\"", BSLLexer.STRING);
     assertMatch("\"", BSLLexer.STRINGSTART);

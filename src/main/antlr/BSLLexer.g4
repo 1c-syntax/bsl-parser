@@ -412,84 +412,108 @@ PREPROC_ELSE_KEYWORD
     ;
 
 PREPROC_MOBILEAPPCLIENT_SYMBOL
-    : RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_O RU_E
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_O RU_E
       RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
       RU_K RU_L RU_I RU_E RU_N RU_T
     | M O B I L E
       A P P
-      C L I E N T
+      C L I E N T )
     ;
 PREPROC_MOBILEAPPSERVER_SYMBOL
-    : RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_O RU_E
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_O RU_E
       RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
       RU_S RU_E RU_R RU_V RU_E RU_R
     | M O B I L E
       A P P
-      S E R V E R
+      S E R V E R )
     ;
 PREPROC_MOBILECLIENT_SYMBOL
-   : RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_Y RU_J
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_Y RU_J
      RU_K RU_L RU_I RU_E RU_N RU_T
    | M O B I L E
-     C L I E N T
+     C L I E N T )
    ;
 PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
-    : RU_T RU_O RU_L RU_S RU_T RU_Y RU_J
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_T RU_O RU_L RU_S RU_T RU_Y RU_J
       RU_K RU_L RU_I RU_E RU_N RU_T
       RU_O RU_B RU_Y RU_CH RU_N RU_O RU_E
       RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
     | T H I C K
       C L I E N T
       O R D I N A R Y
-      A P P L I C A T I O N
+      A P P L I C A T I O N )
     ;
 PREPROC_THICKCLIENTMANAGEDAPPLICATION_SYMBOL
-    : RU_T RU_O RU_L RU_S RU_T RU_Y RU_J
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_T RU_O RU_L RU_S RU_T RU_Y RU_J
       RU_K RU_L RU_I RU_E RU_N RU_T
       RU_U RU_P RU_R RU_A RU_V RU_L RU_YA RU_E RU_M RU_O RU_E
       RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
     | T H I C K
       C L I E N T
       M A N A G E D
-      A P P L I C A T I O N
+      A P P L I C A T I O N )
     ;
 PREPROC_EXTERNALCONNECTION_SYMBOL
-    : RU_V RU_N RU_E RU_SH RU_N RU_E RU_E
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_V RU_N RU_E RU_SH RU_N RU_E RU_E
       RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E
     | E X T E R N A L
-      C O N N E C T I O N
+      C O N N E C T I O N )
     ;
 PREPROC_THINCLIENT_SYMBOL
-    : RU_T RU_O RU_N RU_K RU_I RU_J
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_T RU_O RU_N RU_K RU_I RU_J
       RU_K RU_L RU_I RU_E RU_N RU_T
     | T H I N
-      C L I E N T
+      C L I E N T )
     ;
 PREPROC_WEBCLIENT_SYMBOL
-    : RU_V RU_E RU_B
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_V RU_E RU_B
       RU_K RU_L RU_I RU_E RU_N RU_T
     | W E B
-      C L I E N T
+      C L I E N T )
     ;
 PREPROC_ATCLIENT_SYMBOL
-    : RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
-    | A T C L I E N T
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
+    | A T C L I E N T )
     ;
 PREPROC_CLIENT_SYMBOL
-    : RU_K RU_L RU_I RU_E RU_N RU_T
-    | C L I E N T
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_K RU_L RU_I RU_E RU_N RU_T
+    | C L I E N T )
     ;
 PREPROC_ATSERVER_SYMBOL
-    : RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
-    | A T S E R V E R
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+    | A T S E R V E R )
     ;
 PREPROC_SERVER_SYMBOL
-    : RU_S RU_E RU_R RU_V RU_E RU_R
-    | S E R V E R
+    :
+    { lastTokenType != PREPROC_REGION }?
+    ( RU_S RU_E RU_R RU_V RU_E RU_R
+    | S E R V E R )
     ;
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
-PREPROC_WHITE_SPACE: [ \t\f] -> channel(HIDDEN);
+PREPROC_WHITE_SPACE: [ \t\f] -> skip;
 PREPROC_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 PREPROC_NEWLINE: [\r\n] -> popMode, channel(HIDDEN);
 
