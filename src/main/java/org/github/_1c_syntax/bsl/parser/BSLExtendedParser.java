@@ -27,6 +27,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -54,12 +55,20 @@ public class BSLExtendedParser extends BSLParser {
   }
 
   private void prepareParser(Path path) {
+
     CharStream input;
+
     try {
-      input = CharStreams.fromPath(path, StandardCharsets.UTF_8);
+      FileInputStream fis = new FileInputStream(path.toAbsolutePath().toString());
+
+      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(fis);
+      ubis.skipBOM();
+
+      input = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
     lexer.setInputStream(input);
 
     CommonTokenStream tokenStream = new CommonTokenStream(lexer);

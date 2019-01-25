@@ -30,10 +30,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class BSLLexerTest {
 
@@ -44,13 +44,19 @@ class BSLLexerTest {
   }
 
   private void assertMatch(int mode, String inputString, Integer... expectedTokens) {
-    InputStream inputStream = IOUtils.toInputStream(inputString, Charset.forName("UTF-8"));
     CharStream input;
+
     try {
-      input = CharStreams.fromStream(inputStream, Charset.forName("UTF-8"));
+      InputStream inputStream = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
+
+      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
+      ubis.skipBOM();
+
+      input = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+
     lexer.setInputStream(input);
     lexer.mode(mode);
 
@@ -63,6 +69,11 @@ class BSLLexerTest {
       .map(Token::getType)
       .toArray(Integer[]::new);
     assertArrayEquals(expectedTokens, tokenTypes);
+  }
+
+  @Test
+  void testBOM() {
+    assertMatch('\uFEFF' + "Процедура", BSLLexer.PROCEDURE_KEYWORD);
   }
 
   @Test
