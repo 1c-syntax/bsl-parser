@@ -58,10 +58,10 @@ public class BSLExtendedParser extends BSLParser {
 
     CharStream input;
 
-    try {
-      FileInputStream fis = new FileInputStream(path.toAbsolutePath().toString());
+    try (FileInputStream fis = new FileInputStream(path.toAbsolutePath().toString());
+      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(fis)
+    ) {
 
-      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(fis);
       ubis.skipBOM();
 
       input = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
