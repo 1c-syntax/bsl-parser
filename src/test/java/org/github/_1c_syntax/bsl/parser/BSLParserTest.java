@@ -273,4 +273,18 @@ class BSLParserTest {
     assertMatches(parser.expression());
   }
 
+  @Test
+  void tesForEach() {
+    setInput("Для каждого Переменная Из Коллекция Цикл\n" +
+            "\t\n" +
+            "КонецЦикла;");
+    assertMatches(parser.forEachStatement());
+
+    setInput("For Each varible In collection Do\n" +
+            "\n" +
+            "EndDo;");
+    assertMatches(parser.forEachStatement());
+
+  }
+
 }

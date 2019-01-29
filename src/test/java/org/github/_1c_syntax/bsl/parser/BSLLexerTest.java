@@ -162,4 +162,12 @@ class BSLLexerTest {
     assertMatch("Новый", BSLLexer.NEW_KEYWORD);
     assertMatch("Поле.Новый", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
+
+  @Test
+  void testIn() {
+    assertMatch("Из", BSLLexer.IN_KEYWORD);
+    assertMatch("In", BSLLexer.IN_KEYWORD);
+    assertMatch("Поле.Из", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+  }
+  
 }

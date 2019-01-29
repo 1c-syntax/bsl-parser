@@ -256,11 +256,11 @@ EACH_KEYWORD
     ( RU_K RU_A RU_ZH RU_D RU_O RU_G RU_O
     | E A C H )
     ;
-FROM_KEYWORD
+IN_KEYWORD
     :
     { lastTokenType != DOT }?
     ( RU_I RU_Z
-    | F R O M )
+    | I N )
     ;
 TRY_KEYWORD
     :
