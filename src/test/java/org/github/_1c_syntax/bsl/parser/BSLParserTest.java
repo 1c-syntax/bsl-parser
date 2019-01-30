@@ -287,4 +287,13 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void tesLabel() {
+    setInput("~Метка:");
+    assertMatches(parser.label());
+    setInput("~Если:");
+    assertMatches(parser.label());
+
+  }
+
 }

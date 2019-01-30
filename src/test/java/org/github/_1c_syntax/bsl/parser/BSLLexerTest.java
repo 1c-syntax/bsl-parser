@@ -169,5 +169,40 @@ class BSLLexerTest {
     assertMatch("In", BSLLexer.IN_KEYWORD);
     assertMatch("Поле.Из", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
-  
+
+  @Test
+  void testMark() {
+    assertMatch("~Метка", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Если", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Тогда", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~ИначеЕсли", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Иначе", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~КонецЕсли", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Для", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Каждого", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Из", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~По", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Пока", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Цикл", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~КонецЦикла", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Процедура", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Функция", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~КонецПроцедуры", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~КонецФункции", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Перем", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Перейти", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Возврат", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Продолжить", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Прервать", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~И", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Или", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Не", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Попытка", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Исключение", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~ВызватьИсключение", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~КонецПопытки", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Новый", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+    assertMatch("~Выполнить", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
+  }
+
 }

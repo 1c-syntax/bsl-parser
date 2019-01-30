@@ -62,7 +62,7 @@ HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 
 SQUOTE: '\'';
 BAR: '|';
-TILDA: '~';
+TILDA: '~' -> pushMode(LABEL_MODE);
 
 fragment RU_A: 'А' | 'а';
 fragment RU_B: 'Б' | 'б';
@@ -581,3 +581,8 @@ ANNOTATION_UKNOWN
     : .
     -> channel(HIDDEN)
     ;
+
+mode LABEL_MODE;
+LABEL_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER);
+LABEL_COLON : ':' -> popMode;
+
