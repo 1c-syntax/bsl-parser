@@ -163,7 +163,7 @@ returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
 
 labelName         : IDENTIFIER;
-label             : TILDA labelName LABEL_COLON;
+label             : TILDA labelName COLON;
 gotoStatement     : GOTO_KEYWORD TILDA labelName;
 
 event
