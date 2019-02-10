@@ -39,11 +39,7 @@ class BSLLexerTest {
 
   private BSLLexer lexer = new BSLLexer(null);
 
-  private void assertMatch(String inputString, Integer... expectedTokens) {
-    assertMatch(BSLLexer.DEFAULT_MODE, inputString, expectedTokens);
-  }
-
-  private void assertMatch(int mode, String inputString, Integer... expectedTokens) {
+  private List<Token> getTokens(int mode, String inputString) {
     CharStream input;
 
     try {
@@ -62,7 +58,16 @@ class BSLLexerTest {
 
     CommonTokenStream tokenStream = new CommonTokenStream(lexer);
     tokenStream.fill();
-    List<Token> tokens = tokenStream.getTokens();
+
+    return tokenStream.getTokens();
+  }
+
+  private void assertMatch(String inputString, Integer... expectedTokens) {
+    assertMatch(BSLLexer.DEFAULT_MODE, inputString, expectedTokens);
+  }
+
+  private void assertMatch(int mode, String inputString, Integer... expectedTokens) {
+    List<Token> tokens = getTokens(mode, inputString);
     Integer[] tokenTypes = tokens.stream()
       .filter(token -> token.getChannel() == BSLLexer.DEFAULT_TOKEN_CHANNEL)
       .filter(token -> token.getType() != Token.EOF)
@@ -74,6 +79,17 @@ class BSLLexerTest {
   @Test
   void testBOM() {
     assertMatch('\uFEFF' + "Процедура", BSLLexer.PROCEDURE_KEYWORD);
+  }
+
+  @Test
+  void testCRCR() {
+    List<Token> tokens = getTokens(BSLLexer.DEFAULT_MODE, "\r\n\r\r\n");
+    assert tokens.get(0).getLine() == 1;
+    assert tokens.get(1).getLine() == 1;
+    assert tokens.get(2).getLine() == 2;
+    assert tokens.get(3).getLine() == 3;
+    assert tokens.get(4).getLine() == 3;
+    assert tokens.get(5).getLine() == 4;
   }
 
   @Test

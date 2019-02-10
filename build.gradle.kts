@@ -1,4 +1,5 @@
-import java.util.Calendar
+import java.net.URI
+import java.util.*
 
 plugins {
     maven
@@ -13,6 +14,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven { url = URI("https://jitpack.io") }
 }
 
 group = "org.github._1c_syntax"
@@ -23,8 +25,8 @@ tasks.withType<JavaCompile> {
 }
 
 dependencies {
-    compile("org.antlr", "antlr4", "4.7.2")
-    antlr("org.antlr", "antlr4", "4.7.2")
+    compile("com.github.nixel2007", "antlr4", "798213b0735dd8c803b5b7363cedb4e65ab936d8")
+    antlr("com.github.nixel2007", "antlr4", "798213b0735dd8c803b5b7363cedb4e65ab936d8")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
@@ -110,6 +112,5 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_bsl-parser")
         property("sonar.projectName", "BSL Parser")
-        //property("sonar.exclusions", "**/gen/**/*.*")
     }
 }
