@@ -196,8 +196,24 @@ class BSLParserTest {
     setInput("A = 0;");
     assertMatches(parser.statement());
 
+    setInput("F = 0");
+    assertMatches(parser.statement());
+
     setInput(";");
     assertMatches(parser.statement());
+
+    setInput("~Метка: \n F = 0");
+    assertMatches(parser.statement());
+
+    setInput("~Метка: \n F = 0;");
+    assertMatches(parser.statement());
+
+    setInput("~Метка: \n ;");
+    assertMatches(parser.statement());
+
+    setInput("~Метка: \n");
+    assertMatches(parser.statement());
+
   }
 
   @Test
