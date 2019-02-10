@@ -236,7 +236,10 @@ public class UnicodeBOMInputStream extends InputStream {
    */
   public final synchronized UnicodeBOMInputStream skipBOM() throws IOException {
     if (!skipped) {
-      in.skip(bom.bytes.length);
+      int red = (int) in.skip(bom.bytes.length);
+      if (red != bom.bytes.length) {
+        throw new IllegalStateException();
+      }
       skipped = true;
     }
     return this;
