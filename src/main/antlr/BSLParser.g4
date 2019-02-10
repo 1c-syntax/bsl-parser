@@ -191,7 +191,17 @@ defaultValue     : constValue;
 constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
 string           : (STRING | multilineString)+;
-statement        : label? ((assignment | compoundStatement | preprocessor) SEMICOLON? | SEMICOLON);
+statement
+     : (
+        (
+            ( label (assignment | compoundStatement | preprocessor)?)
+            |
+            (assignment | compoundStatement | preprocessor)
+        )
+        SEMICOLON?
+    )
+    | SEMICOLON
+    ;
 assignment       : complexIdentifier preprocessor* (ASSIGN preprocessor* expression)?;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
