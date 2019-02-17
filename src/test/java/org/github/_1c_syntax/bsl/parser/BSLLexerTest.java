@@ -221,4 +221,12 @@ class BSLLexerTest {
     assertMatch("~Выполнить", BSLLexer.TILDA, BSLLexer.IDENTIFIER);
   }
 
+  @Test
+  void testHandlers() {
+    assertMatch("ДобавитьОбработчик", BSLLexer.ADDHANDLER_KEYWORD);
+    assertMatch("AddHandler", BSLLexer.ADDHANDLER_KEYWORD);
+    assertMatch("УдалитьОбработчик", BSLLexer.REMOVEHANDLER_KEYWORD);
+    assertMatch("RemoveHandler", BSLLexer.REMOVEHANDLER_KEYWORD);
+  }
+
 }

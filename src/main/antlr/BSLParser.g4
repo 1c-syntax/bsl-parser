@@ -174,10 +174,10 @@ handler
     : expression
     ;
 addHandlerStatement
-    : ADDHANDLER_KEYWORD event handler
+    : ADDHANDLER_KEYWORD event COMMA handler
     ;
 removeHandlerStatement
-    : REMOVEHANDLER_KEYWORD event handler
+    : REMOVEHANDLER_KEYWORD event COMMA handler
     ;
 
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
