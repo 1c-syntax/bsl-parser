@@ -312,4 +312,15 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void testHandler() {
+    setInput("ДобавитьОбработчик Событие, Тест2;");
+    assertMatches(parser.addHandlerStatement());
+    setInput("ДобавитьОбработчик Параметр.Событие, Тест2;");
+    assertMatches(parser.addHandlerStatement());
+    setInput("УдалитьОбработчик Событие, Тест2;");
+    assertMatches(parser.removeHandlerStatement());
+
+  }
+
 }
