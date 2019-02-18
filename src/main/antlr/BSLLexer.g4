@@ -388,51 +388,51 @@ PREPROC_END_REGION
 PREPROC_NOT_KEYWORD
     :
     { lastTokenType != PREPROC_REGION }?
-    RU_N RU_E
-    | N O T
+    (RU_N RU_E
+    | N O T)
     ;
 PREPROC_OR_KEYWORD
     :
     { lastTokenType != PREPROC_REGION }?
-    RU_I RU_L RU_I
-    | O R
+    (RU_I RU_L RU_I
+    | O R)
     ;
 PREPROC_AND_KEYWORD
     :
     { lastTokenType != PREPROC_REGION }?
-    RU_I
-    | A N D
+    (RU_I
+    | A N D)
     ;
 
 PREPROC_IF_KEYWORD
     :
     { lastTokenType != PREPROC_REGION }?
-     RU_E RU_S RU_L RU_I
-    | I F
+     (RU_E RU_S RU_L RU_I
+    | I F)
     ;
 PREPROC_THEN_KEYWORD
     :
     { lastTokenType != PREPROC_REGION }?
-    RU_T RU_O RU_G RU_D RU_A
-    | T H E N
+    (RU_T RU_O RU_G RU_D RU_A
+    | T H E N)
     ;
 PREPROC_ELSIF_KEYWORD
     :
     { lastTokenType != PREPROC_REGION }?
-    RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
-    | E L S I F
+    (RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
+    | E L S I F)
     ;
 PREPROC_ENDIF_KEYWORD
     :
     { lastTokenType != PREPROC_REGION }?
-    RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
-    | E N D I F
+    (RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
+    | E N D I F)
     ;
 PREPROC_ELSE_KEYWORD
     :
     { lastTokenType != PREPROC_REGION }?
-    RU_I RU_N RU_A RU_CH RU_E
-    | E L S E
+    (RU_I RU_N RU_A RU_CH RU_E
+    | E L S E)
     ;
 
 PREPROC_MOBILEAPPCLIENT_SYMBOL
