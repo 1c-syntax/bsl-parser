@@ -377,43 +377,61 @@ PREPROC_STRINGPART: BAR (~["\n\r])*;
 PREPROC_USE_KEYWORD: RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_SOFT_SIGN | U S E;
 
 PREPROC_REGION
-    : { lastTokenType == HASH }?
+    :
+    { lastTokenType == HASH }?
     (RU_O RU_B RU_L RU_A RU_S RU_T RU_SOFT_SIGN | R E G I O N);
 PREPROC_END_REGION
-   : { lastTokenType == HASH }?
-   (RU_K RU_O RU_N RU_E RU_C RU_O RU_B RU_L RU_A RU_S RU_T RU_I| E N D R E G I O N);
+    :
+    { lastTokenType == HASH }?
+    (RU_K RU_O RU_N RU_E RU_C RU_O RU_B RU_L RU_A RU_S RU_T RU_I| E N D R E G I O N);
 
 PREPROC_NOT_KEYWORD
-    : RU_N RU_E
+    :
+    { lastTokenType != PREPROC_REGION }?
+    RU_N RU_E
     | N O T
     ;
 PREPROC_OR_KEYWORD
-    : RU_I RU_L RU_I
+    :
+    { lastTokenType != PREPROC_REGION }?
+    RU_I RU_L RU_I
     | O R
     ;
 PREPROC_AND_KEYWORD
-    : RU_I
+    :
+    { lastTokenType != PREPROC_REGION }?
+    RU_I
     | A N D
     ;
 
 PREPROC_IF_KEYWORD
-    : RU_E RU_S RU_L RU_I
+    :
+    { lastTokenType != PREPROC_REGION }?
+     RU_E RU_S RU_L RU_I
     | I F
     ;
 PREPROC_THEN_KEYWORD
-    : RU_T RU_O RU_G RU_D RU_A
+    :
+    { lastTokenType != PREPROC_REGION }?
+    RU_T RU_O RU_G RU_D RU_A
     | T H E N
     ;
 PREPROC_ELSIF_KEYWORD
-    : RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
+    :
+    { lastTokenType != PREPROC_REGION }?
+    RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
     | E L S I F
     ;
 PREPROC_ENDIF_KEYWORD
-    : RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
+    :
+    { lastTokenType != PREPROC_REGION }?
+    RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
     | E N D I F
     ;
 PREPROC_ELSE_KEYWORD
-    : RU_I RU_N RU_A RU_CH RU_E
+    :
+    { lastTokenType != PREPROC_REGION }?
+    RU_I RU_N RU_A RU_CH RU_E
     | E L S E
     ;
 
