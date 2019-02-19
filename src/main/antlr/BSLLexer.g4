@@ -189,7 +189,7 @@ VAL_KEYWORD
     :
     { lastTokenType != DOT }?
     ( RU_Z RU_N RU_A RU_CH
-    | V A L)
+    | V A L )
     ;
 ENDIF_KEYWORD
     :
@@ -378,13 +378,16 @@ PREPROC_USE_KEYWORD: RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A R
 
 PREPROC_REGION
     :
-     ( RU_O RU_B RU_L RU_A RU_S RU_T RU_SOFT_SIGN
+    { lastTokenType == HASH }?
+    ( RU_O RU_B RU_L RU_A RU_S RU_T RU_SOFT_SIGN
     | R E G I O N ) -> pushMode(REGION_MODE)
     ;
 PREPROC_END_REGION
     :
-      RU_K RU_O RU_N RU_E RU_C RU_O RU_B RU_L RU_A RU_S RU_T RU_I
-    | E N D R E G I O N;
+    { lastTokenType == HASH }?
+    ( RU_K RU_O RU_N RU_E RU_C RU_O RU_B RU_L RU_A RU_S RU_T RU_I
+    | E N D R E G I O N )
+    ;
 
 PREPROC_NOT_KEYWORD
     :
@@ -589,5 +592,9 @@ mode LABEL_MODE;
 LABEL_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
 
 mode REGION_MODE;
+REGION_WHITE_SPACE
+    : [ \t\f]
+    -> channel(HIDDEN)
+    ;
 REGION_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(PREPROC_IDENTIFIER), popMode;
 
