@@ -140,6 +140,15 @@ class BSLLexerTest {
     assertMatch("|", BSLLexer.BAR);
     assertMatch("|\"", BSLLexer.STRINGTAIL);
     assertMatch("|aaa\"", BSLLexer.STRINGTAIL);
+    assertMatch("А = \"строка\" + \"строка\";",
+            BSLLexer.IDENTIFIER,
+            BSLLexer.ASSIGN,
+            BSLLexer.STRING,
+            BSLLexer.PLUS,
+            BSLLexer.STRING,
+            BSLLexer.SEMICOLON
+    );
+    assertMatch("\"\"\"\"", BSLLexer.STRING);
   }
 
   @Test

@@ -149,7 +149,7 @@ DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
 FLOAT : DIGIT+ '.' DIGIT*;
-STRING: '"' ~["\n\r]* '"';
+STRING: '"' (~[\r\n"] | '""')* '"';
 STRINGSTART: '"' ~["\n\r]*;
 STRINGTAIL: BAR ~["\n\r]* '"';
 STRINGPART: BAR ~["\n\r]*;
