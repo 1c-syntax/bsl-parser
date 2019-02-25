@@ -150,8 +150,8 @@ DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
 FLOAT : DIGIT+ '.' DIGIT*;
 STRING: '"' (~[\r\n"] | '""')* '"';
-STRINGSTART: '"' ~["\n\r]*;
-STRINGTAIL: BAR ~["\n\r]* '"';
+STRINGSTART: '"' (~["\n\r]| '""')*;
+STRINGTAIL: BAR (~["\n\r] | '""')* '"';
 STRINGPART: BAR ~["\n\r]*;
 
 // keywords

@@ -149,6 +149,9 @@ class BSLLexerTest {
             BSLLexer.SEMICOLON
     );
     assertMatch("\"\"\"\"", BSLLexer.STRING);
+    assertMatch("|СПЕЦСИМВОЛ \"\"~\"\"\"", BSLLexer.STRINGTAIL);
+    assertMatch("\"Минимальная версия платформы \"\"1С:Предприятие 8\"\" указана выше рекомендуемой.", BSLLexer.STRINGSTART);
+
   }
 
   @Test
