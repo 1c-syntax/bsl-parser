@@ -287,6 +287,13 @@ class BSLParserTest {
 
     setInput("A = 1 -+ 2");
     assertMatches(parser.expression());
+
+    setInput("A = \n" +
+      "#Область ИмяОбласти\n" +
+      "1 -+ \n" +
+      "2\n" +
+      "#КонецОбласти");
+    assertMatches(parser.expression());
   }
 
   @Test
