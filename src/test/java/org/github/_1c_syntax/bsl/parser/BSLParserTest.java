@@ -189,6 +189,31 @@ class BSLParserTest {
 
     setInput("?(Истина, Истина, Ложь).Выполнить()");
     assertMatches(parser.complexIdentifier());
+
+    setInput("?(Истина, М, М)(А)");
+    assertMatches(parser.complexIdentifier());
+
+    setInput("?(Истина, М, М)[0]");
+    assertMatches(parser.complexIdentifier());
+
+    setInput("?(Истина, С, С).Свойство");
+    assertMatches(parser.complexIdentifier());
+
+    setInput("А");
+    assertMatches(parser.complexIdentifier());
+
+    setInput("А()");
+    assertMatches(parser.complexIdentifier());
+
+    setInput("А[Б]");
+    assertMatches(parser.complexIdentifier());
+
+    setInput("Новый Массив");
+    assertMatches(parser.complexIdentifier());
+
+    setInput("Выполнить");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.complexIdentifier()));
+
   }
 
   @Test
