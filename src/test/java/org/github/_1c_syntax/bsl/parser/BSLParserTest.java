@@ -538,4 +538,18 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestBoolOperation() {
+
+    setInput("И");
+    assertMatches(parser.boolOperation());
+
+    setInput("ИЛИ");
+    assertMatches(parser.boolOperation());
+
+    setInput("НЕ");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.boolOperation()));
+
+  }
+
 }
