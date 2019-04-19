@@ -256,7 +256,7 @@ class BSLParserTest {
       ";\n" +
       "\n" +
       "#EndRegion");
-    assertMatches(parser.expression());
+    assertMatches(parser.assignment());
   }
 
   @Test
