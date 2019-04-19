@@ -464,4 +464,16 @@ class BSLParserTest {
 
     }
 
+    @Test
+    void TestTypeName() {
+
+      setInput("Массив");
+      assertMatches(parser.typeName());
+
+      setInput("Выполнить");
+      assertThrows(RecognitionException.class, () -> assertMatches(parser.typeName()));
+
+    }
+
+
 }
