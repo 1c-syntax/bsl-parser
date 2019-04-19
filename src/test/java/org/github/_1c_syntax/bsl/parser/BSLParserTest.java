@@ -494,5 +494,31 @@ class BSLParserTest {
     assertThrows(RecognitionException.class, () -> assertMatches(parser.newExpression()));
 
   }
-  
+
+  @Test
+  void TestMember() {
+
+    setInput("Истина");
+    assertMatches(parser.member());
+
+    setInput("А");
+    assertMatches(parser.member());
+
+    setInput("(А)");
+    assertMatches(parser.member());
+
+    setInput("НЕ Истина");
+    assertMatches(parser.member());
+
+    setInput("НЕ А");
+    assertMatches(parser.member());
+
+    setInput("НЕ (А)");
+    assertMatches(parser.member());
+
+    setInput("Выполнить");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.member()));
+
+  }
+
 }
