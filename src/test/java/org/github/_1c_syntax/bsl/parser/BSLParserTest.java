@@ -375,5 +375,25 @@ class BSLParserTest {
     assertThrows(RecognitionException.class, () -> assertMatches(parser.compoundStatement()));
 
   }
-  
+
+   @Test
+   void TestDoCall() {
+
+     setInput("(А)");
+     assertMatches(parser.doCall());
+
+     setInput("(А, Б)");
+     assertMatches(parser.doCall());
+
+     setInput("(А, Б, )");
+     assertMatches(parser.doCall());
+
+     setInput("(,)");
+     assertMatches(parser.doCall());
+
+     setInput("А()");
+     assertThrows(RecognitionException.class, () -> assertMatches(parser.doCall()));
+
+   }
+
 }
