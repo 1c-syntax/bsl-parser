@@ -407,4 +407,16 @@ class BSLParserTest {
      assertThrows(RecognitionException.class, () -> assertMatches(parser.access_property()));
 
     }
+
+   @Test
+   void TestAccess_index() {
+
+      setInput("[А]");
+      assertMatches(parser.access_index());
+
+      setInput("А[A]");
+      assertThrows(RecognitionException.class, () -> assertMatches(parser.access_index()));
+
+    }
+
 }
