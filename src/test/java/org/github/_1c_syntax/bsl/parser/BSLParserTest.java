@@ -475,6 +475,24 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestNewExpression() {
 
+    setInput("Новый Массив");
+    assertMatches(parser.newExpression());
+
+    setInput("Новый(Массив)");
+    assertMatches(parser.newExpression());
+
+    setInput("Новый Массив(А, Б)");
+    assertMatches(parser.newExpression());
+
+    setInput("Новый(Массив, А, Б)");
+    assertMatches(parser.newExpression());
+
+    setInput("А");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.newExpression()));
+
+  }
+  
 }
-
