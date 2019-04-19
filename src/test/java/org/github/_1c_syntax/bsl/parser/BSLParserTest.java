@@ -521,4 +521,21 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestUnaryModifier() {
+
+    setInput("НЕ");
+    assertMatches(parser.unaryModifier());
+
+    setInput("-");
+    assertMatches(parser.unaryModifier());
+
+    setInput("+");
+    assertMatches(parser.unaryModifier());
+
+    setInput("А");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.unaryModifier()));
+
+  }
+
 }
