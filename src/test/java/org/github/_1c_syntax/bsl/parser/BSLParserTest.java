@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BSLParserTest {
   private BSLParser parser = new BSLParser(null);
@@ -65,7 +66,7 @@ class BSLParserTest {
     parser.setTokenStream(tokenStream);
   }
 
-  private void assertMatches(ParseTree tree) {
+  private void assertMatches(ParseTree tree) throws RecognitionException {
 
     if (parser.getNumberOfSyntaxErrors() != 0) {
       throw new RecognitionException(
@@ -81,6 +82,12 @@ class BSLParserTest {
       if (ctx.exception != null) {
         throw ctx.exception;
       }
+
+      if (((ParserRuleContext) tree).parent == null) {
+        boolean parseSuccess = ((BSLLexer) parser.getInputStream().getTokenSource())._hitEOF;
+        assertTrue(parseSuccess, "Parse error EOF don't hit");
+      }
+
     }
 
     for (int i = 0; i < tree.getChildCount(); i++) {
