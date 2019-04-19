@@ -81,6 +81,18 @@ class BSLParserTest {
       if (ctx.exception != null) {
         throw ctx.exception;
       }
+
+      if (((ParserRuleContext) tree).parent == null) {
+        boolean parseSuccess = ((BSLLexer) parser.getInputStream().getTokenSource())._hitEOF;
+        if (!parseSuccess) {
+          throw new RecognitionException(
+                  "Parse error EOF don't hit\n" + parser.getTokenStream().getText(),
+                  parser,
+                  parser.getInputStream(),
+                  parser.getContext()
+          );
+        }
+      }
     }
 
     for (int i = 0; i < tree.getChildCount(); i++) {
