@@ -401,79 +401,80 @@ class BSLParserTest {
 
   }
 
-   @Test
-   void TestDoCall() {
+  @Test
+  void TestDoCall() {
 
-     setInput("()");
-     assertMatches(parser.doCall());
+    setInput("()");
+    assertMatches(parser.doCall());
 
-     setInput("(А)");
-     assertMatches(parser.doCall());
+    setInput("(А)");
+    assertMatches(parser.doCall());
 
-     setInput("(А, Б)");
-     assertMatches(parser.doCall());
+    setInput("(А, Б)");
+    assertMatches(parser.doCall());
 
-     setInput("(А, Б, )");
-     assertMatches(parser.doCall());
+    setInput("(А, Б, )");
+    assertMatches(parser.doCall());
 
-     setInput("(,)");
-     assertMatches(parser.doCall());
+    setInput("(,)");
+    assertMatches(parser.doCall());
 
-     setInput("А()");
-     assertThrows(RecognitionException.class, () -> assertMatches(parser.doCall()));
+    setInput("А()");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.doCall()));
 
-   }
+  }
 
 
-   @Test
-   void TestAccess_property() {
+  @Test
+  void TestAccess_property() {
 
-     setInput(".А");
-     assertMatches(parser.access_property());
+    setInput(".А");
+    assertMatches(parser.access_property());
 
-     setInput("А.А");
-     assertThrows(RecognitionException.class, () -> assertMatches(parser.access_property()));
+    setInput("А.А");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.access_property()));
 
-    }
+  }
 
-   @Test
-   void TestAccess_index() {
+  @Test
+  void TestAccess_index() {
 
-      setInput("[А]");
-      assertMatches(parser.access_index());
+    setInput("[А]");
+    assertMatches(parser.access_index());
 
-      setInput("А[A]");
-      assertThrows(RecognitionException.class, () -> assertMatches(parser.access_index()));
+    setInput("А[A]");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.access_index()));
 
-    }
+  }
 
-    @Test
-    void TestModifier() {
+  @Test
+  void TestModifier() {
 
-      setInput("[А]");
-      assertMatches(parser.modifier());
+    setInput("[А]");
+    assertMatches(parser.modifier());
 
-      setInput(".А");
-      assertMatches(parser.modifier());
+    setInput(".А");
+    assertMatches(parser.modifier());
 
-      setInput("(А)");
-      assertMatches(parser.modifier());
+    setInput("(А)");
+    assertMatches(parser.modifier());
 
-      setInput("А[A]");
-      assertThrows(RecognitionException.class, () -> assertMatches(parser.modifier()));
+    setInput("А[A]");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.modifier()));
 
-    }
+  }
 
-    @Test
-    void TestTypeName() {
+  @Test
+  void TestTypeName() {
 
-      setInput("Массив");
-      assertMatches(parser.typeName());
+    setInput("Массив");
+    assertMatches(parser.typeName());
 
-      setInput("Выполнить");
-      assertThrows(RecognitionException.class, () -> assertMatches(parser.typeName()));
+    setInput("Выполнить");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.typeName()));
 
-    }
+  }
 
 
 }
+
