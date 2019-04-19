@@ -323,4 +323,57 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void testCompoundStatement() {
+
+    setInput("Если А Тогда КонецЕсли");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Пока А Цикл КонецЦикла");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Для А = Б По В Цикл КонецЦикла");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Для Каждого А Из Б Цикл КонецЦикла");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Для Каждого А Из Б Цикл КонецЦикла");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Попытка Исключение КонецПопытки");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Возврат А");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Продолжить");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Прервать");
+    assertMatches(parser.compoundStatement());
+
+    setInput("ВызватьИсключение А");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Выполнить А");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Перейти ~А");
+    assertMatches(parser.compoundStatement());
+
+    setInput("Перейти ~А");
+    assertMatches(parser.compoundStatement());
+
+    setInput("ДобавитьОбработчик А, Б");
+    assertMatches(parser.compoundStatement());
+
+    setInput("УдалитьОбработчик А, Б");
+    assertMatches(parser.compoundStatement());
+
+    setInput("А");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.compoundStatement()));
+
+  }
+  
 }
