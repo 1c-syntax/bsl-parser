@@ -552,4 +552,30 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestCompareOperation() {
+
+    setInput("<");
+    assertMatches(parser.compareOperation());
+
+    setInput("<=");
+    assertMatches(parser.compareOperation());
+
+    setInput(">");
+    assertMatches(parser.compareOperation());
+
+    setInput(">=");
+    assertMatches(parser.compareOperation());
+
+    setInput("=");
+    assertMatches(parser.compareOperation());
+
+    setInput("<>");
+    assertMatches(parser.compareOperation());
+
+    setInput("И");
+    assertThrows(RecognitionException.class, () -> assertMatches(parser.compareOperation()));
+
+  }
+
 }
