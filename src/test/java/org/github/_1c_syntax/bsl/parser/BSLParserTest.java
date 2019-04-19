@@ -652,4 +652,18 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestCallParamList() {
+
+    setInput("НЕ А");
+    assertMatches(parser.callParamList());
+
+    setInput("НЕ А, А");
+    assertMatches(parser.callParamList());
+
+    setInput("НЕ, Если");
+    assertNotMatches(parser.callParamList());
+
+  }
+
 }
