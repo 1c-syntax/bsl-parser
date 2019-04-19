@@ -450,17 +450,17 @@ class BSLParserTest {
     @Test
     void TestModifier() {
 
-        setInput("[А]");
-        assertMatches(parser.modifier());
+      setInput("[А]");
+      assertMatches(parser.modifier());
 
-        setInput(".А");
-        assertMatches(parser.modifier());
+      setInput(".А");
+      assertMatches(parser.modifier());
 
-        setInput("(А)");
-        assertMatches(parser.modifier());
+      setInput("(А)");
+      assertMatches(parser.modifier());
 
-        setInput("А[A]");
-        assertThrows(RecognitionException.class, () -> assertMatches(parser.modifier()));
+      setInput("А[A]");
+      assertThrows(RecognitionException.class, () -> assertMatches(parser.modifier()));
 
     }
 
