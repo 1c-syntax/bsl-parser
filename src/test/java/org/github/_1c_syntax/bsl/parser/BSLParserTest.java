@@ -404,6 +404,9 @@ class BSLParserTest {
    @Test
    void TestDoCall() {
 
+     setInput("()");
+     assertMatches(parser.doCall());
+
      setInput("(А)");
      assertMatches(parser.doCall());
 
