@@ -397,7 +397,7 @@ class BSLParserTest {
     assertMatches(parser.compoundStatement());
 
     setInput("А");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.compoundStatement()));
+    assertNotMatches(parser.compoundStatement());
 
   }
 
@@ -420,7 +420,7 @@ class BSLParserTest {
     assertMatches(parser.doCall());
 
     setInput("А()");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.doCall()));
+    assertNotMatches(parser.doCall());
 
   }
 
@@ -432,7 +432,7 @@ class BSLParserTest {
     assertMatches(parser.access_property());
 
     setInput("А.А");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.access_property()));
+    assertNotMatches(parser.access_property());
 
   }
 
@@ -443,7 +443,7 @@ class BSLParserTest {
     assertMatches(parser.access_index());
 
     setInput("А[A]");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.access_index()));
+    assertNotMatches(parser.access_index());
 
   }
 
@@ -460,7 +460,7 @@ class BSLParserTest {
     assertMatches(parser.modifier());
 
     setInput("А[A]");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.modifier()));
+    assertNotMatches(parser.modifier());
 
   }
 
@@ -471,7 +471,7 @@ class BSLParserTest {
     assertMatches(parser.typeName());
 
     setInput("Выполнить");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.typeName()));
+    assertNotMatches(parser.typeName());
 
   }
 
@@ -491,7 +491,7 @@ class BSLParserTest {
     assertMatches(parser.newExpression());
 
     setInput("А");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.newExpression()));
+    assertNotMatches(parser.newExpression());
 
   }
 
@@ -517,7 +517,7 @@ class BSLParserTest {
     assertMatches(parser.member());
 
     setInput("Выполнить");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.member()));
+    assertNotMatches(parser.member());
 
   }
 
@@ -534,7 +534,7 @@ class BSLParserTest {
     assertMatches(parser.unaryModifier());
 
     setInput("А");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.unaryModifier()));
+    assertNotMatches(parser.unaryModifier());
 
   }
 
@@ -548,7 +548,7 @@ class BSLParserTest {
     assertMatches(parser.boolOperation());
 
     setInput("НЕ");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.boolOperation()));
+    assertNotMatches(parser.boolOperation());
 
   }
 
@@ -574,7 +574,7 @@ class BSLParserTest {
     assertMatches(parser.compareOperation());
 
     setInput("И");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.compareOperation()));
+    assertNotMatches(parser.compareOperation());
 
   }
 
