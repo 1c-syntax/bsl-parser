@@ -631,4 +631,25 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestCallParam() {
+
+    setInput("");
+    assertMatches(parser.callParam());
+
+    setInput("А");
+    assertMatches(parser.callParam());
+
+    setInput("НЕ А");
+    assertMatches(parser.callParam());
+
+    setInput("НЕ");
+    assertNotMatches(parser.callParam());
+
+    //fixme
+//    setInput("Если");
+//    assertNotMatches(parser.callParam());
+
+  }
+
 }
