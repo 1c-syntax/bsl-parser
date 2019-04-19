@@ -396,4 +396,15 @@ class BSLParserTest {
 
    }
 
+
+   @Test
+   void TestAccess_property() {
+
+     setInput(".А");
+     assertMatches(parser.access_property());
+
+     setInput("А.А");
+     assertThrows(RecognitionException.class, () -> assertMatches(parser.access_property()));
+
+    }
 }
