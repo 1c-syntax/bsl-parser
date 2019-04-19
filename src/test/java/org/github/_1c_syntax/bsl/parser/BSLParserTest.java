@@ -578,4 +578,33 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestOperation() {
+
+    setInput("+");
+    assertMatches(parser.operation());
+
+    setInput("-");
+    assertMatches(parser.operation());
+
+    setInput("*");
+    assertMatches(parser.operation());
+
+    setInput("/");
+    assertMatches(parser.operation());
+
+    setInput("%");
+    assertMatches(parser.operation());
+
+    setInput(">");
+    assertMatches(parser.operation());
+
+    setInput("И");
+    assertMatches(parser.operation());
+
+    setInput("НЕ");
+    assertNotMatches(parser.operation());
+
+  }
+
 }
