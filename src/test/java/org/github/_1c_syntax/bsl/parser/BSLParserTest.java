@@ -312,6 +312,30 @@ class BSLParserTest {
 
     setInput("A = 1 -+ 2");
     assertMatches(parser.expression());
+
+    setInput("A = \n" +
+            "#Если НЕ Клиент Тогда\n" +
+            "А +\n" +
+            "#КонецЕсли\n" +
+            "#Если Клиент Тогда\n" +
+            "Б\n" +
+            "#Иначе\n" +
+            "В(\n" +
+            "#Область\n" +
+            "А + \n" +
+            "#КонецОбласти\n" +
+            "Б\n" +
+            ")\n" +
+            "#КонецЕсли\n" +
+            "+ С\n");
+    assertMatches(parser.expression());
+
+    setInput("Выполнить");
+    assertNotMatches(parser.expression());
+
+    setInput("А = Выполнить");
+    assertNotMatches(parser.expression());
+
   }
 
   @Test
