@@ -145,6 +145,20 @@ class BSLParserTest {
   }
 
   @Test
+  void testShebang(){
+
+    setInput("#!");
+    assertMatches(parser.shebang());
+
+    setInput("#! А");
+    assertMatches(parser.shebang());
+
+    setInput("# А");
+    assertNotMatches(parser.shebang());
+
+  }
+
+  @Test
   void testUse() {
     setInput("Использовать lib", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.use());
