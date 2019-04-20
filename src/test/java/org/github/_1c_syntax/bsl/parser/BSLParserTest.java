@@ -396,6 +396,13 @@ class BSLParserTest {
 
     setInput("&Аннотация(П = 0, П2, Истина, \"строка\", П3)");
     assertMatches(parser.annotation());
+
+    setInput("&НаСервере");
+    assertNotMatches(parser.annotation());
+
+    setInput("Аннотация()");
+    assertNotMatches(parser.annotation());
+
   }
 
   @Test
