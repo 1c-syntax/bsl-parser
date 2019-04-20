@@ -341,14 +341,51 @@ class BSLParserTest {
 
   @Test
   void testPreproc_symbol() {
+
     setInput("Клиент", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("НаКлиенте", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("НаСервере", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("МобильноеПриложениеКлиент", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("МобильноеПриложениеСервер", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("МобильныйКлиент", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
     setInput("ТолстыйКлиентОбычноеПриложение", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
+    setInput("ТолстыйКлиентУправляемоеПриложение", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("Сервер", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("ВнешнееСоединение", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("ТонкийКлиент", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("ВебКлиент", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
     setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
+
+    setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_unknownSymbol());
+
+    setInput("Сервер", BSLLexer.PREPROCESSOR_MODE);
+    assertNotMatches(parser.preproc_unknownSymbol());
 
   }
 
