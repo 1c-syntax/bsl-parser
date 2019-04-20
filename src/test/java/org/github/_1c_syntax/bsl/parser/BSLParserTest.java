@@ -316,6 +316,29 @@ class BSLParserTest {
   }
 
   @Test
+  void TestCompilerDirectiveSymbol() {
+
+    setInput("&НаКлиенте");
+    assertMatches(parser.compilerDirective());
+
+    setInput("&НаСервере");
+    assertMatches(parser.compilerDirective());
+
+    setInput("&НаСервереБезКонтекста");
+    assertMatches(parser.compilerDirective());
+
+    setInput("&НаКлиентеНаСервереБезКонтекста");
+    assertMatches(parser.compilerDirective());
+
+    setInput("&НаКлиентеНаСервере");
+    assertMatches(parser.compilerDirective());
+
+    setInput("&Аннотация");
+    assertNotMatches(parser.compilerDirective());
+
+  }
+
+  @Test
   void testExecute() {
     setInput("Выполнить(\"\")");
     assertMatches(parser.executeStatement());
