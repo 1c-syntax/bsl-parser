@@ -171,6 +171,50 @@ class BSLParserTest {
   }
 
   @Test
+  void testPreproc_if() {
+
+    setInput("Если Клиент Тогда", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_if());
+
+    setInput("Если", BSLLexer.PREPROCESSOR_MODE);
+    assertNotMatches(parser.preproc_if());
+
+  }
+
+  @Test
+  void testPreproc_elseif() {
+
+    setInput("ИначеЕсли Клиент Тогда", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_elsif());
+
+    setInput("ИначеЕсли", BSLLexer.PREPROCESSOR_MODE);
+    assertNotMatches(parser.preproc_elsif());
+
+  }
+
+  @Test
+  void testPreproc_else() {
+
+    setInput("Иначе", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_else());
+
+    setInput("ИначеЕсли", BSLLexer.PREPROCESSOR_MODE);
+    assertNotMatches(parser.preproc_else());
+
+  }
+
+  @Test
+  void testPreproc_endif() {
+
+    setInput("КонецЕсли", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_endif());
+
+    setInput("ИначеЕсли", BSLLexer.PREPROCESSOR_MODE);
+    assertNotMatches(parser.preproc_endif());
+
+  }
+
+  @Test
   void testPreproc_Expression() {
     setInput("((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент))))", BSLLexer.PREPROCESSOR_MODE);
   }
