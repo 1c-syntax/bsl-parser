@@ -107,6 +107,44 @@ class BSLParserTest {
   }
 
   @Test
+  void testFile() {
+
+    setInput("А;");
+    assertMatches(parser.file());
+
+    setInput("А; Перем А;");
+    assertNotMatches(parser.file());
+
+    setInput("Перем А; \n" +
+             "Перем Б; \n" +
+             "Сообщить();"
+    );
+    assertMatches(parser.file());
+
+    setInput("Перем А; \n" +
+            "Перем Б; \n" +
+            "Процедура В()\n" +
+            "КонецПроцедуры\n" +
+            "Сообщить();\n"
+    );
+    assertMatches(parser.file());
+
+    setInput("#!\n" +
+            "#Если Сервер Тогда\n" +
+            "Перем А; \n" +
+            "Перем Б; \n" +
+            "#Область Г\n" +
+            "Процедура В()\n" +
+            "КонецПроцедуры\n" +
+            "#КонецОбласти\n" +
+            "Сообщить();\n" +
+            "#КонецЕсли\n"
+    );
+    assertMatches(parser.file());
+
+  }
+
+  @Test
   void testUse() {
     setInput("Использовать lib", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.use());
