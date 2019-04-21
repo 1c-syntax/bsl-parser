@@ -240,10 +240,8 @@ class BSLParserTest {
       "+\n" +
       "#EndRegion\n" +
       "0\n" +
-      ";\n" +
-      "\n" +
       "#EndRegion");
-    assertMatches(parser.expression());
+    assertMatches(parser.assignment());
   }
 
   @Test
