@@ -84,7 +84,7 @@ class BSLParserTest {
 
       if (((ParserRuleContext) tree).parent == null) {
         boolean parseSuccess = ((BSLLexer) parser.getInputStream().getTokenSource())._hitEOF;
-        if (!parseSuccess){
+        if (!parseSuccess) {
           throw new RecognitionException(
                   "Parse error EOF don't hit\n" + parser.getTokenStream().getText(),
                   parser,
@@ -93,7 +93,6 @@ class BSLParserTest {
           );
         }
       }
-
     }
 
     for (int i = 0; i < tree.getChildCount(); i++) {
@@ -488,10 +487,8 @@ class BSLParserTest {
       "+\n" +
       "#EndRegion\n" +
       "0\n" +
-      ";\n" +
-      "\n" +
       "#EndRegion");
-//    assertMatches(parser.assignment());
+    assertMatches(parser.assignment());
   }
 
   @Test
