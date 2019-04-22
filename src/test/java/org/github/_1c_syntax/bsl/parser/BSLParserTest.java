@@ -719,24 +719,35 @@ class BSLParserTest {
 
 
   @Test
-  void TestAccess_property() {
+  void TestAccessProperty() {
 
     setInput(".А");
-    assertMatches(parser.access_property());
+    assertMatches(parser.accessProperty());
 
     setInput("А.А");
-    assertNotMatches(parser.access_property());
+    assertNotMatches(parser.accessProperty());
 
   }
 
   @Test
-  void TestAccess_index() {
+  void TestAccessIndex() {
 
     setInput("[А]");
-    assertMatches(parser.access_index());
+    assertMatches(parser.accessIndex());
 
     setInput("А[A]");
-    assertNotMatches(parser.access_index());
+    assertNotMatches(parser.accessIndex());
+
+  }
+
+  @Test
+  void TestAccessCall() {
+
+    setInput(".А(А)");
+    assertMatches(parser.accessCall());
+
+    setInput("[А]");
+    assertNotMatches(parser.accessCall());
 
   }
 
