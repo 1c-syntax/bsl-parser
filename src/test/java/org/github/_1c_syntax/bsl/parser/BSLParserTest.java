@@ -489,6 +489,25 @@ class BSLParserTest {
       "0\n" +
       "#EndRegion");
     assertMatches(parser.assignment());
+
+    setInput("А = А");
+    assertMatches(parser.assignment());
+    setInput("А = А + Б[В]");
+    assertMatches(parser.assignment());
+    setInput("А = А + Б[В] * Метод()");
+    assertMatches(parser.assignment());
+    setInput("А = (А + Б[В] * Метод()) + Модуль.Метод()");
+    assertMatches(parser.assignment());
+    setInput("А = Модуль.Метод().Свойство");
+    assertMatches(parser.assignment());
+    setInput("А = Модуль.Метод(А).Свойство[А]");
+    assertMatches(parser.assignment());
+    setInput("А = Б = В.Метод(А)");
+    assertMatches(parser.assignment());
+
+    setInput("Модуль.Метод().Свойство[А]");
+    assertNotMatches(parser.assignment());
+
   }
 
   @Test
