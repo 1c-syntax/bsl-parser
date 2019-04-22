@@ -213,11 +213,16 @@ unaryModifier    : NOT_KEYWORD | MINUS | PLUS;
 member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ));
 newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
 typeName         : IDENTIFIER;
-complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator) modifier*;
-modifier         : access_property | access_index | doCall;
-access_index     : LBRACK expression RBRACK;
-access_property  : DOT IDENTIFIER;
+methodCall       : methodName doCall;
+globalMethodCall : methodName doCall;
+methodName       : IDENTIFIER;
+complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) (modifier)*;
+modifier         : accessProperty | accessIndex| accesCall;
+accesCall        : DOT methodCall;
+accessIndex      : LBRACK expression RBRACK;
+accessProperty   : DOT IDENTIFIER;
 doCall           : LPAREN callParamList RPAREN;
+
 compoundStatement
     : ifStatement
     | whileStatement
