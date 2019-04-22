@@ -473,6 +473,21 @@ class BSLParserTest {
     setInput("~Метка: \n");
     assertMatches(parser.statement());
 
+    setInput("Выполнить (Б = А + 1);");
+    assertMatches(parser.statement());
+    setInput("А;");
+    assertMatches(parser.statement());
+    setInput("Модуль.Свойство;");
+    assertMatches(parser.statement());
+    setInput("Модуль.Метод();");
+    assertMatches(parser.statement());
+    setInput("А = Модуль.Метод();");
+    assertMatches(parser.statement());
+    setInput("А = Модуль.Метод() = Истина;");
+    assertMatches(parser.statement());
+    setInput("Сообщить();");
+    assertMatches(parser.statement());
+
   }
 
   @Test
