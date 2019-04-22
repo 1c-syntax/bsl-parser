@@ -551,26 +551,42 @@ class BSLParserTest {
     setInput("A = 1 -+ 2");
     assertMatches(parser.expression());
 
-    setInput("A = \n" +
-            "#Если НЕ Клиент Тогда\n" +
+    setInput("A1 + \n" +
+            "#Если Клиент Тогда\n" +
             "А +\n" +
             "#КонецЕсли\n" +
             "#Если Клиент Тогда\n" +
-            "Б\n" +
+            "Б +\n" +
             "#Иначе\n" +
             "В(\n" +
-            "#Область\n" +
+//            "#Область Имя\n" +
             "А + \n" +
-            "#КонецОбласти\n" +
+//            "#КонецОбласти\n" +
             "Б\n" +
             ")\n" +
             "#КонецЕсли\n" +
             "+ С\n");
-//    assertMatches(parser.expression());
+    assertMatches(parser.expression());
+
+    setInput("Метод()");
+    assertMatches(parser.expression());
+    setInput("Метод().Свойство");
+    assertMatches(parser.expression());
+    setInput("Модуль.Метод().Свойство");
+    assertMatches(parser.expression());
+    setInput("Модуль.Метод().Метод2().Свойство");
+    assertMatches(parser.expression());
+    setInput("Модуль.Метод().Метод2().Свойство.Метод()");
+    assertMatches(parser.expression());
+    setInput("Модуль.Метод().Метод2().Свойство.Метод()[1]");
+    assertMatches(parser.expression());
+    setInput("Идентификатор[1].Метод().Метод2().Свойство.Метод()[1]");
+    assertMatches(parser.expression());
+    setInput("Идентификатор.Свойство.Метод().Метод2().Свойство.Метод()[1]");
+    assertMatches(parser.expression());
 
     setInput("Выполнить");
     assertNotMatches(parser.expression());
-
     setInput("А = Выполнить");
     assertNotMatches(parser.expression());
 
