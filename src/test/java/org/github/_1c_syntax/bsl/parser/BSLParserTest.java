@@ -424,9 +424,6 @@ class BSLParserTest {
     setInput("?(Истина, Истина, Ложь).Выполнить()");
     assertMatches(parser.complexIdentifier());
 
-    setInput("?(Истина, М, М)(А)");
-    assertMatches(parser.complexIdentifier());
-
     setInput("?(Истина, М, М)[0]");
     assertMatches(parser.complexIdentifier());
 
@@ -439,6 +436,9 @@ class BSLParserTest {
     setInput("А()");
     assertMatches(parser.complexIdentifier());
 
+    setInput("А.А()");
+    assertMatches(parser.complexIdentifier());
+
     setInput("А[Б]");
     assertMatches(parser.complexIdentifier());
 
@@ -446,12 +446,19 @@ class BSLParserTest {
     assertMatches(parser.complexIdentifier());
 
     setInput("Выполнить");
-    assertThrows(RecognitionException.class, () -> assertMatches(parser.complexIdentifier()));
+    assertNotMatches(parser.complexIdentifier());
 
   }
 
   @Test
   void testStatement() {
+
+    setInput("Сообщить(А=1);");
+    assertMatches(parser.statement());
+
+    setInput("Если Истина Тогда Сообщить(А=1); F=0; КонецЕсли;");
+    assertMatches(parser.statement());
+
     setInput("A = 0;");
     assertMatches(parser.statement());
 
@@ -542,6 +549,10 @@ class BSLParserTest {
 
   @Test
   void testExpression() {
+
+    setInput("Сообщить(А = 1)");
+    assertMatches(parser.expression());
+
     setInput("A = 0");
     assertMatches(parser.expression());
 
@@ -588,6 +599,8 @@ class BSLParserTest {
     setInput("Метод().Свойство");
     assertMatches(parser.expression());
     setInput("Модуль.Метод().Свойство");
+    assertMatches(parser.expression());
+    setInput("Модуль.Метод(А).Метод2(Б)");
     assertMatches(parser.expression());
     setInput("Модуль.Метод().Метод2().Свойство");
     assertMatches(parser.expression());
@@ -760,7 +773,7 @@ class BSLParserTest {
     setInput(".А");
     assertMatches(parser.modifier());
 
-    setInput("(А)");
+    setInput(".А(А)");
     assertMatches(parser.modifier());
 
     setInput("А[A]");
@@ -792,6 +805,12 @@ class BSLParserTest {
     assertMatches(parser.newExpression());
 
     setInput("Новый(Массив, А, Б)");
+    assertMatches(parser.newExpression());
+
+    setInput("Новый(Тип(\"Массив\"), А, Б)");
+    assertMatches(parser.newExpression());
+
+    setInput("Новый(\"Массив\")");
     assertMatches(parser.newExpression());
 
     setInput("А");
@@ -926,9 +945,8 @@ class BSLParserTest {
     setInput("НЕ");
     assertNotMatches(parser.callParam());
 
-    //fixme
-//    setInput("Если");
-//    assertNotMatches(parser.callParam());
+    setInput("Если А Тогда");
+    assertNotMatches(parser.callParam());
 
   }
 
