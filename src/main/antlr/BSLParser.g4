@@ -194,15 +194,15 @@ string           : (STRING | multilineString)+;
 statement
      : (
         (
-            ( label (assignment | compoundStatement | preprocessor)?)
+            ( label (assignment | compoundStatement | preprocessor | expression)?)
             |
-            (assignment | compoundStatement | preprocessor)
+            (assignment | compoundStatement | preprocessor | expression)
         )
         SEMICOLON?
     )
     | SEMICOLON
     ;
-assignment       : complexIdentifier preprocessor* (ASSIGN preprocessor* expression)?;
+assignment       : complexIdentifier preprocessor* ASSIGN (preprocessor* expression)?;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
 expression       : member (preprocessor* operation preprocessor* member)*;
