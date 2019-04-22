@@ -946,4 +946,32 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestGlobalMethodCall() {
+
+    setInput("Сообщить(А = 1)");
+    assertMatches(parser.globalMethodCall());
+    setInput("Сообщить(А + Б)");
+    assertMatches(parser.globalMethodCall());
+    setInput("Сообщить(Метод())");
+    assertMatches(parser.globalMethodCall());
+
+    setInput("Модуль.Сообщить()");
+    assertNotMatches(parser.globalMethodCall());
+
+  }
+
+  @Test
+  void TestMethodCall() {
+
+    setInput("Сообщить()");
+    assertMatches(parser.methodCall());
+    setInput("Сообщить(А, 1)");
+    assertMatches(parser.methodCall());
+
+    setInput("Модуль.Сообщить()");
+    assertNotMatches(parser.globalMethodCall());
+
+  }
+
 }
