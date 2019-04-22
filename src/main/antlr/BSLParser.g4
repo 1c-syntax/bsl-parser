@@ -205,21 +205,24 @@ statement
 assignment       : complexIdentifier preprocessor* ASSIGN (preprocessor* expression)?;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
-expression       : member (preprocessor* operation? preprocessor* DOT? member)*;
+expression       : member (preprocessor* operation preprocessor* member)*;
 operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | compareOperation;
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;
 unaryModifier    : NOT_KEYWORD | MINUS | PLUS;
-member           : unaryModifier? (constValue | methodCall modifier* | complexIdentifier | ( LPAREN expression RPAREN ));
+member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ));
 newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
 typeName         : IDENTIFIER;
 methodCall       : methodName doCall;
+globalMethodCall : methodName doCall;
 methodName       : IDENTIFIER;
-complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator) modifier*;
-modifier         : access_property | access_index;
-access_index     : LBRACK expression RBRACK;
-access_property  : DOT IDENTIFIER;
+complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) (modifier)*;
+modifier         : accessProperty | accessIndex| accesCall;
+accesCall        : DOT methodCall;
+accessIndex      : LBRACK expression RBRACK;
+accessProperty   : DOT IDENTIFIER;
 doCall           : LPAREN callParamList RPAREN;
+
 compoundStatement
     : ifStatement
     | whileStatement
