@@ -161,7 +161,7 @@ forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO
 tryStatement      : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
-callStatement     : (IDENTIFIER | globalMethodCall) modifier*;
+callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
 
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;

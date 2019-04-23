@@ -108,9 +108,6 @@ class BSLParserTest {
   @Test
   void testFile() {
 
-    setInput("А;");
-    assertMatches(parser.file());
-
     setInput("А; Перем А;");
     assertNotMatches(parser.file());
 
@@ -481,10 +478,6 @@ class BSLParserTest {
     assertMatches(parser.statement());
 
     setInput("Выполнить (Б = А + 1);");
-    assertMatches(parser.statement());
-    setInput("А;");
-    assertMatches(parser.statement());
-    setInput("Модуль.Свойство;");
     assertMatches(parser.statement());
     setInput("Модуль.Метод();");
     assertMatches(parser.statement());
@@ -994,19 +987,18 @@ class BSLParserTest {
 
   @Test
   void TestCallStatement() {
-    setInput("А");
-    assertMatches(parser.callStatement());
+
     setInput("Сообщить(А, 1)");
     assertMatches(parser.callStatement());
-    setInput("А.А");
+    setInput("А.А[1].А(А)");
     assertMatches(parser.callStatement());
     setInput("А.А()");
     assertMatches(parser.callStatement());
     setInput("А.А(А)");
     assertMatches(parser.callStatement());
-    setInput("А(А).А");
+    setInput("А(А).А()");
     assertMatches(parser.callStatement());
-    setInput("А(А).А.А().А");
+    setInput("А(А).А.А().А()");
     assertMatches(parser.callStatement());
 
     setInput("ВызватьИсключение А");
