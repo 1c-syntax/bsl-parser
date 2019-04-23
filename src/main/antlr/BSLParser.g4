@@ -195,9 +195,9 @@ string           : (STRING | multilineString)+;
 statement
      : (
         (
-            ( label (compoundStatement | assignment | preprocessor)?)
+            ( label (callStatement | compoundStatement | assignment | preprocessor)?)
             |
-            (compoundStatement | assignment| preprocessor)
+            (callStatement | compoundStatement | assignment| preprocessor)
         )
         SEMICOLON?
     )
@@ -238,5 +238,4 @@ compoundStatement
     | gotoStatement
     | addHandlerStatement
     | removeHandlerStatement
-    | callStatement
     ;
