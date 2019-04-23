@@ -526,9 +526,9 @@ class BSLParserTest {
     assertMatches(parser.assignment());
     setInput("А = Б = В.Метод(А)");
     assertMatches(parser.assignment());
-// fixme
+
     setInput("Модуль.Метод().Свойство[А]");
-//    assertNotMatches(parser.assignment());
+    assertNotMatches(parser.assignment());
 
   }
 
@@ -702,7 +702,7 @@ class BSLParserTest {
     setInput("УдалитьОбработчик А, Б");
     assertMatches(parser.compoundStatement());
 
-    setInput("А");
+    setInput("А = 1");
     assertNotMatches(parser.compoundStatement());
 
   }
