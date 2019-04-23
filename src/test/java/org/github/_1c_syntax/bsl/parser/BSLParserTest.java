@@ -992,4 +992,25 @@ class BSLParserTest {
 
   }
 
+  @Test
+  void TestCallStatement() {
+    setInput("А");
+    assertMatches(parser.callStatement());
+    setInput("Сообщить(А, 1)");
+    assertMatches(parser.callStatement());
+    setInput("А.А");
+    assertMatches(parser.callStatement());
+    setInput("А.А()");
+    assertMatches(parser.callStatement());
+    setInput("А.А(А)");
+    assertMatches(parser.callStatement());
+    setInput("А(А).А");
+    assertMatches(parser.callStatement());
+    setInput("А(А).А.А().А");
+    assertMatches(parser.callStatement());
+
+    setInput("ВызватьИсключение А");
+    assertNotMatches(parser.callStatement());
+  }
+
 }
