@@ -161,6 +161,7 @@ forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO
 tryStatement      : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
+callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
 
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
@@ -194,15 +195,15 @@ string           : (STRING | multilineString)+;
 statement
      : (
         (
-            ( label (assignment | compoundStatement | preprocessor)?)
+            ( label (callStatement | compoundStatement | assignment | preprocessor)?)
             |
-            (assignment | compoundStatement | preprocessor)
+            (callStatement | compoundStatement | assignment| preprocessor)
         )
         SEMICOLON?
     )
     | SEMICOLON
     ;
-assignment       : complexIdentifier preprocessor* (ASSIGN preprocessor* expression)?;
+assignment       : complexIdentifier preprocessor* ASSIGN (preprocessor* expression)?;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
 expression       : member (preprocessor* operation preprocessor* member)*;
@@ -216,7 +217,7 @@ typeName         : IDENTIFIER;
 methodCall       : methodName doCall;
 globalMethodCall : methodName doCall;
 methodName       : IDENTIFIER;
-complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) (modifier)*;
+complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) modifier*;
 modifier         : accessProperty | accessIndex| accessCall;
 accessCall        : DOT methodCall;
 accessIndex      : LBRACK expression RBRACK;

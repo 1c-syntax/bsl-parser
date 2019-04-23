@@ -108,9 +108,6 @@ class BSLParserTest {
   @Test
   void testFile() {
 
-    setInput("А;");
-    assertMatches(parser.file());
-
     setInput("А; Перем А;");
     assertNotMatches(parser.file());
 
@@ -482,10 +479,6 @@ class BSLParserTest {
 
     setInput("Выполнить (Б = А + 1);");
     assertMatches(parser.statement());
-    setInput("А;");
-    assertMatches(parser.statement());
-    setInput("Модуль.Свойство;");
-    assertMatches(parser.statement());
     setInput("Модуль.Метод();");
     assertMatches(parser.statement());
     setInput("А = Модуль.Метод();");
@@ -526,9 +519,9 @@ class BSLParserTest {
     assertMatches(parser.assignment());
     setInput("А = Б = В.Метод(А)");
     assertMatches(parser.assignment());
-// fixme
+
     setInput("Модуль.Метод().Свойство[А]");
-//    assertNotMatches(parser.assignment());
+    assertNotMatches(parser.assignment());
 
   }
 
@@ -578,18 +571,18 @@ class BSLParserTest {
     assertMatches(parser.expression());
 
     setInput("A1 + \n" +
-            "#Если Клиент Тогда\n" +
+            "#Если (Клиент) Тогда\n" +
             "А +\n" +
             "#КонецЕсли\n" +
             "#Если Клиент Тогда\n" +
             "Б +\n" +
             "#Иначе\n" +
+            "#Область Имя\n" +
             "В(\n" +
-//            "#Область Имя\n" +
             "А + \n" +
-//            "#КонецОбласти\n" +
             "Б\n" +
             ")\n" +
+            "#КонецОбласти\n" +
             "#КонецЕсли\n" +
             "+ С\n");
     assertMatches(parser.expression());
@@ -702,7 +695,7 @@ class BSLParserTest {
     setInput("УдалитьОбработчик А, Б");
     assertMatches(parser.compoundStatement());
 
-    setInput("А");
+    setInput("А = 1");
     assertNotMatches(parser.compoundStatement());
 
   }
@@ -990,6 +983,26 @@ class BSLParserTest {
     setInput("Модуль.Сообщить()");
     assertNotMatches(parser.globalMethodCall());
 
+  }
+
+  @Test
+  void TestCallStatement() {
+
+    setInput("Сообщить(А, 1)");
+    assertMatches(parser.callStatement());
+    setInput("А.А[1].А(А)");
+    assertMatches(parser.callStatement());
+    setInput("А.А()");
+    assertMatches(parser.callStatement());
+    setInput("А.А(А)");
+    assertMatches(parser.callStatement());
+    setInput("А(А).А()");
+    assertMatches(parser.callStatement());
+    setInput("А(А).А.А().А()");
+    assertMatches(parser.callStatement());
+
+    setInput("ВызватьИсключение А");
+    assertNotMatches(parser.callStatement());
   }
 
 }
