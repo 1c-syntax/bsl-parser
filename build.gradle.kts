@@ -78,6 +78,10 @@ tasks.test {
     reports {
         html.isEnabled = true
     }
+
+    doLast {
+        tasks.jacocoTestReport.get().actions[0].execute(tasks.jacocoTestReport.get())
+    }
 }
 
 tasks.jacocoTestReport {
