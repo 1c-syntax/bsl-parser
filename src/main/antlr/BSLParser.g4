@@ -27,7 +27,7 @@ options {
 }
 
 // ROOT
-file: shebang? preprocessor* moduleVars? preprocessor* subs? codeBlock EOF;
+file: shebang? preprocessor* moduleVars? preprocessor* codeBlockBeforeSub subs? codeBlock EOF;
 
 // preprocessor
 shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
@@ -184,6 +184,9 @@ removeHandlerStatement
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
 
 // main
+codeBlockBeforeSub
+    : codeBlock
+    ;
 codeBlock        : (statement | preprocessor)*;
 numeric          : FLOAT | DECIMAL;
 paramList        : param (COMMA param)*;
