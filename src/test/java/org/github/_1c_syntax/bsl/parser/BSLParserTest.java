@@ -418,6 +418,9 @@ class BSLParserTest {
     setInput("Запрос.Выполнить()");
     assertMatches(parser.complexIdentifier());
 
+    setInput("Запрос. Выполнить()");
+    assertMatches(parser.complexIdentifier());
+
     setInput("?(Истина, Истина, Ложь).Выполнить()");
     assertMatches(parser.complexIdentifier());
 
