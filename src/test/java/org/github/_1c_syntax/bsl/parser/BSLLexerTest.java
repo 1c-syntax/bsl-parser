@@ -194,6 +194,8 @@ class BSLLexerTest {
   void testExecute() {
     assertMatch("Выполнить", BSLLexer.EXECUTE_KEYWORD);
     assertMatch("Запрос.Выполнить", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    assertMatch("Запрос.  Выполнить", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    assertMatch("Запрос.  \nВыполнить", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
