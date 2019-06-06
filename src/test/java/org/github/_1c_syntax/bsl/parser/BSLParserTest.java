@@ -1008,4 +1008,17 @@ class BSLParserTest {
     assertNotMatches(parser.callStatement());
   }
 
+  @Test
+  void TestTryStatement() {
+
+    setInput("Попытка Исключение КонецПопытки");
+    assertMatches(parser.tryStatement());
+    setInput("Попытка A = 1; Исключение B = 2; КонецПопытки");
+    assertMatches(parser.tryStatement());
+    setInput("Попытка A = 1;");
+    assertMatches(parser.tryCodeBlock());
+    setInput("Исключение B = 2; КонецПопытки");
+    assertMatches(parser.catchCodeBlock());
+    
+  }
 }
