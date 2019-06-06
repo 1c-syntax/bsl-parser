@@ -158,7 +158,7 @@ ifStatement       : IF_KEYWORD expression THEN_KEYWORD codeBlock
 whileStatement    : WHILE_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-tryStatement      : tryCodeBlock EXCEPT_KEYWORD catchCodeBlock;
+tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD catchCodeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
 callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
@@ -167,8 +167,8 @@ labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
 gotoStatement     : GOTO_KEYWORD TILDA labelName;
 
-tryCodeBlock : TRY_KEYWORD codeBlock;
-catchCodeBlock : codeBlock ENDTRY_KEYWORD;
+tryCodeBlock :  codeBlock;
+catchCodeBlock : codeBlock;
 
 event
     : expression
