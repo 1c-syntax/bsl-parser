@@ -80,6 +80,10 @@ tasks.test {
     }
 }
 
+tasks.check {
+    dependsOn(tasks.jacocoTestReport)
+}
+
 tasks.jacocoTestReport {
     reports {
         xml.isEnabled = true
@@ -113,6 +117,8 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_bsl-parser")
         property("sonar.projectName", "BSL Parser")
+        property("sonar.scm.exclusions.disabled", "true")
+        property("sonar.issue.ignore.allfile", "// Generated from.*ANTLR")
         property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
     }
 }

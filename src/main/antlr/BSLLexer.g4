@@ -27,7 +27,9 @@ lexer grammar BSLLexer;
     @Override
     public void emit(Token token) {
         super.emit(token);
-        lastTokenType = token.getType();
+        if (token.getChannel() == DEFAULT_TOKEN_CHANNEL) {
+          lastTokenType = token.getType();
+        };
     }
 }
 

@@ -27,7 +27,7 @@ options {
 }
 
 // ROOT
-file: shebang? preprocessor* moduleVars? preprocessor* subs? codeBlock EOF;
+file: shebang? preprocessor* moduleVars? preprocessor* codeBlockBeforeSub subs? codeBlock EOF;
 
 // preprocessor
 shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
@@ -158,7 +158,7 @@ ifStatement       : IF_KEYWORD expression THEN_KEYWORD codeBlock
 whileStatement    : WHILE_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-tryStatement      : TRY_KEYWORD codeBlock EXCEPT_KEYWORD codeBlock ENDTRY_KEYWORD;
+tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
 callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
@@ -166,6 +166,9 @@ callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | glo
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
 gotoStatement     : GOTO_KEYWORD TILDA labelName;
+
+tryCodeBlock :  codeBlock;
+exceptCodeBlock : codeBlock;
 
 event
     : expression
@@ -184,6 +187,9 @@ removeHandlerStatement
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
 
 // main
+codeBlockBeforeSub
+    : codeBlock
+    ;
 codeBlock        : (statement | preprocessor)*;
 numeric          : FLOAT | DECIMAL;
 paramList        : param (COMMA param)*;
