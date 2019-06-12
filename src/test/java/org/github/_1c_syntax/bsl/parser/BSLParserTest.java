@@ -162,6 +162,9 @@ class BSLParserTest {
     setInput("Использовать \"./lib\"", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.use());
 
+    setInput("Использовать lib-name", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.use());
+
     setInput("Использовать 1", BSLLexer.PREPROCESSOR_MODE);
     assertNotMatches(parser.use());
   }

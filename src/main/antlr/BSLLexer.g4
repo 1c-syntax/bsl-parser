@@ -374,7 +374,10 @@ PREPROC_STRING: '"' (~["\n\r])* '"';
 PREPROC_STRINGTAIL: BAR (~["\n\r])* '"';
 PREPROC_STRINGPART: BAR (~["\n\r])*;
 
-PREPROC_USE_KEYWORD: RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_SOFT_SIGN | U S E;
+PREPROC_USE_KEYWORD
+    :
+    (RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_SOFT_SIGN
+    | U S E) -> pushMode(USE_MODE);
 
 PREPROC_REGION
     :
@@ -597,4 +600,13 @@ REGION_WHITE_SPACE
     -> channel(HIDDEN)
     ;
 REGION_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(PREPROC_IDENTIFIER), popMode;
+
+mode USE_MODE;
+fragment USE_LETTER: [\p{Letter}] | '_' | '-';
+USE_WHITE_SPACE
+    : [ \t\f]
+    -> channel(HIDDEN)
+    ;
+USE_STRING : '"' (~["\n\r])* '"' -> type(PREPROC_STRING), popMode;
+USE_IDENTIFIER : USE_LETTER ( USE_LETTER | DIGIT )* -> type(PREPROC_IDENTIFIER), popMode;
 
