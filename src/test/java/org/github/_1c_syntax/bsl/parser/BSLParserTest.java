@@ -28,6 +28,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.IOUtils;
+//import org.testng.annotations.ITestAnnotation;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -173,6 +174,15 @@ class BSLParserTest {
   void testPreproc_if() {
 
     setInput("Если Клиент Тогда", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_if());
+
+    setInput("Если НЕ (ТонкийКлиент ИЛИ ВебКлиент) Тогда", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_if());
+
+    setInput("Если НЕ (НЕ ТонкийКлиент ИЛИ НЕ ВебКлиент) Тогда", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_if());
+
+    setInput("Если ТонкийКлиент И ВебКлиент Тогда", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_if());
 
     setInput("Если", BSLLexer.PREPROCESSOR_MODE);

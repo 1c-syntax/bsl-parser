@@ -45,7 +45,7 @@ preproc_else     : PREPROC_ELSE_KEYWORD;
 preproc_endif    : PREPROC_ENDIF_KEYWORD;
 
 preproc_expression
-    : ( PREPROC_LPAREN preproc_expression PREPROC_RPAREN )
+    : ( PREPROC_NOT_KEYWORD? (PREPROC_LPAREN preproc_expression PREPROC_RPAREN ) )
     | preproc_logicalExpression
     ;
 preproc_logicalOperand
