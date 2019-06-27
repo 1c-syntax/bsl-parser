@@ -24,7 +24,7 @@ package org.github._1c_syntax.bsl.parser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.IncrementalTokenStream;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +40,7 @@ public class BSLExtendedParser extends BSLParser {
     super(null);
   }
 
-  public BSLExtendedParser(TokenStream input) {
+  public BSLExtendedParser(IncrementalTokenStream input) {
     super(input);
   }
 

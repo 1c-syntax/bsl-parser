@@ -25,8 +25,8 @@ tasks.withType<JavaCompile> {
 }
 
 dependencies {
-    compile("com.github.nixel2007", "antlr4", "798213b0735dd8c803b5b7363cedb4e65ab936d8")
-    antlr("com.github.nixel2007", "antlr4", "798213b0735dd8c803b5b7363cedb4e65ab936d8")
+    compile("com.github.nixel2007", "antlr4", "b73d287a2877f5a9da26504491ca4f0f8002b18a")
+    antlr("com.github.nixel2007", "antlr4", "b73d287a2877f5a9da26504491ca4f0f8002b18a")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")

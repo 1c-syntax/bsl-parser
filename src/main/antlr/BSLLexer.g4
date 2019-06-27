@@ -21,6 +21,10 @@
  */
 lexer grammar BSLLexer;
 
+options {
+	incremental = true;
+}
+
 @lexer::members {
     int lastTokenType = 0;
 

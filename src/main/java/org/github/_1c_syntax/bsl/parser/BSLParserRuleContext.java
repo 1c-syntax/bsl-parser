@@ -21,7 +21,7 @@
  */
 package org.github._1c_syntax.bsl.parser;
 
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.IncrementalParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -30,13 +30,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BSLParserRuleContext extends ParserRuleContext {
+public class BSLParserRuleContext extends IncrementalParserRuleContext {
 
   public BSLParserRuleContext() {
     super();
   }
 
-  public BSLParserRuleContext(ParserRuleContext parent, int invokingStateNumber) {
+  public BSLParserRuleContext(IncrementalParserRuleContext parent, int invokingStateNumber) {
     super(parent, invokingStateNumber);
   }
 
