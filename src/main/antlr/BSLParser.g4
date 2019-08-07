@@ -28,7 +28,7 @@ options {
 }
 
 // ROOT
-file: shebang? preprocessor* moduleVars? preprocessor* codeBlockBeforeSub subs? codeBlock EOF;
+file: shebang? moduleVars? codeBlockBeforeSub subs? codeBlock EOF;
 
 // preprocessor
 shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
@@ -39,56 +39,6 @@ use              : PREPROC_USE_KEYWORD usedLib;
 regionStart      : PREPROC_REGION regionName;
 regionEnd        : PREPROC_END_REGION;
 regionName       : PREPROC_IDENTIFIER;
-
-preproc_if       : PREPROC_IF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
-preproc_elsif    : PREPROC_ELSIF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
-preproc_else     : PREPROC_ELSE_KEYWORD;
-preproc_endif    : PREPROC_ENDIF_KEYWORD;
-
-preproc_expression
-    : ( PREPROC_NOT_KEYWORD? (PREPROC_LPAREN preproc_expression PREPROC_RPAREN ) )
-    | preproc_logicalExpression
-    ;
-preproc_logicalOperand
-    : (PREPROC_LPAREN PREPROC_NOT_KEYWORD? preproc_logicalOperand PREPROC_RPAREN)
-    | ( PREPROC_NOT_KEYWORD? preproc_symbol )
-    ;
-preproc_logicalExpression
-    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*;
-preproc_symbol
-    : PREPROC_CLIENT_SYMBOL
-    | PREPROC_ATCLIENT_SYMBOL
-    | PREPROC_SERVER_SYMBOL
-    | PREPROC_ATSERVER_SYMBOL
-    | PREPROC_MOBILEAPPCLIENT_SYMBOL
-    | PREPROC_MOBILEAPPSERVER_SYMBOL
-    | PREPROC_MOBILECLIENT_SYMBOL
-    | PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
-    | PREPROC_THICKCLIENTMANAGEDAPPLICATION_SYMBOL
-    | PREPROC_EXTERNALCONNECTION_SYMBOL
-    | PREPROC_THINCLIENT_SYMBOL
-    | PREPROC_WEBCLIENT_SYMBOL
-    | preproc_unknownSymbol
-    ;
-preproc_unknownSymbol
-    : PREPROC_IDENTIFIER
-    ;
-preproc_boolOperation
-    : PREPROC_OR_KEYWORD
-    | PREPROC_AND_KEYWORD
-    ;
-
-preprocessor
-    : HASH
-        (regionStart
-        | regionEnd
-        | preproc_if
-        | preproc_elsif
-        | preproc_else
-        | preproc_endif
-        | use
-        )
-    ;
 
 // compiler directives
 compilerDirectiveSymbol
@@ -130,12 +80,12 @@ annotationParam
 var_name         : IDENTIFIER;
 
 moduleVars       : moduleVar+;
-moduleVar        : (preprocessor | compilerDirective | annotation)* VAR_KEYWORD moduleVarsList SEMICOLON?;
+moduleVar        : ( compilerDirective | annotation)* VAR_KEYWORD moduleVarsList SEMICOLON?;
 moduleVarsList   : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
 moduleVarDeclaration: var_name EXPORT_KEYWORD?;
 
 subVars          : subVar+;
-subVar           : (preprocessor | compilerDirective | annotation)* VAR_KEYWORD subVarsList SEMICOLON?;
+subVar           : ( compilerDirective | annotation)* VAR_KEYWORD subVarsList SEMICOLON?;
 subVarsList      : subVarDeclaration (COMMA subVarDeclaration)*;
 subVarDeclaration: var_name;
 
@@ -146,8 +96,8 @@ subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : (preprocessor | compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : (preprocessor | compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+procDeclaration  : ( compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : ( compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
 subCodeBlock     : subVars? codeBlock;
 
 // statements
@@ -191,7 +141,7 @@ ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression
 codeBlockBeforeSub
     : codeBlock
     ;
-codeBlock        : (statement | preprocessor)*;
+codeBlock        : (statement)*;
 numeric          : FLOAT | DECIMAL;
 paramList        : param (COMMA param)*;
 param            : VAL_KEYWORD? IDENTIFIER (ASSIGN defaultValue)?;
@@ -202,18 +152,18 @@ string           : (STRING | multilineString)+;
 statement
      : (
         (
-            ( label (callStatement | compoundStatement | assignment | preprocessor)?)
+            ( label (callStatement | compoundStatement | assignment)?)
             |
-            (callStatement | compoundStatement | assignment| preprocessor)
+            (callStatement | compoundStatement | assignment)
         )
         SEMICOLON?
     )
     | SEMICOLON
     ;
-assignment       : complexIdentifier preprocessor* ASSIGN (preprocessor* expression)?;
+assignment       : complexIdentifier  ASSIGN (expression)?;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
-expression       : member (preprocessor* operation preprocessor* member)*;
+expression       : member (operation member)*;
 operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | compareOperation;
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;

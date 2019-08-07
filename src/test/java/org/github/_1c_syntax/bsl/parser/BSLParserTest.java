@@ -125,17 +125,6 @@ class BSLParserTest {
     );
     assertMatches(parser.file());
 
-    setInput("#!\n" +
-            "#Если Сервер Тогда\n" +
-            "Перем А; \n" +
-            "Перем Б; \n" +
-            "#Область Г\n" +
-            "Процедура В()\n" +
-            "КонецПроцедуры\n" +
-            "#КонецОбласти\n" +
-            "Сообщить();\n" +
-            "#КонецЕсли\n"
-    );
     assertMatches(parser.file());
 
   }
@@ -151,175 +140,6 @@ class BSLParserTest {
 
     setInput("# А");
     assertNotMatches(parser.shebang());
-
-  }
-
-  @Test
-  void testUse() {
-    setInput("Использовать lib", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.use());
-
-    setInput("Использовать \"./lib\"", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.use());
-
-    setInput("Использовать lib-name", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.use());
-
-    setInput("Использовать 1", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.use());
-  }
-
-  @Test
-  void testPreproc_if() {
-
-    setInput("Если Клиент Тогда", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_if());
-
-    setInput("Если НЕ (ТонкийКлиент ИЛИ ВебКлиент) Тогда", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_if());
-
-    setInput("Если НЕ (НЕ ТонкийКлиент ИЛИ НЕ ВебКлиент) Тогда", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_if());
-
-    setInput("Если ТонкийКлиент И ВебКлиент Тогда", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_if());
-
-    setInput("Если", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.preproc_if());
-
-  }
-
-  @Test
-  void testPreproc_elseif() {
-
-    setInput("ИначеЕсли Клиент Тогда", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_elsif());
-
-    setInput("ИначеЕсли", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.preproc_elsif());
-
-  }
-
-  @Test
-  void testPreproc_else() {
-
-    setInput("Иначе", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_else());
-
-    setInput("ИначеЕсли", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.preproc_else());
-
-  }
-
-  @Test
-  void testPreproc_endif() {
-
-    setInput("КонецЕсли", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_endif());
-
-    setInput("ИначеЕсли", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.preproc_endif());
-
-  }
-
-  @Test
-  void testPreproc_Expression() {
-    setInput("((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент))))", BSLLexer.PREPROCESSOR_MODE);
-  }
-
-  @Test
-  void testPreproc_symbol() {
-
-    setInput("Клиент", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("НаКлиенте", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("НаСервере", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("МобильноеПриложениеКлиент", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("МобильноеПриложениеСервер", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("МобильныйКлиент", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("ТолстыйКлиентОбычноеПриложение", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("ТолстыйКлиентУправляемоеПриложение", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("Сервер", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("ВнешнееСоединение", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("ТонкийКлиент", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("ВебКлиент", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_symbol());
-
-    setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_unknownSymbol());
-
-    setInput("Сервер", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.preproc_unknownSymbol());
-
-  }
-
-  @Test
-  void TestPreproc_boolOperation() {
-
-    setInput("И", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_boolOperation());
-
-    setInput("ИЛИ", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_boolOperation());
-
-    setInput("НЕ", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.preproc_boolOperation());
-
-  }
-
-  @Test
-  void TestPreprocessor() {
-
-    setInput("#Область А");
-    assertMatches(parser.preprocessor());
-
-    setInput("#КонецОбласти");
-    assertMatches(parser.preprocessor());
-
-    setInput("#Если А Тогда");
-    assertMatches(parser.preprocessor());
-
-    setInput("#ИначеЕсли А Тогда");
-    assertMatches(parser.preprocessor());
-
-    setInput("#Иначе");
-    assertMatches(parser.preprocessor());
-
-    setInput("#КонецЕсли");
-    assertMatches(parser.preprocessor());
-
-    setInput("#Использовать А");
-    assertMatches(parser.preprocessor());
-
-    setInput("#Просто");
-    assertNotMatches(parser.preprocessor());
-
-    setInput("Просто");
-    assertNotMatches(parser.preprocessor());
 
   }
 
@@ -378,8 +198,6 @@ class BSLParserTest {
     setInput("&Аннотация\n&ВтораяАннотация\nПерем ИмяПерем");
     assertMatches(parser.moduleVar());
 
-    setInput("&Аннотация\n#Область ИмяОбласти\n&ВтораяАннотация\nПерем ИмяПерем");
-    assertMatches(parser.moduleVar());
   }
 
   @Test
@@ -507,18 +325,6 @@ class BSLParserTest {
 
   @Test
   void testAssignment() {
-    setInput("A = \n" +
-      "#Region Name\n" +
-      "0 +\n" +
-      "#EndRegion\n" +
-      "1\n" +
-      "#Region Name2\n" +
-      "#Region Name2\n" +
-      "+\n" +
-      "#EndRegion\n" +
-      "0\n" +
-      "#EndRegion");
-    assertMatches(parser.assignment());
 
     setInput("А = А");
     assertMatches(parser.assignment());
@@ -583,23 +389,6 @@ class BSLParserTest {
     assertMatches(parser.expression());
 
     setInput("A = 1 -+ 2");
-    assertMatches(parser.expression());
-
-    setInput("A1 + \n" +
-            "#Если (Клиент) Тогда\n" +
-            "А +\n" +
-            "#КонецЕсли\n" +
-            "#Если Клиент Тогда\n" +
-            "Б +\n" +
-            "#Иначе\n" +
-            "#Область Имя\n" +
-            "В(\n" +
-            "А + \n" +
-            "Б\n" +
-            ")\n" +
-            "#КонецОбласти\n" +
-            "#КонецЕсли\n" +
-            "+ С\n");
     assertMatches(parser.expression());
 
     setInput("Метод()");
