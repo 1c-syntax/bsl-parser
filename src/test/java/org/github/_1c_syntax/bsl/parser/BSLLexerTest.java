@@ -152,7 +152,13 @@ class BSLLexerTest {
     assertMatch("\"\"\"\"", BSLLexer.STRING);
     assertMatch("|СПЕЦСИМВОЛ \"\"~\"\"\"", BSLLexer.STRINGTAIL);
     assertMatch("\"Минимальная версия платформы \"\"1С:Предприятие 8\"\" указана выше рекомендуемой.", BSLLexer.STRINGSTART);
-
+    assertMatch("А = \" \n | А \"\"\"\" + А \n  |\";",
+            BSLLexer.IDENTIFIER,
+            BSLLexer.ASSIGN,
+            BSLLexer.STRINGSTART,
+            BSLLexer.STRINGPART,
+            BSLLexer.STRINGTAIL,
+            BSLLexer.SEMICOLON);
   }
 
   @Test

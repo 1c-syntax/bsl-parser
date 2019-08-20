@@ -154,7 +154,7 @@ FLOAT : DIGIT+ '.' DIGIT*;
 STRING: '"' (~[\r\n"] | '""')* '"';
 STRINGSTART: '"' (~["\n\r]| '""')*;
 STRINGTAIL: BAR (~["\n\r] | '""')* '"';
-STRINGPART: BAR ~["\n\r]*;
+STRINGPART: BAR (~[\r\n"] | '""')*;
 
 // keywords
 PROCEDURE_KEYWORD
