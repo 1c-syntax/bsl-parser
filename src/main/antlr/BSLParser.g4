@@ -27,7 +27,7 @@ options {
 }
 
 // ROOT
-file: shebang? preprocessor* moduleVars? preprocessor* codeBlockBeforeSub subs? codeBlock EOF;
+file: shebang? preprocessor* moduleVars? preprocessor* fileCodeBlockBeforeSub subs? fileCodeBlock EOF;
 
 // preprocessor
 shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
@@ -153,8 +153,18 @@ subCodeBlock     : subVars? codeBlock;
 continueStatement : CONTINUE_KEYWORD;
 breakStatement    : BREAK_KEYWORD;
 raiseStatement    : RAISE_KEYWORD expression?;
-ifStatement       : IF_KEYWORD expression THEN_KEYWORD codeBlock
-    (ELSIF_KEYWORD expression THEN_KEYWORD codeBlock)* (ELSE_KEYWORD codeBlock)? ENDIF_KEYWORD;
+ifStatement
+    : ifBranch elsifBranch* elseBranch? ENDIF_KEYWORD
+    ;
+ifBranch
+    : IF_KEYWORD expression THEN_KEYWORD codeBlock
+    ;
+elsifBranch
+    : ELSIF_KEYWORD expression THEN_KEYWORD codeBlock
+    ;
+elseBranch
+    : ELSE_KEYWORD codeBlock
+    ;
 whileStatement    : WHILE_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
@@ -187,7 +197,10 @@ removeHandlerStatement
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
 
 // main
-codeBlockBeforeSub
+fileCodeBlockBeforeSub
+    : codeBlock
+    ;
+fileCodeBlock
     : codeBlock
     ;
 codeBlock        : (statement | preprocessor)*;
