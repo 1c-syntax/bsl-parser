@@ -23,7 +23,7 @@
 // Originally released by:
 // (‑●‑●)> released under the WTFPL v2 license, by Gregory Pakosz (@gpakosz)
 
-package org.github._1c_syntax.bsl.parser;
+package com.github._1c_syntax.bsl.parser;
 
 import java.io.IOException;
 import java.io.InputStream;

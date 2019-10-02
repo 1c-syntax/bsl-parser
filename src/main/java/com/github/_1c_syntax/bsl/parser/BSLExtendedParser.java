@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-package org.github._1c_syntax.bsl.parser;
+package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

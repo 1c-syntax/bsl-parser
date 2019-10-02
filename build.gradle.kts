@@ -17,7 +17,7 @@ repositories {
     maven { url = URI("https://jitpack.io") }
 }
 
-group = "org.github._1c_syntax"
+group = "com.github.1c-syntax"
 version = gitVersionCalculator.calculateVersion("v")
 
 tasks.withType<JavaCompile> {
@@ -56,10 +56,10 @@ idea {
 tasks.generateGrammarSource {
     arguments = arguments + "-visitor"
     arguments = arguments + "-package"
-    arguments = arguments + "org.github._1c_syntax.bsl.parser"
+    arguments = arguments + "com.github._1c_syntax.bsl.parser"
     arguments = arguments + "-encoding"
     arguments = arguments + "utf8"
-    outputDirectory = file("src/main/gen/org/github/_1c_syntax/bsl/parser")
+    outputDirectory = file("src/main/gen/com/github/_1c_syntax/bsl/parser")
 }
 
 tasks.generateGrammarSource {
