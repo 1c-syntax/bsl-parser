@@ -49,7 +49,7 @@ class BSLLexerTest {
       ubis.skipBOM();
 
       CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
-      input = new CaseChangingCharStream(inputTemp, false);
+      input = new CaseChangingCharStream(inputTemp, true);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

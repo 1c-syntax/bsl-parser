@@ -66,86 +66,29 @@ SQUOTE: '\'';
 BAR: '|';
 TILDA: '~' -> pushMode(LABEL_MODE);
 
-fragment RU_A: 'А' | 'а';
-fragment RU_B: 'Б' | 'б';
-fragment RU_V: 'В' | 'в';
-fragment RU_G: 'Г' | 'г';
-fragment RU_D: 'Д' | 'д';
-fragment RU_YO: 'Ё' | 'ё';
-fragment RU_E: 'Е' | 'е';
-fragment RU_ZH: 'Ж' | 'ж';
-fragment RU_Z: 'З' | 'з';
-fragment RU_I: 'И' | 'и';
-fragment RU_J: 'Й' | 'й';
-fragment RU_K: 'К' | 'к';
-fragment RU_L: 'Л' | 'л';
-fragment RU_M: 'М' | 'м';
-fragment RU_N: 'Н' | 'н';
-fragment RU_O: 'О' | 'о';
-fragment RU_P: 'П' | 'п';
-fragment RU_R: 'Р' | 'р';
-fragment RU_S: 'С' | 'с';
-fragment RU_T: 'Т' | 'т';
-fragment RU_U: 'У' | 'у';
-fragment RU_F: 'Ф' | 'ф';
-fragment RU_H: 'Х' | 'х';
-fragment RU_C: 'Ц' | 'ц';
-fragment RU_CH: 'Ч' | 'ч';
-fragment RU_SH: 'Ш' | 'ш';
-fragment RU_SCH: 'Щ' | 'щ';
-fragment RU_SOLID_SIGN: 'Ъ' | 'ъ';
-fragment RU_Y: 'Ы' | 'ы';
-fragment RU_SOFT_SIGN: 'Ь' | 'ь';
-fragment RU_EH: 'Э' | 'э';
-fragment RU_YU: 'Ю' | 'ю';
-fragment RU_YA: 'Я' | 'я';
-fragment A: 'A' | 'a';
-fragment B: 'B' | 'b';   
-fragment C: 'C' | 'c';   
-fragment D: 'D' | 'd';   
-fragment I: 'I' | 'i';   
-fragment E: 'E' | 'e';   
-fragment F: 'F' | 'f';   
-fragment G: 'G' | 'g';   
-fragment U: 'U' | 'u';   
-fragment K: 'K' | 'k';   
-fragment L: 'L' | 'l';   
-fragment M: 'M' | 'm';   
-fragment N: 'N' | 'n';   
-fragment O: 'O' | 'o';   
-fragment P: 'P' | 'p';   
-fragment R: 'R' | 'r';   
-fragment S: 'S' | 's';   
-fragment T: 'T' | 't';
-fragment V: 'V' | 'v';   
-fragment H: 'H' | 'h';   
-fragment W: 'W' | 'w';   
-fragment X: 'X' | 'x';   
-fragment Y: 'Y' | 'y';   
-
 // literals
 TRUE
     :
     { lastTokenType != DOT }?
-    ( RU_I RU_S RU_T RU_I RU_N RU_A
-    | T R U E )
+    ( 'ИСТИНА'
+    | 'TRUE' )
     ;
 FALSE
     :
     { lastTokenType != DOT }?
-    ( RU_L RU_O RU_ZH RU_SOFT_SIGN
-    | F A L S E )
+    ( 'ЛОЖЬ'
+    | 'FALSE' )
     ;
 UNDEFINED
     :
     { lastTokenType != DOT }?
-    ( RU_N RU_E RU_O RU_P RU_R RU_E RU_D RU_E RU_L RU_E RU_N RU_O
-    | U N D E F I N E D )
+    ( 'НЕОПРЕДЕЛЕНО'
+    | 'UNDEFINED' )
     ;
 NULL
     :
     { lastTokenType != DOT }?
-    N U L L
+    'NULL'
     ;
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
@@ -160,204 +103,204 @@ STRINGPART: BAR (~[\r\n"] | '""')*;
 PROCEDURE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_A
-    | P R O C E D U R E )
+    ( 'ПРОЦЕДУРА'
+    | 'PROCEDURE' )
     ;
 FUNCTION_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_F RU_U RU_N RU_K RU_C RU_I RU_YA
-    | F U N C T I O N)
+    ( 'ФУНКЦИЯ'
+    | 'FUNCTION' )
     ;
 ENDPROCEDURE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_K RU_O RU_N RU_E RU_C RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_Y
-    | E N D P R O C E D U R E )
+    ( 'КОНЕЦПРОЦЕДУРЫ'
+    | 'ENDPROCEDURE' )
     ;
 ENDFUNCTION_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_K RU_O RU_N RU_E RU_C RU_F RU_U RU_N RU_K RU_C RU_I RU_I
-    | E N D F U N C T I O N )
+    ( 'КОНЕЦФУНКЦИИ'
+    | 'ENDFUNCTION' )
     ;
 EXPORT_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_EH RU_K RU_S RU_P RU_O RU_R RU_T
-    | E X P O R T )
+    ( 'ЭКСПОРТ'
+    | 'EXPORT' )
     ;
 VAL_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_Z RU_N RU_A RU_CH
-    | V A L )
+    ( 'ЗНАЧ'
+    | 'VAL' )
     ;
 ENDIF_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
-    | E N D I F )
+    ( 'КОНЕЦЕСЛИ'
+    | 'ENDIF' )
     ;
 ENDDO_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_K RU_O RU_N RU_E RU_C RU_C RU_I RU_K RU_L RU_A
-    | E N D D O )
+    ( 'КОНЕЦЦИКЛА'
+    | 'ENDDO' )
     ;
 IF_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_E RU_S RU_L RU_I
-    | I F )
+    ( 'ЕСЛИ'
+    | 'IF' )
     ;
 ELSIF_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
-    | E L S I F )
+    ( 'ИНАЧЕЕСЛИ'
+    | 'ELSIF' )
     ;
 ELSE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_I RU_N RU_A RU_CH RU_E
-    | E L S E )
+    ( 'ИНАЧЕ'
+    | 'ELSE' )
     ;
 THEN_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_T RU_O RU_G RU_D RU_A
-    | T H E N )
+    ( 'ТОГДА'
+    | 'THEN' )
     ;
 WHILE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_P RU_O RU_K RU_A
-    | W H I L E )
+    ( 'ПОКА'
+    | 'WHILE' )
     ;
 DO_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_C RU_I RU_K RU_L
-    | D O )
+    ( 'ЦИКЛ'
+    | 'DO' )
     ;
 FOR_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_D RU_L RU_YA
-    | F O R );
+    ( 'ДЛЯ'
+    | 'FOR' );
 TO_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_P RU_O
-    | T O )
+    ( 'ПО'
+    | 'TO' )
     ;
 EACH_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_K RU_A RU_ZH RU_D RU_O RU_G RU_O
-    | E A C H )
+    ( 'КАЖДОГО'
+    | 'EACH' )
     ;
 IN_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_I RU_Z
-    | I N )
+    ( 'ИЗ'
+    | 'IN' )
     ;
 TRY_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_P RU_O RU_P RU_Y RU_T RU_K RU_A
-    | T R Y )
+    ( 'ПОПЫТКА'
+    | 'TRY' )
     ;
 EXCEPT_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E
-    | E X C E P T )
+    ( 'ИСКЛЮЧЕНИЕ'
+    | 'EXCEPT' )
     ;
 ENDTRY_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_K RU_O RU_N RU_E RU_C RU_P RU_O RU_P RU_Y RU_T RU_K RU_I
-    | E N D T R Y )
+    ( 'КОНЕЦПОПЫТКИ'
+    | 'ENDTRY' )
     ;
 RETURN_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_V RU_O RU_Z RU_V RU_R RU_A RU_T
-    | R E T U R N )
+    ( 'ВОЗВРАТ'
+    | 'RETURN' )
     ;
 CONTINUE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_P RU_R RU_O RU_D RU_O RU_L RU_ZH RU_I RU_T RU_SOFT_SIGN
-    | C O N T I N U E )
+    ( 'ПРОДОЛЖИТЬ'
+    | 'CONTINUE' )
     ;
 RAISE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_V RU_Y RU_Z RU_V RU_A RU_T RU_SOFT_SIGN RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E
-    | R A I S E )
+    ( 'ВЫЗВАТЬИСКЛЮЧЕНИЕ'
+    | 'RAISE' )
     ;
 VAR_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_P RU_E RU_R RU_E RU_M
-    | V A R );
+    ( 'ПЕРЕМ'
+    | 'VAR' );
 NOT_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_N RU_E
-    | N O T )
+    ( 'НЕ'
+    | 'NOT' )
     ;
 OR_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_I RU_L RU_I
-    | O R )
+    ( 'ИЛИ'
+    | 'OR' )
     ;
 AND_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_I
-    | A N D )
+    ( 'И'
+    | 'AND' )
     ;
 NEW_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_N RU_O RU_V RU_Y RU_J
-    | N E W )
+    ( 'НОВЫЙ'
+    | 'NEW' )
     ;
 GOTO_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_P RU_E RU_R RU_E RU_J RU_T RU_I
-    | G O T O )
+    ( 'ПЕРЕЙТИ'
+    | 'GOTO' )
     ;
 BREAK_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_P RU_R RU_E RU_R RU_V RU_A RU_T RU_SOFT_SIGN
-    | B R E A K )
+    ( 'ПРЕРВАТЬ'
+    | 'BREAK' )
     ;
 EXECUTE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_V RU_Y RU_P RU_O RU_L RU_N RU_I RU_T RU_SOFT_SIGN
-    | E X E C U T E )
+    ( 'ВЫПОЛНИТЬ'
+    | 'EXECUTE' )
     ;
 ADDHANDLER_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
-    | A D D H A N D L E R )
+    ( 'ДОБАВИТЬОБРАБОТЧИК'
+    | 'ADDHANDLER' )
     ;
 REMOVEHANDLER_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( RU_U RU_D RU_A RU_L RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
-    | R E M O V E H A N D L E R )
+    ( 'УДАЛИТЬОБРАБОТЧИК'
+    | 'REMOVEHANDLER' )
     ;
 
 fragment LETTER: [\p{Letter}] | '_';   
@@ -378,151 +321,123 @@ PREPROC_STRINGPART: BAR (~["\n\r])*;
 
 PREPROC_USE_KEYWORD
     :
-    (RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_SOFT_SIGN
-    | U S E) -> pushMode(USE_MODE);
+    ('ИСПОЛЬЗОВАТЬ'
+    | 'USE') -> pushMode(USE_MODE);
 
 PREPROC_REGION
     :
     { lastTokenType == HASH }?
-    ( RU_O RU_B RU_L RU_A RU_S RU_T RU_SOFT_SIGN
-    | R E G I O N ) -> pushMode(REGION_MODE)
+    ( 'ОБЛАСТЬ'
+    | 'REGION' ) -> pushMode(REGION_MODE)
     ;
 PREPROC_END_REGION
     :
     { lastTokenType == HASH }?
-    ( RU_K RU_O RU_N RU_E RU_C RU_O RU_B RU_L RU_A RU_S RU_T RU_I
-    | E N D R E G I O N )
+    ( 'КОНЕЦОБЛАСТИ'
+    | 'ENDREGION' )
     ;
 
 PREPROC_NOT_KEYWORD
     :
-      RU_N RU_E
-    | N O T
+      'НЕ'
+    | 'NOT'
     ;
 PREPROC_OR_KEYWORD
     :
-      RU_I RU_L RU_I
-    | O R
+      'ИЛИ'
+    | 'OR'
     ;
 PREPROC_AND_KEYWORD
     :
-      RU_I
-    | A N D
+      'И'
+    | 'AND'
     ;
 
 PREPROC_IF_KEYWORD
     :
-      RU_E RU_S RU_L RU_I
-    | I F
+      'ЕСЛИ'
+    | 'IF'
     ;
 PREPROC_THEN_KEYWORD
     :
-      RU_T RU_O RU_G RU_D RU_A
-    | T H E N
+      'ТОГДА'
+    | 'THEN'
     ;
 PREPROC_ELSIF_KEYWORD
     :
-      RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
-    | E L S I F
+      'ИНАЧЕЕСЛИ'
+    | 'ELSIF'
     ;
 PREPROC_ENDIF_KEYWORD
     :
-      RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
-    | E N D I F
+      'КОНЕЦЕСЛИ'
+    | 'ENDIF'
     ;
 PREPROC_ELSE_KEYWORD
     :
-      RU_I RU_N RU_A RU_CH RU_E
-    | E L S E
+      'ИНАЧЕ'
+    | 'ELSE'
     ;
 
 PREPROC_MOBILEAPPCLIENT_SYMBOL
     :
-      RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_O RU_E
-      RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
-      RU_K RU_L RU_I RU_E RU_N RU_T
-    | M O B I L E
-      A P P
-      C L I E N T
+      'МОБИЛЬНОЕПРИЛОЖЕНИЕКЛИЕНТ'
+    | 'MOBILEAPPCLIENT'
     ;
 PREPROC_MOBILEAPPSERVER_SYMBOL
     :
-      RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_O RU_E
-      RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
-      RU_S RU_E RU_R RU_V RU_E RU_R
-    | M O B I L E
-      A P P
-      S E R V E R
+      'МОБИЛЬНОЕПРИЛОЖЕНИЕСЕРВЕР'
+    | 'MOBILEAPPSERVER'
     ;
 PREPROC_MOBILECLIENT_SYMBOL
     :
-      RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_Y RU_J
-      RU_K RU_L RU_I RU_E RU_N RU_T
-    | M O B I L E
-      C L I E N T
+      'МОБИЛЬНЫЙКЛИЕНТ' 
+    | 'MOBILECLIENT'
     ;
 PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
     :
-      RU_T RU_O RU_L RU_S RU_T RU_Y RU_J
-      RU_K RU_L RU_I RU_E RU_N RU_T
-      RU_O RU_B RU_Y RU_CH RU_N RU_O RU_E
-      RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
-    | T H I C K
-      C L I E N T
-      O R D I N A R Y
-      A P P L I C A T I O N
+      'ТОЛСТЫЙКЛИЕНТОБЫЧНОЕПРИЛОЖЕНИЕ'
+    | 'THICKCLIENTORDINARYAPPLICATION'
     ;
 PREPROC_THICKCLIENTMANAGEDAPPLICATION_SYMBOL
     :
-      RU_T RU_O RU_L RU_S RU_T RU_Y RU_J
-      RU_K RU_L RU_I RU_E RU_N RU_T
-      RU_U RU_P RU_R RU_A RU_V RU_L RU_YA RU_E RU_M RU_O RU_E
-      RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
-    | T H I C K
-      C L I E N T
-      M A N A G E D
-      A P P L I C A T I O N
+      'ТОЛСТЫЙКЛИЕНТУПРАВЛЯЕМОЕПРИЛОЖЕНИЕ'
+    | 'THICKCLIENTMANAGEDAPPLICATION'
     ;
 PREPROC_EXTERNALCONNECTION_SYMBOL
     :
-      RU_V RU_N RU_E RU_SH RU_N RU_E RU_E
-      RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E
-    | E X T E R N A L
-      C O N N E C T I O N
+      'ВНЕСHНЕЕСОЕДИНЕНИЕ'
+    | 'EXTERNALCONNECTION'
     ;
 PREPROC_THINCLIENT_SYMBOL
     :
-      RU_T RU_O RU_N RU_K RU_I RU_J
-      RU_K RU_L RU_I RU_E RU_N RU_T
-    | T H I N
-      C L I E N T
+      'ТОНКИЙКЛИЕНТ'
+    | 'THINCLIENT'
     ;
 PREPROC_WEBCLIENT_SYMBOL
     :
-      RU_V RU_E RU_B
-      RU_K RU_L RU_I RU_E RU_N RU_T
-    | W E B
-      C L I E N T
+      'ВЕБКЛИЕНТ'
+    | 'WEBCLIENT'
     ;
 PREPROC_ATCLIENT_SYMBOL
     :
-      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
-    | A T C L I E N T
+      'НАКЛИЕНТЕ'
+    | 'ATCLIENT'
     ;
 PREPROC_CLIENT_SYMBOL
     :
-      RU_K RU_L RU_I RU_E RU_N RU_T
-    | C L I E N T
+      'КЛИЕНТ'
+    | 'CLIENT'
     ;
 PREPROC_ATSERVER_SYMBOL
     :
-      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
-    | A T S E R V E R
+      'НАСЕРВЕРЕ'
+    | 'ATSERVER'
     ;
 PREPROC_SERVER_SYMBOL
     :
-      RU_S RU_E RU_R RU_V RU_E RU_R
-    | S E R V E R
+      'СЕРВЕР'
+    | 'SERVER'
     ;
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
@@ -536,43 +451,35 @@ mode ANNOTATION_MODE;
 
 ANNOTATION_ATSERVERNOCONTEXT_SYMBOL
     : (
-      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
-      RU_B RU_E RU_Z RU_K RU_O RU_N RU_T RU_E RU_K RU_S RU_T RU_A
-    | A T S E R V E R
-      N O C O N T E X T
+      'НАСЕРВЕРЕБЕЗКОНТЕКСТА'
+    | 'ATSERVERNOCONTEXT'
     ) -> popMode
     ;
 
 ANNOTATION_ATCLIENTATSERVERNOCONTEXT_SYMBOL
     : (
-      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
-      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
-      RU_B RU_E RU_Z RU_K RU_O RU_N RU_T RU_E RU_K RU_S RU_T RU_A
-    | A T C L I E N T
-      A T S E R V E R
-      N O C O N T E X T
+      'НАКЛИЕНТЕНАСЕРВЕРЕБЕЗКОНТЕКСТА'
+    | 'ATCLIENTATSERVERNOCONTEXT'
     ) -> popMode
     ;
 
 ANNOTATION_ATCLIENTATSERVER_SYMBOL
     : (
-      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
-      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
-    | A T C L I E N T
-      A T S E R V E R
+      'НАКЛИЕНТЕНАСЕРВЕРЕ'
+    | 'ATCLIENTATSERVER'
     ) -> popMode
     ;
 
 ANNOTATION_ATCLIENT_SYMBOL
     : (
-      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
-    | A T C L I E N T
+      'НАКЛИЕНТЕ'
+    | 'ATCLIENT'
     ) -> popMode
     ;
 
 ANNOTATION_ATSERVER_SYMBOL
-    : ( RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
-    | A T S E R V E R
+    : ( 'НАСЕРВЕРЕ'
+    | 'ATSERVER'
     ) -> popMode
     ;
 
