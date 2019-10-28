@@ -75,7 +75,7 @@ public class BSLTokenizer {
 
         try (
                 InputStream inputStream = IOUtils.toInputStream(content, StandardCharsets.UTF_8);
-                UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
+                UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream)
         ) {
             ubis.skipBOM();
             input = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
