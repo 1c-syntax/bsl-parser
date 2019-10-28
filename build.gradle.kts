@@ -37,7 +37,7 @@ dependencies {
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    testImplementation("commons-io", "commons-io", "2.6")
+    compile("commons-io", "commons-io", "2.6")
 }
 
 sourceSets {
