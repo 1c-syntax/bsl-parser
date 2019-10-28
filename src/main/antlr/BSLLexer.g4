@@ -70,26 +70,22 @@ TILDA: '~' -> pushMode(LABEL_MODE);
 TRUE
     :
     { lastTokenType != DOT }?
-    ( 'ИСТИНА'
-    | 'TRUE' )
+     'ИСТИНА'
+
     ;
 FALSE
     :
     { lastTokenType != DOT }?
-    ( 'ЛОЖЬ'
-    | 'FALSE' )
-    ;
+    'ЛОЖЬ';
 UNDEFINED
     :
     { lastTokenType != DOT }?
-    ( 'НЕОПРЕДЕЛЕНО'
-    | 'UNDEFINED' )
-    ;
+    'НЕОПРЕДЕЛЕНО';
 NULL
     :
     { lastTokenType != DOT }?
-    'NULL'
-    ;
+    'NULL';
+
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
@@ -103,207 +99,201 @@ STRINGPART: BAR (~[\r\n"] | '""')*;
 PROCEDURE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ПРОЦЕДУРА'
-    | 'PROCEDURE' )
-    ;
+    'ПРОЦЕДУРА';
 FUNCTION_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ФУНКЦИЯ'
-    | 'FUNCTION' )
-    ;
+    'ФУНКЦИЯ';
+
 ENDPROCEDURE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'КОНЕЦПРОЦЕДУРЫ'
-    | 'ENDPROCEDURE' )
-    ;
+    'КОНЕЦПРОЦЕДУРЫ';
+
 ENDFUNCTION_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'КОНЕЦФУНКЦИИ'
-    | 'ENDFUNCTION' )
-    ;
+    'КОНЕЦФУНКЦИИ';
 EXPORT_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ЭКСПОРТ'
-    | 'EXPORT' )
+    'ЭКСПОРТ'
+
     ;
 VAL_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ЗНАЧ'
-    | 'VAL' )
+    'ЗНАЧ'
+
     ;
 ENDIF_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'КОНЕЦЕСЛИ'
-    | 'ENDIF' )
+    'КОНЕЦЕСЛИ'
+
     ;
 ENDDO_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'КОНЕЦЦИКЛА'
-    | 'ENDDO' )
+    'КОНЕЦЦИКЛА'
+
     ;
 IF_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ЕСЛИ'
-    | 'IF' )
+    'ЕСЛИ'
+
     ;
 ELSIF_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ИНАЧЕЕСЛИ'
-    | 'ELSIF' )
+    'ИНАЧЕЕСЛИ'
+
     ;
 ELSE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ИНАЧЕ'
-    | 'ELSE' )
+    'ИНАЧЕ'
+
     ;
 THEN_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ТОГДА'
-    | 'THEN' )
+    'ТОГДА'
+
     ;
 WHILE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ПОКА'
-    | 'WHILE' )
+    'ПОКА'
+
     ;
 DO_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ЦИКЛ'
-    | 'DO' )
+    'ЦИКЛ'
+
     ;
 FOR_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ДЛЯ'
-    | 'FOR' );
+    'ДЛЯ'
+;
 TO_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ПО'
-    | 'TO' )
+     'ПО'
+
     ;
 EACH_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'КАЖДОГО'
-    | 'EACH' )
+    'КАЖДОГО'
+
     ;
 IN_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ИЗ'
-    | 'IN' )
+    'ИЗ'
+
     ;
 TRY_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ПОПЫТКА'
-    | 'TRY' )
+    'ПОПЫТКА'
+
     ;
 EXCEPT_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ИСКЛЮЧЕНИЕ'
-    | 'EXCEPT' )
+    'ИСКЛЮЧЕНИЕ'
+
     ;
 ENDTRY_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'КОНЕЦПОПЫТКИ'
-    | 'ENDTRY' )
+    'КОНЕЦПОПЫТКИ'
+
     ;
 RETURN_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ВОЗВРАТ'
-    | 'RETURN' )
+    'ВОЗВРАТ'
+
     ;
 CONTINUE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ПРОДОЛЖИТЬ'
-    | 'CONTINUE' )
+    'ПРОДОЛЖИТЬ'
+
     ;
 RAISE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ВЫЗВАТЬИСКЛЮЧЕНИЕ'
-    | 'RAISE' )
+    'ВЫЗВАТЬИСКЛЮЧЕНИЕ'
+
     ;
 VAR_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ПЕРЕМ'
-    | 'VAR' );
+    'ПЕРЕМ'
+;
 NOT_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'НЕ'
-    | 'NOT' )
+    'НЕ'
+
     ;
 OR_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ИЛИ'
-    | 'OR' )
+    'ИЛИ'
+
     ;
 AND_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'И'
-    | 'AND' )
+    'И'
+
     ;
 NEW_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'НОВЫЙ'
-    | 'NEW' )
+    'НОВЫЙ'
+
     ;
 GOTO_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ПЕРЕЙТИ'
-    | 'GOTO' )
+    'ПЕРЕЙТИ'
+
     ;
 BREAK_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ПРЕРВАТЬ'
-    | 'BREAK' )
+    'ПРЕРВАТЬ'
+
     ;
 EXECUTE_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ВЫПОЛНИТЬ'
-    | 'EXECUTE' )
+    'ВЫПОЛНИТЬ'
+
     ;
 ADDHANDLER_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'ДОБАВИТЬОБРАБОТЧИК'
-    | 'ADDHANDLER' )
+    'ДОБАВИТЬОБРАБОТЧИК'
+
     ;
 REMOVEHANDLER_KEYWORD
     :
     { lastTokenType != DOT }?
-    ( 'УДАЛИТЬОБРАБОТЧИК'
-    | 'REMOVEHANDLER' )
+    'УДАЛИТЬОБРАБОТЧИК'
+
     ;
 
-fragment LETTER: [\p{Letter}] | '_';   
+fragment LETTER: [\p{Letter}] | '_';
 IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
 UNKNOWN: . -> channel(HIDDEN);
@@ -321,123 +311,117 @@ PREPROC_STRINGPART: BAR (~["\n\r])*;
 
 PREPROC_USE_KEYWORD
     :
-    ('ИСПОЛЬЗОВАТЬ'
-    | 'USE') -> pushMode(USE_MODE);
+    ('ИСПОЛЬЗОВАТЬ') -> pushMode(USE_MODE);
 
 PREPROC_REGION
     :
     { lastTokenType == HASH }?
-    ( 'ОБЛАСТЬ'
-    | 'REGION' ) -> pushMode(REGION_MODE)
+    'ОБЛАСТЬ' -> pushMode(REGION_MODE)
     ;
 PREPROC_END_REGION
     :
     { lastTokenType == HASH }?
-    ( 'КОНЕЦОБЛАСТИ'
-    | 'ENDREGION' )
+    'КОНЕЦОБЛАСТИ'
+
     ;
 
 PREPROC_NOT_KEYWORD
     :
       'НЕ'
-    | 'NOT'
     ;
 PREPROC_OR_KEYWORD
     :
       'ИЛИ'
-    | 'OR'
     ;
 PREPROC_AND_KEYWORD
     :
       'И'
-    | 'AND'
     ;
 
 PREPROC_IF_KEYWORD
     :
       'ЕСЛИ'
-    | 'IF'
     ;
 PREPROC_THEN_KEYWORD
     :
       'ТОГДА'
-    | 'THEN'
+
     ;
 PREPROC_ELSIF_KEYWORD
     :
       'ИНАЧЕЕСЛИ'
-    | 'ELSIF'
+
     ;
 PREPROC_ENDIF_KEYWORD
     :
       'КОНЕЦЕСЛИ'
-    | 'ENDIF'
+
     ;
 PREPROC_ELSE_KEYWORD
     :
       'ИНАЧЕ'
-    | 'ELSE'
+
     ;
 
 PREPROC_MOBILEAPPCLIENT_SYMBOL
     :
       'МОБИЛЬНОЕПРИЛОЖЕНИЕКЛИЕНТ'
-    | 'MOBILEAPPCLIENT'
+
     ;
 PREPROC_MOBILEAPPSERVER_SYMBOL
     :
       'МОБИЛЬНОЕПРИЛОЖЕНИЕСЕРВЕР'
-    | 'MOBILEAPPSERVER'
+
     ;
 PREPROC_MOBILECLIENT_SYMBOL
     :
-      'МОБИЛЬНЫЙКЛИЕНТ' 
-    | 'MOBILECLIENT'
+      'МОБИЛЬНЫЙКЛИЕНТ'
+
     ;
 PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
     :
       'ТОЛСТЫЙКЛИЕНТОБЫЧНОЕПРИЛОЖЕНИЕ'
-    | 'THICKCLIENTORDINARYAPPLICATION'
+
     ;
 PREPROC_THICKCLIENTMANAGEDAPPLICATION_SYMBOL
     :
       'ТОЛСТЫЙКЛИЕНТУПРАВЛЯЕМОЕПРИЛОЖЕНИЕ'
-    | 'THICKCLIENTMANAGEDAPPLICATION'
+
     ;
 PREPROC_EXTERNALCONNECTION_SYMBOL
     :
       'ВНЕШНЕЕСОЕДИНЕНИЕ'
-    | 'EXTERNALCONNECTION'
+
     ;
 PREPROC_THINCLIENT_SYMBOL
     :
       'ТОНКИЙКЛИЕНТ'
-    | 'THINCLIENT'
+
     ;
 PREPROC_WEBCLIENT_SYMBOL
     :
       'ВЕБКЛИЕНТ'
-    | 'WEBCLIENT'
+
     ;
 PREPROC_ATCLIENT_SYMBOL
     :
       'НАКЛИЕНТЕ'
-    | 'ATCLIENT'
+
     ;
 PREPROC_CLIENT_SYMBOL
     :
       'КЛИЕНТ'
-    | 'CLIENT'
+
     ;
 PREPROC_ATSERVER_SYMBOL
     :
       'НАСЕРВЕРЕ'
-    | 'ATSERVER'
+
     ;
 PREPROC_SERVER_SYMBOL
     :
       'СЕРВЕР'
-    | 'SERVER'
+
     ;
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
@@ -450,37 +434,32 @@ PREPROC_ANY: ~[\r\n];
 mode ANNOTATION_MODE;
 
 ANNOTATION_ATSERVERNOCONTEXT_SYMBOL
-    : (
-      'НАСЕРВЕРЕБЕЗКОНТЕКСТА'
-    | 'ATSERVERNOCONTEXT'
-    ) -> popMode
+    :
+      'НАСЕРВЕРЕБЕЗКОНТЕКСТА' -> popMode
     ;
 
 ANNOTATION_ATCLIENTATSERVERNOCONTEXT_SYMBOL
-    : (
+    :
       'НАКЛИЕНТЕНАСЕРВЕРЕБЕЗКОНТЕКСТА'
-    | 'ATCLIENTATSERVERNOCONTEXT'
-    ) -> popMode
+
+ -> popMode
     ;
 
 ANNOTATION_ATCLIENTATSERVER_SYMBOL
-    : (
-      'НАКЛИЕНТЕНАСЕРВЕРЕ'
-    | 'ATCLIENTATSERVER'
-    ) -> popMode
-    ;
+    :
+      'НАКЛИЕНТЕНАСЕРВЕРЕ' -> popMode;
 
 ANNOTATION_ATCLIENT_SYMBOL
-    : (
+    :
       'НАКЛИЕНТЕ'
-    | 'ATCLIENT'
-    ) -> popMode
+
+ -> popMode
     ;
 
 ANNOTATION_ATSERVER_SYMBOL
-    : ( 'НАСЕРВЕРЕ'
-    | 'ATSERVER'
-    ) -> popMode
+    : 'НАСЕРВЕРЕ'
+
+ -> popMode
     ;
 
 ANNOTATION_CUSTOM_SYMBOL
