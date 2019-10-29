@@ -85,7 +85,6 @@ public class Tokenizer {
     }
 
     BSLLexer lexer = new BSLLexer(input);
-    lexer.setInputStream(input);
     lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
 
     CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
