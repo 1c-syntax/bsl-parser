@@ -21,6 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
+import com.github._1c_syntax.bsl.parser.util.Lazy;
 import org.antlr.v4.runtime.*;
 import org.apache.commons.io.IOUtils;
 
@@ -35,14 +36,24 @@ import static org.antlr.v4.runtime.Token.EOF;
 
 public class Tokenizer {
 
-  private String content;
-  private CommonTokenStream tokenStream;
+  private final String content;
+  private Lazy<CommonTokenStream> tokenStream = new Lazy<>(this::computeTokenStream);
+  private Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
+  private Lazy<BSLParser.FileContext> ast = new Lazy<>(this::computeAST);
 
   public Tokenizer(String content) {
     this.content = content;
   }
 
-  public List<Token> computeTokens() {
+  public List<Token> getTokens() {
+    return tokens.getOrCompute();
+  }
+
+  public BSLParser.FileContext getAst() {
+    return ast.getOrCompute();
+  }
+
+  private List<Token> computeTokens() {
     List<Token> tokensTemp = new ArrayList<>(getTokenStream().getTokens());
 
     Token lastToken = tokensTemp.get(tokensTemp.size() - 1);
@@ -50,26 +61,16 @@ public class Tokenizer {
       tokensTemp.remove(tokensTemp.size() - 1);
     }
 
-    return new ArrayList<>(tokensTemp);
+    return tokensTemp;
   }
 
-  public BSLParser.FileContext computeAST() {
+  private BSLParser.FileContext computeAST() {
     BSLParser parser = new BSLParser(getTokenStream());
     parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
     return parser.file();
   }
 
-  private CommonTokenStream getTokenStream() {
-    if (tokenStream == null) {
-      computeTokenStream();
-    }
-
-    final CommonTokenStream tokenStreamUnboxed = tokenStream;
-    tokenStreamUnboxed.seek(0);
-    return tokenStreamUnboxed;
-  }
-
-  private void computeTokenStream() {
+  private CommonTokenStream computeTokenStream() {
     requireNonNull(content);
     CharStream input;
 
@@ -89,7 +90,13 @@ public class Tokenizer {
 
     CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
     tempTokenStream.fill();
-    tokenStream = tempTokenStream;
+    return tempTokenStream;
+  }
+
+  private CommonTokenStream getTokenStream() {
+    final CommonTokenStream tokenStreamUnboxed = tokenStream.getOrCompute();
+    tokenStreamUnboxed.seek(0);
+    return tokenStreamUnboxed;
   }
 
 }
