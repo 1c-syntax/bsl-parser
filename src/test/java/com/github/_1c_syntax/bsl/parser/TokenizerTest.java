@@ -32,7 +32,7 @@ class TokenizerTest {
     void computeTokens() {
 
         Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда");
-        final List<Token> tokens = tokenizer.computeTokens();
+        final List<Token> tokens = tokenizer.getTokens();
         assert tokens.size() == 7;
 
     }
@@ -41,7 +41,7 @@ class TokenizerTest {
     void computeAST() {
 
         Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда");
-        final BSLParser.FileContext ast = tokenizer.computeAST();
+        final BSLParser.FileContext ast = tokenizer.getAst();
         assert ast.children.size() == 7;
         assert ast.getStart().getType() == BSLParser.IF_KEYWORD;
         assert ast.getStop().getType() == BSLParser.THEN_KEYWORD;
