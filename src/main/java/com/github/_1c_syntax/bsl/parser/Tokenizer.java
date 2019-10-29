@@ -78,7 +78,8 @@ public class Tokenizer {
                 UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream)
         ) {
             ubis.skipBOM();
-            input = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
+            CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
+            input = new CaseChangingCharStream(inputTemp, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
