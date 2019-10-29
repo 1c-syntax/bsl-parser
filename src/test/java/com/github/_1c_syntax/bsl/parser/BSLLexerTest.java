@@ -48,7 +48,8 @@ class BSLLexerTest {
       UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
       ubis.skipBOM();
 
-      input = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
+      CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
+      input = new CaseChangingCharStream(inputTemp, true);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -221,6 +222,14 @@ class BSLLexerTest {
   void testNew() {
     assertMatch("Новый", BSLLexer.NEW_KEYWORD);
     assertMatch("Поле.Новый", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+  }
+
+  @Test
+  void testElse() {
+    assertMatch("Иначе", BSLLexer.ELSE_KEYWORD);
+    assertMatch("ИНАЧЕ", BSLLexer.ELSE_KEYWORD);
+    assertMatch("ИнАчЕ", BSLLexer.ELSE_KEYWORD);
+    assertMatch("Поле.Иначе", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
