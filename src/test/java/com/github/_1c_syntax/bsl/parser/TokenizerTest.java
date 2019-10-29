@@ -26,12 +26,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-class BSLTokenizerTest {
+class TokenizerTest {
 
     @Test
     void computeTokens() {
 
-        BSLTokenizer tokenizer = new BSLTokenizer("Если Условие() Тогда");
+        Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда");
         final List<Token> tokens = tokenizer.computeTokens();
         assert tokens.size() == 7;
 
@@ -40,7 +40,7 @@ class BSLTokenizerTest {
     @Test
     void computeAST() {
 
-        BSLTokenizer tokenizer = new BSLTokenizer("Если Условие() Тогда");
+        Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда");
         final BSLParser.FileContext ast = tokenizer.computeAST();
         assert ast.children.size() == 7;
         assert ast.getStart().getType() == BSLParser.IF_KEYWORD;

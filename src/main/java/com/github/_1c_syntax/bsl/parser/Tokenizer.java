@@ -33,12 +33,12 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static org.antlr.v4.runtime.Token.EOF;
 
-public class BSLTokenizer {
+public class Tokenizer {
 
     private String content;
     private CommonTokenStream tokenStream;
 
-    public BSLTokenizer(String content) {
+    public Tokenizer(String content) {
         this.content = content;
     }
 
