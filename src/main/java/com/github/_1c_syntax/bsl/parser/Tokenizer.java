@@ -35,62 +35,62 @@ import static org.antlr.v4.runtime.Token.EOF;
 
 public class Tokenizer {
 
-    private String content;
-    private CommonTokenStream tokenStream;
+  private String content;
+  private CommonTokenStream tokenStream;
 
-    public Tokenizer(String content) {
-        this.content = content;
+  public Tokenizer(String content) {
+    this.content = content;
+  }
+
+  public List<Token> computeTokens() {
+    List<Token> tokensTemp = new ArrayList<>(getTokenStream().getTokens());
+
+    Token lastToken = tokensTemp.get(tokensTemp.size() - 1);
+    if (lastToken.getType() == EOF) {
+      tokensTemp.remove(tokensTemp.size() - 1);
     }
 
-    public List<Token> computeTokens() {
-        List<Token> tokensTemp = new ArrayList<>(getTokenStream().getTokens());
+    return new ArrayList<>(tokensTemp);
+  }
 
-        Token lastToken = tokensTemp.get(tokensTemp.size() - 1);
-        if (lastToken.getType() == EOF) {
-            tokensTemp.remove(tokensTemp.size() - 1);
-        }
+  public BSLParser.FileContext computeAST() {
+    BSLParser parser = new BSLParser(getTokenStream());
+    parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+    return parser.file();
+  }
 
-        return new ArrayList<>(tokensTemp);
+  private CommonTokenStream getTokenStream() {
+    if (tokenStream == null) {
+      computeTokenStream();
     }
 
-    public BSLParser.FileContext computeAST() {
-        BSLParser parser = new BSLParser(getTokenStream());
-        parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        return parser.file();
+    final CommonTokenStream tokenStreamUnboxed = tokenStream;
+    tokenStreamUnboxed.seek(0);
+    return tokenStreamUnboxed;
+  }
+
+  private void computeTokenStream() {
+    requireNonNull(content);
+    CharStream input;
+
+    try (
+      InputStream inputStream = IOUtils.toInputStream(content, StandardCharsets.UTF_8);
+      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream)
+    ) {
+      ubis.skipBOM();
+      CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
+      input = new CaseChangingCharStream(inputTemp, true);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
 
-    private CommonTokenStream getTokenStream() {
-        if (tokenStream == null) {
-            computeTokenStream();
-        }
+    BSLLexer lexer = new BSLLexer(input);
+    lexer.setInputStream(input);
+    lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
 
-        final CommonTokenStream tokenStreamUnboxed = tokenStream;
-        tokenStreamUnboxed.seek(0);
-        return tokenStreamUnboxed;
-    }
-
-    private void computeTokenStream() {
-        requireNonNull(content);
-        CharStream input;
-
-        try (
-                InputStream inputStream = IOUtils.toInputStream(content, StandardCharsets.UTF_8);
-                UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream)
-        ) {
-            ubis.skipBOM();
-            CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
-            input = new CaseChangingCharStream(inputTemp, true);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        BSLLexer lexer = new BSLLexer(input);
-        lexer.setInputStream(input);
-        lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
-
-        CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
-        tempTokenStream.fill();
-        tokenStream = tempTokenStream;
-    }
+    CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
+    tempTokenStream.fill();
+    tokenStream = tempTokenStream;
+  }
 
 }
