@@ -65,11 +65,7 @@ idea {
 }
 
 jmh {
-    jvmArgsAppend = listOf(
-            "-XX:+UseParallelGC",
-            "--add-opens",
-            "java.base/java.lang=ALL-UNNAMED"
-    )
+    jvmArgsAppend = listOf("-XX:+UseParallelGC")
     isIncludeTests = true
     duplicateClassesStrategy = DuplicatesStrategy.WARN
     timeUnit = "s"
