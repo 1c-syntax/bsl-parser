@@ -71,12 +71,6 @@ jmh {
     timeUnit = "s"
 }
 
-//tasks.jmhJar {
-//    doFirst {
-//        File("build/jmh-generated-resources/test").mkdirs()
-//    }
-//}
-
 tasks.generateGrammarSource {
     arguments = arguments + "-visitor"
     arguments = arguments + "-package"
