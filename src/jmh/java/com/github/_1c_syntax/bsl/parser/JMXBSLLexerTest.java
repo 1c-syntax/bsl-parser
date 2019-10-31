@@ -21,9 +21,6 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.apache.commons.io.IOUtils;
 import org.openjdk.jmh.annotations.*;
@@ -45,7 +42,6 @@ public class JMXBSLLexerTest {
   private String content;
 
   public JMXBSLLexerTest() {
-
     final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     try (InputStream inputStream = classLoader.getResourceAsStream("Module.bsl")) {
       assert inputStream != null;
@@ -53,32 +49,16 @@ public class JMXBSLLexerTest {
     } catch (IOException e) {
       e.printStackTrace();
     }
-
   }
 
   @Benchmark
-  public void testCharStream() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, IOException {
+  public void testCharStream()
+    throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+
     Class<Lexer> lexerClass = (Class<Lexer>) Class.forName("com.github._1c_syntax.bsl.parser." + lexerClassName);
-    CommonTokenStream tokenStream = getTokenStream(content, lexerClass);
+    Lexer lexer = (Lexer) lexerClass.getDeclaredConstructors()[0].newInstance((Object) null);
 
-    tokenStream.getTokens();
-  }
-
-  private CommonTokenStream getTokenStream(String inputString, Class<Lexer> lexerClass) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
-
-    InputStream inputStream = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
-
-    UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
-    ubis.skipBOM();
-
-    CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
-    CharStream input = new CaseChangingCharStream(inputTemp, true);
-
-    Lexer lexer = (Lexer) lexerClass.getDeclaredConstructors()[0].newInstance(input);
-
-    CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-    tokenStream.fill();
-
-    return tokenStream;
+    Tokenizer tokenizer = new Tokenizer(content, lexer);
+    tokenizer.getTokens();
   }
 }
