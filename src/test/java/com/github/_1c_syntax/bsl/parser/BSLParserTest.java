@@ -824,6 +824,9 @@ class BSLParserTest {
     setInput("Новый(\"Массив\")");
     assertMatches(parser.newExpression());
 
+    setInput("Новый(\"Файл\").Существует()");
+    assertMatches(parser.newExpression());
+
     setInput("А");
     assertNotMatches(parser.newExpression());
 
