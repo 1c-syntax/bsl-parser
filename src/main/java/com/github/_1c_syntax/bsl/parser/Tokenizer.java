@@ -22,7 +22,12 @@
 package com.github._1c_syntax.bsl.parser;
 
 import com.github._1c_syntax.bsl.parser.util.Lazy;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -37,12 +42,18 @@ import static org.antlr.v4.runtime.Token.EOF;
 public class Tokenizer {
 
   private final String content;
+  private Lexer lexer;
   private Lazy<CommonTokenStream> tokenStream = new Lazy<>(this::computeTokenStream);
   private Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
   private Lazy<BSLParser.FileContext> ast = new Lazy<>(this::computeAST);
 
   public Tokenizer(String content) {
+    this(content, null);
+  }
+
+  protected Tokenizer(String content, Lexer lexer) {
     this.content = content;
+    this.lexer = lexer;
   }
 
   public List<Token> getTokens() {
@@ -85,7 +96,11 @@ public class Tokenizer {
       throw new RuntimeException(e);
     }
 
-    BSLLexer lexer = new BSLLexer(input);
+    if (lexer == null) {
+      lexer = new BSLLexer(input);
+    } else {
+      lexer.setInputStream(input);
+    }
     lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
 
     CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);

@@ -10,6 +10,7 @@ plugins {
     id("com.github.hierynomus.license") version "0.14.0"
     id("org.sonarqube") version "2.6.2"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
+    id("me.champeau.gradle.jmh") version "0.5.0-rc-2"
 }
 
 repositories {
@@ -51,11 +52,23 @@ sourceSets {
     }
 }
 
+sourceSets.jmh {
+    java.srcDirs("src/main/jmh")
+    resources.srcDirs("src/jmh/resources")
+}
+
 idea {
     module {
         // Marks the already(!) added srcDir as "generated"
         generatedSourceDirs = generatedSourceDirs + file("src/main/gen")
     }
+}
+
+jmh {
+    jvmArgsAppend = listOf("-XX:+UseParallelGC")
+    isIncludeTests = true
+    duplicateClassesStrategy = DuplicatesStrategy.WARN
+    timeUnit = "s"
 }
 
 tasks.generateGrammarSource {
