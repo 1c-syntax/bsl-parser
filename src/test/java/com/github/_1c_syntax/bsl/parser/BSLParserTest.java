@@ -463,6 +463,9 @@ class BSLParserTest {
     setInput("Выполнить");
     assertNotMatches(parser.complexIdentifier());
 
+    setInput("Новый(\"Файл\").Существует()");
+    assertMatches(parser.complexIdentifier());
+
   }
 
   @Test
@@ -622,6 +625,12 @@ class BSLParserTest {
     setInput("Идентификатор[1].Метод().Метод2().Свойство.Метод()[1]");
     assertMatches(parser.expression());
     setInput("Идентификатор.Свойство.Метод().Метод2().Свойство.Метод()[1]");
+    assertMatches(parser.expression());
+
+    setInput("Новый Файл().Существует()");
+    assertMatches(parser.expression());
+
+    setInput("(Новый Файл()).Существует()");
     assertMatches(parser.expression());
 
     setInput("Выполнить");
@@ -822,9 +831,6 @@ class BSLParserTest {
     assertMatches(parser.newExpression());
 
     setInput("Новый(\"Массив\")");
-    assertMatches(parser.newExpression());
-
-    setInput("Новый(\"Файл\").Существует()");
     assertMatches(parser.newExpression());
 
     setInput("А");
