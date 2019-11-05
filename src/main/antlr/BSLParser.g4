@@ -222,7 +222,7 @@ statement
     )
     | SEMICOLON
     ;
-assignment       : (IDENTIFIER | globalMethodCall) acceptor* preprocessor* ASSIGN (preprocessor* expression)?;
+assignment       : (IDENTIFIER | globalMethodCall) acceptor? preprocessor* ASSIGN (preprocessor* expression)?;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
 expression       : member (preprocessor* operation preprocessor* member)*;
@@ -238,7 +238,7 @@ globalMethodCall : methodName doCall;
 methodName       : IDENTIFIER;
 complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) modifier*;
 modifier         : accessProperty | accessIndex| accessCall;
-acceptor         : modifier (accessProperty | accessIndex);
+acceptor         : modifier* (accessProperty | accessIndex);
 accessCall       : DOT methodCall;
 accessIndex      : LBRACK expression RBRACK;
 accessProperty   : DOT IDENTIFIER;
