@@ -230,7 +230,7 @@ operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | comp
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;
 unaryModifier    : NOT_KEYWORD | MINUS | PLUS;
-member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ));
+member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ) modifier*);
 newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
 typeName         : IDENTIFIER;
 methodCall       : methodName doCall;
