@@ -335,6 +335,7 @@ USE_IDENTIFIER : USE_LETTER ( USE_LETTER | DIGIT )* -> type(PREPROC_IDENTIFIER),
 mode DOT_MODE;
 DOT_WHITE_SPACE
     : [ \t\f]
-    -> channel(HIDDEN)
+    -> channel(HIDDEN),
+       type(WHITE_SPACE)
     ;
 DOT_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
