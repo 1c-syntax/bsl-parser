@@ -7,10 +7,11 @@ plugins {
     jacoco
     java
     antlr
-    id("com.github.hierynomus.license") version "0.14.0"
-    id("org.sonarqube") version "2.6.2"
+    id("com.github.hierynomus.license") version "0.15.0"
+    id("org.sonarqube") version "2.8"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
-    id("me.champeau.gradle.jmh") version "0.5.0-rc-2"
+    id("com.github.ben-manes.versions") version "0.27.0"
+    id("me.champeau.gradle.jmh") version "0.5.0"
 }
 
 repositories {
@@ -30,12 +31,15 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-dependencies {
-    compile("com.github.nixel2007", "antlr4", "65ca40b0584d426a7e2ee1d687a48b3eef829827")
-    antlr("com.github.nixel2007", "antlr4", "65ca40b0584d426a7e2ee1d687a48b3eef829827")
+val antlrVersion = "65ca40b0584d426a7e2ee1d687a48b3eef829827"
+val junitVersion = "5.6.0-M1"
 
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
-    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
+dependencies {
+    compile("com.github.nixel2007", "antlr4", antlrVersion)
+    antlr("com.github.nixel2007", "antlr4", antlrVersion)
+
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
+    testRuntime("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     compile("commons-io", "commons-io", "2.6")
@@ -72,11 +76,13 @@ jmh {
 }
 
 tasks.generateGrammarSource {
-    arguments = arguments + "-visitor"
-    arguments = arguments + "-package"
-    arguments = arguments + "com.github._1c_syntax.bsl.parser"
-    arguments = arguments + "-encoding"
-    arguments = arguments + "utf8"
+    arguments = listOf(
+            "-visitor",
+            "-package",
+            "com.github._1c_syntax.bsl.parser",
+            "-encoding",
+            "utf8"
+    )
     outputDirectory = file("src/main/gen/com/github/_1c_syntax/bsl/parser")
 }
 
