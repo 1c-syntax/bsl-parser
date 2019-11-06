@@ -39,7 +39,7 @@ LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 WHITE_SPACE: [ \n\r\t\f] -> channel(HIDDEN);
 
 // separators
-DOT: '.';
+DOT: '.' -> pushMode(DOT_MODE);
 LBRACK: '[';
 RBRACK: ']';
 LPAREN: '(';
@@ -67,29 +67,10 @@ BAR: '|';
 TILDA: '~' -> pushMode(LABEL_MODE);
 
 // literals
-TRUE
-    :
-    { lastTokenType != DOT }?
-    ( 'ИСТИНА'
-    | 'TRUE' )
-    ;
-FALSE
-    :
-    { lastTokenType != DOT }?
-    ( 'ЛОЖЬ'
-    | 'FALSE' )
-    ;
-UNDEFINED
-    :
-    { lastTokenType != DOT }?
-    ( 'НЕОПРЕДЕЛЕНО'
-    | 'UNDEFINED' )
-    ;
-NULL
-    :
-    { lastTokenType != DOT }?
-    'NULL'
-    ;
+TRUE : 'ИСТИНА' | 'TRUE';
+FALSE : 'ЛОЖЬ' | 'FALSE';
+UNDEFINED : 'НЕОПРЕДЕЛЕНО' | 'UNDEFINED';
+NULL : 'NULL';
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
@@ -100,210 +81,42 @@ STRINGTAIL: BAR (~["\n\r] | '""')* '"';
 STRINGPART: BAR (~[\r\n"] | '""')*;
 
 // keywords
-PROCEDURE_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ПРОЦЕДУРА'
-    | 'PROCEDURE' )
-    ;
-FUNCTION_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ФУНКЦИЯ'
-    | 'FUNCTION' )
-    ;
-ENDPROCEDURE_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'КОНЕЦПРОЦЕДУРЫ'
-    | 'ENDPROCEDURE' )
-    ;
-ENDFUNCTION_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'КОНЕЦФУНКЦИИ'
-    | 'ENDFUNCTION' )
-    ;
-EXPORT_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ЭКСПОРТ'
-    | 'EXPORT' )
-    ;
-VAL_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ЗНАЧ'
-    | 'VAL' )
-    ;
-ENDIF_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'КОНЕЦЕСЛИ'
-    | 'ENDIF' )
-    ;
-ENDDO_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'КОНЕЦЦИКЛА'
-    | 'ENDDO' )
-    ;
-IF_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ЕСЛИ'
-    | 'IF' )
-    ;
-ELSIF_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ИНАЧЕЕСЛИ'
-    | 'ELSIF' )
-    ;
-ELSE_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ИНАЧЕ'
-    | 'ELSE' )
-    ;
-THEN_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ТОГДА'
-    | 'THEN' )
-    ;
-WHILE_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ПОКА'
-    | 'WHILE' )
-    ;
-DO_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ЦИКЛ'
-    | 'DO' )
-    ;
-FOR_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ДЛЯ'
-    | 'FOR' );
-TO_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ПО'
-    | 'TO' )
-    ;
-EACH_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'КАЖДОГО'
-    | 'EACH' )
-    ;
-IN_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ИЗ'
-    | 'IN' )
-    ;
-TRY_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ПОПЫТКА'
-    | 'TRY' )
-    ;
-EXCEPT_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ИСКЛЮЧЕНИЕ'
-    | 'EXCEPT' )
-    ;
-ENDTRY_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'КОНЕЦПОПЫТКИ'
-    | 'ENDTRY' )
-    ;
-RETURN_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ВОЗВРАТ'
-    | 'RETURN' )
-    ;
-CONTINUE_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ПРОДОЛЖИТЬ'
-    | 'CONTINUE' )
-    ;
-RAISE_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ВЫЗВАТЬИСКЛЮЧЕНИЕ'
-    | 'RAISE' )
-    ;
-VAR_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ПЕРЕМ'
-    | 'VAR' );
-NOT_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'НЕ'
-    | 'NOT' )
-    ;
-OR_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ИЛИ'
-    | 'OR' )
-    ;
-AND_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'И'
-    | 'AND' )
-    ;
-NEW_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'НОВЫЙ'
-    | 'NEW' )
-    ;
-GOTO_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ПЕРЕЙТИ'
-    | 'GOTO' )
-    ;
-BREAK_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ПРЕРВАТЬ'
-    | 'BREAK' )
-    ;
-EXECUTE_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ВЫПОЛНИТЬ'
-    | 'EXECUTE' )
-    ;
-ADDHANDLER_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'ДОБАВИТЬОБРАБОТЧИК'
-    | 'ADDHANDLER' )
-    ;
-REMOVEHANDLER_KEYWORD
-    :
-    { lastTokenType != DOT }?
-    ( 'УДАЛИТЬОБРАБОТЧИК'
-    | 'REMOVEHANDLER' )
-    ;
+PROCEDURE_KEYWORD : 'ПРОЦЕДУРА' | 'PROCEDURE';
+FUNCTION_KEYWORD : 'ФУНКЦИЯ' | 'FUNCTION';
+ENDPROCEDURE_KEYWORD : 'КОНЕЦПРОЦЕДУРЫ' | 'ENDPROCEDURE';
+ENDFUNCTION_KEYWORD : 'КОНЕЦФУНКЦИИ' | 'ENDFUNCTION';
+EXPORT_KEYWORD : 'ЭКСПОРТ' | 'EXPORT';
+VAL_KEYWORD : 'ЗНАЧ' | 'VAL';
+ENDIF_KEYWORD : 'КОНЕЦЕСЛИ' | 'ENDIF';
+ENDDO_KEYWORD : 'КОНЕЦЦИКЛА' | 'ENDDO';
+IF_KEYWORD : 'ЕСЛИ' | 'IF';
+ELSIF_KEYWORD : 'ИНАЧЕЕСЛИ' | 'ELSIF';
+ELSE_KEYWORD : 'ИНАЧЕ' | 'ELSE';
+THEN_KEYWORD : 'ТОГДА' | 'THEN';
+WHILE_KEYWORD : 'ПОКА' | 'WHILE';
+DO_KEYWORD : 'ЦИКЛ' | 'DO';
+FOR_KEYWORD : 'ДЛЯ' | 'FOR';
+TO_KEYWORD : 'ПО' | 'TO';
+EACH_KEYWORD : 'КАЖДОГО' | 'EACH';
+IN_KEYWORD : 'ИЗ' | 'IN';
+TRY_KEYWORD : 'ПОПЫТКА' | 'TRY';
+EXCEPT_KEYWORD : 'ИСКЛЮЧЕНИЕ' | 'EXCEPT';
+ENDTRY_KEYWORD : 'КОНЕЦПОПЫТКИ' | 'ENDTRY';
+RETURN_KEYWORD : 'ВОЗВРАТ' | 'RETURN';
+CONTINUE_KEYWORD : 'ПРОДОЛЖИТЬ' | 'CONTINUE';
+RAISE_KEYWORD : 'ВЫЗВАТЬИСКЛЮЧЕНИЕ' | 'RAISE';
+VAR_KEYWORD : 'ПЕРЕМ' | 'VAR';
+NOT_KEYWORD : 'НЕ' | 'NOT';
+OR_KEYWORD  : 'ИЛИ'| 'OR';
+AND_KEYWORD : 'И' | 'AND';
+NEW_KEYWORD : 'НОВЫЙ' | 'NEW';
+GOTO_KEYWORD : 'ПЕРЕЙТИ' | 'GOTO';
+BREAK_KEYWORD : 'ПРЕРВАТЬ' | 'BREAK';
+EXECUTE_KEYWORD : 'ВЫПОЛНИТЬ' | 'EXECUTE';
+ADDHANDLER_KEYWORD : 'ДОБАВИТЬОБРАБОТЧИК' | 'ADDHANDLER';
+REMOVEHANDLER_KEYWORD : 'УДАЛИТЬОБРАБОТЧИК' | 'REMOVEHANDLER';
 
-fragment LETTER: [\p{Letter}] | '_';   
+fragment LETTER: [\p{Letter}] | '_';
 IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
 UNKNOWN: . -> channel(HIDDEN);
@@ -391,7 +204,7 @@ PREPROC_MOBILEAPPSERVER_SYMBOL
     ;
 PREPROC_MOBILECLIENT_SYMBOL
     :
-      'МОБИЛЬНЫЙКЛИЕНТ' 
+      'МОБИЛЬНЫЙКЛИЕНТ'
     | 'MOBILECLIENT'
     ;
 PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
@@ -519,3 +332,10 @@ USE_WHITE_SPACE
 USE_STRING : '"' (~["\n\r])* '"' -> type(PREPROC_STRING), popMode;
 USE_IDENTIFIER : USE_LETTER ( USE_LETTER | DIGIT )* -> type(PREPROC_IDENTIFIER), popMode;
 
+mode DOT_MODE;
+DOT_WHITE_SPACE
+    : [ \t\f]
+    -> channel(HIDDEN),
+       type(WHITE_SPACE)
+    ;
+DOT_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
