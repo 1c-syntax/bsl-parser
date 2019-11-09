@@ -22,30 +22,40 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TokenizerTest {
 
     @Test
     void computeTokens() {
+        // given
+        Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда КонецЕсли");
 
-        Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда");
+        // when
         final List<Token> tokens = tokenizer.getTokens();
-        assert tokens.size() == 7;
 
+        // then
+        assertThat(tokens).hasSize(9);
     }
 
     @Test
     void computeAST() {
+        // given
+        Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда КонецЕсли");
 
-        Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда");
+        // when
         final BSLParser.FileContext ast = tokenizer.getAst();
-        assert ast.children.size() == 7;
-        assert ast.getStart().getType() == BSLParser.IF_KEYWORD;
-        assert ast.getStop().getType() == BSLParser.THEN_KEYWORD;
 
+        // then
+        BSLParser.FileCodeBlockContext fileCodeBlock = ast.fileCodeBlock();
+        assertThat(fileCodeBlock).isNotNull();
+        assertThat(fileCodeBlock.getStart().getType()).isEqualTo(BSLParser.IF_KEYWORD);
+        assertThat(fileCodeBlock.getStop().getType()).isEqualTo(BSLParser.ENDIF_KEYWORD);
     }
 
 }
