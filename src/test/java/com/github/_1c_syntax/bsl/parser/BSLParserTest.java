@@ -23,23 +23,27 @@ package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.IOUtils;
-//import org.testng.annotations.ITestAnnotation;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BSLParserTest {
-  private BSLParser parser = new BSLParser(null);
-  private BSLLexer lexer = new BSLLexer(null);
+
+  private BSLParser parser;
 
   private void setInput(String inputString) {
     setInput(inputString, BSLLexer.DEFAULT_MODE);
@@ -48,31 +52,34 @@ class BSLParserTest {
   private void setInput(String inputString, int mode) {
     CharStream input;
 
-    try {
+    try (
       InputStream inputStream = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
-
       UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
+      Reader inputStreamReader = new InputStreamReader(ubis, StandardCharsets.UTF_8)
+    ) {
       ubis.skipBOM();
-
-      CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
-      input = new CaseChangingCharStream(inputTemp, true);
-   
+      CodePointCharStream inputTemp = CharStreams.fromReader(inputStreamReader);
+      input = new CaseChangingCharStream(inputTemp);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    lexer.setInputStream(input);
+    BSLLexer lexer = new BSLLexer(input);
+    lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
     lexer.mode(mode);
 
     CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-    parser.setTokenStream(tokenStream);
+    tokenStream.fill();
+
+    parser = new BSLParser(tokenStream);
+    parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
   }
 
   private void assertMatches(ParseTree tree) throws RecognitionException {
 
     if (parser.getNumberOfSyntaxErrors() != 0) {
       throw new RecognitionException(
-        "Syntax error while parsing:\n" + parser.getTokenStream().getText(),
+        "Syntax error while parsing:\n" + parser.getInputStream().getText(),
         parser,
         parser.getInputStream(),
         parser.getContext()
@@ -89,12 +96,21 @@ class BSLParserTest {
         boolean parseSuccess = ((BSLLexer) parser.getInputStream().getTokenSource())._hitEOF;
         if (!parseSuccess) {
           throw new RecognitionException(
-                  "Parse error EOF don't hit\n" + parser.getTokenStream().getText(),
-                  parser,
-                  parser.getInputStream(),
-                  parser.getContext()
+            "Parse error EOF don't hit\n" + parser.getInputStream().getText(),
+            parser,
+            parser.getInputStream(),
+            parser.getContext()
           );
         }
+      }
+
+      if (tree.getChildCount() == 0 && ((ParserRuleContext) tree).getStart() != null) {
+//        throw new RecognitionException(
+//          "Node without children and with filled start token\n" + parser.getInputStream().getText(),
+//          parser,
+//          parser.getInputStream(),
+//          parser.getContext()
+//        );
       }
     }
 
@@ -105,7 +121,10 @@ class BSLParserTest {
   }
 
   private void assertNotMatches(ParseTree tree) {
-    assertThrows(RecognitionException.class, () -> assertMatches(tree));
+    assertThat(tree).satisfiesAnyOf(
+      (parseTree) -> assertThat(parseTree.getChildCount()).isEqualTo(0),
+      (parseTree) -> assertThrows(RecognitionException.class, () -> assertMatches(tree))
+    );
   }
 
   @Test
@@ -115,36 +134,36 @@ class BSLParserTest {
     assertNotMatches(parser.file());
 
     setInput("Перем А; \n" +
-             "Перем Б; \n" +
-             "Сообщить();"
+      "Перем Б; \n" +
+      "Сообщить();"
     );
     assertMatches(parser.file());
 
     setInput("Перем А; \n" +
-            "Перем Б; \n" +
-            "Процедура В()\n" +
-            "КонецПроцедуры\n" +
-            "Сообщить();\n"
+      "Перем Б; \n" +
+      "Процедура В()\n" +
+      "КонецПроцедуры\n" +
+      "Сообщить();\n"
     );
     assertMatches(parser.file());
 
     setInput("#!\n" +
-            "#Если Сервер Тогда\n" +
-            "Перем А; \n" +
-            "Перем Б; \n" +
-            "#Область Г\n" +
-            "Процедура В()\n" +
-            "КонецПроцедуры\n" +
-            "#КонецОбласти\n" +
-            "Сообщить();\n" +
-            "#КонецЕсли\n"
+      "#Если Сервер Тогда\n" +
+      "Перем А; \n" +
+      "Перем Б; \n" +
+      "#Область Г\n" +
+      "Процедура В()\n" +
+      "КонецПроцедуры\n" +
+      "#КонецОбласти\n" +
+      "Сообщить();\n" +
+      "#КонецЕсли\n"
     );
     assertMatches(parser.file());
 
   }
 
   @Test
-  void testShebang(){
+  void testShebang() {
 
     setInput("#!");
     assertMatches(parser.shebang());
@@ -604,20 +623,20 @@ class BSLParserTest {
     assertMatches(parser.expression());
 
     setInput("A1 + \n" +
-            "#Если (Клиент) Тогда\n" +
-            "А +\n" +
-            "#КонецЕсли\n" +
-            "#Если Клиент Тогда\n" +
-            "Б +\n" +
-            "#Иначе\n" +
-            "#Область Имя\n" +
-            "В(\n" +
-            "А + \n" +
-            "Б\n" +
-            ")\n" +
-            "#КонецОбласти\n" +
-            "#КонецЕсли\n" +
-            "+ С\n");
+      "#Если (Клиент) Тогда\n" +
+      "А +\n" +
+      "#КонецЕсли\n" +
+      "#Если Клиент Тогда\n" +
+      "Б +\n" +
+      "#Иначе\n" +
+      "#Область Имя\n" +
+      "В(\n" +
+      "А + \n" +
+      "Б\n" +
+      ")\n" +
+      "#КонецОбласти\n" +
+      "#КонецЕсли\n" +
+      "+ С\n");
     assertMatches(parser.expression());
 
     setInput("Метод()");
@@ -655,13 +674,13 @@ class BSLParserTest {
   @Test
   void tesForEach() {
     setInput("Для каждого Переменная Из Коллекция Цикл\n" +
-            "\t\n" +
-            "КонецЦикла;");
+      "\t\n" +
+      "КонецЦикла;");
     assertMatches(parser.forEachStatement());
 
     setInput("For Each varible In collection Do\n" +
-            "\n" +
-            "EndDo;");
+      "\n" +
+      "EndDo;");
     assertMatches(parser.forEachStatement());
 
   }

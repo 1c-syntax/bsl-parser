@@ -72,6 +72,6 @@ public class BSLExtendedParser extends BSLParser {
     lexer.setInputStream(input);
 
     CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-    this.setTokenStream(tokenStream);
+    this.setInputStream(tokenStream);
   }
 }
