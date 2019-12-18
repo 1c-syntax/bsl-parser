@@ -330,7 +330,7 @@ USE_WHITE_SPACE
     -> channel(HIDDEN)
     ;
 USE_STRING : '"' (~["\n\r])* '"' -> type(PREPROC_STRING), popMode;
-USE_IDENTIFIER : USE_LETTER ( USE_LETTER | DIGIT )* -> type(PREPROC_IDENTIFIER), popMode;
+USE_IDENTIFIER : ( USE_LETTER | DIGIT )+ -> type(PREPROC_IDENTIFIER), popMode;
 
 mode DOT_MODE;
 DOT_WHITE_SPACE

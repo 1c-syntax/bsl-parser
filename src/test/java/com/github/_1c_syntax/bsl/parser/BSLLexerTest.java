@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class BSLLexerTest {
@@ -98,6 +99,10 @@ class BSLLexerTest {
     assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать lib", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER);
     assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать \"lib\"", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_STRING);
     assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать lib-name", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER);
+    assertMatch(BSLLexer.PREPROCESSOR_MODE, "Использовать 1lib", BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER);
+
+    final List<Token> tokens = getTokens(BSLLexer.PREPROCESSOR_MODE, "Использовать 1lib");
+    assertThat(tokens.get(2).getText()).isEqualTo("1lib");
   }
 
   @Test
