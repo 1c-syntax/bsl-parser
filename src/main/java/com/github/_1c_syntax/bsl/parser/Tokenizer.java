@@ -97,7 +97,7 @@ public class Tokenizer {
     } else {
       lexer.setInputStream(input);
     }
-    //lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
+    lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
 
     CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
     tempTokenStream.fill();

@@ -225,10 +225,11 @@ statement
      | compositionCall
      | SEMICOLON
     ;
-assignment       : lValue preprocessor* ASSIGN preprocessor* expression;
+assignment       : lValue preprocessor* ASSIGN expression;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
 expression       : preprocessor expression
+                 | expression preprocessor
                  | IDENTIFIER
                  | methodCall
                  | ternaryOperator
@@ -255,7 +256,7 @@ mathOperation           : PLUS | MINUS;
 newExpression           : NEW_KEYWORD (typeName doCall? | doCall);
 typeName                : IDENTIFIER;
 methodCall              : methodName=IDENTIFIER doCall;
-composition             : (IDENTIFIER | methodCall) member*;
+composition             : (IDENTIFIER | methodCall | newExpression|ternaryOperator| LPAREN composition RPAREN) member*;
 compositionCall         : composition DOT methodCall;
 member                  : DOT accessProperty
                         | DOT methodCall
