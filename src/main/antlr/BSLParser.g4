@@ -240,17 +240,15 @@ expression       : preprocessor expression
                  | unaryMathOperation expression
                  | expression numberoperation expression
                  | expression mathOperation expression
-                 | unaryLogicalOperation expression
+                 | NOT_KEYWORD expression
                  | expression compareOperation expression
-                 | expression boolAndOperation expression
-                 | expression boolOrOperation expression
+                 | expression AND_KEYWORD expression
+                 | expression OR_KEYWORD expression
                  | preprocessor
                  ;
-boolAndOperation        : AND_KEYWORD;
-boolOrOperation         : OR_KEYWORD;
+
 numberoperation         : MUL | QUOTIENT | MODULO;
 compareOperation        : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
-unaryLogicalOperation   : NOT_KEYWORD;
 unaryMathOperation      : PLUS | MINUS;
 mathOperation           : PLUS | MINUS;
 newExpression           : NEW_KEYWORD (typeName doCall? | doCall);

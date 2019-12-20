@@ -862,31 +862,11 @@ class BSLParserTest {
   @Test
   void TestUnaryModifier() {
 
-    setInput("НЕ");
-    assertMatches(parser.unaryLogicalOperation());
-
     setInput("-");
     assertMatches(parser.unaryMathOperation());
 
     setInput("+");
     assertMatches(parser.unaryMathOperation());
-
-    setInput("А");
-    assertNotMatches(parser.unaryLogicalOperation());
-
-  }
-
-  @Test
-  void TestBoolOperation() {
-
-    setInput("И");
-    assertMatches(parser.boolAndOperation());
-
-    setInput("ИЛИ");
-    assertMatches(parser.boolOrOperation());
-
-    setInput("НЕ");
-    assertMatches(parser.unaryLogicalOperation());
 
   }
 
