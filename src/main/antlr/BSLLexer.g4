@@ -72,7 +72,7 @@ FALSE : 'ЛОЖЬ' | 'FALSE';
 UNDEFINED : 'НЕОПРЕДЕЛЕНО' | 'UNDEFINED';
 NULL : 'NULL';
 DECIMAL: DIGIT+;
-DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
+DATETIME: SQUOTE (DIGIT DIGIT DIGIT DIGIT DIGIT DIGIT DIGIT DIGIT )(DIGIT DIGIT DIGIT DIGIT DIGIT DIGIT)? SQUOTE?; // TODO: Честная регулярка
 
 FLOAT : DIGIT+ '.' DIGIT*;
 STRING: '"' (~[\r\n"] | '""')* '"';

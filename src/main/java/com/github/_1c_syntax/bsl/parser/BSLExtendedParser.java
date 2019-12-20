@@ -21,57 +21,63 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.PredictionMode;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public class BSLExtendedParser extends BSLParser {
 
-  private BSLLexer lexer = new BSLLexer(null);
+    CommonTokenStream tokenStream;
+    private BSLLexer lexer = new BSLLexer(null);
 
-  public BSLExtendedParser() {
-    super(null);
-  }
-
-  public BSLExtendedParser(TokenStream input) {
-    super(input);
-  }
-
-  public BSLParser.FileContext parseFile(Path path) {
-    prepareParser(path);
-    return file();
-  }
-
-  public BSLParser.FileContext parseFile(File file) {
-    prepareParser(file.toPath());
-    return file();
-  }
-
-  private void prepareParser(Path path) {
-
-    CharStream input;
-
-    try (FileInputStream fis = new FileInputStream(path.toAbsolutePath().toString());
-      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(fis)
-    ) {
-
-      ubis.skipBOM();
-
-      input = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    public BSLExtendedParser() {
+        super(null);
     }
 
-    lexer.setInputStream(input);
+    public BSLExtendedParser(TokenStream input) {
+        super(input);
+    }
 
-    CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-    this.setTokenStream(tokenStream);
-  }
+    public BSLParser.FileContext parseFile(Path path) {
+        prepareParser(path);
+        return file();
+    }
+
+    public BSLParser.FileContext parseFile(File file) {
+        prepareParser(file.toPath());
+        try {
+            this.getInterpreter().setPredictionMode(PredictionMode.SLL);
+            return file();
+        } catch (Exception ex) {
+            tokenStream.seek(0); // rewind input stream
+            this.reset();
+            this.getInterpreter().setPredictionMode(PredictionMode.LL);
+        }
+
+        return file();
+    }
+
+    private void prepareParser(Path path) {
+        this.removeErrorListener(ConsoleErrorListener.INSTANCE);
+        CharStream input;
+
+        try (InputStream fis = new BufferedInputStream(new FileInputStream(path.toAbsolutePath().toString()));
+             UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(fis)
+        ) {
+
+            ubis.skipBOM();
+
+            input =  new CaseChangingCharStream(CharStreams.fromStream(ubis), true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        lexer.setInputStream(input);
+
+        tokenStream = new CommonTokenStream(lexer);
+        this.setInputStream(tokenStream);
+    }
 }

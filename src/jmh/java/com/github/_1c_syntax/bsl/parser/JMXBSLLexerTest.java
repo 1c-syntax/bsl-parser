@@ -24,41 +24,80 @@ package com.github._1c_syntax.bsl.parser;
 import org.antlr.v4.runtime.Lexer;
 import org.apache.commons.io.IOUtils;
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
+import org.openjdk.jmh.profile.GCProfiler;
+import org.openjdk.jmh.profile.StackProfiler;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
+import java.nio.Buffer;
+import java.nio.charset.Charset;
+import java.util.concurrent.TimeUnit;
 
-@BenchmarkMode(Mode.SampleTime)
-@Warmup(iterations = 2) // число итераций для прогрева нашей функции
-@Measurement(iterations = 2, batchSize = 2)
-@State(Scope.Thread)
+@BenchmarkMode(Mode.AverageTime)
+@Warmup(iterations = 3)
+@Measurement(iterations = 5)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class JMXBSLLexerTest {
 
-  @Param({"BSLLexer"})
-  public String lexerClassName;
 
-  private String content;
+    public static void main(String[] args) throws RunnerException {
+        Options opt = new OptionsBuilder()
+                .addProfiler(StackProfiler.class)
+                .addProfiler(GCProfiler.class)
+                .build();
 
-  public JMXBSLLexerTest() {
-    final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    try (InputStream inputStream = classLoader.getResourceAsStream("Module.bsl")) {
-      assert inputStream != null;
-      content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      e.printStackTrace();
+        new Runner(opt).run();
     }
-  }
 
-  @Benchmark
-  public void testCharStream()
-    throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    @Benchmark
+    @Fork(1)
+    public void testLexer(Blackhole blackhole, MyState state) throws IOException {
+        Tokenizer tokenizer;
+        if (state.mode.equals("As stream")) {
+            tokenizer = new Tokenizer(Thread.currentThread().getContextClassLoader().getResourceAsStream(state.fileName), state.lexer);
+        } else {
+            tokenizer = new Tokenizer(state.content, state.lexer);
+        }
+        blackhole.consume(tokenizer.getTokens());
+    }
 
-    Class<Lexer> lexerClass = (Class<Lexer>) Class.forName("com.github._1c_syntax.bsl.parser." + lexerClassName);
-    Lexer lexer = (Lexer) lexerClass.getDeclaredConstructors()[0].newInstance((Object) null);
+    @Benchmark
+    @Fork(1)
+    public void testParser(Blackhole blackhole, MyState state) throws IOException {
+        Tokenizer tokenizer;
+        if (state.mode.equals("As stream")) {
+            tokenizer = new Tokenizer(Thread.currentThread().getContextClassLoader().getResourceAsStream(state.fileName), state.lexer);
+        } else {
+            tokenizer = new Tokenizer(state.content, state.lexer);
+        }
+        blackhole.consume(tokenizer.getAst());
+    }
 
-    Tokenizer tokenizer = new Tokenizer(content, lexer);
-    tokenizer.getTokens();
-  }
+    @State(Scope.Thread)
+    public static class MyState {
+
+        public String lexerClassName = "BSLLexer";
+        @Param({"As stream", "As text"})
+        public String mode;
+        public Lexer lexer;
+        private String fileName = "Module.bsl";
+        private String content;
+
+        public String getContent() {
+            return content;
+        }
+
+        @Setup
+        public void init() throws Exception {
+            Class<?> lexerClass = (Class<Lexer>) Class.forName("com.github._1c_syntax.bsl.parser." + lexerClassName);
+            lexer = (Lexer) lexerClass.getDeclaredConstructors()[0].newInstance((Object) null);
+            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            content = IOUtils.toString(new BufferedInputStream(classLoader.getResourceAsStream(fileName)), Charset.defaultCharset());
+        }
+    }
 }
