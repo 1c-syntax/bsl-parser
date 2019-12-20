@@ -45,15 +45,12 @@ preproc_else     : PREPROC_ELSE_KEYWORD;
 preproc_endif    : PREPROC_ENDIF_KEYWORD;
 
 preproc_expression
-    : ( PREPROC_NOT_KEYWORD? (PREPROC_LPAREN preproc_expression PREPROC_RPAREN ) )
-    | preproc_logicalExpression
+    : PREPROC_LPAREN preproc_expression PREPROC_RPAREN
+    | PREPROC_NOT_KEYWORD preproc_expression
+    | preproc_expression preproc_boolOperation preproc_expression
+    | preproc_symbol
     ;
-preproc_logicalOperand
-    : (PREPROC_LPAREN PREPROC_NOT_KEYWORD? preproc_logicalOperand PREPROC_RPAREN)
-    | ( PREPROC_NOT_KEYWORD? preproc_symbol )
-    ;
-preproc_logicalExpression
-    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*;
+
 preproc_symbol
     : PREPROC_CLIENT_SYMBOL
     | PREPROC_ATCLIENT_SYMBOL
