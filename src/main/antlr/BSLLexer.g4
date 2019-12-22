@@ -21,18 +21,6 @@
  */
 lexer grammar BSLLexer;
 
-@lexer::members {
-    int lastTokenType = 0;
-
-    @Override
-    public void emit(Token token) {
-        super.emit(token);
-        if (token.getChannel() == DEFAULT_TOKEN_CHANNEL) {
-          lastTokenType = token.getType();
-        };
-    }
-}
-
 // commons
 fragment DIGIT: [0-9];
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
@@ -139,13 +127,11 @@ PREPROC_USE_KEYWORD
 
 PREPROC_REGION
     :
-    { lastTokenType == HASH }?
     ( 'ОБЛАСТЬ'
     | 'REGION' ) -> pushMode(REGION_MODE)
     ;
 PREPROC_END_REGION
     :
-    { lastTokenType == HASH }?
     ( 'КОНЕЦОБЛАСТИ'
     | 'ENDREGION' )
     ;
@@ -298,7 +284,6 @@ ANNOTATION_ATSERVER_SYMBOL
 
 ANNOTATION_CUSTOM_SYMBOL
     : (
-    { lastTokenType == AMPERSAND }?
     LETTER ( LETTER | DIGIT )*
     ) -> popMode
     ;
