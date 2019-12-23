@@ -62,7 +62,7 @@ QUESTION: '?';
 AMPERSAND: '&' -> pushMode(ANNOTATION_MODE);
 HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 
-SQUOTE: '\'';
+
 BAR: '|';
 TILDA: '~' -> pushMode(LABEL_MODE);
 
@@ -72,7 +72,9 @@ FALSE : 'ЛОЖЬ' | 'FALSE';
 UNDEFINED : 'НЕОПРЕДЕЛЕНО' | 'UNDEFINED';
 NULL : 'NULL';
 DECIMAL: DIGIT+;
-DATETIME: SQUOTE (DIGIT DIGIT DIGIT DIGIT DIGIT DIGIT DIGIT DIGIT )(DIGIT DIGIT DIGIT DIGIT DIGIT DIGIT)? SQUOTE?; // TODO: Честная регулярка
+DATETIME: QUOTE -> pushMode(DATE_MODE);
+
+QUOTE: '\'';
 
 FLOAT : DIGIT+ '.' DIGIT*;
 STRING: '"' (~[\r\n"] | '""')* '"';
@@ -339,3 +341,12 @@ DOT_WHITE_SPACE
        type(WHITE_SPACE)
     ;
 DOT_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
+
+mode DATE_MODE;
+DATE_WHITE_SPACE
+    : ~[\p{Nd}']
+    -> channel(HIDDEN)
+    ;
+QUOTE_DATE_MODE: QUOTE  -> type(DATETIME), popMode;
+DATE_PART : [\p{Nd}]+ -> type(DATETIME);
+

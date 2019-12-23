@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BSLParserTest {
   private BSLParser parser = new BSLParser(null);
@@ -565,6 +565,11 @@ class BSLParserTest {
 
     setInput("ИСТИНА");
     assertMatches(parser.constValue());
+
+    setInput("'000dg10101'");
+    assertMatches(parser.constValue());
+    setInput("'000dg1010sdaff a sffalgksg1'");
+    assertEquals("'00010101'", parser.constValue().getText());
   }
 
   @Test

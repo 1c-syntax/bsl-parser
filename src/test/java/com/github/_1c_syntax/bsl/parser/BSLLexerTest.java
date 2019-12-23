@@ -138,6 +138,11 @@ class BSLLexerTest {
     assertMatch("#Region EndIf", BSLLexer.HASH, BSLLexer.PREPROC_REGION, BSLLexer.PREPROC_IDENTIFIER);
 
   }
+  @Test
+  void testDate() {
+    assertMatch(BSLLexer.DEFAULT_TOKEN_CHANNEL,"'000dg10101'", BSLLexer.DATETIME, BSLLexer.DATETIME, BSLLexer.DATETIME, BSLLexer.DATETIME);
+    assertMatch(BSLLexer.DEFAULT_TOKEN_CHANNEL,"'00010101010101'", BSLLexer.DATETIME, BSLLexer.DATETIME, BSLLexer.DATETIME);
+  }
 
   @Test
   void testString() {

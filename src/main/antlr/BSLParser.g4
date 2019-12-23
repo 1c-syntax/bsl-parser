@@ -199,7 +199,7 @@ codeBlock        : statement*;
 numeric          : FLOAT | DECIMAL;
 paramList        : param (COMMA param)*;
 param            : VAL_KEYWORD? IDENTIFIER (ASSIGN constValue)?;
-constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
+constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | datetime=DATETIME+;
 multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
 string           : (STRING | multilineString)+;
 statement
