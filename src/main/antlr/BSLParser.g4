@@ -45,15 +45,12 @@ preproc_else     : PREPROC_ELSE_KEYWORD;
 preproc_endif    : PREPROC_ENDIF_KEYWORD;
 
 preproc_expression
-    : ( PREPROC_NOT_KEYWORD? (PREPROC_LPAREN preproc_expression PREPROC_RPAREN ) )
-    | preproc_logicalExpression
+    : PREPROC_LPAREN preproc_expression PREPROC_RPAREN
+    | PREPROC_NOT_KEYWORD preproc_expression
+    | preproc_expression preproc_boolOperation preproc_expression
+    | preproc_symbol
     ;
-preproc_logicalOperand
-    : (PREPROC_LPAREN PREPROC_NOT_KEYWORD? preproc_logicalOperand PREPROC_RPAREN)
-    | ( PREPROC_NOT_KEYWORD? preproc_symbol )
-    ;
-preproc_logicalExpression
-    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*;
+
 preproc_symbol
     : PREPROC_CLIENT_SYMBOL
     | PREPROC_ATCLIENT_SYMBOL
@@ -145,8 +142,9 @@ subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : (preprocessor | compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : (preprocessor | compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+procDeclaration  : beforeDeclaration PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : beforeDeclaration FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+beforeDeclaration: (preprocessor | compilerDirective | annotation)*;
 subCodeBlock     : subVars? codeBlock;
 
 // statements
@@ -165,33 +163,27 @@ elsifBranch
 elseBranch
     : ELSE_KEYWORD codeBlock
     ;
-whileStatement    : WHILE_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
+whileStatement    : WHILE_KEYWORD cycleBody;
+forStatement      : FOR_KEYWORD (forVarStatement|forEachStatement) cycleBody;
+forVarStatement   : IDENTIFIER ASSIGN expression TO_KEYWORD;
+forEachStatement  : EACH_KEYWORD IDENTIFIER IN_KEYWORD;
+cycleBody         : expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
+
 tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
-callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
-
-labelName         : IDENTIFIER;
-label             : TILDA labelName COLON;
-gotoStatement     : GOTO_KEYWORD TILDA labelName;
+labelRef          : TILDA labelName=IDENTIFIER;
+label             : labelRef COLON;
+gotoStatement     : GOTO_KEYWORD labelRef;
 
 tryCodeBlock :  codeBlock;
 exceptCodeBlock : codeBlock;
 
-event
-    : expression
-    ;
-
-handler
-    : expression
-    ;
 addHandlerStatement
-    : ADDHANDLER_KEYWORD event COMMA handler
+    : ADDHANDLER_KEYWORD event=expression COMMA handler=expression
     ;
 removeHandlerStatement
-    : REMOVEHANDLER_KEYWORD event COMMA handler
+    : REMOVEHANDLER_KEYWORD event=expression COMMA handler=expression
     ;
 
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
@@ -203,60 +195,70 @@ fileCodeBlockBeforeSub
 fileCodeBlock
     : codeBlock
     ;
-codeBlock        : (statement | preprocessor)*;
+codeBlock        : statement*;
 numeric          : FLOAT | DECIMAL;
 paramList        : param (COMMA param)*;
-param            : VAL_KEYWORD? IDENTIFIER (ASSIGN defaultValue)?;
-defaultValue     : constValue;
-constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
+param            : VAL_KEYWORD? IDENTIFIER (ASSIGN constValue)?;
+constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | datetime=DATETIME+;
 multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
 string           : (STRING | multilineString)+;
 statement
-     : (
-        (
-            ( label (callStatement | compoundStatement | assignment | preprocessor)?)
-            |
-            (callStatement | compoundStatement | assignment| preprocessor)
-        )
-        SEMICOLON?
-    )
-    | SEMICOLON
+     : preprocessor
+     | label statement
+     | assignment
+     | ifStatement
+     | whileStatement
+     | forStatement
+     | tryStatement
+     | returnStatement
+     | continueStatement
+     | breakStatement
+     | raiseStatement
+     | executeStatement
+     | gotoStatement
+     | addHandlerStatement
+     | removeHandlerStatement
+     | methodCall
+     | compositionCall
+     | SEMICOLON
     ;
-assignment       : lValue preprocessor* ASSIGN (preprocessor* expression)?;
+assignment       : lValue preprocessor* ASSIGN expression;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
-expression       : member (preprocessor* operation preprocessor* member)*;
-operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | compareOperation;
-compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
-boolOperation    : OR_KEYWORD | AND_KEYWORD;
-unaryModifier    : NOT_KEYWORD | MINUS | PLUS;
-member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ) modifier*);
-newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
-typeName         : IDENTIFIER;
-methodCall       : methodName doCall;
-globalMethodCall : methodName doCall;
-methodName       : IDENTIFIER;
-complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) modifier*;
-modifier         : accessProperty | accessIndex| accessCall;
-acceptor         : modifier* (accessProperty | accessIndex);
-lValue           : (IDENTIFIER | globalMethodCall) acceptor?;
-accessCall       : DOT methodCall;
-accessIndex      : LBRACK expression RBRACK;
-accessProperty   : DOT IDENTIFIER;
-doCall           : LPAREN callParamList RPAREN;
+expression       : preprocessor expression
+                 | expression preprocessor
+                 | IDENTIFIER
+                 | methodCall
+                 | ternaryOperator
+                 | constValue
+                 | newExpression
+                 | LPAREN expression RPAREN
+                 | composition
+                 | unaryMathOperation expression
+                 | expression numberoperation expression
+                 | expression mathOperation expression
+                 | NOT_KEYWORD expression
+                 | expression compareOperation expression
+                 | expression AND_KEYWORD expression
+                 | expression OR_KEYWORD expression
+                 | preprocessor
+                 ;
 
-compoundStatement
-    : ifStatement
-    | whileStatement
-    | forStatement
-    | forEachStatement
-    | tryStatement
-    | returnStatement
-    | continueStatement
-    | breakStatement
-    | raiseStatement
-    | executeStatement
-    | gotoStatement
-    | addHandlerStatement
-    | removeHandlerStatement
-    ;
+numberoperation         : MUL | QUOTIENT | MODULO;
+compareOperation        : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
+unaryMathOperation      : PLUS | MINUS;
+mathOperation           : PLUS | MINUS;
+newExpression           : NEW_KEYWORD (typeName doCall? | doCall);
+typeName                : IDENTIFIER;
+methodCall              : methodName=IDENTIFIER doCall;
+composition             : (IDENTIFIER | methodCall | newExpression|ternaryOperator| LPAREN composition RPAREN) member*;
+compositionCall         : composition DOT methodCall;
+member                  : DOT accessProperty
+                        | DOT methodCall
+                        | accessIndex;
+
+lValue                  : IDENTIFIER
+                        | composition (DOT accessProperty|accessIndex);
+accessIndex             : LBRACK expression RBRACK;
+accessProperty          : IDENTIFIER;
+doCall                  : LPAREN callParamList RPAREN;
