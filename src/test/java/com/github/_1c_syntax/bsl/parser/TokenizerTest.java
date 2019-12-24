@@ -25,6 +25,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TokenizerTest {
 
     @Test
-    void computeTokens() {
+    void computeTokens() throws IOException {
         // given
         Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда КонецЕсли");
 
@@ -44,7 +45,7 @@ class TokenizerTest {
     }
 
     @Test
-    void computeAST() {
+    void computeAST() throws IOException {
         // given
         Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда КонецЕсли");
 
@@ -52,7 +53,7 @@ class TokenizerTest {
         final BSLParser.FileContext ast = tokenizer.getAst();
 
         // then
-        BSLParser.FileCodeBlockContext fileCodeBlock = ast.fileCodeBlock();
+        BSLParser.CodeBlockContext fileCodeBlock = ast.fileCodeBlock;
         assertThat(fileCodeBlock).isNotNull();
         assertThat(fileCodeBlock.getStart().getType()).isEqualTo(BSLParser.IF_KEYWORD);
         assertThat(fileCodeBlock.getStop().getType()).isEqualTo(BSLParser.ENDIF_KEYWORD);

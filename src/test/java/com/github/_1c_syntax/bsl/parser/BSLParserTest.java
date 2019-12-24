@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BSLParserTest {
   private BSLParser parser = new BSLParser(null);
@@ -56,7 +56,7 @@ class BSLParserTest {
 
       CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
       input = new CaseChangingCharStream(inputTemp, true);
-   
+
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -65,14 +65,14 @@ class BSLParserTest {
     lexer.mode(mode);
 
     CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-    parser.setTokenStream(tokenStream);
+    parser.setInputStream(tokenStream);
   }
 
   private void assertMatches(ParseTree tree) throws RecognitionException {
 
     if (parser.getNumberOfSyntaxErrors() != 0) {
       throw new RecognitionException(
-        "Syntax error while parsing:\n" + parser.getTokenStream().getText(),
+        "Syntax error while parsing:\n" + parser.getInputStream().getText(),
         parser,
         parser.getInputStream(),
         parser.getContext()
@@ -89,10 +89,10 @@ class BSLParserTest {
         boolean parseSuccess = ((BSLLexer) parser.getInputStream().getTokenSource())._hitEOF;
         if (!parseSuccess) {
           throw new RecognitionException(
-                  "Parse error EOF don't hit\n" + parser.getTokenStream().getText(),
-                  parser,
-                  parser.getInputStream(),
-                  parser.getContext()
+            "Parse error EOF don't hit\n" + parser.getInputStream().getText(),
+            parser,
+            parser.getInputStream(),
+            parser.getContext()
           );
         }
       }
@@ -115,36 +115,36 @@ class BSLParserTest {
     assertNotMatches(parser.file());
 
     setInput("Перем А; \n" +
-             "Перем Б; \n" +
-             "Сообщить();"
+      "Перем Б; \n" +
+      "Сообщить();"
     );
     assertMatches(parser.file());
 
     setInput("Перем А; \n" +
-            "Перем Б; \n" +
-            "Процедура В()\n" +
-            "КонецПроцедуры\n" +
-            "Сообщить();\n"
+      "Перем Б; \n" +
+      "Процедура В()\n" +
+      "КонецПроцедуры\n" +
+      "Сообщить();\n"
     );
     assertMatches(parser.file());
 
     setInput("#!\n" +
-            "#Если Сервер Тогда\n" +
-            "Перем А; \n" +
-            "Перем Б; \n" +
-            "#Область Г\n" +
-            "Процедура В()\n" +
-            "КонецПроцедуры\n" +
-            "#КонецОбласти\n" +
-            "Сообщить();\n" +
-            "#КонецЕсли\n"
+      "#Если Сервер Тогда\n" +
+      "Перем А; \n" +
+      "Перем Б; \n" +
+      "#Область Г\n" +
+      "Процедура В()\n" +
+      "КонецПроцедуры\n" +
+      "#КонецОбласти\n" +
+      "Сообщить();\n" +
+      "#КонецЕсли\n"
     );
     assertMatches(parser.file());
 
   }
 
   @Test
-  void testShebang(){
+  void testShebang() {
 
     setInput("#!");
     assertMatches(parser.shebang());
@@ -273,26 +273,11 @@ class BSLParserTest {
     assertMatches(parser.preproc_symbol());
 
     setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_unknownSymbol());
-
-    setInput("Сервер", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.preproc_unknownSymbol());
+    assertMatches(parser.preproc_symbol());
 
   }
 
-  @Test
-  void TestPreproc_boolOperation() {
 
-    setInput("И", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_boolOperation());
-
-    setInput("ИЛИ", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.preproc_boolOperation());
-
-    setInput("НЕ", BSLLexer.PREPROCESSOR_MODE);
-    assertNotMatches(parser.preproc_boolOperation());
-
-  }
 
   @Test
   void TestPreprocessor() {
@@ -428,43 +413,40 @@ class BSLParserTest {
   @Test
   void testComplexIdentifier() {
     setInput("Запрос.Пустой()");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("Запрос.Выполнить()");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("Запрос. Выполнить()");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("?(Истина, Истина, Ложь).Выполнить()");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("?(Истина, М, М)[0]");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("?(Истина, С, С).Свойство");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("А");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("А()");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("А.А()");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("А[Б]");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("Новый Массив");
-    assertMatches(parser.complexIdentifier());
-
-    setInput("Выполнить");
-    assertNotMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
     setInput("Новый(\"Файл\").Существует()");
-    assertMatches(parser.complexIdentifier());
+    assertMatches(parser.expression());
 
   }
 
@@ -496,7 +478,7 @@ class BSLParserTest {
     assertMatches(parser.statement());
 
     setInput("~Метка: \n");
-    assertMatches(parser.statement());
+    assertMatches(parser.label());
 
     setInput("Выполнить (Б = А + 1);");
     assertMatches(parser.statement());
@@ -524,53 +506,57 @@ class BSLParserTest {
       "#EndRegion\n" +
       "0\n" +
       "#EndRegion");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
 
     setInput("А = А");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
     setInput("А = А + Б[В]");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
     setInput("А = А + Б[В] * Метод()");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
     setInput("А = (А + Б[В] * Метод()) + Модуль.Метод()");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
     setInput("А = Модуль.Метод().Свойство");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
     setInput("А = Модуль.Метод(А).Свойство[А]");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
     setInput("А = Б = В.Метод(А)");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
 
     setInput("А.Свойство[0] = В.Метод(А)");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
 
     setInput("А[0].Свойство = В.Метод(А)");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
 
     setInput("А.Метод()[0][1].Метод().Свойство = В.Метод(А)");
-    assertMatches(parser.assignment());
+    assertMatches(parser.assignmentStatement());
 
     setInput("А.Свойство.Метод() = В.Метод(А)");
-    assertNotMatches(parser.assignment());
+    assertNotMatches(parser.assignmentStatement());
 
     setInput("Модуль.Метод().Свойство[А]");
-    assertNotMatches(parser.assignment());
+    assertNotMatches(parser.assignmentStatement());
 
   }
 
   @Test
   void testDefaultValue() {
     setInput("0");
-    assertMatches(parser.defaultValue());
+    assertMatches(parser.literal());
 
     setInput("-1");
-    assertMatches(parser.defaultValue());
+    assertMatches(parser.literal());
 
     setInput("+1");
-    assertMatches(parser.defaultValue());
+    assertMatches(parser.literal());
 
     setInput("ИСТИНА");
-    assertMatches(parser.defaultValue());
+    assertMatches(parser.literal());
+
+    setInput("'000dg10101'");
+    assertMatches(parser.literal());
+
   }
 
   @Test
@@ -604,20 +590,20 @@ class BSLParserTest {
     assertMatches(parser.expression());
 
     setInput("A1 + \n" +
-            "#Если (Клиент) Тогда\n" +
-            "А +\n" +
-            "#КонецЕсли\n" +
-            "#Если Клиент Тогда\n" +
-            "Б +\n" +
-            "#Иначе\n" +
-            "#Область Имя\n" +
-            "В(\n" +
-            "А + \n" +
-            "Б\n" +
-            ")\n" +
-            "#КонецОбласти\n" +
-            "#КонецЕсли\n" +
-            "+ С\n");
+      "#Если (Клиент) Тогда\n" +
+      "А +\n" +
+      "#КонецЕсли\n" +
+      "#Если Клиент Тогда\n" +
+      "Б +\n" +
+      "#Иначе\n" +
+      "#Область Имя\n" +
+      "В(\n" +
+      "А + \n" +
+      "Б\n" +
+      ")\n" +
+      "#КонецОбласти\n" +
+      "#КонецЕсли\n" +
+      "+ С\n");
     assertMatches(parser.expression());
 
     setInput("Метод()");
@@ -645,8 +631,6 @@ class BSLParserTest {
     setInput("(Новый Файл()).Существует()");
     assertMatches(parser.expression());
 
-    setInput("Выполнить");
-    assertNotMatches(parser.expression());
     setInput("А = Выполнить");
     assertNotMatches(parser.expression());
 
@@ -655,14 +639,14 @@ class BSLParserTest {
   @Test
   void tesForEach() {
     setInput("Для каждого Переменная Из Коллекция Цикл\n" +
-            "\t\n" +
-            "КонецЦикла;");
-    assertMatches(parser.forEachStatement());
+      "\t\n" +
+      "КонецЦикла");
+    assertMatches(parser.forStatement());
 
     setInput("For Each varible In collection Do\n" +
-            "\n" +
-            "EndDo;");
-    assertMatches(parser.forEachStatement());
+      "\n" +
+      "EndDo");
+    assertMatches(parser.forStatement());
 
   }
 
@@ -690,52 +674,49 @@ class BSLParserTest {
   void testCompoundStatement() {
 
     setInput("Если А Тогда КонецЕсли");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Пока А Цикл КонецЦикла");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Для А = Б По В Цикл КонецЦикла");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Для Каждого А Из Б Цикл КонецЦикла");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Для Каждого А Из Б Цикл КонецЦикла");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Попытка Исключение КонецПопытки");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Возврат А");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Продолжить");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Прервать");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("ВызватьИсключение А");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Выполнить А");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Перейти ~А");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("Перейти ~А");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("ДобавитьОбработчик А, Б");
-    assertMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
     setInput("УдалитьОбработчик А, Б");
-    assertMatches(parser.compoundStatement());
-
-    setInput("А = 1");
-    assertNotMatches(parser.compoundStatement());
+    assertMatches(parser.statement());
 
   }
 
@@ -789,10 +770,7 @@ class BSLParserTest {
   void TestAccessCall() {
 
     setInput(".А(А)");
-    assertMatches(parser.accessCall());
-
-    setInput("[А]");
-    assertNotMatches(parser.accessCall());
+    assertMatches(parser.expression());
 
   }
 
@@ -800,27 +778,16 @@ class BSLParserTest {
   void TestModifier() {
 
     setInput("[А]");
-    assertMatches(parser.modifier());
+    assertMatches(parser.expression());
 
     setInput(".А");
-    assertMatches(parser.modifier());
+    assertMatches(parser.expression());
 
     setInput(".А(А)");
-    assertMatches(parser.modifier());
+    assertMatches(parser.expression());
 
     setInput("А[A]");
-    assertNotMatches(parser.modifier());
-
-  }
-
-  @Test
-  void TestTypeName() {
-
-    setInput("Массив");
-    assertMatches(parser.typeName());
-
-    setInput("Выполнить");
-    assertNotMatches(parser.typeName());
+    assertNotMatches(parser.expression());
 
   }
 
@@ -854,59 +821,37 @@ class BSLParserTest {
   void TestMember() {
 
     setInput("Истина");
-    assertMatches(parser.member());
+    assertMatches(parser.expression());
 
     setInput("А");
-    assertMatches(parser.member());
+    assertMatches(parser.expression());
 
     setInput("(А)");
-    assertMatches(parser.member());
+    assertMatches(parser.expression());
 
     setInput("НЕ Истина");
-    assertMatches(parser.member());
+    assertMatches(parser.expression());
 
     setInput("НЕ А");
-    assertMatches(parser.member());
+    assertMatches(parser.expression());
 
     setInput("НЕ (А)");
-    assertMatches(parser.member());
-
-    setInput("Выполнить");
-    assertNotMatches(parser.member());
+    assertMatches(parser.expression());
 
   }
 
   @Test
   void TestUnaryModifier() {
 
-    setInput("НЕ");
-    assertMatches(parser.unaryModifier());
-
+    /*
     setInput("-");
-    assertMatches(parser.unaryModifier());
+    assertMatches(parser.unaryMathOperation());
 
     setInput("+");
-    assertMatches(parser.unaryModifier());
-
-    setInput("А");
-    assertNotMatches(parser.unaryModifier());
-
+    assertMatches(parser.unaryMathOperation());
+*/
   }
-
-  @Test
-  void TestBoolOperation() {
-
-    setInput("И");
-    assertMatches(parser.boolOperation());
-
-    setInput("ИЛИ");
-    assertMatches(parser.boolOperation());
-
-    setInput("НЕ");
-    assertNotMatches(parser.boolOperation());
-
-  }
-
+/*
   @Test
   void TestCompareOperation() {
 
@@ -936,49 +881,34 @@ class BSLParserTest {
   @Test
   void TestOperation() {
 
-    setInput("+");
-    assertMatches(parser.operation());
-
-    setInput("-");
-    assertMatches(parser.operation());
-
     setInput("*");
-    assertMatches(parser.operation());
+    assertMatches(parser.numberoperation());
 
     setInput("/");
-    assertMatches(parser.operation());
+    assertMatches(parser.numberoperation());
 
     setInput("%");
-    assertMatches(parser.operation());
+    assertMatches(parser.numberoperation());
 
-    setInput(">");
-    assertMatches(parser.operation());
-
-    setInput("И");
-    assertMatches(parser.operation());
-
-    setInput("НЕ");
-    assertNotMatches(parser.operation());
-
-  }
+  }*/
 
   @Test
   void TestCallParam() {
 
     setInput("");
-    assertMatches(parser.callParam());
+    assertMatches(parser.expression());
 
     setInput("А");
-    assertMatches(parser.callParam());
+    assertMatches(parser.expression());
 
     setInput("НЕ А");
-    assertMatches(parser.callParam());
+    assertMatches(parser.expression());
 
     setInput("НЕ");
-    assertNotMatches(parser.callParam());
+    assertNotMatches(parser.expression());
 
     setInput("Если А Тогда");
-    assertNotMatches(parser.callParam());
+    assertNotMatches(parser.expression());
 
   }
 
@@ -986,13 +916,13 @@ class BSLParserTest {
   void TestCallParamList() {
 
     setInput("НЕ А");
-    assertMatches(parser.callParamList());
+    assertMatches(parser.expression());
 
     setInput("НЕ А, А");
-    assertMatches(parser.callParamList());
+    assertMatches(parser.expression());
 
     setInput("НЕ, Если");
-    assertNotMatches(parser.callParamList());
+    assertNotMatches(parser.expression());
 
   }
 
@@ -1000,14 +930,14 @@ class BSLParserTest {
   void TestGlobalMethodCall() {
 
     setInput("Сообщить(А = 1)");
-    assertMatches(parser.globalMethodCall());
+    assertMatches(parser.methodCall());
     setInput("Сообщить(А + Б)");
-    assertMatches(parser.globalMethodCall());
+    assertMatches(parser.methodCall());
     setInput("Сообщить(Метод())");
-    assertMatches(parser.globalMethodCall());
+    assertMatches(parser.methodCall());
 
     setInput("Модуль.Сообщить()");
-    assertNotMatches(parser.globalMethodCall());
+    assertNotMatches(parser.methodCall());
 
   }
 
@@ -1020,7 +950,7 @@ class BSLParserTest {
     assertMatches(parser.methodCall());
 
     setInput("Модуль.Сообщить()");
-    assertNotMatches(parser.globalMethodCall());
+    assertNotMatches(parser.methodCall());
 
   }
 
@@ -1028,20 +958,20 @@ class BSLParserTest {
   void TestCallStatement() {
 
     setInput("Сообщить(А, 1)");
-    assertMatches(parser.callStatement());
+    assertMatches(parser.methodCall());
     setInput("А.А[1].А(А)");
-    assertMatches(parser.callStatement());
+    assertMatches(parser.expression());
     setInput("А.А()");
-    assertMatches(parser.callStatement());
+    assertMatches(parser.expression());
     setInput("А.А(А)");
-    assertMatches(parser.callStatement());
+    assertMatches(parser.expression());
     setInput("А(А).А()");
-    assertMatches(parser.callStatement());
+    assertMatches(parser.expression());
     setInput("А(А).А.А().А()");
-    assertMatches(parser.callStatement());
+    assertMatches(parser.expression());
 
     setInput("ВызватьИсключение А");
-    assertNotMatches(parser.callStatement());
+    assertNotMatches(parser.expression());
   }
 
   @Test

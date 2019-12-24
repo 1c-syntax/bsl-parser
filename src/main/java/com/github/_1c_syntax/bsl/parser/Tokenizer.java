@@ -22,13 +22,10 @@
 package com.github._1c_syntax.bsl.parser;
 
 import com.github._1c_syntax.bsl.parser.util.Lazy;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ConsoleErrorListener;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.plexus.util.IOUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,23 +33,28 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
 import static org.antlr.v4.runtime.Token.EOF;
 
 public class Tokenizer {
 
-  private final String content;
+  private CharStream input;
   private Lexer lexer;
   private Lazy<CommonTokenStream> tokenStream = new Lazy<>(this::computeTokenStream);
   private Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
   private Lazy<BSLParser.FileContext> ast = new Lazy<>(this::computeAST);
 
-  public Tokenizer(String content) {
+  public Tokenizer(String content) throws IOException {
     this(content, null);
   }
 
-  protected Tokenizer(String content, Lexer lexer) {
-    this.content = content;
+  protected Tokenizer(String content, Lexer lexer) throws IOException {
+    this(IOUtils.toInputStream(content, StandardCharsets.UTF_8), lexer);
+  }
+
+  protected Tokenizer(InputStream content, Lexer lexer) throws IOException {
+    UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(content);
+    ubis.skipBOM();
+    this.input = new CaseChangingCharStream(CharStreams.fromStream(ubis, StandardCharsets.UTF_8), true);
     this.lexer = lexer;
   }
 
@@ -78,23 +80,17 @@ public class Tokenizer {
   private BSLParser.FileContext computeAST() {
     BSLParser parser = new BSLParser(getTokenStream());
     parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+    try {
+       parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+            return parser.file();
+        } catch (Exception ex) {
+            parser.reset(); // rewind input stream
+            parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+        }
     return parser.file();
   }
 
   private CommonTokenStream computeTokenStream() {
-    requireNonNull(content);
-    CharStream input;
-
-    try (
-      InputStream inputStream = IOUtils.toInputStream(content, StandardCharsets.UTF_8);
-      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream)
-    ) {
-      ubis.skipBOM();
-      CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
-      input = new CaseChangingCharStream(inputTemp, true);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
 
     if (lexer == null) {
       lexer = new BSLLexer(input);
@@ -113,5 +109,4 @@ public class Tokenizer {
     tokenStreamUnboxed.seek(0);
     return tokenStreamUnboxed;
   }
-
 }

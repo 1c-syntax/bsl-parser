@@ -27,236 +27,184 @@ options {
 }
 
 // ROOT
-file: shebang? preprocessor* moduleVars? preprocessor* (fileCodeBlockBeforeSub subs)? fileCodeBlock EOF;
+file                    : shebang? preprocessor* moduleVarBlock? preprocessor* fileCodeBlockBeforeSub=codeBlock? subDeclaration? fileCodeBlock=codeBlock? EOF;
 
 // preprocessor
-shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
+shebang                 : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
 
-usedLib          : (PREPROC_STRING | PREPROC_IDENTIFIER);
-use              : PREPROC_USE_KEYWORD usedLib;
+usedLib                 : (PREPROC_STRING | PREPROC_IDENTIFIER);
+use                     : PREPROC_USE_KEYWORD usedLib;
 
-regionStart      : PREPROC_REGION regionName;
-regionEnd        : PREPROC_END_REGION;
-regionName       : PREPROC_IDENTIFIER;
+regionStart             : PREPROC_REGION regionName;
+regionEnd               : PREPROC_END_REGION;
+regionName              : PREPROC_IDENTIFIER;
 
-preproc_if       : PREPROC_IF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
-preproc_elsif    : PREPROC_ELSIF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
-preproc_else     : PREPROC_ELSE_KEYWORD;
-preproc_endif    : PREPROC_ENDIF_KEYWORD;
+preproc_if              : PREPROC_IF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
+preproc_elsif           : PREPROC_ELSIF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
+preproc_else            : PREPROC_ELSE_KEYWORD;
+preproc_endif           : PREPROC_ENDIF_KEYWORD;
 
-preproc_expression
-    : ( PREPROC_NOT_KEYWORD? (PREPROC_LPAREN preproc_expression PREPROC_RPAREN ) )
-    | preproc_logicalExpression
-    ;
-preproc_logicalOperand
-    : (PREPROC_LPAREN PREPROC_NOT_KEYWORD? preproc_logicalOperand PREPROC_RPAREN)
-    | ( PREPROC_NOT_KEYWORD? preproc_symbol )
-    ;
-preproc_logicalExpression
-    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*;
-preproc_symbol
-    : PREPROC_CLIENT_SYMBOL
-    | PREPROC_ATCLIENT_SYMBOL
-    | PREPROC_SERVER_SYMBOL
-    | PREPROC_ATSERVER_SYMBOL
-    | PREPROC_MOBILEAPPCLIENT_SYMBOL
-    | PREPROC_MOBILEAPPSERVER_SYMBOL
-    | PREPROC_MOBILECLIENT_SYMBOL
-    | PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
-    | PREPROC_THICKCLIENTMANAGEDAPPLICATION_SYMBOL
-    | PREPROC_EXTERNALCONNECTION_SYMBOL
-    | PREPROC_THINCLIENT_SYMBOL
-    | PREPROC_WEBCLIENT_SYMBOL
-    | preproc_unknownSymbol
-    ;
-preproc_unknownSymbol
-    : PREPROC_IDENTIFIER
-    ;
-preproc_boolOperation
-    : PREPROC_OR_KEYWORD
-    | PREPROC_AND_KEYWORD
-    ;
+preproc_expression      : PREPROC_LPAREN preproc_expression PREPROC_RPAREN
+                        | PREPROC_NOT_KEYWORD preproc_expression
+                        | preproc_expression PREPROC_AND_KEYWORD preproc_expression
+                        | preproc_expression PREPROC_OR_KEYWORD preproc_expression
+                        | preproc_symbol
+                        ;
 
-preprocessor
-    : HASH
-        (regionStart
-        | regionEnd
-        | preproc_if
-        | preproc_elsif
-        | preproc_else
-        | preproc_endif
-        | use
-        )
-    ;
+preproc_symbol          : PREPROC_CLIENT_SYMBOL
+                        | PREPROC_ATCLIENT_SYMBOL
+                        | PREPROC_SERVER_SYMBOL
+                        | PREPROC_ATSERVER_SYMBOL
+                        | PREPROC_MOBILEAPPCLIENT_SYMBOL
+                        | PREPROC_MOBILEAPPSERVER_SYMBOL
+                        | PREPROC_MOBILECLIENT_SYMBOL
+                        | PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
+                        | PREPROC_THICKCLIENTMANAGEDAPPLICATION_SYMBOL
+                        | PREPROC_EXTERNALCONNECTION_SYMBOL
+                        | PREPROC_THINCLIENT_SYMBOL
+                        | PREPROC_WEBCLIENT_SYMBOL
+                        | preproc_unknownSymbol
+                        ;
+preproc_unknownSymbol   : PREPROC_IDENTIFIER
+                        ;
+
+preprocessor            : HASH
+                             (regionStart
+                             | regionEnd
+                             | preproc_if
+                             | preproc_elsif
+                             | preproc_else
+                             | preproc_endif
+                             | use
+                             )
+                         ;
 
 // compiler directives
-compilerDirectiveSymbol
-    : ANNOTATION_ATSERVERNOCONTEXT_SYMBOL
-    | ANNOTATION_ATCLIENTATSERVERNOCONTEXT_SYMBOL
-    | ANNOTATION_ATCLIENTATSERVER_SYMBOL
-    | ANNOTATION_ATCLIENT_SYMBOL
-    | ANNOTATION_ATSERVER_SYMBOL
-    ;
+compilerDirectiveSymbol : ANNOTATION_ATSERVERNOCONTEXT_SYMBOL
+                        | ANNOTATION_ATCLIENTATSERVERNOCONTEXT_SYMBOL
+                        | ANNOTATION_ATCLIENTATSERVER_SYMBOL
+                        | ANNOTATION_ATCLIENT_SYMBOL
+                        | ANNOTATION_ATSERVER_SYMBOL
+                        ;
 
-compilerDirective
-    : AMPERSAND compilerDirectiveSymbol
-    ;
-
+compilerDirective       : AMPERSAND compilerDirectiveSymbol;
 // annotations
-annotationName
-    : ANNOTATION_CUSTOM_SYMBOL
-    ;
-annotationParamName
-    : IDENTIFIER
-    ;
-annotation
-    : AMPERSAND annotationName annotationParams?
-    ;
-annotationParams
-    : LPAREN
-      (
-        annotationParam
-        (COMMA annotationParam)*
-      )?
-      RPAREN
-    ;
-annotationParam
-    : (annotationParamName (ASSIGN constValue)?)
-    | constValue
-    ;
+annotationName          : ANNOTATION_CUSTOM_SYMBOL;
+annotationParamName     : IDENTIFIER;
+annotation              : AMPERSAND annotationName annotationParams?;
+annotationParams        : LPAREN (annotationParam (COMMA annotationParam)*)? RPAREN;
+
+annotationParam         : (annotationParamName (ASSIGN literal)?)
+                        | literal;
 
 // vars
-var_name         : IDENTIFIER;
+var_name                : IDENTIFIER;
 
-moduleVars       : moduleVar+;
-moduleVar        : (preprocessor | compilerDirective | annotation)* VAR_KEYWORD moduleVarsList SEMICOLON?;
-moduleVarsList   : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
-moduleVarDeclaration: var_name EXPORT_KEYWORD?;
+variableDeclaration     : (preprocessor | compilerDirective | annotation)*;
 
-subVars          : subVar+;
-subVar           : (preprocessor | compilerDirective | annotation)* VAR_KEYWORD subVarsList SEMICOLON?;
-subVarsList      : subVarDeclaration (COMMA subVarDeclaration)*;
-subVarDeclaration: var_name;
+moduleVarBlock          : moduleVar*;
+moduleVar               : variableDeclaration VAR_KEYWORD moduleVarsList SEMICOLON?;
+moduleVarsList          : moduleVarDeclaration (COMMA moduleVarDeclaration)*;
+moduleVarDeclaration    : var_name EXPORT_KEYWORD?;
+
+subVar                  : variableDeclaration VAR_KEYWORD subVarsList SEMICOLON?;
+subVarsList             : subVarDeclaration (COMMA subVarDeclaration)*;
+subVarDeclaration       : var_name;
 
 // subs
-subName          : IDENTIFIER;
-
-subs             : sub+;
-sub              : procedure | function;
-procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
-function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : (preprocessor | compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : (preprocessor | compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
-subCodeBlock     : subVars? codeBlock;
+subDeclaration          : (procedure | function)*;
+procedure               : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
+function                : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
+procDeclaration         : beforeDeclaration PROCEDURE_KEYWORD subName=IDENTIFIER LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+funcDeclaration         : beforeDeclaration FUNCTION_KEYWORD  subName=IDENTIFIER LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+beforeDeclaration       : (preprocessor | compilerDirective | annotation)*;
+subCodeBlock            : subVar* codeBlock;
 
 // statements
-continueStatement : CONTINUE_KEYWORD;
-breakStatement    : BREAK_KEYWORD;
-raiseStatement    : RAISE_KEYWORD expression?;
-ifStatement
-    : ifBranch elsifBranch* elseBranch? ENDIF_KEYWORD
-    ;
-ifBranch
-    : IF_KEYWORD expression THEN_KEYWORD codeBlock
-    ;
-elsifBranch
-    : ELSIF_KEYWORD expression THEN_KEYWORD codeBlock
-    ;
-elseBranch
-    : ELSE_KEYWORD codeBlock
-    ;
-whileStatement    : WHILE_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
-tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDTRY_KEYWORD;
-returnStatement   : RETURN_KEYWORD expression?;
-executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
-callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
+continueStatement       : CONTINUE_KEYWORD;
+breakStatement          : BREAK_KEYWORD;
+raiseStatement          : RAISE_KEYWORD expression?;
+ifStatement             : ifBranch elsifBranch* elseBranch? ENDIF_KEYWORD;
+ifBranch                : IF_KEYWORD expression THEN_KEYWORD codeBlock;
+elsifBranch             : ELSIF_KEYWORD expression THEN_KEYWORD codeBlock;
+elseBranch              : ELSE_KEYWORD codeBlock;
+whileStatement          : WHILE_KEYWORD cycleBody;
+forStatement            : FOR_KEYWORD (forVarStatement|forEachStatement) cycleBody;
+forVarStatement         : IDENTIFIER ASSIGN expression TO_KEYWORD;
+forEachStatement        : EACH_KEYWORD IDENTIFIER IN_KEYWORD;
+cycleBody               : expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 
-labelName         : IDENTIFIER;
-label             : TILDA labelName COLON;
-gotoStatement     : GOTO_KEYWORD TILDA labelName;
+tryStatement            : TRY_KEYWORD tryCodeBlock=codeBlock EXCEPT_KEYWORD exceptCodeBlock=codeBlock ENDTRY_KEYWORD;
+returnStatement         : RETURN_KEYWORD expression?;
+executeStatement        : EXECUTE_KEYWORD (doCall | argumentList);
+labelRef                : TILDA labelName=IDENTIFIER;
+label                   : labelRef COLON;
+gotoStatement           : GOTO_KEYWORD labelRef;
 
-tryCodeBlock :  codeBlock;
-exceptCodeBlock : codeBlock;
+addHandlerStatement     : ADDHANDLER_KEYWORD    event=expression COMMA handler=expression;
+removeHandlerStatement  : REMOVEHANDLER_KEYWORD event=expression COMMA handler=expression;
 
-event
-    : expression
-    ;
-
-handler
-    : expression
-    ;
-addHandlerStatement
-    : ADDHANDLER_KEYWORD event COMMA handler
-    ;
-removeHandlerStatement
-    : REMOVEHANDLER_KEYWORD event COMMA handler
-    ;
-
-ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
+ternaryOperator         : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
 
 // main
-fileCodeBlockBeforeSub
-    : codeBlock
-    ;
-fileCodeBlock
-    : codeBlock
-    ;
-codeBlock        : (statement | preprocessor)*;
-numeric          : FLOAT | DECIMAL;
-paramList        : param (COMMA param)*;
-param            : VAL_KEYWORD? IDENTIFIER (ASSIGN defaultValue)?;
-defaultValue     : constValue;
-constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
-multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
-string           : (STRING | multilineString)+;
-statement
-     : (
-        (
-            ( label (callStatement | compoundStatement | assignment | preprocessor)?)
-            |
-            (callStatement | compoundStatement | assignment| preprocessor)
-        )
-        SEMICOLON?
-    )
-    | SEMICOLON
-    ;
-assignment       : lValue preprocessor* ASSIGN (preprocessor* expression)?;
-callParamList    : callParam (COMMA callParam)*;
-callParam        : expression?;
-expression       : member (preprocessor* operation preprocessor* member)*;
-operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | compareOperation;
-compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
-boolOperation    : OR_KEYWORD | AND_KEYWORD;
-unaryModifier    : NOT_KEYWORD | MINUS | PLUS;
-member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ) modifier*);
-newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
-typeName         : IDENTIFIER;
-methodCall       : methodName doCall;
-globalMethodCall : methodName doCall;
-methodName       : IDENTIFIER;
-complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) modifier*;
-modifier         : accessProperty | accessIndex| accessCall;
-acceptor         : modifier* (accessProperty | accessIndex);
-lValue           : (IDENTIFIER | globalMethodCall) acceptor?;
-accessCall       : DOT methodCall;
-accessIndex      : LBRACK expression RBRACK;
-accessProperty   : DOT IDENTIFIER;
-doCall           : LPAREN callParamList RPAREN;
+codeBlock               : statement*;
 
-compoundStatement
-    : ifStatement
-    | whileStatement
-    | forStatement
-    | forEachStatement
-    | tryStatement
-    | returnStatement
-    | continueStatement
-    | breakStatement
-    | raiseStatement
-    | executeStatement
-    | gotoStatement
-    | addHandlerStatement
-    | removeHandlerStatement
-    ;
+numeric                 : FLOAT | DECIMAL;
+paramList               : param (COMMA param)*;
+param                   : VAL_KEYWORD? IDENTIFIER (ASSIGN literal)?;
+literal                 : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
+
+multilineString         : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
+string                  : (STRING | multilineString)+;
+statement
+                        : preprocessor
+                        | assignmentStatement
+                        | label statement
+                        | ifStatement
+                        | whileStatement
+                        | forStatement
+                        | tryStatement
+                        | returnStatement
+                        | continueStatement
+                        | breakStatement
+                        | raiseStatement
+                        | executeStatement
+                        | gotoStatement
+                        | addHandlerStatement
+                        | removeHandlerStatement
+                        | callStatement
+                        | SEMICOLON;
+
+assignmentStatement     : lValue preprocessor* ASSIGN expression;
+callStatement           : methodCall
+                        | expression DOT methodCall;
+methodCall              : methodName=IDENTIFIER doCall;
+
+expression              : LPAREN expression RPAREN
+                        | IDENTIFIER
+                        | methodCall
+                        | ternaryOperator
+                        | literal
+                        | newExpression
+                        | expression DOT expression
+                        | expression LBRACK expression RBRACK
+                        | (PLUS | MINUS) expression
+                        | expression (MUL | QUOTIENT | MODULO) expression
+                        | expression (PLUS | MINUS) expression
+                        | NOT_KEYWORD expression
+                        | expression (LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL) expression
+                        | expression AND_KEYWORD expression
+                        | expression OR_KEYWORD expression
+                        | preprocessor expression
+                        | expression preprocessor
+                        | preprocessor
+                        ;
+
+newExpression           : NEW_KEYWORD (typeName=IDENTIFIER doCall? | doCall);
+
+lValue                  : IDENTIFIER
+                        | expression (DOT accessProperty|accessIndex);
+accessIndex             : LBRACK expression RBRACK;
+accessProperty          : IDENTIFIER;
+doCall                  : LPAREN argumentList? RPAREN;
+argumentList            : expression? (COMMA expression?)*;

@@ -50,17 +50,18 @@ QUESTION: '?';
 AMPERSAND: '&' -> pushMode(ANNOTATION_MODE);
 HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 
-SQUOTE: '\'';
+
 BAR: '|';
 TILDA: '~' -> pushMode(LABEL_MODE);
 
 // literals
-TRUE : 'ИСТИНА' | 'TRUE';
-FALSE : 'ЛОЖЬ' | 'FALSE';
-UNDEFINED : 'НЕОПРЕДЕЛЕНО' | 'UNDEFINED';
-NULL : 'NULL';
-DECIMAL: DIGIT+;
-DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
+TRUE        : 'ИСТИНА' | 'TRUE';
+FALSE       : 'ЛОЖЬ' | 'FALSE';
+UNDEFINED   : 'НЕОПРЕДЕЛЕНО' | 'UNDEFINED';
+NULL        : 'NULL';
+DECIMAL     : DIGIT+;
+DATETIME    : SQUOTE(~['\n\r])*SQUOTE?;
+SQUOTE      : '\'';
 
 FLOAT : DIGIT+ '.' DIGIT*;
 STRING: '"' (~[\r\n"] | '""')* '"';
@@ -324,3 +325,5 @@ DOT_WHITE_SPACE
        type(WHITE_SPACE)
     ;
 DOT_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
+
+
