@@ -67,14 +67,13 @@ BAR: '|';
 TILDA: '~' -> pushMode(LABEL_MODE);
 
 // literals
-TRUE : 'ИСТИНА' | 'TRUE';
-FALSE : 'ЛОЖЬ' | 'FALSE';
-UNDEFINED : 'НЕОПРЕДЕЛЕНО' | 'UNDEFINED';
-NULL : 'NULL';
-DECIMAL: DIGIT+;
-DATETIME: QUOTE -> pushMode(DATE_MODE);
-
-QUOTE: '\'';
+TRUE        : 'ИСТИНА' | 'TRUE';
+FALSE       : 'ЛОЖЬ' | 'FALSE';
+UNDEFINED   : 'НЕОПРЕДЕЛЕНО' | 'UNDEFINED';
+NULL        : 'NULL';
+DECIMAL     : DIGIT+;
+DATETIME    : SQUOTE(~['\n\r])*SQUOTE?;
+SQUOTE      : '\'';
 
 FLOAT : DIGIT+ '.' DIGIT*;
 STRING: '"' (~[\r\n"] | '""')* '"';
@@ -342,11 +341,4 @@ DOT_WHITE_SPACE
     ;
 DOT_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
 
-mode DATE_MODE;
-DATE_WHITE_SPACE
-    : ~[\p{Nd}']
-    -> channel(HIDDEN)
-    ;
-QUOTE_DATE_MODE: QUOTE  -> type(DATETIME), popMode;
-DATE_PART : [\p{Nd}]+ -> type(DATETIME);
 

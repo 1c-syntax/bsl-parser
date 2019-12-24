@@ -53,7 +53,7 @@ class TokenizerTest {
         final BSLParser.FileContext ast = tokenizer.getAst();
 
         // then
-        BSLParser.FileCodeBlockContext fileCodeBlock = ast.fileCodeBlock();
+        BSLParser.CodeBlockContext fileCodeBlock = ast.fileCodeBlock;
         assertThat(fileCodeBlock).isNotNull();
         assertThat(fileCodeBlock.getStart().getType()).isEqualTo(BSLParser.IF_KEYWORD);
         assertThat(fileCodeBlock.getStop().getType()).isEqualTo(BSLParser.ENDIF_KEYWORD);

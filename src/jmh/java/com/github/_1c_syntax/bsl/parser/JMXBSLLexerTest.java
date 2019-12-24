@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 3)
-@Measurement(iterations = 5)
+@Measurement(iterations = 5, time=2)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class JMXBSLLexerTest {
 
@@ -85,7 +85,7 @@ public class JMXBSLLexerTest {
         @Param({"As stream", "As text"})
         public String mode;
         public Lexer lexer;
-        private String fileName = "Module.bsl";
+        private String fileName = "LargeModule.bsl";
         private String content;
 
         public String getContent() {
@@ -94,10 +94,15 @@ public class JMXBSLLexerTest {
 
         @Setup
         public void init() throws Exception {
-            Class<?> lexerClass = (Class<Lexer>) Class.forName("com.github._1c_syntax.bsl.parser." + lexerClassName);
+            Class<?> lexerClass = Class.forName("com.github._1c_syntax.bsl.parser." + lexerClassName);
             lexer = (Lexer) lexerClass.getDeclaredConstructors()[0].newInstance((Object) null);
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            content = IOUtils.toString(new BufferedInputStream(classLoader.getResourceAsStream(fileName)), Charset.defaultCharset());
+            InputStream resourceAsStream = classLoader.getResourceAsStream(fileName);
+            if(resourceAsStream!=null) {
+                content = IOUtils.toString(new BufferedInputStream(resourceAsStream), Charset.defaultCharset());
+            }else {
+                throw new RuntimeException("Empty file");
+            }
         }
     }
 }
