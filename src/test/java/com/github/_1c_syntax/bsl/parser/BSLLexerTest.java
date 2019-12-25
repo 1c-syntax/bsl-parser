@@ -21,15 +21,14 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -38,30 +37,35 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class BSLLexerTest {
 
-  private BSLLexer lexer = new BSLLexer(null);
+  private BSLLexer lexer;
 
   private List<Token> getTokens(int mode, String inputString) {
     CharStream input;
 
-    try {
+    try (
       InputStream inputStream = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
-
       UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
+      Reader inputStreamReader = new InputStreamReader(ubis, StandardCharsets.UTF_8)
+    ) {
       ubis.skipBOM();
-
-      CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
-      input = new CaseChangingCharStream(inputTemp, true);
+      CodePointCharStream inputTemp = CharStreams.fromReader(inputStreamReader);
+      input = new CaseChangingCharStream(inputTemp);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    lexer.setInputStream(input);
+    if (lexer == null) {
+      lexer = new BSLLexer(input);
+    } else {
+      lexer.setInputStream(input);
+    }
+    lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
     lexer.mode(mode);
 
-    CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-    tokenStream.fill();
+    CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
+    tempTokenStream.fill();
 
-    return tokenStream.getTokens();
+    return tempTokenStream.getTokens();
   }
 
   private void assertMatch(String inputString, Integer... expectedTokens) {

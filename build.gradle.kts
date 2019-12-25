@@ -31,12 +31,14 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-val antlrVersion = "65ca40b0584d426a7e2ee1d687a48b3eef829827"
+val antlrVersion = "fde6a4930aedcd88725a6f01d7293b1bf2e25140"
+val antlrGroupId = "com.github.nixel2007"
+val antlrArtifactId = "antlr4-optimized"
 val junitVersion = "5.6.0-M1"
 
 dependencies {
-    compile("com.github.nixel2007", "antlr4", antlrVersion)
-    antlr("com.github.nixel2007", "antlr4", antlrVersion)
+    compile(antlrGroupId, antlrArtifactId, antlrVersion)
+    antlr(antlrGroupId, antlrArtifactId, antlrVersion)
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", junitVersion)

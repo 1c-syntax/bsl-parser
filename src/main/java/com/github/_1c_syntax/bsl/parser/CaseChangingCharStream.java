@@ -52,6 +52,7 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.UnicodeCharStream;
 import org.antlr.v4.runtime.misc.Interval;
 
 /**
@@ -63,71 +64,71 @@ import org.antlr.v4.runtime.misc.Interval;
  * 'BEGIN' if constructor parameter upper=true but getText() would return
  * 'BeGiN'.
  */
-public class CaseChangingCharStream implements CharStream {
+public class CaseChangingCharStream implements UnicodeCharStream {
 
-    private final CharStream stream;
-    private final boolean upper;
+  private final UnicodeCharStream stream;
 
-    /**
-     * Constructs a new CaseChangingCharStream wrapping the given {@link CharStream} forcing
-     * all characters to upper case or lower case.
-     * @param stream The stream to wrap.
-     * @param upper If true force each symbol to upper case, otherwise force to lower.
-     */
-    public CaseChangingCharStream(CharStream stream, boolean upper) {
-        this.stream = stream;
-        this.upper = upper;
+  /**
+   * Constructs a new CaseChangingCharStream wrapping the given {@link UnicodeCharStream} forcing
+   * all characters to upper case.
+   *
+   * @param stream The stream to wrap.
+   */
+  public CaseChangingCharStream(UnicodeCharStream stream) {
+    this.stream = stream;
+  }
+
+  @Override
+  public String getText(Interval interval) {
+    return stream.getText(interval);
+  }
+
+  @Override
+  public void consume() {
+    stream.consume();
+  }
+
+  @Override
+  public int LA(int i) {
+    int c = stream.LA(i);
+    if (c <= 0) {
+      return c;
     }
+    return Character.toUpperCase(c);
+  }
 
-    @Override
-    public String getText(Interval interval) {
-        return stream.getText(interval);
-    }
+  @Override
+  public int mark() {
+    return stream.mark();
+  }
 
-    @Override
-    public void consume() {
-        stream.consume();
-    }
+  @Override
+  public void release(int marker) {
+    stream.release(marker);
+  }
 
-    @Override
-    public int LA(int i) {
-        int c = stream.LA(i);
-        if (c <= 0) {
-            return c;
-        }
-        if (upper) {
-            return Character.toUpperCase(c);
-        }
-        return Character.toLowerCase(c);
-    }
+  @Override
+  public int index() {
+    return stream.index();
+  }
 
-    @Override
-    public int mark() {
-        return stream.mark();
-    }
+  @Override
+  public void seek(int index) {
+    stream.seek(index);
+  }
 
-    @Override
-    public void release(int marker) {
-        stream.release(marker);
-    }
+  @Override
+  public int size() {
+    return stream.size();
+  }
 
-    @Override
-    public int index() {
-        return stream.index();
-    }
+  @Override
+  public String getSourceName() {
+    return stream.getSourceName();
+  }
 
-    @Override
-    public void seek(int index) {
-        stream.seek(index);
-    }
-
-    @Override
-    public int size() {
-        return stream.size();
-    }
-
-    @Override
-    public String getSourceName() {
-        return stream.getSourceName();
-    }
+  @Override
+  public boolean supportsUnicodeCodePoints() {
+    return stream.supportsUnicodeCodePoints();
+  }
 }
