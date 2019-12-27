@@ -60,7 +60,7 @@ class BSLLexerTest {
       lexer.setInputStream(input);
     }
     lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
-    lexer.mode(mode);
+    lexer.pushMode(mode);
 
     CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
     tempTokenStream.fill();
@@ -80,6 +80,67 @@ class BSLLexerTest {
       .map(Token::getType)
       .toArray(Integer[]::new);
     assertArrayEquals(expectedTokens, tokenTypes);
+  }
+
+  @Test
+  void testWhitespaces() {
+    String inputString = "   А";
+
+    List<Token> tokens = getTokens(BSLLexer.DEFAULT_MODE, inputString);
+
+    assertThat(tokens).extracting(Token::getType).containsExactly(
+      BSLLexer.WHITE_SPACE,
+      BSLLexer.IDENTIFIER,
+      BSLLexer.EOF
+    );
+
+    tokens = getTokens(BSLLexer.ANNOTATION_MODE, inputString);
+
+    assertThat(tokens).extracting(Token::getType).containsExactly(
+      BSLLexer.WHITE_SPACE,
+      BSLLexer.ANNOTATION_CUSTOM_SYMBOL,
+      BSLLexer.EOF
+    );
+
+    tokens = getTokens(BSLLexer.ANNOTATION_MODE, inputString);
+
+    assertThat(tokens).extracting(Token::getType).containsExactly(
+      BSLLexer.WHITE_SPACE,
+      BSLLexer.ANNOTATION_CUSTOM_SYMBOL,
+      BSLLexer.EOF
+    );
+
+    tokens = getTokens(BSLLexer.PREPROCESSOR_MODE, inputString);
+
+    assertThat(tokens).extracting(Token::getType).containsExactly(
+      BSLLexer.WHITE_SPACE,
+      BSLLexer.PREPROC_IDENTIFIER,
+      BSLLexer.EOF
+    );
+
+    tokens = getTokens(BSLLexer.REGION_MODE, inputString);
+
+    assertThat(tokens).extracting(Token::getType).containsExactly(
+      BSLLexer.WHITE_SPACE,
+      BSLLexer.PREPROC_IDENTIFIER,
+      BSLLexer.EOF
+    );
+
+    tokens = getTokens(BSLLexer.USE_MODE, inputString);
+
+    assertThat(tokens).extracting(Token::getType).containsExactly(
+      BSLLexer.WHITE_SPACE,
+      BSLLexer.PREPROC_IDENTIFIER,
+      BSLLexer.EOF
+    );
+
+    tokens = getTokens(BSLLexer.DOT_MODE, inputString);
+
+    assertThat(tokens).extracting(Token::getType).containsExactly(
+      BSLLexer.WHITE_SPACE,
+      BSLLexer.IDENTIFIER,
+      BSLLexer.EOF
+    );
   }
 
   @Test

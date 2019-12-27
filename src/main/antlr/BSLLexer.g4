@@ -24,7 +24,8 @@ lexer grammar BSLLexer;
 // commons
 fragment DIGIT: [0-9];
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
-WHITE_SPACE: [ \n\r\t\f] -> channel(HIDDEN);
+NEWLINE: [\r\n] -> channel(HIDDEN);
+WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN);
 
 // separators
 DOT: '.' -> pushMode(DOT_MODE);
@@ -240,7 +241,7 @@ PREPROC_SERVER_SYMBOL
     ;
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
-PREPROC_WHITE_SPACE: [ \t\f] -> skip;
+PREPROC_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
 PREPROC_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 PREPROC_NEWLINE: [\r\n] -> popMode, channel(HIDDEN);
 
@@ -289,8 +290,9 @@ ANNOTATION_CUSTOM_SYMBOL
     ;
 
 ANNOTATION_WHITE_SPACE
-    : [ \n\r\t\f]
-    -> channel(HIDDEN)
+    : [ \n\r\t\f]+
+    -> channel(HIDDEN),
+       type(WHITE_SPACE)
     ;
 
 ANNOTATION_UKNOWN
@@ -303,23 +305,25 @@ LABEL_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
 
 mode REGION_MODE;
 REGION_WHITE_SPACE
-    : [ \t\f]
-    -> channel(HIDDEN)
+    : [ \t\f]+
+    -> channel(HIDDEN),
+       type(WHITE_SPACE)
     ;
 REGION_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(PREPROC_IDENTIFIER), popMode;
 
 mode USE_MODE;
 fragment USE_LETTER: [\p{Letter}] | '_' | '-';
 USE_WHITE_SPACE
-    : [ \t\f]
-    -> channel(HIDDEN)
+    : [ \t\f]+
+    -> channel(HIDDEN),
+       type(WHITE_SPACE)
     ;
 USE_STRING : '"' (~["\n\r])* '"' -> type(PREPROC_STRING), popMode;
 USE_IDENTIFIER : ( USE_LETTER | DIGIT )+ -> type(PREPROC_IDENTIFIER), popMode;
 
 mode DOT_MODE;
 DOT_WHITE_SPACE
-    : [ \t\f]
+    : [ \t\f]+
     -> channel(HIDDEN),
        type(WHITE_SPACE)
     ;
