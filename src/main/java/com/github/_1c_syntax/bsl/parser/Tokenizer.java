@@ -29,6 +29,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -84,6 +85,13 @@ public class Tokenizer {
   private BSLParser.FileContext computeAST() {
     BSLParser parser = new BSLParser(getTokenStream());
     parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+    try {
+      parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+      return parser.file();
+    } catch (Exception ex) {
+      parser.reset(); // rewind input stream
+      parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+    }
     return parser.file();
   }
 
