@@ -39,12 +39,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
 import static org.antlr.v4.runtime.Token.EOF;
 
 public class Tokenizer {
 
-  private final String content;
+  private InputStream content;
   private Lexer lexer;
   private Lazy<CommonTokenStream> tokenStream = new Lazy<>(this::computeTokenStream);
   private Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
@@ -55,6 +54,10 @@ public class Tokenizer {
   }
 
   protected Tokenizer(String content, Lexer lexer) {
+    this(IOUtils.toInputStream(content, StandardCharsets.UTF_8), lexer);
+  }
+
+  protected Tokenizer(InputStream content, Lexer lexer) {
     this.content = content;
     this.lexer = lexer;
   }
@@ -85,13 +88,12 @@ public class Tokenizer {
   }
 
   private CommonTokenStream computeTokenStream() {
-    requireNonNull(content);
+
     CharStream input;
 
     try (
-      InputStream inputStream = IOUtils.toInputStream(content, StandardCharsets.UTF_8);
-      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
-      Reader inputStreamReader = new InputStreamReader(ubis, StandardCharsets.UTF_8)
+      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(content);
+      Reader inputStreamReader = new InputStreamReader(ubis, StandardCharsets.UTF_8);
     ) {
       ubis.skipBOM();
       CodePointCharStream inputTemp = CharStreams.fromReader(inputStreamReader);
