@@ -54,34 +54,8 @@ public class JMXBSLParserTest {
 
   //@Benchmark
   public void testCharStream() {
-    CommonTokenStream tokenStream = getTokenStream(content);
-
-    BSLParser parser = new BSLParser(tokenStream);
-    parser.file();
-
-
+    Tokenizer tokenizer = new Tokenizer(content);
+    tokenizer.getAst();
   }
 
-  private CommonTokenStream getTokenStream(String inputString) {
-    Lexer lexer = new BSLLexer(null);
-    CharStream input;
-
-    try {
-      InputStream inputStream = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
-
-      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
-      ubis.skipBOM();
-
-      CharStream inputTemp = CharStreams.fromStream(ubis, StandardCharsets.UTF_8);
-      input = new CaseChangingCharStream(inputTemp, true);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    lexer.setInputStream(input);
-
-    CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-    tokenStream.fill();
-    return tokenStream;
-  }
 }
