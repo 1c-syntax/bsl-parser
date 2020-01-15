@@ -56,7 +56,7 @@ public class JMXBSLLexerTest {
     throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
 
     Class<Lexer> lexerClass = (Class<Lexer>) Class.forName("com.github._1c_syntax.bsl.parser." + lexerClassName);
-    Lexer lexer = (Lexer) lexerClass.getDeclaredConstructors()[0].newInstance((Object) null);
+    Lexer lexer = (Lexer) lexerClass.getDeclaredConstructors()[0].newInstance((Object) null, true);
 
     Tokenizer tokenizer = new Tokenizer(content, lexer);
     tokenizer.getTokens();

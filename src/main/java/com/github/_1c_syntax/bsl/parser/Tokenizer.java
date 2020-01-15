@@ -111,7 +111,7 @@ public class Tokenizer {
     }
 
     if (lexer == null) {
-      lexer = new BSLLexer(input);
+      lexer = new BSLLexer(input, true);
     } else {
       lexer.setInputStream(input);
     }

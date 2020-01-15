@@ -55,7 +55,7 @@ class BSLLexerTest {
     }
 
     if (lexer == null) {
-      lexer = new BSLLexer(input);
+      lexer = new BSLLexer(input, true);
     } else {
       lexer.setInputStream(input);
     }
@@ -152,11 +152,7 @@ class BSLLexerTest {
   void testCRCR() {
     List<Token> tokens = getTokens(BSLLexer.DEFAULT_MODE, "\r\n\r\r\n");
     assert tokens.get(0).getLine() == 1;
-    assert tokens.get(1).getLine() == 1;
-    assert tokens.get(2).getLine() == 2;
-    assert tokens.get(3).getLine() == 3;
-    assert tokens.get(4).getLine() == 3;
-    assert tokens.get(5).getLine() == 4;
+    assert tokens.get(1).getLine() == 4;
   }
 
   @Test

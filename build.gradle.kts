@@ -31,10 +31,10 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-val antlrVersion = "fde6a4930aedcd88725a6f01d7293b1bf2e25140"
-val antlrGroupId = "com.github.nixel2007"
-val antlrArtifactId = "antlr4-optimized"
-val junitVersion = "5.6.0-M1"
+val antlrVersion = "4.7.4"
+val antlrGroupId = "com.tunnelvisionlabs"
+val antlrArtifactId = "antlr4"
+val junitVersion = "5.6.0-RC1"
 
 dependencies {
     compile(antlrGroupId, antlrArtifactId, antlrVersion)
@@ -42,7 +42,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
-    testImplementation("org.assertj", "assertj-core", "3.13.2")
+    testImplementation("org.assertj", "assertj-core", "3.14.0")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     compile("commons-io", "commons-io", "2.6")

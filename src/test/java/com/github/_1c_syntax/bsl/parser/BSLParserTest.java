@@ -64,7 +64,7 @@ class BSLParserTest {
       throw new RuntimeException(e);
     }
 
-    BSLLexer lexer = new BSLLexer(input);
+    BSLLexer lexer = new BSLLexer(input, true);
     lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
     lexer.mode(mode);
 
