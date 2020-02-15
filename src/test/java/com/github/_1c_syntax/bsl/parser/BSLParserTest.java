@@ -288,7 +288,16 @@ class BSLParserTest {
     setInput("ВебКлиент", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
-    setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
+    setInput("Вставка", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("КонецВставки", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("Удаление", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("КонецУдаления", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
     setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
@@ -363,9 +372,11 @@ class BSLParserTest {
     setInput("&НаКлиентеНаСервере");
     assertMatches(parser.compilerDirective());
 
+    setInput("&ИзменениеИКонтроль");
+    assertMatches(parser.compilerDirective());
+
     setInput("&Аннотация");
     assertNotMatches(parser.compilerDirective());
-
   }
 
   @Test
