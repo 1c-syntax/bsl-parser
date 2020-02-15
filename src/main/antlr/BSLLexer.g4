@@ -311,6 +311,24 @@ ANNOTATION_ATSERVER_SYMBOL
     ) -> popMode
     ;
 
+ANNOTATION_BEFORE_SYMBOL
+    : ( 'ПЕРЕД'
+    | 'BEFORE'
+    ) -> popMode
+    ;
+
+ANNOTATION_AFTER_SYMBOL
+    : ( 'ПОСЛЕ'
+    | 'AFTER'
+    ) -> popMode
+    ;
+
+ANNOTATION_AROUND_SYMBOL
+    : ( 'ВМЕСТО'
+    | 'AROUND'
+    ) -> popMode
+    ;
+
 ANNOTATION_CHANGEANDVALIDATE_SYMBOL
     : ( 'ИЗМЕНЕНИЕИКОНТРОЛЬ'
     | 'CHANGEANDVALIDATE'

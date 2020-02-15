@@ -372,6 +372,15 @@ class BSLParserTest {
     setInput("&НаКлиентеНаСервере");
     assertMatches(parser.compilerDirective());
 
+    setInput("&Перед");
+    assertMatches(parser.compilerDirective());
+
+    setInput("&После");
+    assertMatches(parser.compilerDirective());
+
+    setInput("&Вместо");
+    assertMatches(parser.compilerDirective());
+
     setInput("&ИзменениеИКонтроль");
     assertMatches(parser.compilerDirective());
 
