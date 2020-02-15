@@ -372,18 +372,6 @@ class BSLParserTest {
     setInput("&НаКлиентеНаСервере");
     assertMatches(parser.compilerDirective());
 
-    setInput("&Перед");
-    assertMatches(parser.compilerDirective());
-
-    setInput("&После");
-    assertMatches(parser.compilerDirective());
-
-    setInput("&Вместо");
-    assertMatches(parser.compilerDirective());
-
-    setInput("&ИзменениеИКонтроль");
-    assertMatches(parser.compilerDirective());
-
     setInput("&Аннотация");
     assertNotMatches(parser.compilerDirective());
   }
@@ -445,6 +433,24 @@ class BSLParserTest {
     assertMatches(parser.annotation());
 
     setInput("&Аннотация(П = 0, П2, Истина, \"строка\", П3)");
+    assertMatches(parser.annotation());
+
+    setInput("&Перед");
+    assertMatches(parser.annotation());
+
+    setInput("&Перед(Парам1 = 1)");
+    assertMatches(parser.annotation());
+
+    setInput("&После");
+    assertMatches(parser.annotation());
+
+    setInput("&После(\"РегламентноеЗадание1\")");
+    assertMatches(parser.annotation());
+
+    setInput("&Вместо");
+    assertMatches(parser.annotation());
+
+    setInput("&ИзменениеИКонтроль");
     assertMatches(parser.annotation());
 
     setInput("&НаСервере");
