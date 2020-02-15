@@ -288,7 +288,16 @@ class BSLParserTest {
     setInput("ВебКлиент", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
-    setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
+    setInput("Вставка", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("КонецВставки", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("Удаление", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("КонецУдаления", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
     setInput("Нечто", BSLLexer.PREPROCESSOR_MODE);
@@ -365,7 +374,6 @@ class BSLParserTest {
 
     setInput("&Аннотация");
     assertNotMatches(parser.compilerDirective());
-
   }
 
   @Test
@@ -425,6 +433,24 @@ class BSLParserTest {
     assertMatches(parser.annotation());
 
     setInput("&Аннотация(П = 0, П2, Истина, \"строка\", П3)");
+    assertMatches(parser.annotation());
+
+    setInput("&Перед");
+    assertMatches(parser.annotation());
+
+    setInput("&Перед(Парам1 = 1)");
+    assertMatches(parser.annotation());
+
+    setInput("&После");
+    assertMatches(parser.annotation());
+
+    setInput("&После(\"РегламентноеЗадание1\")");
+    assertMatches(parser.annotation());
+
+    setInput("&Вместо");
+    assertMatches(parser.annotation());
+
+    setInput("&ИзменениеИКонтроль");
     assertMatches(parser.annotation());
 
     setInput("&НаСервере");

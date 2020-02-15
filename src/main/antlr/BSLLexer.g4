@@ -246,6 +246,27 @@ PREPROC_SERVER_SYMBOL
       'СЕРВЕР'
     | 'SERVER'
     ;
+PREPROC_INSERT_SYMBOL
+    :
+      'ВСТАВКА'
+    | 'INSERT'
+    ;
+PREPROC_ENDINSERT_SYMBOL
+    :
+      'КОНЕЦВСТАВКИ'
+    | 'ENDINSERT'
+    ;
+PREPROC_DELETE_SYMBOL
+    :
+      'УДАЛЕНИЕ'
+    | 'DELETE'
+    ;
+PREPROC_ENDDELETE_SYMBOL
+    :
+      'КОНЕЦУДАЛЕНИЯ'
+    | 'ENDDELETE'
+    ;
+
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
 PREPROC_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
@@ -287,6 +308,30 @@ ANNOTATION_ATCLIENT_SYMBOL
 ANNOTATION_ATSERVER_SYMBOL
     : ( 'НАСЕРВЕРЕ'
     | 'ATSERVER'
+    ) -> popMode
+    ;
+
+ANNOTATION_BEFORE_SYMBOL
+    : ( 'ПЕРЕД'
+    | 'BEFORE'
+    ) -> popMode
+    ;
+
+ANNOTATION_AFTER_SYMBOL
+    : ( 'ПОСЛЕ'
+    | 'AFTER'
+    ) -> popMode
+    ;
+
+ANNOTATION_AROUND_SYMBOL
+    : ( 'ВМЕСТО'
+    | 'AROUND'
+    ) -> popMode
+    ;
+
+ANNOTATION_CHANGEANDVALIDATE_SYMBOL
+    : ( 'ИЗМЕНЕНИЕИКОНТРОЛЬ'
+    | 'CHANGEANDVALIDATE'
     ) -> popMode
     ;
 
