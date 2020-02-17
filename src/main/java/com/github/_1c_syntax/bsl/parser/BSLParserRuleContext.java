@@ -44,12 +44,8 @@ public class BSLParserRuleContext extends ParserRuleContext {
     if ( children==null ) {
       return Collections.emptyList();
     }
-    List<Token> tokens = new ArrayList<>();
-    for (ParseTree tree: children) {
-      tokens.addAll(getTokensFromParseTree(tree));
-    }
 
-    return tokens;
+    return new ArrayList<>(getTokensFromParseTree(this));
   }
 
   private static List<Token> getTokensFromParseTree(ParseTree tree) {
