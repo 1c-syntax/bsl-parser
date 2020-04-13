@@ -25,6 +25,7 @@ import com.github._1c_syntax.bsl.parser.util.Lazy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
+import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.Lexer;
@@ -75,8 +76,8 @@ public class Tokenizer {
     List<Token> tokensTemp = new ArrayList<>(getTokenStream().getTokens());
 
     Token lastToken = tokensTemp.get(tokensTemp.size() - 1);
-    if (lastToken.getType() == EOF) {
-      tokensTemp.remove(tokensTemp.size() - 1);
+    if (lastToken.getType() == EOF && lastToken instanceof CommonToken) {
+      ((CommonToken)lastToken).setChannel(Lexer.HIDDEN);
     }
 
     return tokensTemp;

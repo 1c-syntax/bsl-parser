@@ -40,7 +40,7 @@ class TokenizerTest {
         final List<Token> tokens = tokenizer.getTokens();
 
         // then
-        assertThat(tokens).hasSize(9);
+        assertThat(tokens).hasSize(10);
     }
 
     @Test
