@@ -21,6 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
+import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,8 @@ class TokenizerTest {
 
         // then
         assertThat(tokens).hasSize(10);
+        assertThat(tokens.get(9).getType()).isEqualTo(Lexer.EOF);
+        assertThat(tokens.get(9).getChannel()).isEqualTo(Lexer.HIDDEN);
     }
 
     @Test
