@@ -33,6 +33,7 @@ import java.util.List;
 
 public class BSLParserRuleContext extends ParserRuleContext {
   private final Lazy<String> text = new Lazy<>(this::computeText);
+  private final Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
 
   public BSLParserRuleContext() {
     super();
@@ -48,15 +49,24 @@ public class BSLParserRuleContext extends ParserRuleContext {
   }
 
   public List<Token> getTokens() {
+    return tokens.getOrCompute();
+  }
+
+  private String computeText() {
+    return super.getText();
+  }
+
+  private List<Token> computeTokens() {
     if ( children == null ) {
       return Collections.emptyList();
     }
 
-    return new ArrayList<>(getTokensFromParseTree(this));
+    List<Token> results = new ArrayList<>();
+    getTokensFromParseTree(this, results);
+    return results;
   }
 
-  private static List<Token> getTokensFromParseTree(ParseTree tree) {
-    List<Token> tokens = new ArrayList<>();
+  private static void getTokensFromParseTree(ParseTree tree, List<Token> tokens) {
     for (int i = 0; i < tree.getChildCount(); i++) {
       ParseTree child = tree.getChild(i);
       if (child instanceof TerminalNode) {
@@ -64,13 +74,8 @@ public class BSLParserRuleContext extends ParserRuleContext {
         Token token = node.getSymbol();
         tokens.add(token);
       } else {
-        tokens.addAll(getTokensFromParseTree(child));
+        getTokensFromParseTree(child, tokens);
       }
     }
-    return tokens;
-  }
-
-  private String computeText() {
-    return super.getText();
   }
 }
