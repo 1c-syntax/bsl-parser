@@ -21,6 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
+import com.github._1c_syntax.bsl.parser.util.Lazy;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -31,9 +32,15 @@ import java.util.Collections;
 import java.util.List;
 
 public class BSLParserRuleContext extends ParserRuleContext {
+  private final Lazy<String> text = new Lazy<>(this::computeText);
 
   public BSLParserRuleContext() {
     super();
+  }
+
+  @Override
+  public String getText() {
+    return text.getOrCompute();
   }
 
   public BSLParserRuleContext(ParserRuleContext parent, int invokingStateNumber) {
@@ -41,7 +48,7 @@ public class BSLParserRuleContext extends ParserRuleContext {
   }
 
   public List<Token> getTokens() {
-    if ( children==null ) {
+    if ( children == null ) {
       return Collections.emptyList();
     }
 
@@ -61,5 +68,9 @@ public class BSLParserRuleContext extends ParserRuleContext {
       }
     }
     return tokens;
+  }
+
+  private String computeText() {
+    return super.getText();
   }
 }
