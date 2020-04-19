@@ -21,7 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
-import com.github._1c_syntax.bsl.parser.util.Lazy;
+import com.github._1c_syntax.utils.Lazy;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
