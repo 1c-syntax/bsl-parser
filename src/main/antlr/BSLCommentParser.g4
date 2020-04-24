@@ -27,12 +27,14 @@ options {
 }
 
 // ROOT
-doc: description parameters?;
+doc: description parameters? return?;
 
 description: COMMENT_STRING+;
 parameters:
     COMMENT_PARAMETERS
     firstparamet+;
+
+return: COMMENT_RETURNS (MINUS? type)? (MINUS description?)?;
 
 firstparamet: parameter subparameters;
 parameter: parameterName MINUS (type (COMMA type)*) MINUS parametrdescription;

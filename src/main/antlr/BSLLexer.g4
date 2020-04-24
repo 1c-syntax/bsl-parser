@@ -393,10 +393,9 @@ COMMENT_MINUS: '-' -> type(MINUS);
 COMMENT_COMMA: ',' -> type(COMMA);
 COMMENT_MUL: '*';
 COMMENT_MULTIMUL: '**';
-
 COMMENT_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
-
 COMMENT_PARAMETERS : 'ПАРАМЕТРЫ:' | 'PARAMETERS:';
+COMMENT_RETURNS: 'ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:' | 'RETURNS:';
 COMMENT_CONTAINS : 'ИЗ' | 'CONTAINS';
 COMMENT_STRING : (~[ ,'-'\t\f\n\r])+;
 COMMENT_NEWLINE: [\r\n] -> channel(HIDDEN), popMode;
