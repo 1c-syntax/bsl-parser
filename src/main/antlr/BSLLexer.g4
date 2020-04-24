@@ -385,16 +385,16 @@ DOT_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
 
 mode COMMENT;
 
-COMMENT_START: '//' -> channel(COMMENTS);
+COMMENT_START: '//' -> channel(HIDDEN);
 
-COMMENT_MINUS: '-' -> type(MINUS), channel(COMMENTS);
-COMMENT_COMMA: ',' -> type(COMMA), channel(COMMENTS);
-COMMENT_MUL: '*' -> channel(COMMENTS);
-COMMENT_MULTIMUL: '**' -> channel(COMMENTS);
+COMMENT_MINUS: '-' -> type(MINUS), channel(HIDDEN);
+COMMENT_COMMA: ',' -> type(COMMA), channel(HIDDEN);
+COMMENT_MUL: '*' -> channel(HIDDEN);
+COMMENT_MULTIMUL: '**' -> channel(HIDDEN);
 COMMENT_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
 COMMENT_PARAMETERS : 'ПАРАМЕТРЫ:' | 'PARAMETERS:';
 COMMENT_RETURNS: 'ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:' | 'RETURNS:';
 COMMENT_EXAMPLE: 'EXAMPLE:' | 'ПРИМЕР:';
 COMMENT_CONTAINS : 'ИЗ' | 'CONTAINS';
-COMMENT_STRING : (~[ ,'-'\t\f\n\r])+ -> channel(COMMENTS);
+COMMENT_STRING : (~[ ,'-'\t\f\n\r])+ -> channel(HIDDEN);
 COMMENT_NEWLINE: [\r\n] -> channel(HIDDEN), popMode;
