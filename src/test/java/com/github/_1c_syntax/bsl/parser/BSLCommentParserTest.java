@@ -132,8 +132,8 @@ class BSLCommentParserTest {
 
     setInput("// Описание \n" +
       "// Многосторочное \n" +
-      "Параметры: \n" +
-      "Имя - Тип из Типа - Описание");
+      "// Параметры: \n" +
+      "// Имя - Тип из Типа - Описание");
     //assertNotMatches(parser.description());
 }
 
