@@ -27,22 +27,20 @@ options {
 }
 
 // ROOT
-doc: description parameters? return?;
+doc: description parameters? return? example?;
 
 description: COMMENT_STRING+;
-parameters:
-    COMMENT_PARAMETERS
-    firstparamet+;
-
+parameters: COMMENT_PARAMETERS parameter+;
 return: COMMENT_RETURNS (MINUS? type)? (MINUS description?)?;
+example: COMMENT_EXAMPLE exampleDescription;
 
-firstparamet: parameter subparameters;
-parameter: parameterName MINUS (type (COMMA type)*) MINUS parametrdescription;
+parameter: parameterBody subparameters;
+parameterBody: parameterName MINUS (type (COMMA type)*) MINUS parametrDescription;
 subparameters: subparameter* ;
-parametrdescription : COMMENT_STRING+;
-subparameter: COMMENT_MUL parameter subsubparameter*;
-subsubparameter: COMMENT_MULTIMUL parameter;
-
-//parameter: PASTRING;
+parametrDescription : COMMENT_STRING+;
+subparameter: COMMENT_MUL parameterBody subsubparameter*;
+subsubparameter: COMMENT_MULTIMUL parameterBody;
 parameterName: COMMENT_STRING;
 type: COMMENT_STRING (COMMENT_CONTAINS COMMENT_STRING)?;
+
+exampleDescription : COMMENT_STRING+;
