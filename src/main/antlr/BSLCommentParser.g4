@@ -32,8 +32,15 @@ doc: description parameters?;
 description: COMMENT_STRING+;
 parameters:
     COMMENT_PARAMETERS
-    parameter+;
-parameter: parameterName MINUS (type (COMMA type)*) MINUS COMMENT_STRING+;
+    firstparamet+;
+
+firstparamet: parameter subparameters;
+parameter: parameterName MINUS (type (COMMA type)*) MINUS parametrdescription;
+subparameters: subparameter* ;
+parametrdescription : COMMENT_STRING+;
+subparameter: COMMENT_MUL parameter subsubparameter*;
+subsubparameter: COMMENT_MULTIMUL parameter;
+
 //parameter: PASTRING;
 parameterName: COMMENT_STRING;
-type: COMMENT_STRING;
+type: COMMENT_STRING (COMMENT_CONTAINS COMMENT_STRING)?;
