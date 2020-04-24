@@ -27,11 +27,11 @@ options {
 }
 
 // ROOT
-doc: description parameters? return? example?;
+doc: description parameters? returnSection? example?;
 
 description: COMMENT_STRING+;
 parameters: COMMENT_PARAMETERS parameter+;
-return: COMMENT_RETURNS (MINUS? type)? (MINUS description?)?;
+returnSection: COMMENT_RETURNS (MINUS? type)? (MINUS description?)?;
 example: COMMENT_EXAMPLE exampleDescription;
 
 parameter: parameterBody subparameters;

@@ -36,8 +36,6 @@ fragment DIGIT: [0-9];
 LINE_COMMENT: '//' ->  channel(HIDDEN), pushMode(COMMENT);
 WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
 
-mode DEFAULT;
-
 // separators
 DOT: '.' -> pushMode(DOT_MODE);
 LBRACK: '[';
