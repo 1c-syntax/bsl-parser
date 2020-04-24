@@ -21,6 +21,8 @@
  */
 lexer grammar BSLLexer;
 
+channels { COMMENTS }
+
 @members {
 public BSLLexer(CharStream input, boolean crAwareCostructor) {
   super(input);
@@ -31,8 +33,46 @@ public BSLLexer(CharStream input, boolean crAwareCostructor) {
 
 // commons
 fragment DIGIT: [0-9];
-LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
+LINE_COMMENT: '//' ->  channel(HIDDEN), pushMode(COMMENT);
 WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
+
+mode COMMENT;
+
+//COMMENT_STRING : (~["\n\r]) -> channel(COMMENTS), popMode;
+COMMENT_START: '//';
+//COMMENT_WHITE_SPACE
+//    : [ \t\f]+ ->
+//       type(WHITE_SPACE);
+
+COMMENT_MINUS: '-' -> type(MINUS);
+COMMENT_COMMA: ',' -> type(COMMA);
+
+//COMMENT_IDENTIFIER : ( LETTER | DIGIT )+ -> type(STRING);
+//PREPROC_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
+COMMENT_NEWLINE: [\r\n] -> channel(HIDDEN), popMode;
+COMMENT_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
+
+COMMENT_PARAMETERS : 'ПАРАМЕТРЫ' | 'PARAMETERS';
+COMMENT_STRING : (~[ ,'-'\t\f\n\r])+;
+
+//COMMENT_WHITE_SPACE
+//    : [ \t\f]
+//    -> channel(HIDDEN),
+//       type(WHITE_SPACE)
+//    ;
+
+
+//WS : [ \t\r\n]+ -> channel(WHITESPACE);
+//NUMBER : [0-9]+ ;
+//NAME : [a-z_A-Z][a-z_A-Z0-9]* ;
+//
+//COMMENT_ALL
+//    :  (LETTER)*  -> channel(COMMENTS);
+//
+//
+//COMMENT_NEWLINE: [\r\n] -> popMode, channel(HIDDEN);
+
+mode DEFAULT;
 
 // separators
 DOT: '.' -> pushMode(DOT_MODE);
@@ -380,3 +420,4 @@ DOT_WHITE_SPACE
        type(WHITE_SPACE)
     ;
 DOT_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
+
