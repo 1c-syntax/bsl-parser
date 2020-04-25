@@ -29,16 +29,16 @@ public BSLCommentLexer(CharStream input, boolean crAwareCostructor) {
 }
 }
 
-COMMENT_START: '//';
+//COMMENT_START: '//';
 
 COMMENT_MINUS: '-';
 COMMENT_COMMA: ',';
 COMMENT_MUL: '*';
 COMMENT_MULTIMUL: '**';
-COMMENT_WHITE_SPACE: [ \t\f]+ ;
+COMMENT_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN);
 COMMENT_PARAMETERS : 'ПАРАМЕТРЫ:' | 'PARAMETERS:';
 COMMENT_RETURNS: 'ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:' | 'RETURNS:';
 COMMENT_EXAMPLE: 'EXAMPLE:' | 'ПРИМЕР:';
 COMMENT_CONTAINS : 'ИЗ' | 'CONTAINS';
+COMMENT_NEWLINE: [\r\n] -> channel(HIDDEN);
 COMMENT_STRING : (~[ ,'-'\t\f\n\r])+;
-COMMENT_NEWLINE: [\r\n];
