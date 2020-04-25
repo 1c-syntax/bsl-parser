@@ -73,11 +73,20 @@ public class Tokenizer {
   }
 
   private List<Token> computeTokens() {
-    List<Token> tokensTemp = new ArrayList<>(getTokenStream().getTokens());
+    List<Token> tokensTemp = new ArrayList<>();
+
+    getTokenStream().getTokens().forEach(token -> {
+      if (token.getChannel() == BSLLexer.COMMENTS) {
+        CommonToken defaultToken = new CommonToken(token);
+        defaultToken.setChannel(BSLLexer.HIDDEN);
+        tokensTemp.add(defaultToken);
+      }
+      tokensTemp.add(token);
+    });
 
     Token lastToken = tokensTemp.get(tokensTemp.size() - 1);
     if (lastToken.getType() == EOF && lastToken instanceof CommonToken) {
-      ((CommonToken)lastToken).setChannel(Lexer.HIDDEN);
+      ((CommonToken) lastToken).setChannel(Lexer.HIDDEN);
     }
 
     return tokensTemp;
