@@ -40,5 +40,5 @@ COMMENT_PARAMETERS : 'ПАРАМЕТРЫ:' | 'PARAMETERS:';
 COMMENT_RETURNS: 'ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:' | 'RETURNS:';
 COMMENT_EXAMPLE: 'EXAMPLE:' | 'ПРИМЕР:';
 COMMENT_CONTAINS : 'ИЗ' | 'CONTAINS';
-COMMENT_NEWLINE: [\r\n] -> channel(HIDDEN);
+COMMENT_NEWLINE: [\r\n] ;
 COMMENT_STRING : (~[ ,'-'\t\f\n\r])+;

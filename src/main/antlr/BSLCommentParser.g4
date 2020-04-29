@@ -29,16 +29,17 @@ options {
 // ROOT
 doc: description parameters? returnSection? example?;
 
-description: COMMENT_STRING+;
-parameters: COMMENT_PARAMETERS parameter+;
-returnSection: COMMENT_RETURNS (COMMENT_MINUS? type)? (COMMENT_MINUS description?)?;
-example: COMMENT_EXAMPLE exampleDescription;
+description: (COMMENT_STRING | COMMENT_COMMA | COMMENT_MINUS | COMMENT_NEWLINE)+;
+parameters: COMMENT_NEWLINE COMMENT_PARAMETERS (parameter COMMENT_NEWLINE*)+;
 
-parameter: parameterBody subparameters;
-parameterBody: parameterName COMMENT_MINUS (type (COMMENT_COMMA type)*) COMMENT_MINUS parametrDescription;
-subparameters: subparameter* ;
-parametrDescription : COMMENT_STRING+;
-subparameter: COMMENT_MUL parameterBody subsubparameter*;
+returnSection: COMMENT_NEWLINE COMMENT_RETURNS (COMMENT_MINUS? type)? (COMMENT_MINUS description?)?;
+example: COMMENT_NEWLINE COMMENT_EXAMPLE exampleDescription;
+
+parameter: COMMENT_NEWLINE parameterBody subparameters?;
+parameterBody: parameterName COMMENT_MINUS (type (COMMENT_COMMA type)*) COMMENT_MINUS? parametrDescription;
+subparameters: subparameter (COMMENT_NEWLINE* subparameter)*;
+parametrDescription : (COMMENT_STRING | COMMENT_COMMA | COMMENT_MINUS)+;
+subparameter: COMMENT_MUL parameterBody subsubparameter*?;
 subsubparameter: COMMENT_MULTIMUL parameterBody;
 parameterName: COMMENT_STRING;
 type: COMMENT_STRING (COMMENT_CONTAINS COMMENT_STRING)?;
