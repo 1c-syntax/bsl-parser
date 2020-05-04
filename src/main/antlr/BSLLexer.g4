@@ -62,11 +62,83 @@ SQUOTE: '\'';
 BAR: '|';
 TILDA: '~' -> pushMode(LABEL_MODE);
 
+fragment RU_A: 'А' | 'а';
+fragment RU_B: 'Б' | 'б';
+fragment RU_V: 'В' | 'в';
+fragment RU_G: 'Г' | 'г';
+fragment RU_D: 'Д' | 'д';
+fragment RU_YO: 'Ё' | 'ё';
+fragment RU_E: 'Е' | 'е';
+fragment RU_ZH: 'Ж' | 'ж';
+fragment RU_Z: 'З' | 'з';
+fragment RU_I: 'И' | 'и';
+fragment RU_J: 'Й' | 'й';
+fragment RU_K: 'К' | 'к';
+fragment RU_L: 'Л' | 'л';
+fragment RU_M: 'М' | 'м';
+fragment RU_N: 'Н' | 'н';
+fragment RU_O: 'О' | 'о';
+fragment RU_P: 'П' | 'п';
+fragment RU_R: 'Р' | 'р';
+fragment RU_S: 'С' | 'с';
+fragment RU_T: 'Т' | 'т';
+fragment RU_U: 'У' | 'у';
+fragment RU_F: 'Ф' | 'ф';
+fragment RU_H: 'Х' | 'х';
+fragment RU_C: 'Ц' | 'ц';
+fragment RU_CH: 'Ч' | 'ч';
+fragment RU_SH: 'Ш' | 'ш';
+fragment RU_SCH: 'Щ' | 'щ';
+fragment RU_SOLID_SIGN: 'Ъ' | 'ъ';
+fragment RU_Y: 'Ы' | 'ы';
+fragment RU_SOFT_SIGN: 'Ь' | 'ь';
+fragment RU_EH: 'Э' | 'э';
+fragment RU_YU: 'Ю' | 'ю';
+fragment RU_YA: 'Я' | 'я';
+fragment A: 'A' | 'a';
+fragment B: 'B' | 'b';
+fragment C: 'C' | 'c';
+fragment D: 'D' | 'd';
+fragment I: 'I' | 'i';
+fragment E: 'E' | 'e';
+fragment F: 'F' | 'f';
+fragment G: 'G' | 'g';
+fragment U: 'U' | 'u';
+fragment K: 'K' | 'k';
+fragment L: 'L' | 'l';
+fragment M: 'M' | 'm';
+fragment N: 'N' | 'n';
+fragment O: 'O' | 'o';
+fragment P: 'P' | 'p';
+fragment R: 'R' | 'r';
+fragment S: 'S' | 's';
+fragment T: 'T' | 't';
+fragment V: 'V' | 'v';
+fragment H: 'H' | 'h';
+fragment W: 'W' | 'w';
+fragment X: 'X' | 'x';
+fragment Y: 'Y' | 'y';
+
 // literals
-TRUE : 'ИСТИНА' | 'TRUE';
-FALSE : 'ЛОЖЬ' | 'FALSE';
-UNDEFINED : 'НЕОПРЕДЕЛЕНО' | 'UNDEFINED';
-NULL : 'NULL';
+TRUE
+    :
+     RU_I RU_S RU_T RU_I RU_N RU_A
+    | T R U E
+    ;
+FALSE
+    :
+     RU_L RU_O RU_ZH RU_SOFT_SIGN
+    | F A L S E
+    ;
+UNDEFINED
+    :
+     RU_N RU_E RU_O RU_P RU_R RU_E RU_D RU_E RU_L RU_E RU_N RU_O
+    | U N D E F I N E D
+    ;
+NULL
+    :
+    N U L L
+    ;
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
@@ -77,40 +149,176 @@ STRINGTAIL: BAR (~["\n\r] | '""')* '"';
 STRINGPART: BAR (~[\r\n"] | '""')*;
 
 // keywords
-PROCEDURE_KEYWORD : 'ПРОЦЕДУРА' | 'PROCEDURE';
-FUNCTION_KEYWORD : 'ФУНКЦИЯ' | 'FUNCTION';
-ENDPROCEDURE_KEYWORD : 'КОНЕЦПРОЦЕДУРЫ' | 'ENDPROCEDURE';
-ENDFUNCTION_KEYWORD : 'КОНЕЦФУНКЦИИ' | 'ENDFUNCTION';
-EXPORT_KEYWORD : 'ЭКСПОРТ' | 'EXPORT';
-VAL_KEYWORD : 'ЗНАЧ' | 'VAL';
-ENDIF_KEYWORD : 'КОНЕЦЕСЛИ' | 'ENDIF';
-ENDDO_KEYWORD : 'КОНЕЦЦИКЛА' | 'ENDDO';
-IF_KEYWORD : 'ЕСЛИ' | 'IF';
-ELSIF_KEYWORD : 'ИНАЧЕЕСЛИ' | 'ELSIF';
-ELSE_KEYWORD : 'ИНАЧЕ' | 'ELSE';
-THEN_KEYWORD : 'ТОГДА' | 'THEN';
-WHILE_KEYWORD : 'ПОКА' | 'WHILE';
-DO_KEYWORD : 'ЦИКЛ' | 'DO';
-FOR_KEYWORD : 'ДЛЯ' | 'FOR';
-TO_KEYWORD : 'ПО' | 'TO';
-EACH_KEYWORD : 'КАЖДОГО' | 'EACH';
-IN_KEYWORD : 'ИЗ' | 'IN';
-TRY_KEYWORD : 'ПОПЫТКА' | 'TRY';
-EXCEPT_KEYWORD : 'ИСКЛЮЧЕНИЕ' | 'EXCEPT';
-ENDTRY_KEYWORD : 'КОНЕЦПОПЫТКИ' | 'ENDTRY';
-RETURN_KEYWORD : 'ВОЗВРАТ' | 'RETURN';
-CONTINUE_KEYWORD : 'ПРОДОЛЖИТЬ' | 'CONTINUE';
-RAISE_KEYWORD : 'ВЫЗВАТЬИСКЛЮЧЕНИЕ' | 'RAISE';
-VAR_KEYWORD : 'ПЕРЕМ' | 'VAR';
-NOT_KEYWORD : 'НЕ' | 'NOT';
-OR_KEYWORD  : 'ИЛИ'| 'OR';
-AND_KEYWORD : 'И' | 'AND';
-NEW_KEYWORD : 'НОВЫЙ' | 'NEW';
-GOTO_KEYWORD : 'ПЕРЕЙТИ' | 'GOTO';
-BREAK_KEYWORD : 'ПРЕРВАТЬ' | 'BREAK';
-EXECUTE_KEYWORD : 'ВЫПОЛНИТЬ' | 'EXECUTE';
-ADDHANDLER_KEYWORD : 'ДОБАВИТЬОБРАБОТЧИК' | 'ADDHANDLER';
-REMOVEHANDLER_KEYWORD : 'УДАЛИТЬОБРАБОТЧИК' | 'REMOVEHANDLER';
+PROCEDURE_KEYWORD
+    :
+     RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_A
+    | P R O C E D U R E
+    ;
+FUNCTION_KEYWORD
+    :
+     RU_F RU_U RU_N RU_K RU_C RU_I RU_YA
+    | F U N C T I O N
+    ;
+ENDPROCEDURE_KEYWORD
+    :
+     RU_K RU_O RU_N RU_E RU_C RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_Y
+    | E N D P R O C E D U R E
+    ;
+ENDFUNCTION_KEYWORD
+    :
+     RU_K RU_O RU_N RU_E RU_C RU_F RU_U RU_N RU_K RU_C RU_I RU_I
+    | E N D F U N C T I O N
+    ;
+EXPORT_KEYWORD
+    :
+     RU_EH RU_K RU_S RU_P RU_O RU_R RU_T
+    | E X P O R T
+    ;
+VAL_KEYWORD
+    :
+     RU_Z RU_N RU_A RU_CH
+    | V A L
+    ;
+ENDIF_KEYWORD
+    :
+     RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
+    | E N D I F
+    ;
+ENDDO_KEYWORD
+    :
+     RU_K RU_O RU_N RU_E RU_C RU_C RU_I RU_K RU_L RU_A
+    | E N D D O
+    ;
+IF_KEYWORD
+    :
+     RU_E RU_S RU_L RU_I
+    | I F
+    ;
+ELSIF_KEYWORD
+    :
+     RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
+    | E L S I F
+    ;
+ELSE_KEYWORD
+    :
+     RU_I RU_N RU_A RU_CH RU_E
+    | E L S E
+    ;
+THEN_KEYWORD
+    :
+     RU_T RU_O RU_G RU_D RU_A
+    | T H E N
+    ;
+WHILE_KEYWORD
+    :
+     RU_P RU_O RU_K RU_A
+    | W H I L E
+    ;
+DO_KEYWORD
+    :
+     RU_C RU_I RU_K RU_L
+    | D O
+    ;
+FOR_KEYWORD
+    :
+     RU_D RU_L RU_YA
+    | F O R
+    ;
+TO_KEYWORD
+    :
+     RU_P RU_O
+    | T O
+    ;
+EACH_KEYWORD
+    :
+     RU_K RU_A RU_ZH RU_D RU_O RU_G RU_O
+    | E A C H
+    ;
+IN_KEYWORD
+    :
+     RU_I RU_Z
+    | I N
+    ;
+TRY_KEYWORD
+    :
+     RU_P RU_O RU_P RU_Y RU_T RU_K RU_A
+    | T R Y
+    ;
+EXCEPT_KEYWORD
+    :
+     RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E
+    | E X C E P T
+    ;
+ENDTRY_KEYWORD
+    :
+     RU_K RU_O RU_N RU_E RU_C RU_P RU_O RU_P RU_Y RU_T RU_K RU_I
+    | E N D T R Y
+    ;
+RETURN_KEYWORD
+    :
+     RU_V RU_O RU_Z RU_V RU_R RU_A RU_T
+    | R E T U R N
+    ;
+CONTINUE_KEYWORD
+    :
+     RU_P RU_R RU_O RU_D RU_O RU_L RU_ZH RU_I RU_T RU_SOFT_SIGN
+    | C O N T I N U E
+    ;
+RAISE_KEYWORD
+    :
+     RU_V RU_Y RU_Z RU_V RU_A RU_T RU_SOFT_SIGN RU_I RU_S RU_K RU_L RU_YU RU_CH RU_E RU_N RU_I RU_E
+    | R A I S E
+    ;
+VAR_KEYWORD
+    :
+     RU_P RU_E RU_R RU_E RU_M
+    | V A R
+    ;
+NOT_KEYWORD
+    :
+     RU_N RU_E
+    | N O T
+    ;
+OR_KEYWORD
+    :
+     RU_I RU_L RU_I
+    | O R
+    ;
+AND_KEYWORD
+    :
+     RU_I
+    | A N D
+    ;
+NEW_KEYWORD
+    :
+     RU_N RU_O RU_V RU_Y RU_J
+    | N E W
+    ;
+GOTO_KEYWORD
+    :
+     RU_P RU_E RU_R RU_E RU_J RU_T RU_I
+    | G O T O
+    ;
+BREAK_KEYWORD
+    :
+     RU_P RU_R RU_E RU_R RU_V RU_A RU_T RU_SOFT_SIGN
+    | B R E A K
+    ;
+EXECUTE_KEYWORD
+    :
+     RU_V RU_Y RU_P RU_O RU_L RU_N RU_I RU_T RU_SOFT_SIGN
+    | E X E C U T E
+    ;
+ADDHANDLER_KEYWORD
+    :
+     RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
+    | A D D H A N D L E R
+    ;
+REMOVEHANDLER_KEYWORD
+    :
+     RU_U RU_D RU_A RU_L RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
+    | R E M O V E H A N D L E R
+    ;
 
 fragment LETTER: [\p{Letter}] | '_';
 IDENTIFIER : LETTER ( LETTER | DIGIT )*;
@@ -130,141 +338,169 @@ PREPROC_STRINGPART: BAR (~["\n\r])*;
 
 PREPROC_USE_KEYWORD
     :
-    ('ИСПОЛЬЗОВАТЬ'
-    | 'USE') -> pushMode(USE_MODE);
+    (RU_I RU_S RU_P RU_O RU_L RU_SOFT_SIGN RU_Z RU_O RU_V RU_A RU_T RU_SOFT_SIGN
+    | U S E) -> pushMode(USE_MODE);
 
 PREPROC_REGION
     :
-    ( 'ОБЛАСТЬ'
-    | 'REGION' ) -> pushMode(REGION_MODE)
+    ( RU_O RU_B RU_L RU_A RU_S RU_T RU_SOFT_SIGN
+    | R E G I O N ) -> pushMode(REGION_MODE)
     ;
 PREPROC_END_REGION
     :
-    ( 'КОНЕЦОБЛАСТИ'
-    | 'ENDREGION' )
+    ( RU_K RU_O RU_N RU_E RU_C RU_O RU_B RU_L RU_A RU_S RU_T RU_I
+    | E N D R E G I O N )
     ;
 
 PREPROC_NOT_KEYWORD
     :
-      'НЕ'
-    | 'NOT'
+      RU_N RU_E
+    | N O T
     ;
 PREPROC_OR_KEYWORD
     :
-      'ИЛИ'
-    | 'OR'
+      RU_I RU_L RU_I
+    | O R
     ;
 PREPROC_AND_KEYWORD
     :
-      'И'
-    | 'AND'
+      RU_I
+    | A N D
     ;
 
 PREPROC_IF_KEYWORD
     :
-      'ЕСЛИ'
-    | 'IF'
+      RU_E RU_S RU_L RU_I
+    | I F
     ;
 PREPROC_THEN_KEYWORD
     :
-      'ТОГДА'
-    | 'THEN'
+      RU_T RU_O RU_G RU_D RU_A
+    | T H E N
     ;
 PREPROC_ELSIF_KEYWORD
     :
-      'ИНАЧЕЕСЛИ'
-    | 'ELSIF'
+      RU_I RU_N RU_A RU_CH RU_E RU_E RU_S RU_L RU_I
+    | E L S I F
     ;
 PREPROC_ENDIF_KEYWORD
     :
-      'КОНЕЦЕСЛИ'
-    | 'ENDIF'
+      RU_K RU_O RU_N RU_E RU_C RU_E RU_S RU_L RU_I
+    | E N D I F
     ;
 PREPROC_ELSE_KEYWORD
     :
-      'ИНАЧЕ'
-    | 'ELSE'
+      RU_I RU_N RU_A RU_CH RU_E
+    | E L S E
     ;
 
 PREPROC_MOBILEAPPCLIENT_SYMBOL
     :
-      'МОБИЛЬНОЕПРИЛОЖЕНИЕКЛИЕНТ'
-    | 'MOBILEAPPCLIENT'
+      RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_O RU_E
+      RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
+      RU_K RU_L RU_I RU_E RU_N RU_T
+    | M O B I L E
+      A P P
+      C L I E N T
     ;
 PREPROC_MOBILEAPPSERVER_SYMBOL
     :
-      'МОБИЛЬНОЕПРИЛОЖЕНИЕСЕРВЕР'
-    | 'MOBILEAPPSERVER'
+      RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_O RU_E
+      RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
+      RU_S RU_E RU_R RU_V RU_E RU_R
+    | M O B I L E
+      A P P
+      S E R V E R
     ;
 PREPROC_MOBILECLIENT_SYMBOL
     :
-      'МОБИЛЬНЫЙКЛИЕНТ'
-    | 'MOBILECLIENT'
+      RU_M RU_O RU_B RU_I RU_L RU_SOFT_SIGN RU_N RU_Y RU_J
+      RU_K RU_L RU_I RU_E RU_N RU_T
+    | M O B I L E
+      C L I E N T
     ;
 PREPROC_THICKCLIENTORDINARYAPPLICATION_SYMBOL
     :
-      'ТОЛСТЫЙКЛИЕНТОБЫЧНОЕПРИЛОЖЕНИЕ'
-    | 'THICKCLIENTORDINARYAPPLICATION'
+      RU_T RU_O RU_L RU_S RU_T RU_Y RU_J
+      RU_K RU_L RU_I RU_E RU_N RU_T
+      RU_O RU_B RU_Y RU_CH RU_N RU_O RU_E
+      RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
+    | T H I C K
+      C L I E N T
+      O R D I N A R Y
+      A P P L I C A T I O N
     ;
 PREPROC_THICKCLIENTMANAGEDAPPLICATION_SYMBOL
     :
-      'ТОЛСТЫЙКЛИЕНТУПРАВЛЯЕМОЕПРИЛОЖЕНИЕ'
-    | 'THICKCLIENTMANAGEDAPPLICATION'
+      RU_T RU_O RU_L RU_S RU_T RU_Y RU_J
+      RU_K RU_L RU_I RU_E RU_N RU_T
+      RU_U RU_P RU_R RU_A RU_V RU_L RU_YA RU_E RU_M RU_O RU_E
+      RU_P RU_R RU_I RU_L RU_O RU_ZH RU_E RU_N RU_I RU_E
+    | T H I C K
+      C L I E N T
+      M A N A G E D
+      A P P L I C A T I O N
     ;
 PREPROC_EXTERNALCONNECTION_SYMBOL
     :
-      'ВНЕШНЕЕСОЕДИНЕНИЕ'
-    | 'EXTERNALCONNECTION'
+      RU_V RU_N RU_E RU_SH RU_N RU_E RU_E
+      RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E
+    | E X T E R N A L
+      C O N N E C T I O N
     ;
 PREPROC_THINCLIENT_SYMBOL
     :
-      'ТОНКИЙКЛИЕНТ'
-    | 'THINCLIENT'
+      RU_T RU_O RU_N RU_K RU_I RU_J
+      RU_K RU_L RU_I RU_E RU_N RU_T
+    | T H I N
+      C L I E N T
     ;
 PREPROC_WEBCLIENT_SYMBOL
     :
-      'ВЕБКЛИЕНТ'
-    | 'WEBCLIENT'
+      RU_V RU_E RU_B
+      RU_K RU_L RU_I RU_E RU_N RU_T
+    | W E B
+      C L I E N T
     ;
 PREPROC_ATCLIENT_SYMBOL
     :
-      'НАКЛИЕНТЕ'
-    | 'ATCLIENT'
+      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
+    | A T C L I E N T
     ;
 PREPROC_CLIENT_SYMBOL
     :
-      'КЛИЕНТ'
-    | 'CLIENT'
+      RU_K RU_L RU_I RU_E RU_N RU_T
+    | C L I E N T
     ;
 PREPROC_ATSERVER_SYMBOL
     :
-      'НАСЕРВЕРЕ'
-    | 'ATSERVER'
+      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+    | A T S E R V E R
     ;
 PREPROC_SERVER_SYMBOL
     :
-      'СЕРВЕР'
-    | 'SERVER'
+      RU_S RU_E RU_R RU_V RU_E RU_R
+    | S E R V E R
     ;
 PREPROC_INSERT_SYMBOL
     :
-      'ВСТАВКА'
-    | 'INSERT'
+      RU_V RU_S RU_T RU_A RU_V RU_K RU_A
+    | I N S E R T
     ;
 PREPROC_ENDINSERT_SYMBOL
     :
-      'КОНЕЦВСТАВКИ'
-    | 'ENDINSERT'
+      RU_K RU_O RU_N RU_E RU_C RU_V RU_S RU_T RU_A RU_V RU_K RU_I
+    | E N D I N S E R T
     ;
 PREPROC_DELETE_SYMBOL
     :
-      'УДАЛЕНИЕ'
-    | 'DELETE'
+      RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_E
+    | D E L E T E
     ;
 PREPROC_ENDDELETE_SYMBOL
     :
-      'КОНЕЦУДАЛЕНИЯ'
-    | 'ENDDELETE'
+      RU_K RU_O RU_N RU_E RU_C RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_YA
+    | E N D D E L E T E
     ;
 
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
@@ -279,59 +515,67 @@ mode ANNOTATION_MODE;
 
 ANNOTATION_ATSERVERNOCONTEXT_SYMBOL
     : (
-      'НАСЕРВЕРЕБЕЗКОНТЕКСТА'
-    | 'ATSERVERNOCONTEXT'
+      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+      RU_B RU_E RU_Z RU_K RU_O RU_N RU_T RU_E RU_K RU_S RU_T RU_A
+    | A T S E R V E R
+      N O C O N T E X T
     ) -> popMode
     ;
 
 ANNOTATION_ATCLIENTATSERVERNOCONTEXT_SYMBOL
     : (
-      'НАКЛИЕНТЕНАСЕРВЕРЕБЕЗКОНТЕКСТА'
-    | 'ATCLIENTATSERVERNOCONTEXT'
+      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
+      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+      RU_B RU_E RU_Z RU_K RU_O RU_N RU_T RU_E RU_K RU_S RU_T RU_A
+    | A T C L I E N T
+      A T S E R V E R
+      N O C O N T E X T
     ) -> popMode
     ;
 
 ANNOTATION_ATCLIENTATSERVER_SYMBOL
     : (
-      'НАКЛИЕНТЕНАСЕРВЕРЕ'
-    | 'ATCLIENTATSERVER'
+      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
+      RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+    | A T C L I E N T
+      A T S E R V E R
     ) -> popMode
     ;
 
 ANNOTATION_ATCLIENT_SYMBOL
     : (
-      'НАКЛИЕНТЕ'
-    | 'ATCLIENT'
+      RU_N RU_A RU_K RU_L RU_I RU_E RU_N RU_T RU_E
+    | A T C L I E N T
     ) -> popMode
     ;
 
 ANNOTATION_ATSERVER_SYMBOL
-    : ( 'НАСЕРВЕРЕ'
-    | 'ATSERVER'
+    : ( RU_N RU_A RU_S RU_E RU_R RU_V RU_E RU_R RU_E
+    | A T S E R V E R
     ) -> popMode
     ;
 
 ANNOTATION_BEFORE_SYMBOL
-    : ( 'ПЕРЕД'
-    | 'BEFORE'
+    : ( RU_P RU_E RU_R RU_E RU_D
+    | B E F O R E
     ) -> popMode
     ;
 
 ANNOTATION_AFTER_SYMBOL
-    : ( 'ПОСЛЕ'
-    | 'AFTER'
+    : ( RU_P RU_O RU_S RU_L RU_E
+    | A F T E R
     ) -> popMode
     ;
 
 ANNOTATION_AROUND_SYMBOL
-    : ( 'ВМЕСТО'
-    | 'AROUND'
+    : ( RU_V RU_M RU_E RU_S RU_T RU_O
+    | A R O U N D
     ) -> popMode
     ;
 
 ANNOTATION_CHANGEANDVALIDATE_SYMBOL
-    : ( 'ИЗМЕНЕНИЕИКОНТРОЛЬ'
-    | 'CHANGEANDVALIDATE'
+    : (  RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_E RU_I RU_K RU_O RU_N RU_T RU_R RU_O RU_L RU_SOFT_SIGN
+    | C H A N G E A N D V A L I D A T E
     ) -> popMode
     ;
 

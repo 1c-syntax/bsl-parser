@@ -24,7 +24,6 @@ package com.github._1c_syntax.bsl.parser;
 import com.github._1c_syntax.bsl.parser.util.Lazy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
@@ -105,8 +104,7 @@ public class Tokenizer {
       Reader inputStreamReader = new InputStreamReader(ubis, StandardCharsets.UTF_8);
     ) {
       ubis.skipBOM();
-      CodePointCharStream inputTemp = CharStreams.fromReader(inputStreamReader);
-      input = new CaseChangingCharStream(inputTemp);
+      input = CharStreams.fromReader(inputStreamReader);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
