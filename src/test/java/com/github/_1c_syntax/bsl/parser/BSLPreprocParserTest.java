@@ -34,7 +34,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -75,47 +74,19 @@ class BSLPreprocParserTest {
 
         parser = new BSLPreprocessorParser(tokenStream);
         parser.conditions.push(true);
-        parser.predefinedSymbols.add("SERVER");
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-    }
-
-    private BSLParser setInputNoPrec(String inputString) {
-        CharStream input;
-
-        try (
-                InputStream inputStream = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
-                UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
-                Reader inputStreamReader = new InputStreamReader(ubis, StandardCharsets.UTF_8)
-        ) {
-            ubis.skipBOM();
-            CodePointCharStream inputTemp = CharStreams.fromReader(inputStreamReader);
-            input = new CaseChangingCharStream(inputTemp);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        BSLLexer lexer = new BSLLexer(input, true);
-        //  lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
-
-        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        tokenStream.fill();
-
-        var parsers = new BSLParser(tokenStream);
-        parsers.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        return parsers;
     }
 
     private BSLParser.FileContext setInput(String inputString, List<String> definedSymbols) {
         CharStream input;
 
         try (
-                InputStream inputStream = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
-                UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
+                InputStream content = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
+                UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(content);
                 Reader inputStreamReader = new InputStreamReader(ubis, StandardCharsets.UTF_8)
         ) {
             ubis.skipBOM();
-            CodePointCharStream inputTemp = CharStreams.fromReader(inputStreamReader);
-            input = new CaseChangingCharStream(inputTemp);
+            input = CharStreams.fromReader(inputStreamReader);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
