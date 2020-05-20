@@ -77,7 +77,7 @@ class BSLPreprocParserTest {
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
     }
 
-    private BSLParser.FileContext setInput(String inputString, List<String> definedSymbols) {
+    private CompilationResult setInput(String inputString, List<String> definedSymbols) {
         CharStream input;
 
         try (
@@ -99,6 +99,7 @@ class BSLPreprocParserTest {
 
         List<Token> tokens = tempTokenStream.getTokens();
         List<Token> codeTokens = new ArrayList<>();
+        List<List<Token>> regionTokens = new ArrayList<>();
         List<Token> directiveTokens = new ArrayList<>();
         var directiveTokenSource = new ListTokenSource(directiveTokens);
         var directiveTokenStream = new CommonTokenStream(directiveTokenSource, BSLLexer.PREPROCESSOR_MODE);
@@ -113,20 +114,26 @@ class BSLPreprocParserTest {
 
         int index = 0;
         boolean compiliedTokens = true;
+        boolean storeDirective;
         while (index < tokens.size()) {
             var token = tokens.get(index);
             if (token.getType() == BSLLexer.HASH) {
                 directiveTokens.clear();
+                storeDirective = false;
                 int directiveTokenIndex = index + 1;
                 // Сбор всех токенов препроцессора
                 do {
                     if (directiveTokenIndex < tokens.size()) {
                         Token nextToken = tokens.get(directiveTokenIndex);
+                        if (nextToken.getType() == BSLLexer.PREPROC_REGION
+                                || nextToken.getType() == BSLLexer.PREPROC_END_REGION) {
+                            storeDirective = true;
+                        }
                         if (nextToken.getType() != BSLLexer.EOF &&
                                 nextToken.getType() != BSLLexer.PREPROC_NEWLINE &&
                                 nextToken.getType() != BSLLexer.HASH) {
-                            if (tokens.get(directiveTokenIndex).getChannel() != Lexer.HIDDEN) {
-                                directiveTokens.add(tokens.get(directiveTokenIndex));
+                            if (nextToken.getChannel() != Lexer.HIDDEN) {
+                                directiveTokens.add(nextToken);
                             }
                             directiveTokenIndex++;
                         } else {
@@ -146,6 +153,9 @@ class BSLPreprocParserTest {
                 BSLPreprocessorParser.Preprocessor_directiveContext directive = preprocessorParser.preprocessor_directive(true);
                 // Если истина следующий код активен согласно директивам компиляции
                 compiliedTokens = directive.value;
+                if (storeDirective) { // TODO or !compiliedTokens collect only compiled regions
+                    regionTokens.add(new ArrayList<>(directiveTokens));
+                }
                 index = directiveTokenIndex - 1;
             } else if (token.getType() != BSLLexer.PREPROC_NEWLINE &&
                     compiliedTokens) {
@@ -159,14 +169,18 @@ class BSLPreprocParserTest {
         var codeTokenStream = new CommonTokenStream(codeTokenSource);
         BSLParser parser = new BSLParser(codeTokenStream);
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+        BSLParser.FileContext compilationUnit;
+        CompilationResult result = new CompilationResult();
+        result.regionTokens = regionTokens;
         try {
             parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-            return parser.file();
+            result.compilationUnit = parser.file();
         } catch (Exception ex) {
             parser.reset(); // rewind input stream
             parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+            result.compilationUnit = parser.file();
         }
-        return parser.file();
+        return result;
     }
 
     private void assertMatches(ParseTree tree) throws RecognitionException {
@@ -240,10 +254,12 @@ class BSLPreprocParserTest {
         var preprocSymbolsClient = Stream.of("Сервер")
                 .collect(Collectors.toList());
 
-        var file = setInput(fileContent, preprocSymbols);
-        Assertions.assertNotEquals("", file.getText());
-        file = setInput(fileContent, preprocSymbolsClient);
-        Assertions.assertEquals("<EOF>", file.getText());
+        var file = setInput(fileContent, preprocSymbolsClient);
+        Assertions.assertEquals("<EOF>", file.compilationUnit.getText());
+        file = setInput(fileContent, preprocSymbols);
+        Assertions.assertNotEquals("", file.compilationUnit.getText());
+        Assertions.assertEquals(2, file.regionTokens.size());
+        Assertions.assertEquals("Гооо", file.regionTokens.get(0).get(1).getText());
     }
 
     @Test
@@ -270,7 +286,7 @@ class BSLPreprocParserTest {
                         .map(BSLPreprocessorParser.VOCABULARY::getSymbolicName)
                         .collect(Collectors.toList()));
 
-        Assertions.assertEquals("ПеремКлиент;ПеремВебКлиент;ПеремВебКлиентИНЕТолстыйКлиент;ПроцедураВ()КонецПроцедурыСообщить();<EOF>", file.getText());
+        Assertions.assertEquals("ПеремКлиент;ПеремВебКлиент;ПеремВебКлиентИНЕТолстыйКлиент;ПроцедураВ()КонецПроцедурыСообщить();<EOF>", file.compilationUnit.getText());
     }
 
     @Test
@@ -434,6 +450,11 @@ class BSLPreprocParserTest {
         setInput("Просто");
         assertNotMatches(parser.preprocessor());
 
+    }
+
+    public class CompilationResult {
+        public BSLParser.FileContext compilationUnit;
+        public List<List<Token>> regionTokens;
     }
 
 }
