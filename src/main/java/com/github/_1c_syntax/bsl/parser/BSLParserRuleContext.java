@@ -23,7 +23,9 @@ package com.github._1c_syntax.bsl.parser;
 
 import com.github._1c_syntax.utils.Lazy;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -32,11 +34,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class BSLParserRuleContext extends ParserRuleContext {
-  private final Lazy<String> text = new Lazy<>(this::computeText);
+
+  private final Lazy<String> text = new Lazy<>(super::getText);
   private final Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
 
   public BSLParserRuleContext() {
     super();
+  }
+
+  public BSLParserRuleContext(ParserRuleContext parent, int invokingStateNumber) {
+    super(parent, invokingStateNumber);
   }
 
   @Override
@@ -44,16 +51,49 @@ public class BSLParserRuleContext extends ParserRuleContext {
     return text.getOrCompute();
   }
 
-  public BSLParserRuleContext(ParserRuleContext parent, int invokingStateNumber) {
-    super(parent, invokingStateNumber);
-  }
-
   public List<Token> getTokens() {
     return tokens.getOrCompute();
   }
 
-  private String computeText() {
-    return super.getText();
+  @Override
+  public void copyFrom(ParserRuleContext ctx) {
+    super.copyFrom(ctx);
+    clearCachedValues();
+  }
+
+  @Override
+  public <T extends ParseTree> T addAnyChild(T t) {
+    clearCachedValues();
+    return super.addAnyChild(t);
+  }
+
+  @Override
+  public void addChild(RuleContext ruleInvocation) {
+    super.addChild(ruleInvocation);
+    clearCachedValues();
+  }
+
+  @Override
+  public void addChild(TerminalNode t) {
+    super.addChild(t);
+    clearCachedValues();
+  }
+
+  @Override
+  public ErrorNode addErrorNode(ErrorNode errorNode) {
+    clearCachedValues();
+    return super.addErrorNode(errorNode);
+  }
+
+  @Override
+  public void removeLastChild() {
+    super.removeLastChild();
+    clearCachedValues();
+  }
+
+  private void clearCachedValues() {
+    text.clear();
+    tokens.clear();
   }
 
   private List<Token> computeTokens() {
@@ -63,7 +103,7 @@ public class BSLParserRuleContext extends ParserRuleContext {
 
     List<Token> results = new ArrayList<>();
     getTokensFromParseTree(this, results);
-    return results;
+    return Collections.unmodifiableList(results);
   }
 
   private static void getTokensFromParseTree(ParseTree tree, List<Token> tokens) {
