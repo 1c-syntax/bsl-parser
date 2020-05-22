@@ -21,7 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
-import com.github._1c_syntax.bsl.parser.util.Lazy;
+import com.github._1c_syntax.utils.Lazy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonToken;
@@ -44,11 +44,11 @@ import static org.antlr.v4.runtime.Token.EOF;
 
 public class Tokenizer {
 
-  private InputStream content;
+  private final InputStream content;
   private Lexer lexer;
-  private Lazy<CommonTokenStream> tokenStream = new Lazy<>(this::computeTokenStream);
-  private Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
-  private Lazy<BSLParser.FileContext> ast = new Lazy<>(this::computeAST);
+  private final Lazy<CommonTokenStream> tokenStream = new Lazy<>(this::computeTokenStream);
+  private final Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
+  private final Lazy<BSLParser.FileContext> ast = new Lazy<>(this::computeAST);
 
   public Tokenizer(String content) {
     this(content, null);
