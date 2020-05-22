@@ -40,6 +40,8 @@ dependencies {
     compile(antlrGroupId, antlrArtifactId, antlrVersion)
     antlr(antlrGroupId, antlrArtifactId, antlrVersion)
 
+    implementation("com.github.1c-syntax", "utils", "0.2.1")
+
     testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
     testImplementation("org.assertj", "assertj-core", "3.14.0")
