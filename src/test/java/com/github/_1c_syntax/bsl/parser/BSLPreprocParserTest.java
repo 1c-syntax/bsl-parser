@@ -77,7 +77,7 @@ class BSLPreprocParserTest {
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
     }
 
-    private CompilationResult setInput(String inputString, List<String> definedSymbols) {
+    private CompilationResult setInput(String inputString, List<String> definedSymbols, boolean forceUseAllCode) {
         CharStream input;
 
         try (
@@ -145,20 +145,23 @@ class BSLPreprocParserTest {
 
                 } while (true);
 
-                directiveTokenSource = new ListTokenSource(directiveTokens);
-                directiveTokenStream = new CommonTokenStream(directiveTokenSource, BSLLexer.DEFAULT_TOKEN_CHANNEL);
-                preprocessorParser.setInputStream(directiveTokenStream);
-                preprocessorParser.reset();
+                //Если нужны все токены не имеет смысла вычислять результат выражжения препроцессора
+                if(!forceUseAllCode) {
+                    directiveTokenSource = new ListTokenSource(directiveTokens);
+                    directiveTokenStream = new CommonTokenStream(directiveTokenSource, BSLLexer.DEFAULT_TOKEN_CHANNEL);
+                    preprocessorParser.setInputStream(directiveTokenStream);
+                    preprocessorParser.reset();
 
-                BSLPreprocessorParser.Preprocessor_directiveContext directive = preprocessorParser.preprocessor_directive(true);
-                // Если истина следующий код активен согласно директивам компиляции
-                compiliedTokens = directive.value;
+                    BSLPreprocessorParser.Preprocessor_directiveContext directive = preprocessorParser.preprocessor_directive(true);
+                    // Если истина следующий код активен согласно директивам компиляции
+                    compiliedTokens = directive.value;
+                }
                 if (storeDirective) { // TODO or !compiliedTokens collect only compiled regions
                     regionTokens.add(new ArrayList<>(directiveTokens));
                 }
                 index = directiveTokenIndex - 1;
             } else if (token.getType() != BSLLexer.PREPROC_NEWLINE &&
-                    compiliedTokens) {
+                    (compiliedTokens || forceUseAllCode)) {
                 codeTokens.add(token); // сбор активных токенов в компилируемый контекст
             }
             index++;
@@ -254,9 +257,9 @@ class BSLPreprocParserTest {
         var preprocSymbolsClient = Stream.of("Сервер")
                 .collect(Collectors.toList());
 
-        var file = setInput(fileContent, preprocSymbolsClient);
+        var file = setInput(fileContent, preprocSymbolsClient,false);
         Assertions.assertEquals("<EOF>", file.compilationUnit.getText());
-        file = setInput(fileContent, preprocSymbols);
+        file = setInput(fileContent, preprocSymbols,false);
         Assertions.assertNotEquals("", file.compilationUnit.getText());
         Assertions.assertEquals(2, file.regionTokens.size());
         Assertions.assertEquals("Гооо", file.regionTokens.get(0).get(1).getText());
@@ -284,9 +287,36 @@ class BSLPreprocParserTest {
                         "#КонецЕсли\n"
                 , Stream.of(BSLPreprocessorParser.PREPROC_CLIENT_SYMBOL, BSLPreprocessorParser.PREPROC_WEBCLIENT_SYMBOL)
                         .map(BSLPreprocessorParser.VOCABULARY::getSymbolicName)
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()),false);
 
         Assertions.assertEquals("ПеремКлиент;ПеремВебКлиент;ПеремВебКлиентИНЕТолстыйКлиент;ПроцедураВ()КонецПроцедурыСообщить();<EOF>", file.compilationUnit.getText());
+    }
+
+    @Test
+    void testForceAllCode() {
+
+        var file = setInput("#!\n" +
+                        "#Если Клиент Тогда\n" +
+                        "Перем Клиент; \n" +
+                        "#Если ВебКлиент Тогда\n" +
+                        "Перем ВебКлиент; \n" +
+                        "#Если ТОЛСТЫЙКЛИЕНТОБЫЧНОЕПРИЛОЖЕНИЕ Тогда\n" +
+                        "Перем ТолстыйКлиент; \n" +
+                        "#КонецЕсли\n" +
+                        "#Если ВебКлиент И НЕ ТОЛСТЫЙКЛИЕНТОБЫЧНОЕПРИЛОЖЕНИЕ Тогда\n" +
+                        "Перем ВебКлиентИНЕТолстыйКлиент; \n" +
+                        "#КонецЕсли\n" + "#КонецЕсли\n" +
+                        "#Область Гооо\n" +
+                        "Процедура В()\n" +
+                        "КонецПроцедуры\n" +
+                        "#КонецОбласти\n" +
+                        "Сообщить();\n" +
+                        "#КонецЕсли\n"
+                , Stream.of(BSLPreprocessorParser.PREPROC_CLIENT_SYMBOL, BSLPreprocessorParser.PREPROC_WEBCLIENT_SYMBOL)
+                        .map(BSLPreprocessorParser.VOCABULARY::getSymbolicName)
+                        .collect(Collectors.toList()),true);
+
+        Assertions.assertEquals("ПеремКлиент;ПеремВебКлиент;ПеремТолстыйКлиент;ПеремВебКлиентИНЕТолстыйКлиент;ПроцедураВ()КонецПроцедурыСообщить();<EOF>", file.compilationUnit.getText());
     }
 
     @Test
