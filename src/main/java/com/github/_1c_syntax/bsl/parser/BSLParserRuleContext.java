@@ -55,47 +55,6 @@ public class BSLParserRuleContext extends ParserRuleContext {
     return tokens.getOrCompute();
   }
 
-  @Override
-  public void copyFrom(ParserRuleContext ctx) {
-    super.copyFrom(ctx);
-    clearCachedValues();
-  }
-
-  @Override
-  public <T extends ParseTree> T addAnyChild(T t) {
-    clearCachedValues();
-    return super.addAnyChild(t);
-  }
-
-  @Override
-  public void addChild(RuleContext ruleInvocation) {
-    super.addChild(ruleInvocation);
-    clearCachedValues();
-  }
-
-  @Override
-  public void addChild(TerminalNode t) {
-    super.addChild(t);
-    clearCachedValues();
-  }
-
-  @Override
-  public ErrorNode addErrorNode(ErrorNode errorNode) {
-    clearCachedValues();
-    return super.addErrorNode(errorNode);
-  }
-
-  @Override
-  public void removeLastChild() {
-    super.removeLastChild();
-    clearCachedValues();
-  }
-
-  private void clearCachedValues() {
-    text.clear();
-    tokens.clear();
-  }
-
   private List<Token> computeTokens() {
     if ( children == null ) {
       return Collections.emptyList();
