@@ -33,8 +33,8 @@ public BSLCommentLexer(CharStream input, boolean crAwareCostructor) {
 
 COMMENT_MINUS: '-';
 COMMENT_COMMA: ',';
-COMMENT_MUL: '*';
-COMMENT_MULTIMUL: '**';
+COMMENT_MUL: '*'+;
+//COMMENT_MULTIMUL: '**';
 COMMENT_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN);
 COMMENT_PARAMETERS : 'ПАРАМЕТРЫ:' | 'PARAMETERS:';
 COMMENT_RETURNS: 'ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:' | 'RETURNS:';
