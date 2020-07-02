@@ -133,16 +133,7 @@ total:
 ;
 
 // EXPRESSION
-expression:
-    member (
-        (operation expression)
-        | (negativeOperation? (LIKE_KEYWORD | ESCAPE_KEYWORD) expression)
-        | (REFS_KEYWORD mdoName)
-        | (negativeOperation? IN_KEYWORD (EN_HIERARCHY_KEYWORD | RU_HIERARCHII_KEYWORD)? LPAREN ((expression (COMMA expression)?) | subqueries) RPAREN)
-        | (negativeOperation? BETWEEN_KEYWORD expression AND_KEYWORD expression)
-        | (IS_KEYWORD negativeOperation? NULL)
-    )?
-;
+expression: member (boolOperation expression)*;
 
 member:
     ((unaryOpertion | negativeOperation)? (
@@ -156,7 +147,14 @@ member:
             | (LPAREN expression RPAREN)
             | parameter
         )
-    )
+    ) (
+        (operation member)
+        | (REFS_KEYWORD mdoName)
+        | (negativeOperation? (LIKE_KEYWORD | ESCAPE_KEYWORD) member)
+        | (negativeOperation? IN_KEYWORD (EN_HIERARCHY_KEYWORD | RU_HIERARCHII_KEYWORD)? LPAREN ((member (COMMA member)?) | subqueries) RPAREN)
+        | (negativeOperation? BETWEEN_KEYWORD member AND_KEYWORD member)
+        | (IS_KEYWORD negativeOperation? NULL)
+    )?
 ;
 
 aggregateFunction:
@@ -233,7 +231,7 @@ unaryOpertion       : PLUS | MINUS;
 compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 negativeOperation   : NOT_KEYWORD;
 boolOperation       : OR_KEYWORD | AND_KEYWORD;
-operation           : binaryOperation | compareOperation | boolOperation;
+operation           : binaryOperation | compareOperation;
 
 // NAMES
 alias       : AS_KEYWORD? aliasName; // псевдоним

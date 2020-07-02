@@ -57,9 +57,9 @@ public class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
   @Test
   void testDropTable() {
 
-    setInput("Уничтожить �?мяТаблицы");
+    setInput("Уничтожить ИмяТаблицы");
     assertMatches(parser.queries());
-    setInput("drop �?мяТаблицы;");
+    setInput("drop ИмяТаблицы;");
     assertMatches(parser.queries());
     setInput("drop");
     assertNotMatches(parser.queries());
