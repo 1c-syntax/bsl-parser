@@ -38,7 +38,7 @@ dropTable: DROP_KEYWORD tableName SEMICOLON?;
 // описание запроса
 query:
     (
-        (subqueries autoOrdering? totals? forUpdate?)   // подзапросы с объдинениями и тогами
+        (subqueries AUTOORDER_KEYWORD? totals? forUpdate?)   // подзапросы с объдинениями и тогами
         | subqueriesTemparyTable forUpdate?             // ВТ с объединениями
     ) SEMICOLON?
     ;
@@ -51,15 +51,13 @@ subqueryTemparyTable: SELECT_KEYWORD limitations fields temporaryTable froms? fi
 
 // ограничения выборки
 limitations:
-      (allowed? distinct? top?)
-    | (allowed? top? distinct?)
-    | (top? allowed? distinct?)
-    | (distinct? allowed? top?)
-    | (distinct? top? allowed?)
-    | (top? distinct? allowed?)
+      (ALLOWED_KEYWORD? DISTINCT_KEYWORD? top?)
+    | (ALLOWED_KEYWORD? top? DISTINCT_KEYWORD?)
+    | (top? ALLOWED_KEYWORD? DISTINCT_KEYWORD?)
+    | (DISTINCT_KEYWORD? ALLOWED_KEYWORD? top?)
+    | (DISTINCT_KEYWORD? top? ALLOWED_KEYWORD?)
+    | (top? DISTINCT_KEYWORD? ALLOWED_KEYWORD?)
     ;
-allowed : ALLOWED_KEYWORD;      // разрешенные
-distinct: DISTINCT_KEYWORD;     // различные
 top     : TOP_KEYWORD DECIMAL+; // первые N
 
 // поля выборки
@@ -125,8 +123,6 @@ ordering:
     ORDER_KEYWORD by dataSourceField orderDirection? (COMMA dataSourceField orderDirection?)*;
 orderDirection: ASC_KEYWORD | DESC_KEYWORD | (hierarhy DESC_KEYWORD?);
 
-autoOrdering: AUTOORDER_KEYWORD; // автоупорядочивание
-
 // итоги
 totals:
     TOTALS_KEYWORD fields? by total (COMMA total)*;
@@ -155,7 +151,7 @@ member:
             | parameter
         )
     ) (
-        (operation member)
+        ((binaryOperation | compareOperation) member)
         | (REFS_KEYWORD mdoName)
         | (negativeOperation? (LIKE_KEYWORD | ESCAPE_KEYWORD) member)
         | (negativeOperation? IN_KEYWORD (EN_HIERARCHY_KEYWORD | RU_HIERARCHII_KEYWORD)? LPAREN ((member (COMMA member)?) | subqueries) RPAREN)
@@ -229,8 +225,7 @@ castStatement:
     ) RPAREN
     ;
 
-parameter: AMPERSAND parameterName; // имя параметра
-parameterName: PARAMETER_IDENTIFIER;
+parameter: AMPERSAND PARAMETER_IDENTIFIER; // имя параметра
 
 // OPERATION
 binaryOperation     : PLUS | MINUS | MUL | QUOTIENT | MODULO;
@@ -238,7 +233,6 @@ unaryOpertion       : PLUS | MINUS;
 compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 negativeOperation   : NOT_KEYWORD;
 boolOperation       : OR_KEYWORD | AND_KEYWORD;
-operation           : binaryOperation | compareOperation;
 
 // NAMES
 alias       : AS_KEYWORD? aliasName; // псевдоним
