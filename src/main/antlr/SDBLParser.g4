@@ -50,7 +50,14 @@ subqueriesTemparyTable: subqueryTemparyTable (union subquery)*;
 subqueryTemparyTable: SELECT_KEYWORD limitations fields temporaryTable froms? filters? grouping? ordering? indexing?;
 
 // ограничения выборки
-limitations: ((allowed? distinct?) | (distinct? allowed?)) top?;
+limitations:
+      (allowed? distinct? top?)
+    | (allowed? top? distinct?)
+    | (top? allowed? distinct?)
+    | (distinct? allowed? top?)
+    | (distinct? top? allowed?)
+    | (top? distinct? allowed?)
+    ;
 allowed : ALLOWED_KEYWORD;      // разрешенные
 distinct: DISTINCT_KEYWORD;     // различные
 top     : TOP_KEYWORD DECIMAL+; // первые N
