@@ -39,15 +39,15 @@ dropTable: DROP_KEYWORD tableName SEMICOLON?;
 query:
     (
         (subqueries AUTOORDER_KEYWORD? totals? forUpdate?)   // подзапросы с объдинениями и тогами
-        | subqueriesTemparyTable forUpdate?             // ВТ с объединениями
+        | (subqueriesTT forUpdate?)                // ВТ с объединениями
     ) SEMICOLON?
     ;
 
 // основная часть запроса
 subqueries: subquery (union subquery)*;
 subquery: SELECT_KEYWORD limitations fields froms? filters? grouping? ordering?;
-subqueriesTemparyTable: subqueryTemparyTable (union subquery)*;
-subqueryTemparyTable: SELECT_KEYWORD limitations fields temporaryTable froms? filters? grouping? ordering? indexing?;
+subqueriesTT: subqueryTT (union subquery)*;
+subqueryTT: SELECT_KEYWORD limitations fields temporaryTable froms? filters? grouping? ordering? indexing?;
 
 // ограничения выборки
 limitations:
@@ -86,12 +86,11 @@ dataSource:
     (LPAREN subquery RPAREN)
     | table
     | virtualTable
-    | parameterTable
+    | parameter
     | (LPAREN dataSource RPAREN)
     ;
 table               : ((mdoName (DOT tableName)?) | tableName);
 dataSourceField     : (tableName DOT)* fieldName;
-parameterTable      : parameter;
 virtualTable        :
     mdoName (
         (DOT virtualTableName (LPAREN virtualTableParameters? RPAREN)?)
@@ -109,14 +108,10 @@ join:
     ;
 
 // блок отборов к источникам
-filters:
-    WHERE_KEYWORD expression;
+filters: WHERE_KEYWORD expression;
 
 // группировка данных
-grouping:
-    GROUP_KEYWORD by expression (COMMA expression)* hanving?;
-hanving:
-    HAVING_KEYWORD expression;
+grouping: GROUP_KEYWORD by expression (COMMA expression)* (HAVING_KEYWORD expression)?;
 
 // упорядочивание данных
 ordering:
@@ -124,8 +119,7 @@ ordering:
 orderDirection: ASC_KEYWORD | DESC_KEYWORD | (hierarhy DESC_KEYWORD?);
 
 // итоги
-totals:
-    TOTALS_KEYWORD fields? by total (COMMA total)*;
+totals: TOTALS_KEYWORD fields? by total (COMMA total)*;
 total:
     OVERALL_KEYWORD
     | (expression (
@@ -194,9 +188,9 @@ inlineFunction:
 
 predefined:
     VALUE_KEYWORD LPAREN (
-        (mdoName DOT ROUTEPOINT_FIELD DOT routePointName)    // для точки маршрута бизнес процесса
-        | (systemEnumName DOT enumValueName)                 // для системного перечисления
-        | (mdoName DOT (EMPTYREF_FIELD | fieldName)?)        // может быть просто точка - аналог пустой ссылки
+        (mdoName DOT ROUTEPOINT_FIELD DOT IDENTIFIER)   // для точки маршрута бизнес процесса
+        | (IDENTIFIER DOT IDENTIFIER)                   // для системного перечисления
+        | (mdoName DOT (EMPTYREF_FIELD | fieldName)?)   // может быть просто точка - аналог пустой ссылки
     ) RPAREN;
 
 literal:   // литералы
@@ -262,10 +256,6 @@ mdoTypeName :                               // имя типа метаданн�
     | TASK_TYPE
     | EXTERNAL_DATA_SOURCE_TYPE
     ;
-
-systemEnumName  : IDENTIFIER;   // имя системного перечисления
-enumValueName   : IDENTIFIER;   // имя значения перечисления
-routePointName  : IDENTIFIER;   // имя точки маршрута
 
 // TODO надо прописать все имена VT
 virtualTableName:   // имя виртуальной таблицы
