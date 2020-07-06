@@ -29,13 +29,8 @@ public SDBLLexer(CharStream input, boolean crAwareCostructor) {
 }
 }
 
-// commons
-fragment DIGIT: [0-9];
-LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
-WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
-
-// separators
-DOT: '.';
+// SEPARATORS
+DOT: '.' -> pushMode(DOT_MODE);
 LPAREN: '(';
 RPAREN: ')';
 SEMICOLON: ';';
@@ -54,7 +49,179 @@ MODULO: '%';
 AMPERSAND: '&' -> pushMode(PARAMETER_MODE);
 BAR: '|';
 
-// letters
+// KEYWORDS         RU                                                                          EN
+ALL:            RU_V RU_S RU_E                                                              | A L L;
+ALLOWED:        RU_R RU_A RU_Z RU_R RU_E RU_SH RU_E RU_N RU_N RU_Y RU_E                     | A L L O W E D;
+AND:            RU_I                                                                        | A N D;
+AS:             RU_K RU_A RU_K                                                              | A S;
+ASC:            RU_V RU_O RU_Z RU_R                                                         | A S C;
+AUTOORDER:      RU_A RU_V RU_T RU_O RU_U RU_P RU_O RU_R RU_YA RU_D RU_O
+                    RU_CH RU_I RU_V RU_A RU_N RU_I RU_E                                     | A U T O O R D E R;
+BETWEEN:        RU_M RU_E RU_ZH RU_D RU_U                                                   | B E T W E E N;
+BY_EN:                                                                                        B Y;
+CASE:           RU_V RU_Y RU_B RU_O RU_R                                                    | C A S E;
+CAST:           RU_V RU_Y RU_R RU_A RU_Z RU_I RU_T RU_SOFT_SIGN                             | C A S T;
+DESC:           RU_U RU_B RU_Y RU_V                                                         | D E S C;
+DISTINCT:       RU_R RU_A RU_Z RU_L RU_I RU_CH RU_N RU_Y RU_E                               | D I S T I N C T;
+DROP:           RU_U RU_N RU_I RU_CH RU_T RU_O RU_ZH RU_I RU_T RU_SOFT_SIGN                 | D R O P;
+ELSE:           RU_I RU_N RU_A RU_CH RU_E                                                   | E L S E;
+END:            RU_K RU_O RU_N RU_E RU_C                                                    | E N D;
+ESCAPE:         RU_S RU_P RU_E RU_C RU_S RU_I RU_M RU_V RU_O RU_L                           | E S C A P E;
+FALSE:          RU_L RU_O RU_ZH RU_SOFT_SIGN                                                | F A L S E;
+FOR:            RU_D RU_L RU_YA                                                             | F O R;
+FROM:           RU_I RU_Z                                                                   | F R O M;
+FULL:           RU_P RU_O RU_L RU_N RU_O RU_E                                               | F U L L;
+GROUP:          RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN    | G R O U P;
+HAVING:         RU_I RU_M RU_E RU_YU RU_SCH RU_I RU_E                                       | H A V I N G;
+HIERARCHY_EN:                                                                                 H I E R A R C H Y;
+HIERARCHII_RU:  RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_I;
+HIERARCHYA_RU:  RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_YA;
+IN:             RU_V                                                                        | I N;
+INDEX:          RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN    | I N D E X;
+INNER:          RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E                           | I N N E R;
+INTO:           RU_P RU_O RU_M RU_E RU_S RU_T RU_I RU_T RU_SOFT_SIGN                        | I N T O;
+IS:             RU_E RU_S RU_T RU_SOFT_SIGN                                                 | I S;
+ISNULL:         RU_E RU_S RU_T RU_SOFT_SIGN N U L L                                         | I S N U L L;
+JOIN:           RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E                           | J O I N;
+LEFT:           RU_L RU_E RU_V RU_O RU_E                                                    | L E F T;
+LIKE:           RU_P RU_O RU_D RU_O RU_B RU_N RU_O                                          | L I K E;
+NOT:            RU_N RU_E                                                                   | N O T;
+NULL:                                                                                         N U L L;
+OF:                                                                                           O F;
+ON_EN:                                                                                        O N;
+OR:             RU_I RU_L RU_I                                                              | O R;
+ORDER:          RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_T RU_SOFT_SIGN            | O R D E R;
+OUTER:          RU_V RU_N RU_E RU_SH RU_N RU_E RU_E                                         | O U T E R;
+OVERALL:        RU_O RU_B RU_SCH RU_I RU_E                                                  | O V E R A L L;
+PO_RU:          RU_P RU_O;
+RIGHT:          RU_P RU_R RU_A RU_V RU_O RU_E                                               | R I G H T;
+SELECT:         RU_V RU_Y RU_B RU_R RU_A RU_T RU_SOFT_SIGN                                  | S E L E C T;
+THEN:           RU_T RU_O RU_G RU_D RU_A                                                    | T H E N;
+TOP:            RU_P RU_E RU_R RU_V RU_Y RU_E                                               | T O P;
+TOTALS:         RU_I RU_T RU_O RU_G RU_I                                                    | T O T A L S;
+TRUE:           RU_I RU_S RU_T RU_I RU_N RU_A                                               | T R U E;
+UNDEFINED:      RU_N RU_E RU_O RU_P RU_R RU_E RU_D RU_E RU_L RU_E RU_N RU_O                 | U N D E F I N E D;
+UNION:          RU_O RU_B RU_SOLID_SIGN RU_E RU_D RU_I RU_N RU_I RU_T RU_SOFT_SIGN          | U N I O N;
+WHEN:           RU_K RU_O RU_G RU_D RU_A                                                    | W H E N;
+WHERE:          RU_G RU_D RU_E                                                              | W H E R E;
+
+// KEYWORDS         RU                                                                          EN
+AUTORECORDNUMBER:
+                RU_A RU_V RU_T RU_O RU_N RU_O RU_M RU_E RU_R RU_Z RU_A RU_P RU_I RU_S RU_I  | A U T O R E C O R D N U M B E R;
+AVG:            RU_S RU_R RU_E RU_D RU_N RU_E RU_E                                          | A V G;
+BEGINOFPERIOD:  RU_N RU_A RU_CH RU_A RU_L RU_O RU_P RU_E RU_R RU_I RU_O RU_D RU_A           | B E G I N O F P E R I O D;
+BOOLEAN:        RU_B RU_U RU_L RU_E RU_V RU_O                                               | B O O L E A N;
+COUNT:          RU_K RU_O RU_L RU_I RU_CH RU_E RU_S RU_T RU_V RU_O                          | C O U N T;
+DATE:           RU_D RU_A RU_T RU_A                                                         | D A T E;
+DATEADD:        RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_K RU_D RU_A RU_T RU_E    | D A T E A D D;
+DATEDIFF:       RU_R RU_A RU_Z RU_N RU_O RU_S RU_T RU_SOFT_SIGN RU_D RU_A RU_T              | D A T E D I F F;
+DATETIME:       RU_D RU_A RU_T RU_A RU_V RU_R RU_E RU_M RU_YA                               | D A T E T I M E;
+DAY:            RU_D RU_E RU_N RU_SOFT_SIGN                                                 | D A Y;
+DAYOFYEAR:      RU_D RU_E RU_N RU_SOFT_SIGN RU_G RU_O RU_D RU_A                             | D A Y O F Y E A R;
+EMPTYTABLE:     RU_P RU_U RU_S RU_T RU_A RU_YA RU_T RU_A RU_B RU_L RU_I RU_C RU_A           | E M P T Y T A B L E;
+ENDOFPERIOD:    RU_K RU_O RU_N RU_E RU_C RU_P RU_E RU_R RU_I RU_O RU_D RU_A                 | E N D O F P E R I O D;
+HALFYEAR:       RU_P RU_O RU_L RU_U RU_G RU_O RU_D RU_I RU_E                                | H A L F Y E A R;
+HOUR:           RU_CH RU_A RU_S                                                             | H O U R;
+MAX:            RU_M RU_A RU_K RU_S RU_I RU_M RU_U RU_M                                     | M A X;
+MIN:            RU_M RU_I RU_N RU_I RU_M RU_U RU_M                                          | M I N;
+MINUTE:         RU_M RU_I RU_N RU_U RU_T RU_A                                               | M I N U T E;
+MONTH:          RU_M RU_E RU_S RU_YA RU_C                                                   | M O N T H;
+NUMBER:         RU_CH RU_I RU_S RU_L RU_O                                                   | N U M B E R;
+QUARTER:        RU_K RU_V RU_A RU_R RU_T RU_A RU_L                                          | Q U A R T E R;
+ONLY:           RU_T RU_O RU_L RU_SOFT_SIGN RU_K RU_O                                       | O N L Y;
+PERIODS:        RU_P RU_E RU_R RU_I RU_O RU_D RU_A RU_M RU_I                                | P E R I O D S;
+REFS:           RU_S RU_S RU_Y RU_L RU_K RU_A                                               | R E F S;
+PRESENTATION:   RU_P RU_R RU_E RU_D RU_S RU_T RU_A RU_V RU_L RU_E RU_N RU_I RU_E            | P R E S E N T A T I O N;
+SECOND:         RU_S RU_E RU_K RU_U RU_N RU_D RU_A                                          | S E C O N D;
+STRING:         RU_S RU_T RU_R RU_O RU_K RU_A                                               | S T R I N G;
+SUBSTRING:      RU_P RU_O RU_D RU_S RU_T RU_R RU_O RU_K RU_A                                | S U B S T R I N G;
+SUM:            RU_S RU_U RU_M RU_M RU_A                                                    | S U M;
+TENDAYS:        RU_D RU_E RU_K RU_A RU_D RU_A                                               | T E N D A Y S;
+TYPE:           RU_T RU_I RU_P                                                              | T Y P E;
+UPDATE:         RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_YA                               | U P D A T E;
+VALUE:          RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_E                                    | V A L U E;
+VALUETYPE:      RU_T RU_I RU_P RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_YA                    | V A L U E T Y P E;
+WEEK:           RU_N RU_E RU_D RU_E RU_L RU_YA                                              | W E E K;
+WEEKDAY:        RU_D RU_E RU_N RU_SOFT_SIGN RU_N RU_E RU_D RU_E RU_L RU_I                   | W E E K D A Y;
+YEAR:           RU_G RU_O RU_D                                                              | Y E A R;
+
+// MDO TYPES                RU                                                                  EN
+ACCOUNTING_REGISTER_TYPE:
+                REGISTER_RU RU_R RU_B RU_U RU_H RU_G RU_A RU_L RU_T RU_E RU_R RU_I RU_I     | A C C O U N T I N G REGISTER_EN;
+ACCUMULATION_REGISTER_TYPE:
+                REGISTER_RU RU_N RU_A RU_K RU_O RU_P RU_L RU_E RU_N RU_I RU_YA              | A C C U M U L A T I O N REGISTER_EN;
+BUSINESS_PROCESS_TYPE:
+                RU_B RU_I RU_Z RU_N RU_E RU_S RU_P RU_R RU_O RU_C RU_E RU_S RU_S            | B U S I N E S S P R O C E S S;
+CALCULATION_REGISTER_TYPE:
+                REGISTER_RU RU_R RU_A RU_S RU_CH RU_E RU_T RU_A                             | C A L C U L A T I O N REGISTER_EN;
+CATALOG_TYPE:   RU_S RU_P RU_R RU_A RU_V RU_O RU_CH RU_N RU_I RU_K                          | C A T A L O G;
+CHART_OF_ACCOUNTS_TYPE:
+                PLAN_RU RU_S RU_CH RU_E RU_T RU_O RU_V                                      | PLAN_EN A C C O U N T S;
+CHART_OF_CALCULATION_TYPES_TYPE:
+                PLAN_RU RU_V RU_I RU_D RU_O RU_V RU_R RU_A RU_S RU_CH RU_E RU_T RU_A        | PLAN_EN C A L C U L A T I O N T Y P E S;
+CHART_OF_CHARACTERISTIC_TYPES_TYPE:
+                PLAN_RU RU_V RU_I RU_D RU_O RU_V RU_H RU_A RU_R RU_A RU_K RU_T RU_E RU_R RU_I RU_S RU_T RU_I RU_K
+                                                                                            | PLAN_EN C H A R A C T E R I S T I C T Y P E S;
+CONSTANT_TYPE:  RU_K RU_O RU_N RU_S RU_T RU_A RU_N RU_T RU_A                                | C O N S T A N T;
+DOCUMENT_TYPE:  DOCUMENT_RU                                                                 | DOCUMENT_EN;
+DOCUMENT_JOURNAL_TYPE:
+                RU_ZH RU_U RU_R RU_N RU_A RU_L DOCUMENT_RU RU_O RU_V                        | DOCUMENT_EN J O U R N A L;
+ENUM_TYPE:      RU_P RU_E RU_R RU_E RU_CH RU_I RU_S RU_L RU_E RU_N RU_I RU_E                | E N U M;
+EXCHANGE_PLAN_TYPE:
+                PLAN_RU RU_O RU_B RU_M RU_E RU_N RU_A                                       | E X C H A N G E P L A N;
+EXTERNAL_DATA_SOURCE_TYPE:
+                RU_V RU_N RU_E RU_SH RU_N RU_I RU_J RU_I RU_S RU_T RU_O RU_CH RU_N RU_I RU_K RU_D RU_A RU_N RU_N RU_Y RU_H
+                                                                                            | E X T E R N A L D A T A S O U R C E;
+FILTER_CRITERION_TYPE:
+                RU_K RU_R RU_I RU_T RU_E RU_R RU_I RU_J RU_O RU_T RU_B RU_O RU_R RU_A       | F I L T E R C R I T E R I O N;
+INFORMATION_REGISTER_TYPE:
+                REGISTER_RU RU_S RU_V RU_E RU_D RU_E RU_N RU_I RU_J                         | I N F O R M A T I O N REGISTER_EN;
+SEQUENCE_TYPE:
+                RU_P RU_O RU_S RU_L RU_E RU_D RU_O RU_V RU_A RU_T RU_E RU_L RU_SOFT_SIGN RU_N RU_O RU_S RU_T RU_SOFT_SIGN
+                                                                                            | S E Q U E N C E;
+TASK_TYPE:      RU_Z RU_A RU_D RU_A RU_CH RU_A                                              | T A S K;
+
+// VIRTUAL TABLES                 RU                                                                  EN
+ACTUAL_ACTION_PERIOD_VT:
+                RU_F RU_A RU_K RU_T RU_I RU_CH RU_E RU_S RU_K RU_I RU_J RU_P RU_E RU_R RU_I RU_O RU_D RU_D RU_E RU_J RU_S RU_T RU_V RU_I RU_YA
+                                                                                            | A C T U A L A C T I O N P E R I O D;
+BALANCE_VT:     BALANCE_RU                                                                  | BALANCE_EN;
+BALANCE_AND_TURNOVERS_VT:
+                BALANCE_RU RU_I TURNOVERS_RU                                                | BALANCE_EN A N D TURNOVERS_EN;
+BOUNDARIES_VT:  RU_G RU_R RU_A RU_N RU_I RU_C RU_Y                                          | B O U N D A R I E S;
+DR_CR_TURNOVERS_VT:
+                TURNOVERS_RU RU_D RU_T RU_K RU_T                                            | D R C R TURNOVERS_EN;
+EXT_DIMENSIONS_VT:
+                EXT_DIMENSIONS_RU                                                           | EXT_DIMENSIONS_EN;
+RECORDS_WITH_EXT_DIMENSIONS_VT:
+                RU_D RU_V RU_I RU_ZH RU_E RU_N RU_I RU_YA RU_S EXT_DIMENSIONS_RU            | R E C O R D S W I T H EXT_DIMENSIONS_EN;
+SCHEDULE_DATA_VT:
+                RU_D RU_A RU_N RU_N RU_Y RU_E RU_G RU_R RU_A RU_F RU_I RU_K RU_A            | S C H E D U L E D A T A;
+SLICEFIRST_VT:  RU_S RU_R RU_E RU_Z RU_P RU_E RU_R RU_V RU_Y RU_H                           | S L I C E F I R S T;
+SLICELAST_VT:   RU_S RU_R RU_E RU_Z RU_P RU_O RU_S RU_L RU_E RU_D RU_N RU_I RU_H            | S L I C E L A S T;
+TASK_BY_PERFORMER_VT:
+                RU_Z RU_A RU_D RU_A RU_CH RU_I RU_P RU_O RU_I RU_S RU_P RU_O RU_L RU_N RU_I RU_T RU_E RU_L RU_YU
+                                                                                            | T A S K B Y P E R F O R M E R;
+TURNOVERS_VT:   TURNOVERS_RU                                                                | TURNOVERS_EN;
+
+// FIELDS                 RU                                                                  EN
+EMPTYREF_FIELD:     RU_P RU_U RU_S RU_T RU_A RU_YA RU_S RU_S RU_Y RU_L RU_K RU_A            | E M P T Y R E F;
+ROUTEPOINT_FIELD:   RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A      | R O U T E P O I N T;
+
+fragment BALANCE_RU: RU_O RU_S RU_T RU_A RU_T RU_K RU_I;
+fragment BALANCE_EN: B A L A N C E;
+fragment DOCUMENT_RU: RU_D RU_O RU_K RU_U RU_M RU_E RU_N RU_T;
+fragment DOCUMENT_EN: D O C U M E N T;
+fragment EXT_DIMENSIONS_RU: RU_S RU_U RU_B RU_K RU_O RU_N RU_T RU_O;
+fragment EXT_DIMENSIONS_EN: E X T D I M E N S I O N S;
+fragment PLAN_RU: RU_P RU_L RU_A RU_N;
+fragment PLAN_EN: C H A R T O F;
+fragment REGISTER_RU: RU_R RU_E RU_G RU_I RU_S RU_T RU_R;
+fragment REGISTER_EN: R E G I S T E R;
+fragment TURNOVERS_RU: RU_O RU_B RU_O RU_R RU_O RU_T RU_Y;
+fragment TURNOVERS_EN: T U R N O V E R S;
+
+// LETTERS
 fragment RU_A: 'А' | 'а';
 fragment RU_B: 'Б' | 'б';
 fragment RU_V: 'В' | 'в';
@@ -114,499 +281,28 @@ fragment W: 'W' | 'w';
 fragment X: 'X' | 'x';
 fragment Y: 'Y' | 'y';
 
-// literals
-TRUE:
-    RU_I RU_S RU_T RU_I RU_N RU_A
-    | T R U E
-    ;
-FALSE:
-    RU_L RU_O RU_ZH RU_SOFT_SIGN
-    | F A L S E
-    ;
-UNDEFINED:
-    RU_N RU_E RU_O RU_P RU_R RU_E RU_D RU_E RU_L RU_E RU_N RU_O
-    | U N D E F I N E D
-    ;
-NULL: N U L L;
+// COMMONS
+WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
+LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 
-DECIMAL: DIGIT+;
-FLOAT : DIGIT+ '.' DIGIT*;
-STRING: '"' (~[\r\n"] | '""')* '"';
-STRINGSTART: '"' (~["\n\r]| '""')*;
-STRINGTAIL: BAR (~["\n\r] | '""')* '"';
-STRINGPART: BAR (~[\r\n"] | '""')*;
-
-// keywords
-
-AUTOORDER_KEYWORD:
-    RU_A RU_V RU_T RU_O RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_V RU_A RU_N RU_I RU_E
-    | A U T O O R D E R
-    ;
-BOOLEAN_KEYWORD:
-    RU_B RU_U RU_L RU_E RU_V RU_O
-    | B O O L E A N
-    ;
-IN_KEYWORD:
-    RU_V
-    | I N
-    ;
-OUTER_KEYWORD:
-    RU_V RU_N RU_E RU_SH RU_N RU_E RU_E
-    | O U T E R
-    ;
-INNER_KEYWORD:
-    RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E
-    | I N N E R
-    ;
-ASC_KEYWORD:
-    RU_V RU_O RU_Z RU_R
-    | A S C
-    ;
-ALL_KEYWORD:
-    RU_V RU_S RU_E
-    | A L L
-    ;
-CASE_KEYWORD:
-    RU_V RU_Y RU_B RU_O RU_R
-    | C A S E
-    ;
-SELECT_KEYWORD:
-    RU_V RU_Y RU_B RU_R RU_A RU_T RU_SOFT_SIGN
-    | S E L E C T
-    ;
-CAST_KEYWORD:
-    RU_V RU_Y RU_R RU_A RU_Z RU_I RU_T RU_SOFT_SIGN
-    | C A S T
-    ;
-WHERE_KEYWORD:
-    RU_G RU_D RU_E
-    | W H E R E
-    ;
-YEAR_KEYWORD:
-    RU_G RU_O RU_D
-    | Y E A R
-    ;
-DATE_KEYWORD:
-    RU_D RU_A RU_T RU_A
-    | D A T E
-    ;
-DATETIME_KEYWORD:
-    RU_D RU_A RU_T RU_A RU_V RU_R RU_E RU_M RU_YA
-    | D A T E T I M E
-    ;
-TENDAYS_KEYWORD:
-    RU_D RU_E RU_K RU_A RU_D RU_A
-    | T E N D A Y S
-    ;
-DAY_KEYWORD:
-    RU_D RU_E RU_N RU_SOFT_SIGN
-    | D A Y
-    ;
-DAYOFYEAR_KEYWORD:
-    RU_D RU_E RU_N RU_SOFT_SIGN RU_G RU_O RU_D RU_A
-    | D A Y O F Y E A R
-    ;
-WEEKDAY_KEYWORD:
-    RU_D RU_E RU_N RU_SOFT_SIGN RU_N RU_E RU_D RU_E RU_L RU_I
-    | W E E K D A Y
-    ;
-FOR_KEYWORD:
-    RU_D RU_L RU_YA
-    | F O R
-    ;
-UPDATE_KEYWORD:
-    RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_YA
-    | U P D A T E
-    ;
-OF_KEYWORD: O F; // only for english
-DATEADD_KEYWORD:
-    RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_K RU_D RU_A RU_T RU_E
-    | D A T E A D D
-    ;
-IS_KEYWORD:
-    RU_E RU_S RU_T RU_SOFT_SIGN
-    | I S
-    ;
-ISNULL_KEYWORD:
-    RU_E RU_S RU_T RU_SOFT_SIGN N U L L
-    | I S N U L L
-    ;
-VALUE_KEYWORD:
-    RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_E
-    | V A L U E
-    ;
-AND_KEYWORD:
-    RU_I
-    | A N D
-    ;
-EN_HIERARCHY_KEYWORD: H I E R A R C H Y;
-RU_HIERARCHYA_KEYWORD: RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_YA;
-RU_HIERARCHII_KEYWORD: RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_I;
-FROM_KEYWORD:
-    RU_I RU_Z
-    | F R O M
-    ;
-OR_KEYWORD:
-    RU_I RU_L RU_I
-    | O R
-    ;
-HAVING_KEYWORD:
-    RU_I RU_M RU_E RU_YU RU_SCH RU_I RU_E
-    | H A V I N G
-    ;
-ELSE_KEYWORD:
-    RU_I RU_N RU_A RU_CH RU_E
-    | E L S E
-    ;
-INDEX_KEYWORD:
-    RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN
-    | I N D E X
-    ;
-EN_BY_KEYWORD: B Y;
-RU_PO_KEYWORD: RU_P RU_O;
-TOTALS_KEYWORD:
-    RU_I RU_T RU_O RU_G RU_I
-    | T O T A L S
-    ;
-AS_KEYWORD:
-    RU_K RU_A RU_K
-    | A S
-    ;
-QUARTER_KEYWORD:
-    RU_K RU_V RU_A RU_R RU_T RU_A RU_L
-    | Q U A R T E R
-    ;
-WHEN_KEYWORD:
-    RU_K RU_O RU_G RU_D RU_A
-    | W H E N
-    ;
-COUNT_KEYWORD:
-    RU_K RU_O RU_L RU_I RU_CH RU_E RU_S RU_T RU_V RU_O
-    | C O U N T
-    ;
-ENDOFPERIOD_KEYWORD:
-    RU_K RU_O RU_N RU_E RU_C RU_P RU_E RU_R RU_I RU_O RU_D RU_A
-    | E N D O F P E R I O D
-    ;
-END_KEYWORD:
-    RU_K RU_O RU_N RU_E RU_C
-    | E N D
-    ;
-LEFT_KEYWORD:
-    RU_L RU_E RU_V RU_O RU_E
-    | L E F T
-    ;
-MAX_KEYWORD:
-    RU_M RU_A RU_K RU_S RU_I RU_M RU_U RU_M
-    | M A X
-    ;
-BETWEEN_KEYWORD:
-    RU_M RU_E RU_ZH RU_D RU_U
-    | B E T W E E N
-    ;
-MONTH_KEYWORD:
-    RU_M RU_E RU_S RU_YA RU_C
-    | M O N T H
-    ;
-MIN_KEYWORD:
-    RU_M RU_I RU_N RU_I RU_M RU_U RU_M
-    | M I N
-    ;
-MINUTE_KEYWORD:
-    RU_M RU_I RU_N RU_U RU_T RU_A
-    | M I N U T E
-    ;
-BEGINOFPERIOD_KEYWORD:
-    RU_N RU_A RU_CH RU_A RU_L RU_O RU_P RU_E RU_R RU_I RU_O RU_D RU_A
-    | B E G I N O F P E R I O D
-    ;
-NOT_KEYWORD:
-    RU_N RU_E
-    | N O T
-    ;
-WEEK_KEYWORD:
-    RU_N RU_E RU_D RU_E RU_L RU_YA
-    | W E E K
-    ;
-OVERALL_KEYWORD:
-    RU_O RU_B RU_SCH RU_I RU_E
-    | O V E R A L L
-    ;
-UNION_KEYWORD:
-    RU_O RU_B RU_SOLID_SIGN RU_E RU_D RU_I RU_N RU_I RU_T RU_SOFT_SIGN
-    | U N I O N
-    ;
-TOP_KEYWORD:
-    RU_P RU_E RU_R RU_V RU_Y RU_E
-    | T O P
-    ;
-PERIODS_KEYWORD:
-    RU_P RU_E RU_R RU_I RU_O RU_D RU_A RU_M RU_I
-    | P E R I O D S
-    ;
-LIKE_KEYWORD:
-    RU_P RU_O RU_D RU_O RU_B RU_N RU_O
-    | L I K E
-    ;
-FULL_KEYWORD:
-    RU_P RU_O RU_L RU_N RU_O RU_E
-    | F U L L
-    ;
-HALFYEAR_KEYWORD:
-    RU_P RU_O RU_L RU_U RU_G RU_O RU_D RU_I RU_E
-    | H A L F Y E A R
-    ;
-INTO_KEYWORD:
-    RU_P RU_O RU_M RU_E RU_S RU_T RU_I RU_T RU_SOFT_SIGN
-    | I N T O
-    ;
-RIGHT_KEYWORD:
-    RU_P RU_R RU_A RU_V RU_O RU_E
-    | R I G H T
-    ;
-PRESENTATION_KEYWORD:
-    RU_P RU_R RU_E RU_D RU_S RU_T RU_A RU_V RU_L RU_E RU_N RU_I RU_E
-    | P R E S E N T A T I O N
-    ;
-EMPTYTABLE_KEYWORD:
-    RU_P RU_U RU_S RU_T RU_A RU_YA RU_T RU_A RU_B RU_L RU_I RU_C RU_A
-    | E M P T Y T A B L E
-    ;
-DISTINCT_KEYWORD:
-    RU_R RU_A RU_Z RU_L RU_I RU_CH RU_N RU_Y RU_E
-    | D I S T I N C T
-    ;
-ALLOWED_KEYWORD:
-    RU_R RU_A RU_Z RU_R RU_E RU_SH RU_E RU_N RU_N RU_Y RU_E
-    | A L L O W E D
-    ;
-GROUP_KEYWORD:
-    RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN
-    | G R O U P
-    ;
-SECOND_KEYWORD:
-    RU_S RU_E RU_K RU_U RU_N RU_D RU_A
-    | S E C O N D
-    ;
-JOIN_KEYWORD:
-    RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E
-    | J O I N
-    ;
-EN_ON_KEYWORD: O N;
-ESCAPE_KEYWORD:
-    RU_S RU_P RU_E RU_C RU_S RU_I RU_M RU_V RU_O RU_L
-    | E S C A P E
-    ;
-SUBSTRING_KEYWORD:
-    RU_P RU_O RU_D RU_S RU_T RU_R RU_O RU_K RU_A
-    | S U B S T R I N G
-    ;
-AVG_KEYWORD:
-    RU_S RU_R RU_E RU_D RU_N RU_E RU_E
-    | A V G
-    ;
-REFS_KEYWORD:
-    RU_S RU_S RU_Y RU_L RU_K RU_A
-    | R E F S
-    ;
-STRING_KEYWORD:
-    RU_S RU_T RU_R RU_O RU_K RU_A
-    | S T R I N G
-    ;
-SUM_KEYWORD:
-    RU_S RU_U RU_M RU_M RU_A
-    | S U M
-    ;
-TYPE_KEYWORD:
-    RU_T RU_I RU_P
-    | T Y P E
-    ;
-VALUETYPE_KEYWORD:
-    RU_T RU_I RU_P RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_YA
-    | V A L U E T Y P E
-    ;
-THEN_KEYWORD:
-    RU_T RU_O RU_G RU_D RU_A
-    | T H E N
-    ;
-ONLY_KEYWORD:
-    RU_T RU_O RU_L RU_SOFT_SIGN RU_K RU_O
-    | O N L Y
-    ;
-DESC_KEYWORD:
-    RU_U RU_B RU_Y RU_V
-    | D E S C
-    ;
-ORDER_KEYWORD:
-    RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_T RU_SOFT_SIGN
-    | O R D E R
-    ;
-HOUR_KEYWORD:
-    RU_CH RU_A RU_S
-    | H O U R
-    ;
-NUMBER_KEYWORD:
-    RU_CH RU_I RU_S RU_L RU_O
-    | N U M B E R
-    ;
-DROP_KEYWORD:
-    RU_U RU_N RU_I RU_CH RU_T RU_O RU_ZH RU_I RU_T RU_SOFT_SIGN
-    | D R O P
-    ;
-DATEDIFF_KEYWORD:
-    RU_R RU_A RU_Z RU_N RU_O RU_S RU_T RU_SOFT_SIGN RU_D RU_A RU_T
-    | D A T E D I F F
-    ;
-AUTORECORDNUMBER_KEYWORD:
-    RU_A RU_V RU_T RU_O RU_N RU_O RU_M RU_E RU_R RU_Z RU_A RU_P RU_I RU_S RU_I
-    | A U T O R E C O R D N U M B E R
-    ;
-
-EMPTYREF_FIELD:
-    RU_P RU_U RU_S RU_T RU_A RU_YA RU_S RU_S RU_Y RU_L RU_K RU_A
-    | E M P T Y R E F
-    ;
-ROUTEPOINT_FIELD:
-    RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A
-    | R O U T E P O I N T
-    ;
-
-BUSINESSPROCESS_TYPE:
-    RU_B RU_I RU_Z RU_N RU_E RU_S RU_P RU_R RU_O RU_C RU_E RU_S RU_S
-    | B U S I N E S S P R O C E S S
-    ;
-CATALOG_TYPE:
-    RU_S RU_P RU_R RU_A RU_V RU_O RU_CH RU_N RU_I RU_K
-    | C A T A L O G
-    ;
-DOCUMENT_TYPE:
-    RU_D RU_O RU_K RU_U RU_M RU_E RU_N RU_T
-    | D O C U M E N T
-    ;
-INFORMATION_REGISTER_TYPE:
-    RU_R RU_E RU_G RU_I RU_S RU_T RU_R RU_S RU_V RU_E RU_D RU_E RU_N RU_I RU_J
-    | I N F O R M A T I O N R E G I S T E R
-    ;
-CONSTANT_TYPE:
-    RU_K RU_O RU_N RU_S RU_T RU_A RU_N RU_T RU_A
-    | C O N S T A N T
-    ;
-FILTER_CRITERION_TYPE:
-    RU_K RU_R RU_I RU_T RU_E RU_R RU_I RU_J RU_O RU_T RU_B RU_O RU_R RU_A
-    | F I L T E R C R I T E R I O N
-    ;
-EXCHANGE_PLAN_TYPE:
-    RU_P RU_L RU_A RU_N RU_O RU_B RU_M RU_E RU_N RU_A
-    | E X C H A N G E P L A N
-    ;
-SEQUENCE_TYPE:
-    RU_P RU_O RU_S RU_L RU_E RU_D RU_O RU_V RU_A RU_T RU_E RU_L RU_SOFT_SIGN RU_N RU_O RU_S RU_T RU_SOFT_SIGN
-    | S E Q U E N C E
-    ;
-DOCUMENT_JOURNAL_TYPE:
-    RU_ZH RU_U RU_R RU_N RU_A RU_L RU_D RU_O RU_K RU_U RU_M RU_E RU_N RU_T RU_O RU_V
-    | D O C U M E N T J O U R N A L
-    ;
-ENUM_TYPE:
-    RU_P RU_E RU_R RU_E RU_CH RU_I RU_S RU_L RU_E RU_N RU_I RU_E
-    | E N U M
-    ;
-CHART_OF_CHARACTERISTIC_TYPES_TYPE:
-    RU_P RU_L RU_A RU_N RU_V RU_I RU_D RU_O RU_V RU_H RU_A RU_R RU_A RU_K RU_T RU_E RU_R RU_I RU_S RU_T RU_I RU_K
-    | C H A R T O F C H A R A C T E R I S T I C T Y P E S
-    ;
-CHART_OF_ACCOUNTS_TYPE:
-    RU_P RU_L RU_A RU_N RU_S RU_CH RU_E RU_T RU_O RU_V
-    | C H A R T O F A C C O U N T S
-    ;
-CHART_OF_CALCULATION_TYPES_TYPE:
-    RU_P RU_L RU_A RU_N RU_V RU_I RU_D RU_O RU_V RU_R RU_A RU_S RU_CH RU_E RU_T RU_A
-    | C H A R T O F C A L C U L A T I O N T Y P E S
-    ;
-ACCUMULATION_REGISTER_TYPE:
-    RU_R RU_E RU_G RU_I RU_S RU_T RU_R RU_N RU_A RU_K RU_O RU_P RU_L RU_E RU_N RU_I RU_YA
-    | A C C U M U L A T I O N R E G I S T E R
-    ;
-ACCOUNTING_REGISTER_TYPE:
-    RU_R RU_E RU_G RU_I RU_S RU_T RU_R RU_B RU_U RU_H RU_G RU_A RU_L RU_T RU_E RU_R RU_I RU_I
-    | A C C O U N T I N G R E G I S T E R
-    ;
-CALCULATION_REGISTER_TYPE:
-    RU_R RU_E RU_G RU_I RU_S RU_T RU_R RU_R RU_A RU_S RU_CH RU_E RU_T RU_A
-    | C A L C U L A T I O N R E G I S T E R
-    ;
-TASK_TYPE:
-    RU_Z RU_A RU_D RU_A RU_CH RU_A
-    | T A S K
-    ;
-EXTERNAL_DATA_SOURCE_TYPE:
-    RU_V RU_N RU_E RU_SH RU_N RU_I RU_J RU_I RU_S RU_T RU_O RU_CH RU_N RU_I RU_K RU_D RU_A RU_N RU_N RU_Y RU_H
-    | E X T E R N A L D A T A S O U R C E
-    ;
-
-SLICELAST_TT:
-    RU_S RU_R RU_E RU_Z RU_P RU_O RU_S RU_L RU_E RU_D RU_N RU_I RU_H
-    | S L I C E L A S T
-    ;
-SLICEFIRST_TT:
-    RU_S RU_R RU_E RU_Z RU_P RU_E RU_R RU_V RU_Y RU_H
-    | S L I C E F I R S T
-    ;
-BOUNDARIES_TT:
-    RU_G RU_R RU_A RU_N RU_I RU_C RU_Y
-    | B O U N D A R I E S
-    ;
-TURNOVERS_TT:
-    RU_O RU_B RU_O RU_R RU_O RU_T RU_Y
-    | T U R N O V E R S
-    ;
-BALANCE_TT:
-    RU_O RU_S RU_T RU_A RU_T RU_K RU_I
-    | B A L A N C E
-    ;
-BALANCE_AND_TURNOVERS_TT:
-    RU_O RU_S RU_T RU_A RU_T RU_K RU_I RU_I RU_O RU_B RU_O RU_R RU_O RU_T RU_Y
-    | B A L A N C E A N D T U R N O V E R S
-    ;
-EXT_DIMENSIONS_TT:
-    RU_S RU_U RU_B RU_K RU_O RU_N RU_T RU_O
-    | E X T D I M E N S I O N S
-    ;
-RECORDS_WITH_EXT_DIMENSIONS_TT:
-    RU_D RU_V RU_I RU_ZH RU_E RU_N RU_I RU_YA RU_S RU_S RU_U RU_B RU_K RU_O RU_N RU_T RU_O
-    | R E C O R D S W I T H E X T D I M E N S I O N S
-    ;
-DR_CR_TURNOVERS_TT:
-    RU_O RU_B RU_O RU_R RU_O RU_T RU_Y RU_D RU_T RU_K RU_T
-    | D R C R T U R N O V E R S
-    ;
-ACTUAL_ACTION_PERIOD_TT:
-    RU_F RU_A RU_K RU_T RU_I RU_CH RU_E RU_S RU_K RU_I RU_J RU_P RU_E RU_R RU_I RU_O RU_D RU_D RU_E RU_J RU_S RU_T RU_V RU_I RU_YA
-    | A C T U A L A C T I O N P E R I O D
-    ;
-SCHEDULE_DATA_TT:
-    RU_D RU_A RU_N RU_N RU_Y RU_E RU_G RU_R RU_A RU_F RU_I RU_K RU_A
-    | S C H E D U L E D A T A
-    ;
-TASK_BY_PERFORMER_TT:
-    RU_Z RU_A RU_D RU_A RU_CH RU_I RU_P RU_O RU_I RU_S RU_P RU_O RU_L RU_N RU_I RU_T RU_E RU_L RU_YU
-    | T A S K B Y P E R F O R M E R
-    ;
-
-fragment LETTER: [\p{Letter}] | '_';
-IDENTIFIER : LETTER (LETTER | DIGIT)*;
-
+// LITERALS
+DECIMAL     : DIGIT+;
+FLOAT       : DIGIT+ '.' DIGIT*;
+STR         : '"' (~[\r\n"] | '""')* '"';
+IDENTIFIER  : LETTER (LETTER | DIGIT)*;
 UNKNOWN: . -> channel(HIDDEN);
 
+fragment DIGIT: [0-9];
+fragment LETTER: [\p{Letter}] | '_';
+
+// PARAMETERS
 mode PARAMETER_MODE;
-PARAMETER_WHITE_SPACE
-    : [ \n\r\t\f]+
-    -> channel(HIDDEN),
-       type(WHITE_SPACE)
-    ;
+PARAMETER_WHITE_SPACE   : [ \n\r\t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
+PARAMETER_IDENTIFIER    : LETTER (LETTER | DIGIT)* -> popMode;
+PARAMETER_UKNOWN        : . -> channel(HIDDEN);
 
-PARAMETER_IDENTIFIER : LETTER (LETTER | DIGIT)* -> popMode;
-
-PARAMETER_UKNOWN
-    : . -> channel(HIDDEN)
-    ;
+mode DOT_MODE;
+DOT_WHITE_SPACE         : [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
+DOT_MUL                 : MUL -> type(MUL), popMode;
+DOT_LPAREN              : LPAREN -> type(LPAREN), popMode;
+DOT_IDENTIFIER          : (LETTER ( LETTER | DIGIT )*) -> type(IDENTIFIER), popMode;
