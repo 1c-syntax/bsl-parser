@@ -153,7 +153,7 @@ YEAR:           RU_G RU_O RU_D                                                  
 
 // MDO TYPES                RU                                                                  EN
 ACCOUNTING_REGISTER_TYPE:
-                REGISTER_RU RU_R RU_B RU_U RU_H RU_G RU_A RU_L RU_T RU_E RU_R RU_I RU_I     | A C C O U N T I N G REGISTER_EN;
+                REGISTER_RU RU_B RU_U RU_H RU_G RU_A RU_L RU_T RU_E RU_R RU_I RU_I     | A C C O U N T I N G REGISTER_EN;
 ACCUMULATION_REGISTER_TYPE:
                 REGISTER_RU RU_N RU_A RU_K RU_O RU_P RU_L RU_E RU_N RU_I RU_YA              | A C C U M U L A T I O N REGISTER_EN;
 BUSINESS_PROCESS_TYPE:

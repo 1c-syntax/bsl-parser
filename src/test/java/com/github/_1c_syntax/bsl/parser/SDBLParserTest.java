@@ -51,7 +51,7 @@ public class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
 
     setInput("Выбрать 1, \n" +
       "Уничтожить Б");
-    assertNotMatches(parser.queries());
+    assertMatches(parser.queries());
   }
 
   @Test
