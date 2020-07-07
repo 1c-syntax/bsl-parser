@@ -32,16 +32,16 @@ queries: queryStatement (SEMICOLON queryStatement)* SEMICOLON? EOF;
 queryStatement: selectStatement | dropTableStatement;
 
 dropTableStatement: DROP temparyTableName=id;
-selectStatement: (subquery ordersAndTotalsStatement) | (subqueryTemparyTable ordersStatement? indexingStatement?);
+selectStatement: (subquery ordersAndTotalsStatement?) | (subqueryTemparyTable ordersStatement? indexingStatement?);
 
 subquery:
     SELECT limitations
     subqueryFields
     (FROM dataSources)?
-//    (WHERE whereSearh)?
-//    (GROUP (BY_EN | PO_RU) groupByItems)?
-//    (HAVING havingSearch)?
-//    (FOR UPDATE forUpdateItems?)?
+    (WHERE whereSearch=whereExpression)?
+    (GROUP by=(BY_EN | PO_RU) groupByItems)?
+    (HAVING havingSearch=havingExpression)?
+    (FOR UPDATE mdo?)?
     (UNION ALL? subquery)*
     ;
 subqueryTemparyTable:
@@ -49,32 +49,55 @@ subqueryTemparyTable:
     temparyTableFields
     INTO temparyTableName=id
     (FROM dataSources)?
-//    (WHERE whereSearh)?
-//    (GROUP (BY_EN | PO_RU) groupByItems)?
-//    (HAVING havingSearch)?
-//    (FOR UPDATE forUpdateItems?)?
+    (WHERE whereSearch=whereExpression)?
+    (GROUP by=(BY_EN | PO_RU) groupByItems)?
+    (HAVING havingSearch=havingExpression)?
+    (FOR UPDATE mdo?)?
     (UNION ALL? subquery)* // TODO придумать как здесь использовать subqueryTemparyTable, но с заппретом INTO
     ;
 ordersAndTotalsStatement:
-        (AUTOORDER? ordersStatement? totalsStatement?)
-        | (ordersStatement? AUTOORDER? totalsStatement?)
-        | (ordersStatement? totalsStatement? AUTOORDER?);
-ordersStatement: ORDER (BY_EN | PO_RU) ordersItem orderDirection? (COMMA ordersItem orderDirection?)*;
+        (AUTOORDER ordersStatement totalsStatement)
+        | (ordersStatement AUTOORDER totalsStatement)
+        | (ordersStatement totalsStatement AUTOORDER)
+        | (AUTOORDER (ordersStatement | totalsStatement)?)
+        | (ordersStatement (AUTOORDER | ordersStatement)?)
+        | (totalsStatement AUTOORDER?)
+        ;
+
+ordersStatement: ORDER by=(BY_EN | PO_RU) ordersItem orderDirection? (COMMA ordersItem orderDirection?)*;
 orderDirection: ASC | DESC | (hierarhy=(HIERARCHY_EN | HIERARCHYA_RU) DESC?);
-ordersItem: expression;
+ordersItem: ordersExpression;
 
-totalsStatement: TOTALS (BY_EN | PO_RU);
+totalsStatement: TOTALS totalsItems? by=(BY_EN | PO_RU) totalsGroups;
+totalsItems: totalsItemExpression alias? (COMMA totalsItemExpression alias?)*;
+totalsGroups: totals (COMMA totals)*;
+totals:
+   (
+        OVERALL
+      | (totalsExpression
+          (
+              (ONLY? (hierarhy=(HIERARCHY_EN | HIERARCHYA_RU)))
+            | (doCall=PERIODS LPAREN datePart (COMMA totalsExpression?)? (COMMA totalsExpression?)? RPAREN)
+          )?
+      )
+   )
+   alias?
+   ;
 
-indexingStatement: INDEX (BY_EN | PO_RU) indexingItem (COMMA indexingItem)*;
+indexingStatement: INDEX by=(BY_EN | PO_RU) indexingItem (COMMA indexingItem)*;
 indexingItem: parameter | field;
 
 limitations:
-      (ALLOWED? DISTINCT? top?)
-    | (ALLOWED? top? DISTINCT?)
-    | (top? ALLOWED? DISTINCT?)
-    | (DISTINCT? ALLOWED? top?)
-    | (DISTINCT? top? ALLOWED?)
-    | (top? DISTINCT? ALLOWED?)
+    (ALLOWED DISTINCT top)
+    | (ALLOWED top DISTINCT)
+    | (top ALLOWED DISTINCT)
+    | (top DISTINCT ALLOWED)
+    | (DISTINCT ALLOWED top)
+    | (DISTINCT top ALLOWED)
+    | (ALLOWED (DISTINCT | top)?)
+    | (DISTINCT (ALLOWED | top)?)
+    | (top (ALLOWED | DISTINCT)?)
+    | ((ALLOWED | DISTINCT | top)?)
     ;
 top: TOP DECIMAL+;
 
@@ -84,24 +107,26 @@ subqueryField:
           (emptyTable=EMPTYTABLE DOT LPAREN emptyTableFields RPAREN)
         | ((tableName=id DOT)* inlineTable=id DOT LPAREN inlineTableFields RPAREN)
         | ((tableName=id DOT)* MUL)
-        | expression
+        | selectExpression
     )
-    (AS? alias=id)?
+    alias?
     ;
 
 temparyTableFields: temparyTableField (COMMA temparyTableField)*;
 temparyTableField:
     (
-          expression
+          selectTemparyTableExpression
         | ((tableName=id DOT)* MUL)
+        | (doCall=RECORDAUTONUMBER LPAREN RPAREN)
     )
-    (AS? alias=id)?
+    alias?
     ;
 
-emptyTableFields: ((AS? alias=id)? COMMA)+;
+emptyTableFields: emptyTableField (COMMA emptyTableField)*;
+emptyTableField: alias?;
 
 inlineTableFields: inlineTableField (COMMA inlineTableField)*;
-inlineTableField: expression (AS? alias=id)?;
+inlineTableField: inlineTableExpression alias?;
 
 dataSources: dataSource (COMMA dataSource)*;
 dataSource:
@@ -110,57 +135,91 @@ dataSource:
         | virtualTable
         | parameter
         | (LPAREN dataSource RPAREN)
-    ) (AS? alias=id)? joinPart*
+    ) alias? joinPart*
     ;
 table: ((mdo (DOT inlineTable=id)?) | tableName=id);
 virtualTable:
-    (mdo DOT virtualTableName (LPAREN virtualTableParameters? RPAREN)?)
+    (mdo DOT virtualTableName (LPAREN virtualTableParameters RPAREN)?)
     | (FILTER_CRITERION_TYPE DOT id LPAREN parameter RPAREN) // для критерия отбора ВТ не указывается
     ;
 // todo надо для каждого типа ВТ свои параметры прописать, пока - какие-то выажения
-virtualTableParameters: expression (COMMA expression)*;
+virtualTableParameters: virtualTableExpression? (COMMA virtualTableExpression?)*;
 
 joinPart:
-    (INNER? | (LEFT | RIGHT | FULL) OUTER?)  // тип соединения
-    JOIN dataSource (ON_EN | PO_RU) expression   // имя таблицы и соединение
+    (INNER? | ((LEFT | RIGHT | FULL) OUTER?))  // тип соединения
+    JOIN dataSource on=(ON_EN | PO_RU) joinExpression   // имя таблицы и соединение
     ;
 
-
-whereSearh:IDENTIFIER;
-
-groupByItems:IDENTIFIER;
-
-havingSearch:IDENTIFIER;
-
-forUpdateItems:IDENTIFIER;
-
+groupByItems: groupByExpession (COMMA groupByExpession)*;
 
 // EXPRESSIONS
-
 expression: member (operation member)*;
-member:
-    ((unaryOpertion | negativeOperation)?
-    (
-          (LPAREN expression RPAREN)
-        | (parameter | field | literal))
-    )
+member: (leftStatement | callStatement | caseStatement) rightStatement?;
+
+leftStatement:
+      (negativeOperation* ((LPAREN member RPAREN) | parameter | field))
+    | (unaryOpertion* ((LPAREN member RPAREN) | parameter | field))
+    | (negativeOperation* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
+    | (unaryOpertion* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
+    | (literal=(STR | UNDEFINED))                                   // другого нельзя
     ;
 
-// COMMON
+rightStatement:
+      (REFS mdo)
+    | (negativeOperation? LIKE expression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
+    | (negativeOperation? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? LPAREN ((expression (COMMA expression)*) | subquery) RPAREN)
+    | (negativeOperation? BETWEEN expression AND expression)
+    | (IS negativeOperation? literal=NULL)
+    ;
+
+caseStatement: CASE expression? whenBranch+ elseBranch? END;
+whenBranch: WHEN expression THEN expression;
+elseBranch: ELSE expression;
+
+callStatement:
+         (doCall=DATETIME LPAREN (parameter | DECIMAL) COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL)
+            (COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL) (COMMA (parameter | DECIMAL)))? RPAREN)
+        | (doCall=TYPE LPAREN (mdo | type) RPAREN)
+        | (doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
+        | (doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
+        | (doCall=SUBSTRING LPAREN expression COMMA expression COMMA expression RPAREN)
+        | (doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN expression RPAREN)
+        | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN expression RPAREN)
+        | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN expression COMMA datePart RPAREN)
+        | (doCall=DATEADD LPAREN expression COMMA datePart COMMA expression RPAREN)
+        | (doCall=DATEDIFF LPAREN expression COMMA expression COMMA datePart RPAREN)
+        | (doCall=ISNULL LPAREN expression COMMA expression RPAREN)
+        | (doCall=CAST LPAREN member AS (
+            BOOLEAN
+            | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+            | (STRING (LPAREN DECIMAL RPAREN)?)
+            | DATE
+            | mdo
+          ) RPAREN)
+        | (doCall=VALUE LPAREN (
+            (mdo DOT ROUTEPOINT_FIELD DOT IDENTIFIER)       // для точки маршрута бизнес процесса
+            | (id DOT id)                                   // для системного перечисления
+            | (mdo DOT )                                    // может быть просто точка - аналог пустой ссылки
+            | (mdo DOT fieldName=id)
+          ) RPAREN)
+        ;
+
+// todo нужно придумать, как разделить
+selectExpression: expression;
+selectTemparyTableExpression: expression;
+whereExpression: expression;
+ordersExpression: expression;
+inlineTableExpression: expression;
+joinExpression: expression;
+virtualTableExpression: expression;
+groupByExpession: expression;
+havingExpression: expression;
+totalsItemExpression: expression;
+totalsExpression: expression;
 
 parameter: AMPERSAND parameterName=PARAMETER_IDENTIFIER; // любые символы
 field: (tableName=id DOT)* fieldName=id;
-literal:   // литералы
-    TRUE
-    | FALSE
-    | DECIMAL
-    | FLOAT
-    | STR
-    | NULL
-    | UNDEFINED
-    | (function=DATETIME LPAREN DECIMAL COMMA DECIMAL COMMA DECIMAL (COMMA DECIMAL)? (COMMA DECIMAL)? (COMMA DECIMAL)? RPAREN)
-    | (function=TYPE LPAREN (mdo | type) RPAREN)
-    ;
+alias: AS? id;
 
 mdo: mdoType DOT mdoName=id; // полное имя объекта метаданных
 mdoType:                             // имя типа метаданных
@@ -198,18 +257,14 @@ virtualTableName:            // имя виртуальной таблицы
     | TASK_BY_PERFORMER_VT
     ;
 
-type:                        // встроенные типы
-    STRING
-    | BOOLEAN
-    | DATE
-    | NUMBER
-    ;
+type: STRING | BOOLEAN | DATE | NUMBER; // встроенные типы
+datePart: MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR | TENDAYS | HALFYEAR | SECOND; // части дат
 
 // OPERATION
 boolOperation       : OR | AND;
 negativeOperation   : NOT;
-unaryOpertion       : PLUS | MINUS;
-binaryOperation     : PLUS | MINUS | MUL | QUOTIENT | MODULO;
+unaryOpertion       : MINUS;
+binaryOperation     : PLUS | MINUS | MUL | QUOTIENT;
 compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 operation           : binaryOperation | compareOperation | boolOperation;
 
@@ -252,7 +307,6 @@ id: // возможные идентификаторы
     | SELECT
     | TOTALS
     | UNION
-    | AUTORECORDNUMBER
     | AVG
     | BEGINOFPERIOD
     | BOOLEAN
@@ -277,6 +331,8 @@ id: // возможные идентификаторы
     | PERIODS
     | REFS
     | PRESENTATION
+    | RECORDAUTONUMBER
+    | REFPRESENTATION
     | SECOND
     | STRING
     | SUBSTRING
@@ -303,199 +359,29 @@ id: // возможные идентификаторы
     | TASK_BY_PERFORMER_VT
     | TURNOVERS_VT
     // системные поля
-    | EMPTYREF_FIELD
     | ROUTEPOINT_FIELD
     ;
 
-
-//
-//dataSourceField     : (tableName DOT)* fieldName;
-
-
-//
-
-//
-//// блок отборов к источникам
-//filters: WHERE_KEYWORD expression;
-//
-//// группировка данных
-//grouping: GROUP_KEYWORD by expression (COMMA expression)* (HAVING_KEYWORD expression)?;
-//
-//// упорядочивание данных
-//ordering:
-//    ORDER_KEYWORD by dataSourceField orderDirection? (COMMA dataSourceField orderDirection?)*;
-//
-//
-//// итоги
-//totals: TOTALS_KEYWORD fields? by total (COMMA total)*;
-//total:
-//    OVERALL_KEYWORD
-//    | (expression (
-//            (ONLY_KEYWORD? hierarhy)?
-//            | (PERIODS_KEYWORD LPAREN datePart (COMMA expression)? (COMMA expression)? RPAREN)
-//        ) alias?
-//    )
-//;
-//
-//// EXPRESSION
-//expression: member (boolOperation expression)*;
-//
-//member:
-//    ((unaryOpertion | negativeOperation)? (
-//        dataSourceField
-//            | aggregateFunction
-//            | inlineFunction
-//            | caseStatement
-//            | castStatement
-//            | literal
-//            | predefined
-//            | (LPAREN expression RPAREN)
-//            | parameter
-//        )
-//    ) (
-//        ((binaryOperation | compareOperation) member)
-//        | (REFS_KEYWORD mdoName)
-//        | (negativeOperation? (LIKE_KEYWORD | ESCAPE_KEYWORD) member)
-//        | (negativeOperation? IN_KEYWORD (EN_HIERARCHY_KEYWORD | RU_HIERARCHII_KEYWORD)? LPAREN ((member (COMMA member)?) | subqueries) RPAREN)
-//        | (negativeOperation? BETWEEN_KEYWORD member AND_KEYWORD member)
-//        | (IS_KEYWORD negativeOperation? NULL)
-//    )?
-//;
-//
-//aggregateFunction:
-//    (
-//        ((SUM_KEYWORD | AVG_KEYWORD | MIN_KEYWORD | MAX_KEYWORD) LPAREN expression)
-//        | (COUNT_KEYWORD LPAREN DISTINCT_KEYWORD? (expression | MUL))
-//    ) RPAREN
-//    ;
-//
-//inlineFunction:
-//    (SUBSTRING_KEYWORD LPAREN expression COMMA DECIMAL COMMA DECIMAL RPAREN)
-//    | (
-//        (YEAR_KEYWORD
-//            | QUARTER_KEYWORD
-//            | MONTH_KEYWORD
-//            | DAYOFYEAR_KEYWORD
-//            | DAY_KEYWORD
-//            | WEEK_KEYWORD
-//            | WEEKDAY_KEYWORD
-//            | HOUR_KEYWORD
-//            | MINUTE_KEYWORD
-//            | SECOND_KEYWORD
-//            | VALUETYPE_KEYWORD
-//            | PRESENTATION_KEYWORD
-//        )
-//        LPAREN expression RPAREN
-//     )
-//    | ((BEGINOFPERIOD_KEYWORD | ENDOFPERIOD_KEYWORD) LPAREN expression COMMA datePart RPAREN)
-//    | (DATEADD_KEYWORD LPAREN expression COMMA datePart COMMA expression RPAREN)
-//    | (DATEDIFF_KEYWORD LPAREN expression COMMA expression COMMA datePart RPAREN )
-//    | (ISNULL_KEYWORD LPAREN expression COMMA expression RPAREN)
-//    | (AUTORECORDNUMBER_KEYWORD LPAREN RPAREN)
-//    ;
-//
-//predefined:
-//    VALUE_KEYWORD LPAREN (
-//        (mdoName DOT ROUTEPOINT_FIELD DOT IDENTIFIER)   // для точки маршрута бизнес процесса
-//        | (IDENTIFIER DOT IDENTIFIER)                   // для системного перечисления
-//        | (mdoName DOT (EMPTYREF_FIELD | fieldName)?)   // может быть просто точка - аналог пустой ссылки
-//    ) RPAREN;
-//
-
-//
-//caseStatement: CASE_KEYWORD whenBranch+ elseBranch? END_KEYWORD;
-//whenBranch: WHEN_KEYWORD expression THEN_KEYWORD expression;
-//elseBranch: ELSE_KEYWORD expression;
-//
-//castStatement:
-//    CAST_KEYWORD LPAREN expression AS_KEYWORD (
-//        BOOLEAN_KEYWORD
-//        | (NUMBER_KEYWORD (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
-//        | (STRING_KEYWORD (LPAREN DECIMAL RPAREN)?)
-//        | DATE_KEYWORD
-//        | mdoName
-//    ) RPAREN
-//    ;
-//
-//parameter: AMPERSAND PARAMETER_IDENTIFIER; // имя параметра
-//
-//// OPERATION
-
-//
-//
-
-//
-//
-//// NAMES
-//alias       : AS_KEYWORD? aliasName; // псевдоним
-//aliasName   : IDENTIFIER | keywordAsIdentifier;
-//tableName   : IDENTIFIER | keywordAsIdentifier; // имя таблицы
-//fieldName   : IDENTIFIER | keywordAsIdentifier; // имя поля
-//
-
-//
-//// TODO надо прописать все имена VT
-//
-
-//    ;
-//inlineFunctionName:                         // встроенные функции
-//    SUBSTRING_KEYWORD
-//    ;
-//aggregateFunctionName:                      // агрегатные функции
-//    SUM_KEYWORD
-//    | AVG_KEYWORD
-//    | MIN_KEYWORD
-//    | MAX_KEYWORD
-//    | COUNT_KEYWORD
-//    ;
-//
-//keywordAsIdentifier: // ключевые слова, которые можно использовать как идентификаторы
-//    typeName
-//    | aggregateFunctionName
-//    | inlineFunctionName
-//    | mdoTypeName
-//    | virtualTableName
-//    | ROUTEPOINT_FIELD
-//    | REFS_KEYWORD
-//    ;
-//
-//// OTHER
-//union: UNION_KEYWORD ALL_KEYWORD?;
-//forUpdate: FOR_KEYWORD UPDATE_KEYWORD OF_KEYWORD?
-//    ((mdoName (DOT virtualTableName)?)? (COMMA (mdoName (DOT virtualTableName)?)?)); // для изменения
-//
-//datePart: // части дат
-//    MINUTE_KEYWORD
-//    | HOUR_KEYWORD
-//    | DAY_KEYWORD
-//    | WEEK_KEYWORD
-//    | MONTH_KEYWORD
-//    | QUARTER_KEYWORD
-//    | YEAR_KEYWORD
-//    | TENDAYS_KEYWORD
-//    | HALFYEAR_KEYWORD
-//    | SECOND_KEYWORD
-//    ;
-//
-//by: EN_BY_KEYWORD | RU_PO_KEYWORD;
-//hierarhy: EN_HIERARCHY_KEYWORD | RU_HIERARCHYA_KEYWORD;
-//
-//// todo
-//// 1. [ ] Поля в разных секциях отличаются по правилам, надо сделать для каждого варианта
-////  - [x] для блока выборки
-////  - [x] для пустой таблицы
-////  - [ ] для вложенных таблиц
-////  - [ ] для упорядочить
-////  - [ ] для сгруппировать
-////  - [ ] для итоги
-////  - [x] для Для изменения
-////  - [ ] для индексировать
-//// 2. [ ] Выражения в разных секциях отличаются по правилам, надо сделать для каждого варианта
-////  - [x] для блока выборки
-////  - [ ] для вложенных таблиц
-////  - [ ] для соединений
-////  - [ ] для упорядочить
-////  - [ ] для сгруппировать
-////  - [ ] для итоги
-//// 3. [?] Добавить системные перечисления
-//// 4. [?] Добавить сопоставление виртуальных таблиц MDO
+// todo
+// 1. [ ] Поля в разных секциях отличаются по правилам, надо сделать для каждого варианта
+//  - [x] для блока выборки
+//  - [x] для пустой таблицы
+//  - [ ] для вложенных таблиц
+//  - [ ] для упорядочить
+//  - [ ] для сгруппировать
+//  - [ ] для итоги
+//  - [x] для Для изменения
+//  - [ ] для индексировать
+// 2. [ ] Выражения в разных секциях отличаются по правилам, надо сделать для каждого варианта
+//  - [x] для блока выборки
+//  - [ ] для вложенных таблиц
+//  - [ ] для соединений
+//  - [ ] для упорядочить
+//  - [ ] для сгруппировать
+//  - [ ] для итоги
+// 3. [?] Добавить системные перечисления
+// 4. [?] Добавить сопоставление виртуальных таблиц MDO
+// 5. [ ] Пробел между выражением и алиасом должен быть
+// 6. [ ] Реализовать многострочные строки - могут быть без | вначале
+// 7. [ ] Оптимизировать скорость парсера
+// 8. [ ] Комментарии в многострочной строке

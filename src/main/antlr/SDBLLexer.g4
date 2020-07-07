@@ -29,6 +29,10 @@ public SDBLLexer(CharStream input, boolean crAwareCostructor) {
 }
 }
 
+// COMMONS
+WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
+LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
+
 // SEPARATORS
 DOT: '.' -> pushMode(DOT_MODE);
 LPAREN: '(';
@@ -45,7 +49,6 @@ GREATER_OR_EQUAL: '>=';
 GREATER: '>';
 MUL: '*';
 QUOTIENT: '/';
-MODULO: '%';
 AMPERSAND: '&' -> pushMode(PARAMETER_MODE);
 BAR: '|';
 
@@ -106,8 +109,6 @@ WHEN:           RU_K RU_O RU_G RU_D RU_A                                        
 WHERE:          RU_G RU_D RU_E                                                              | W H E R E;
 
 // KEYWORDS         RU                                                                          EN
-AUTORECORDNUMBER:
-                RU_A RU_V RU_T RU_O RU_N RU_O RU_M RU_E RU_R RU_Z RU_A RU_P RU_I RU_S RU_I  | A U T O R E C O R D N U M B E R;
 AVG:            RU_S RU_R RU_E RU_D RU_N RU_E RU_E                                          | A V G;
 BEGINOFPERIOD:  RU_N RU_A RU_CH RU_A RU_L RU_O RU_P RU_E RU_R RU_I RU_O RU_D RU_A           | B E G I N O F P E R I O D;
 BOOLEAN:        RU_B RU_U RU_L RU_E RU_V RU_O                                               | B O O L E A N;
@@ -132,6 +133,11 @@ ONLY:           RU_T RU_O RU_L RU_SOFT_SIGN RU_K RU_O                           
 PERIODS:        RU_P RU_E RU_R RU_I RU_O RU_D RU_A RU_M RU_I                                | P E R I O D S;
 REFS:           RU_S RU_S RU_Y RU_L RU_K RU_A                                               | R E F S;
 PRESENTATION:   RU_P RU_R RU_E RU_D RU_S RU_T RU_A RU_V RU_L RU_E RU_N RU_I RU_E            | P R E S E N T A T I O N;
+RECORDAUTONUMBER:
+                RU_A RU_V RU_T RU_O RU_N RU_O RU_M RU_E RU_R RU_Z RU_A RU_P RU_I RU_S RU_I  | R E C O R D A U T O N U M B E R;
+REFPRESENTATION:
+                RU_P RU_R RU_E RU_D RU_S RU_T RU_A RU_V RU_L RU_E RU_N RU_I RU_E RU_S RU_S RU_Y RU_L RU_K RU_I
+                                                                                            | R E F P R E S E N T A T I O N;
 SECOND:         RU_S RU_E RU_K RU_U RU_N RU_D RU_A                                          | S E C O N D;
 STRING:         RU_S RU_T RU_R RU_O RU_K RU_A                                               | S T R I N G;
 SUBSTRING:      RU_P RU_O RU_D RU_S RU_T RU_R RU_O RU_K RU_A                                | S U B S T R I N G;
@@ -205,7 +211,6 @@ TASK_BY_PERFORMER_VT:
 TURNOVERS_VT:   TURNOVERS_RU                                                                | TURNOVERS_EN;
 
 // FIELDS                 RU                                                                  EN
-EMPTYREF_FIELD:     RU_P RU_U RU_S RU_T RU_A RU_YA RU_S RU_S RU_Y RU_L RU_K RU_A            | E M P T Y R E F;
 ROUTEPOINT_FIELD:   RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A      | R O U T E P O I N T;
 
 fragment BALANCE_RU: RU_O RU_S RU_T RU_A RU_T RU_K RU_I;
@@ -281,28 +286,26 @@ fragment W: 'W' | 'w';
 fragment X: 'X' | 'x';
 fragment Y: 'Y' | 'y';
 
-// COMMONS
-WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
-LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
-
 // LITERALS
+fragment DIGIT: [0-9];
+fragment LETTER: [\p{Letter}] | '_';
+
 DECIMAL     : DIGIT+;
 FLOAT       : DIGIT+ '.' DIGIT*;
 STR         : '"' (~[\r\n"] | '""')* '"';
 IDENTIFIER  : LETTER (LETTER | DIGIT)*;
 UNKNOWN: . -> channel(HIDDEN);
 
-fragment DIGIT: [0-9];
-fragment LETTER: [\p{Letter}] | '_';
-
 // PARAMETERS
 mode PARAMETER_MODE;
 PARAMETER_WHITE_SPACE   : [ \n\r\t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
 PARAMETER_IDENTIFIER    : LETTER (LETTER | DIGIT)* -> popMode;
-PARAMETER_UKNOWN        : . -> channel(HIDDEN);
+PARAMETER_UKNOWN        : . -> channel(HIDDEN), type(UNKNOWN);
 
 mode DOT_MODE;
 DOT_WHITE_SPACE         : [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
 DOT_MUL                 : MUL -> type(MUL), popMode;
 DOT_LPAREN              : LPAREN -> type(LPAREN), popMode;
+DOT_RPAREN              : RPAREN -> type(RPAREN), popMode;
+DOT_ROUTEPOINT_FIELD    : ROUTEPOINT_FIELD -> type(ROUTEPOINT_FIELD), popMode;
 DOT_IDENTIFIER          : (LETTER ( LETTER | DIGIT )*) -> type(IDENTIFIER), popMode;
