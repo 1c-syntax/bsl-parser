@@ -187,29 +187,6 @@ SEQUENCE_TYPE:
                                                                                             | S E Q U E N C E;
 TASK_TYPE:      RU_Z RU_A RU_D RU_A RU_CH RU_A                                              | T A S K;
 
-// VIRTUAL TABLES                 RU                                                                  EN
-ACTUAL_ACTION_PERIOD_VT:
-                RU_F RU_A RU_K RU_T RU_I RU_CH RU_E RU_S RU_K RU_I RU_J RU_P RU_E RU_R RU_I RU_O RU_D RU_D RU_E RU_J RU_S RU_T RU_V RU_I RU_YA
-                                                                                            | A C T U A L A C T I O N P E R I O D;
-BALANCE_VT:     BALANCE_RU                                                                  | BALANCE_EN;
-BALANCE_AND_TURNOVERS_VT:
-                BALANCE_RU RU_I TURNOVERS_RU                                                | BALANCE_EN A N D TURNOVERS_EN;
-BOUNDARIES_VT:  RU_G RU_R RU_A RU_N RU_I RU_C RU_Y                                          | B O U N D A R I E S;
-DR_CR_TURNOVERS_VT:
-                TURNOVERS_RU RU_D RU_T RU_K RU_T                                            | D R C R TURNOVERS_EN;
-EXT_DIMENSIONS_VT:
-                EXT_DIMENSIONS_RU                                                           | EXT_DIMENSIONS_EN;
-RECORDS_WITH_EXT_DIMENSIONS_VT:
-                RU_D RU_V RU_I RU_ZH RU_E RU_N RU_I RU_YA RU_S EXT_DIMENSIONS_RU            | R E C O R D S W I T H EXT_DIMENSIONS_EN;
-SCHEDULE_DATA_VT:
-                RU_D RU_A RU_N RU_N RU_Y RU_E RU_G RU_R RU_A RU_F RU_I RU_K RU_A            | S C H E D U L E D A T A;
-SLICEFIRST_VT:  RU_S RU_R RU_E RU_Z RU_P RU_E RU_R RU_V RU_Y RU_H                           | S L I C E F I R S T;
-SLICELAST_VT:   RU_S RU_R RU_E RU_Z RU_P RU_O RU_S RU_L RU_E RU_D RU_N RU_I RU_H            | S L I C E L A S T;
-TASK_BY_PERFORMER_VT:
-                RU_Z RU_A RU_D RU_A RU_CH RU_I RU_P RU_O RU_I RU_S RU_P RU_O RU_L RU_N RU_I RU_T RU_E RU_L RU_YU
-                                                                                            | T A S K B Y P E R F O R M E R;
-TURNOVERS_VT:   TURNOVERS_RU                                                                | TURNOVERS_EN;
-
 // FIELDS                 RU                                                                  EN
 ROUTEPOINT_FIELD:   RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A      | R O U T E P O I N T;
 
@@ -308,4 +285,27 @@ DOT_MUL                 : MUL -> type(MUL), popMode;
 DOT_LPAREN              : LPAREN -> type(LPAREN), popMode;
 DOT_RPAREN              : RPAREN -> type(RPAREN), popMode;
 DOT_ROUTEPOINT_FIELD    : ROUTEPOINT_FIELD -> type(ROUTEPOINT_FIELD), popMode;
+// VIRTUAL TABLES                 RU                                                                  EN
+ACTUAL_ACTION_PERIOD_VT:
+                (RU_F RU_A RU_K RU_T RU_I RU_CH RU_E RU_S RU_K RU_I RU_J RU_P RU_E RU_R RU_I RU_O RU_D RU_D RU_E RU_J RU_S RU_T RU_V RU_I RU_YA
+                                                                                            | A C T U A L A C T I O N P E R I O D) -> popMode;
+BALANCE_VT:     (BALANCE_RU                                                                  | BALANCE_EN) -> popMode;
+BALANCE_AND_TURNOVERS_VT:
+                (BALANCE_RU RU_I TURNOVERS_RU                                                | BALANCE_EN A N D TURNOVERS_EN) -> popMode;
+BOUNDARIES_VT:  (RU_G RU_R RU_A RU_N RU_I RU_C RU_Y                                          | B O U N D A R I E S) -> popMode;
+DR_CR_TURNOVERS_VT:
+                (TURNOVERS_RU RU_D RU_T RU_K RU_T                                            | D R C R TURNOVERS_EN) -> popMode;
+EXT_DIMENSIONS_VT:
+                (EXT_DIMENSIONS_RU                                                           | EXT_DIMENSIONS_EN) -> popMode;
+RECORDS_WITH_EXT_DIMENSIONS_VT:
+                (RU_D RU_V RU_I RU_ZH RU_E RU_N RU_I RU_YA RU_S EXT_DIMENSIONS_RU            | R E C O R D S W I T H EXT_DIMENSIONS_EN) -> popMode;
+SCHEDULE_DATA_VT:
+                (RU_D RU_A RU_N RU_N RU_Y RU_E RU_G RU_R RU_A RU_F RU_I RU_K RU_A            | S C H E D U L E D A T A) -> popMode;
+SLICEFIRST_VT:  (RU_S RU_R RU_E RU_Z RU_P RU_E RU_R RU_V RU_Y RU_H                           | S L I C E F I R S T) -> popMode;
+SLICELAST_VT:   (RU_S RU_R RU_E RU_Z RU_P RU_O RU_S RU_L RU_E RU_D RU_N RU_I RU_H            | S L I C E L A S T) -> popMode;
+TASK_BY_PERFORMER_VT:
+                (RU_Z RU_A RU_D RU_A RU_CH RU_I RU_P RU_O RU_I RU_S RU_P RU_O RU_L RU_N RU_I RU_T RU_E RU_L RU_YU
+                                                                                            | T A S K B Y P E R F O R M E R) -> popMode;
+TURNOVERS_VT:   (TURNOVERS_RU                                                                | TURNOVERS_EN) -> popMode;
+
 DOT_IDENTIFIER          : (LETTER ( LETTER | DIGIT )*) -> type(IDENTIFIER), popMode;

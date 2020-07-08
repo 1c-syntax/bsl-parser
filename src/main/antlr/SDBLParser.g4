@@ -60,7 +60,7 @@ ordersAndTotalsStatement:
         | (ordersStatement AUTOORDER totalsStatement)
         | (ordersStatement totalsStatement AUTOORDER)
         | (AUTOORDER (ordersStatement | totalsStatement)?)
-        | (ordersStatement (AUTOORDER | ordersStatement)?)
+        | (ordersStatement (AUTOORDER | totalsStatement)?)
         | (totalsStatement AUTOORDER?)
         ;
 
@@ -154,10 +154,12 @@ groupByItems: groupByExpession (COMMA groupByExpession)*;
 
 // EXPRESSIONS
 expression: member (operation member)*;
-member: (leftStatement | callStatement | caseStatement) rightStatement?;
+member: ((leftStatement | callStatement | caseStatement) 
+        | (negativeOperation* (leftStatement | callStatement | caseStatement) rightStatement));
 
 leftStatement:
-      (negativeOperation* ((LPAREN member RPAREN) | parameter | field))
+      (negativeOperation* ((LPAREN expression RPAREN) | parameter | field))
+    | (negativeOperation* ((LPAREN expression (COMMA expression)* RPAREN) | parameter | field))
     | (unaryOpertion* ((LPAREN member RPAREN) | parameter | field))
     | (negativeOperation* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
     | (unaryOpertion* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
@@ -166,10 +168,10 @@ leftStatement:
 
 rightStatement:
       (REFS mdo)
-    | (negativeOperation? LIKE expression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
-    | (negativeOperation? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? LPAREN ((expression (COMMA expression)*) | subquery) RPAREN)
-    | (negativeOperation? BETWEEN expression AND expression)
-    | (IS negativeOperation? literal=NULL)
+    | (negativeOperation* LIKE expression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
+    | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? LPAREN ((expression (COMMA expression)*) | subquery) RPAREN)
+    | (negativeOperation* BETWEEN expression AND expression)
+    | (IS negativeOperation* literal=NULL)
     ;
 
 caseStatement: CASE expression? whenBranch+ elseBranch? END;
@@ -180,8 +182,8 @@ callStatement:
          (doCall=DATETIME LPAREN (parameter | DECIMAL) COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL)
             (COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL) (COMMA (parameter | DECIMAL)))? RPAREN)
         | (doCall=TYPE LPAREN (mdo | type) RPAREN)
-        | (doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
-        | (doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
+        | (unaryOpertion* doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
+        | (unaryOpertion* doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
         | (doCall=SUBSTRING LPAREN expression COMMA expression COMMA expression RPAREN)
         | (doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN expression RPAREN)
         | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN expression RPAREN)
@@ -195,7 +197,7 @@ callStatement:
             | (STRING (LPAREN DECIMAL RPAREN)?)
             | DATE
             | mdo
-          ) RPAREN)
+          ) RPAREN (DOT id)*)
         | (doCall=VALUE LPAREN (
             (mdo DOT ROUTEPOINT_FIELD DOT IDENTIFIER)       // для точки маршрута бизнес процесса
             | (id DOT id)                                   // для системного перечисления
