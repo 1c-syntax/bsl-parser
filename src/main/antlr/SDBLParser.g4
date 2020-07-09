@@ -201,7 +201,7 @@ callStatement:
         | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN expression COMMA datePart RPAREN)
         | (doCall=DATEADD LPAREN expression COMMA datePart COMMA expression RPAREN)
         | (doCall=DATEDIFF LPAREN expression COMMA expression COMMA datePart RPAREN)
-        | (doCall=ISNULL LPAREN expression COMMA expression RPAREN)
+        | (negativeOperation* doCall=ISNULL LPAREN expression COMMA expression RPAREN)
         | (doCall=CAST LPAREN expression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
@@ -249,7 +249,7 @@ withoutAggregateCallStatement:
         | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN withoutAggregateExpression COMMA datePart RPAREN)
         | (doCall=DATEADD LPAREN withoutAggregateExpression COMMA datePart COMMA withoutAggregateExpression RPAREN)
         | (doCall=DATEDIFF LPAREN withoutAggregateExpression COMMA withoutAggregateExpression COMMA datePart RPAREN)
-        | (doCall=ISNULL LPAREN withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
+        | (negativeOperation* doCall=ISNULL LPAREN withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
         | (negativeOperation* doCall=CAST LPAREN withoutAggregateExpression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
