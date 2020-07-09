@@ -170,17 +170,17 @@ public class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
 
   @Test
   void testMDOTT() {
-    assertMatch("СрезПоследних", "SLICELAST", SDBLLexer.SLICELAST_VT);
-    assertMatch("СрезПервых", "SLICEFIRST", SDBLLexer.SLICEFIRST_VT);
-    assertMatch("Границы", "BOUNDARIES", SDBLLexer.BOUNDARIES_VT);
-    assertMatch("Обороты", "TURNOVERS", SDBLLexer.TURNOVERS_VT);
-    assertMatch("Остатки", "BALANCE", SDBLLexer.BALANCE_VT);
-    assertMatch("ОстаткиИОбороты", "BALANCEANDTURNOVERS", SDBLLexer.BALANCE_AND_TURNOVERS_VT);
-    assertMatch("Субконто", "EXTDIMENSIONS", SDBLLexer.EXT_DIMENSIONS_VT);
-    assertMatch("Движенияссубконто", "RECORDSWITHEXTDIMENSIONS", SDBLLexer.RECORDS_WITH_EXT_DIMENSIONS_VT);
-    assertMatch("ОборотыДтКт", "DrCrTURNOVERS", SDBLLexer.DR_CR_TURNOVERS_VT);
-    assertMatch("ФактическийПериодДействия", "ACTUALACTIONPERIOD", SDBLLexer.ACTUAL_ACTION_PERIOD_VT);
-    assertMatch("ДанныеГрафика", "SCHEDULEDATA", SDBLLexer.SCHEDULE_DATA_VT);
-    assertMatch("ЗадачиПоИсполнителю", "TASKBYPERFORMER", SDBLLexer.TASK_BY_PERFORMER_VT);
+    assertMatch(".СрезПоследних", ".SLICELAST", SDBLLexer.DOT, SDBLLexer.SLICELAST_VT);
+    assertMatch(".СрезПервых", ".SLICEFIRST", SDBLLexer.DOT, SDBLLexer.SLICEFIRST_VT);
+    assertMatch(".Границы", ".BOUNDARIES", SDBLLexer.DOT, SDBLLexer.BOUNDARIES_VT);
+    assertMatch(".Обороты", ".TURNOVERS", SDBLLexer.DOT, SDBLLexer.TURNOVERS_VT);
+    assertMatch(".Остатки", ".BALANCE", SDBLLexer.DOT, SDBLLexer.BALANCE_VT);
+    assertMatch(".ОстаткиИОбороты", ".BALANCEANDTURNOVERS", SDBLLexer.DOT, SDBLLexer.BALANCE_AND_TURNOVERS_VT);
+    assertMatch(".Субконто", ".EXTDIMENSIONS", SDBLLexer.DOT, SDBLLexer.EXT_DIMENSIONS_VT);
+    assertMatch(".Движенияссубконто", ".RECORDSWITHEXTDIMENSIONS", SDBLLexer.DOT, SDBLLexer.RECORDS_WITH_EXT_DIMENSIONS_VT);
+    assertMatch(".ОборотыДтКт", ".DrCrTURNOVERS", SDBLLexer.DOT, SDBLLexer.DR_CR_TURNOVERS_VT);
+    assertMatch(".ФактическийПериодДействия", ".ACTUALACTIONPERIOD", SDBLLexer.DOT, SDBLLexer.ACTUAL_ACTION_PERIOD_VT);
+    assertMatch(".ДанныеГрафика", ".SCHEDULEDATA", SDBLLexer.DOT, SDBLLexer.SCHEDULE_DATA_VT);
+    assertMatch(".ЗадачиПоИсполнителю", ".TASKBYPERFORMER", SDBLLexer.DOT, SDBLLexer.TASK_BY_PERFORMER_VT);
   }
 }

@@ -34,27 +34,32 @@ queryStatement: selectStatement | dropTableStatement;
 dropTableStatement: DROP temparyTableName=id;
 selectStatement: (subquery ordersAndTotalsStatement?) | (subqueryTemparyTable ordersStatement? indexingStatement?);
 
-subquery:
+subquery: query union*;
+query:
     SELECT limitations
     subqueryFields
-    (FROM dataSources)?
-    (WHERE whereSearch=whereExpression)?
+    fromStatement
+    (WHERE whereSearch=withoutAggregateExpression)?
     (GROUP by=(BY_EN | PO_RU) groupByItems)?
     (HAVING havingSearch=havingExpression)?
     (FOR UPDATE mdo?)?
-    (UNION ALL? subquery)*
     ;
-subqueryTemparyTable:
+
+subqueryTemparyTable: queryTemparyTable union*;
+queryTemparyTable:
     SELECT limitations
     temparyTableFields
     INTO temparyTableName=id
-    (FROM dataSources)?
-    (WHERE whereSearch=whereExpression)?
+    fromStatement
+    (WHERE whereSearch=withoutAggregateExpression)?
     (GROUP by=(BY_EN | PO_RU) groupByItems)?
     (HAVING havingSearch=havingExpression)?
     (FOR UPDATE mdo?)?
-    (UNION ALL? subquery)* // TODO придумать как здесь использовать subqueryTemparyTable, но с заппретом INTO
+    // TODO придумать как здесь использовать subqueryTemparyTable, но с заппретом INTO
     ;
+
+union: UNION ALL? query;
+
 ordersAndTotalsStatement:
         (AUTOORDER ordersStatement totalsStatement)
         | (ordersStatement AUTOORDER totalsStatement)
@@ -64,9 +69,8 @@ ordersAndTotalsStatement:
         | (totalsStatement AUTOORDER?)
         ;
 
-ordersStatement: ORDER by=(BY_EN | PO_RU) ordersItem orderDirection? (COMMA ordersItem orderDirection?)*;
+ordersStatement: ORDER by=(BY_EN | PO_RU) expression orderDirection? (COMMA expression orderDirection?)*;
 orderDirection: ASC | DESC | (hierarhy=(HIERARCHY_EN | HIERARCHYA_RU) DESC?);
-ordersItem: ordersExpression;
 
 totalsStatement: TOTALS totalsItems? by=(BY_EN | PO_RU) totalsGroups;
 totalsItems: totalsItemExpression alias? (COMMA totalsItemExpression alias?)*;
@@ -74,10 +78,10 @@ totalsGroups: totals (COMMA totals)*;
 totals:
    (
         OVERALL
-      | (totalsExpression
+      | (withoutAggregateExpression
           (
               (ONLY? (hierarhy=(HIERARCHY_EN | HIERARCHYA_RU)))
-            | (doCall=PERIODS LPAREN datePart (COMMA totalsExpression?)? (COMMA totalsExpression?)? RPAREN)
+            | (doCall=PERIODS LPAREN datePart (COMMA withoutAggregateExpression?)? (COMMA withoutAggregateExpression?)? RPAREN)
           )?
       )
    )
@@ -94,9 +98,12 @@ limitations:
     | (top DISTINCT ALLOWED)
     | (DISTINCT ALLOWED top)
     | (DISTINCT top ALLOWED)
-    | (ALLOWED (DISTINCT | top)?)
-    | (DISTINCT (ALLOWED | top)?)
-    | (top (ALLOWED | DISTINCT)?)
+    | (ALLOWED DISTINCT)
+    | (ALLOWED top)
+    | (DISTINCT ALLOWED)
+    | (DISTINCT top)
+    | (top ALLOWED)
+    | (top DISTINCT)
     | ((ALLOWED | DISTINCT | top)?)
     ;
 top: TOP DECIMAL+;
@@ -107,7 +114,7 @@ subqueryField:
           (emptyTable=EMPTYTABLE DOT LPAREN emptyTableFields RPAREN)
         | ((tableName=id DOT)* inlineTable=id DOT LPAREN inlineTableFields RPAREN)
         | ((tableName=id DOT)* MUL)
-        | selectExpression
+        | expression
     )
     alias?
     ;
@@ -115,7 +122,7 @@ subqueryField:
 temparyTableFields: temparyTableField (COMMA temparyTableField)*;
 temparyTableField:
     (
-          selectTemparyTableExpression
+          expression
         | ((tableName=id DOT)* MUL)
         | (doCall=RECORDAUTONUMBER LPAREN RPAREN)
     )
@@ -128,16 +135,19 @@ emptyTableField: alias?;
 inlineTableFields: inlineTableField (COMMA inlineTableField)*;
 inlineTableField: inlineTableExpression alias?;
 
+fromStatement: (FROM dataSources)?;
 dataSources: dataSource (COMMA dataSource)*;
 dataSource:
-    (     (LPAREN subquery RPAREN)
+    (     (LPAREN (subquery | dataSource) RPAREN)
         | table
+        | temparyTable
         | virtualTable
         | parameter
-        | (LPAREN dataSource RPAREN)
     ) alias? joinPart*
     ;
-table: ((mdo (DOT inlineTable=id)?) | tableName=id);
+
+table: mdo (DOT inlineTable=id)?;
+temparyTable: tableName=id;
 virtualTable:
     (mdo DOT virtualTableName (LPAREN virtualTableParameters RPAREN)?)
     | (FILTER_CRITERION_TYPE DOT id LPAREN parameter RPAREN) // для критерия отбора ВТ не указывается
@@ -146,44 +156,45 @@ virtualTable:
 virtualTableParameters: virtualTableExpression? (COMMA virtualTableExpression?)*;
 
 joinPart:
-    (INNER? | ((LEFT | RIGHT | FULL) OUTER?))  // тип соединения
-    JOIN dataSource on=(ON_EN | PO_RU) joinExpression   // имя таблицы и соединение
+    (INNER? | ((LEFT | RIGHT | FULL) OUTER?))                       // тип соединения
+    JOIN dataSource on=(ON_EN | PO_RU) withoutAggregateExpression   // имя таблицы и соединение
     ;
 
-groupByItems: groupByExpession (COMMA groupByExpession)*;
+groupByItems: withoutAggregateExpression (COMMA withoutAggregateExpression)*;
 
 // EXPRESSIONS
 expression: member (operation member)*;
-member: ((leftStatement | callStatement | caseStatement) 
-        | (negativeOperation* (leftStatement | callStatement | caseStatement) rightStatement));
-
-leftStatement:
-      (negativeOperation* ((LPAREN expression RPAREN) | parameter | field))
-    | (negativeOperation* ((LPAREN expression (COMMA expression)* RPAREN) | parameter | field))
-    | (unaryOpertion* ((LPAREN member RPAREN) | parameter | field))
-    | (negativeOperation* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
-    | (unaryOpertion* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
-    | (literal=(STR | UNDEFINED))                                   // другого нельзя
-    ;
-
-rightStatement:
-      (REFS mdo)
-    | (negativeOperation* LIKE expression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
-    | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? LPAREN ((expression (COMMA expression)*) | subquery) RPAREN)
-    | (negativeOperation* BETWEEN expression AND expression)
-    | (IS negativeOperation* literal=NULL)
+member:
+    (
+          (negativeOperation* ((LPAREN expression (COMMA expression)* RPAREN) | parameter | field))
+        | (unaryOpertion* ((LPAREN expression RPAREN) | parameter | field))
+        | (negativeOperation* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
+        | (unaryOpertion* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
+        | (literal=(STR | UNDEFINED))                                   // другого нельзя
+        | callStatement
+        | aggregateCallStatement
+        | caseStatement
+    ) (
+          (REFS mdo)
+        | (negativeOperation* LIKE expression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
+        | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? LPAREN ((expression (COMMA expression)*) | subquery) RPAREN)
+        | (negativeOperation* BETWEEN expression AND expression)
+        | (IS negativeOperation* literal=NULL)
+    )?
     ;
 
 caseStatement: CASE expression? whenBranch+ elseBranch? END;
 whenBranch: WHEN expression THEN expression;
 elseBranch: ELSE expression;
 
+aggregateCallStatement:
+    (unaryOpertion* doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
+    | (unaryOpertion* doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
+    ;
 callStatement:
          (doCall=DATETIME LPAREN (parameter | DECIMAL) COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL)
             (COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL) (COMMA (parameter | DECIMAL)))? RPAREN)
         | (doCall=TYPE LPAREN (mdo | type) RPAREN)
-        | (unaryOpertion* doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
-        | (unaryOpertion* doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
         | (doCall=SUBSTRING LPAREN expression COMMA expression COMMA expression RPAREN)
         | (doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN expression RPAREN)
         | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN expression RPAREN)
@@ -191,7 +202,55 @@ callStatement:
         | (doCall=DATEADD LPAREN expression COMMA datePart COMMA expression RPAREN)
         | (doCall=DATEDIFF LPAREN expression COMMA expression COMMA datePart RPAREN)
         | (doCall=ISNULL LPAREN expression COMMA expression RPAREN)
-        | (doCall=CAST LPAREN member AS (
+        | (doCall=CAST LPAREN expression AS (
+            BOOLEAN
+            | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+            | (STRING (LPAREN DECIMAL RPAREN)?)
+            | DATE
+            | mdo
+          ) RPAREN (DOT id)*)
+        | (negativeOperation* doCall=VALUE LPAREN (
+            (mdo DOT ROUTEPOINT_FIELD DOT IDENTIFIER)       // для точки маршрута бизнес процесса
+            | (id DOT id)                                   // для системного перечисления
+            | (mdo DOT fieldName=id?)                       // может быть просто точка - аналог пустой ссылки
+          ) RPAREN)
+        ;
+
+// WITHOUT AGGREGATE EXPRESSION
+// без использования агрегатные ф-ии
+withoutAggregateExpression: withoutAggregateMember (operation withoutAggregateMember)*;
+withoutAggregateMember:
+    (
+          (negativeOperation* ((LPAREN withoutAggregateExpression (COMMA withoutAggregateExpression)* RPAREN) | parameter | field))
+        | (unaryOpertion* ((LPAREN withoutAggregateExpression RPAREN) | parameter | field))
+        | (negativeOperation* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
+        | (unaryOpertion* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
+        | (literal=(STR | UNDEFINED))                                   // другого нельзя
+        | withoutAggregateCallStatement
+        | withoutAggregateCaseStatement
+    ) (
+        (REFS mdo)
+        | (negativeOperation* LIKE withoutAggregateExpression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
+        | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? LPAREN ((withoutAggregateExpression (COMMA withoutAggregateExpression)*) | subquery) RPAREN)
+        | (negativeOperation* BETWEEN withoutAggregateExpression AND withoutAggregateExpression)
+        | (IS negativeOperation* literal=NULL)
+    )?
+    ;
+withoutAggregateCaseStatement: CASE withoutAggregateExpression? withoutAggregateWhenBranch+ withoutAggregateElseBranch? END;
+withoutAggregateWhenBranch: WHEN withoutAggregateExpression THEN withoutAggregateExpression;
+withoutAggregateElseBranch: ELSE withoutAggregateExpression;
+withoutAggregateCallStatement:
+         (doCall=DATETIME LPAREN (parameter | DECIMAL) COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL)
+            (COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL) (COMMA (parameter | DECIMAL)))? RPAREN)
+        | (doCall=TYPE LPAREN (mdo | type) RPAREN)
+        | (doCall=SUBSTRING LPAREN withoutAggregateExpression COMMA withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
+        | (doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN withoutAggregateExpression RPAREN)
+        | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN withoutAggregateExpression RPAREN)
+        | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN withoutAggregateExpression COMMA datePart RPAREN)
+        | (doCall=DATEADD LPAREN withoutAggregateExpression COMMA datePart COMMA withoutAggregateExpression RPAREN)
+        | (doCall=DATEDIFF LPAREN withoutAggregateExpression COMMA withoutAggregateExpression COMMA datePart RPAREN)
+        | (doCall=ISNULL LPAREN withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
+        | (negativeOperation* doCall=CAST LPAREN withoutAggregateExpression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
             | (STRING (LPAREN DECIMAL RPAREN)?)
@@ -207,17 +266,10 @@ callStatement:
         ;
 
 // todo нужно придумать, как разделить
-selectExpression: expression;
-selectTemparyTableExpression: expression;
-whereExpression: expression;
-ordersExpression: expression;
 inlineTableExpression: expression;
-joinExpression: expression;
 virtualTableExpression: expression;
-groupByExpession: expression;
 havingExpression: expression;
 totalsItemExpression: expression;
-totalsExpression: expression;
 
 parameter: AMPERSAND parameterName=PARAMETER_IDENTIFIER; // любые символы
 field: (tableName=id DOT)* fieldName=id;
@@ -347,19 +399,6 @@ id: // возможные идентификаторы
     | WEEK
     | WEEKDAY
     | YEAR
-    // виртуаьные таблицы
-    | ACTUAL_ACTION_PERIOD_VT
-    | BALANCE_VT
-    | BALANCE_AND_TURNOVERS_VT
-    | BOUNDARIES_VT
-    | DR_CR_TURNOVERS_VT
-    | EXT_DIMENSIONS_VT
-    | RECORDS_WITH_EXT_DIMENSIONS_VT
-    | SCHEDULE_DATA_VT
-    | SLICEFIRST_VT
-    | SLICELAST_VT
-    | TASK_BY_PERFORMER_VT
-    | TURNOVERS_VT
     // системные поля
     | ROUTEPOINT_FIELD
     ;
@@ -369,21 +408,20 @@ id: // возможные идентификаторы
 //  - [x] для блока выборки
 //  - [x] для пустой таблицы
 //  - [ ] для вложенных таблиц
-//  - [ ] для упорядочить
-//  - [ ] для сгруппировать
 //  - [ ] для итоги
 //  - [x] для Для изменения
-//  - [ ] для индексировать
+//  - [x] для индексировать
 // 2. [ ] Выражения в разных секциях отличаются по правилам, надо сделать для каждого варианта
 //  - [x] для блока выборки
 //  - [ ] для вложенных таблиц
-//  - [ ] для соединений
-//  - [ ] для упорядочить
-//  - [ ] для сгруппировать
+//  - [x] для соединений
+//  - [x] для условий
+//  - [x] для упорядочить
+//  - [x] для сгруппировать
 //  - [ ] для итоги
 // 3. [?] Добавить системные перечисления
 // 4. [?] Добавить сопоставление виртуальных таблиц MDO
-// 5. [ ] Пробел между выражением и алиасом должен быть
-// 6. [ ] Реализовать многострочные строки - могут быть без | вначале
+// 5. [x] Пробел между выражением и алиасом должен быть
+// 6. [x] Реализовать многострочные строки - могут быть без | вначале
 // 7. [ ] Оптимизировать скорость парсера
 // 8. [ ] Комментарии в многострочной строке

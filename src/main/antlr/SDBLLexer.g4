@@ -269,7 +269,8 @@ fragment LETTER: [\p{Letter}] | '_';
 
 DECIMAL     : DIGIT+;
 FLOAT       : DIGIT+ '.' DIGIT*;
-STR         : '"' (~[\r\n"] | '""')* '"';
+STR         : '"' (~["] | '""')* '"';
+INCORRECT_IDENTIFIER  : DIGIT+ LETTER (LETTER | DIGIT)*;
 IDENTIFIER  : LETTER (LETTER | DIGIT)*;
 UNKNOWN: . -> channel(HIDDEN);
 
