@@ -33,7 +33,7 @@ queryStatement: selectStatement | dropTableStatement;
 
 dropTableStatement: DROP temparyTableName=id;
 selectStatement: (subquery ordersAndTotalsStatement?) | (subqueryTemparyTable ordersStatement? indexingStatement?);
-
+inlineSubquery: LPAREN subquery ordersStatement? RPAREN;
 subquery: query union*;
 query:
     SELECT limitations
@@ -138,7 +138,8 @@ inlineTableField: inlineTableExpression alias?;
 fromStatement: (FROM dataSources)?;
 dataSources: dataSource (COMMA dataSource)*;
 dataSource:
-    (     (LPAREN (subquery | dataSource) RPAREN)
+    (   (LPAREN dataSource RPAREN)
+        | inlineSubquery
         | table
         | temparyTable
         | virtualTable
@@ -150,7 +151,7 @@ table: mdo (DOT inlineTable=id)?;
 temparyTable: tableName=id;
 virtualTable:
     (mdo DOT virtualTableName (LPAREN virtualTableParameters RPAREN)?)
-    | (FILTER_CRITERION_TYPE DOT id LPAREN parameter RPAREN) // для критерия отбора ВТ не указывается
+    | (FILTER_CRITERION_TYPE DOT id LPAREN parameter? RPAREN) // для критерия отбора ВТ не указывается
     ;
 // todo надо для каждого типа ВТ свои параметры прописать, пока - какие-то выажения
 virtualTableParameters: virtualTableExpression? (COMMA virtualTableExpression?)*;
@@ -177,18 +178,18 @@ member:
     ) (
           (REFS mdo)
         | (negativeOperation* LIKE expression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
-        | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? LPAREN ((expression (COMMA expression)*) | subquery) RPAREN)
+        | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN expression (COMMA expression)* RPAREN) | inlineSubquery))
         | (negativeOperation* BETWEEN expression AND expression)
         | (IS negativeOperation* literal=NULL)
     )?
     ;
 
-caseStatement: CASE expression? whenBranch+ elseBranch? END;
+caseStatement: negativeOperation* CASE expression? whenBranch+ elseBranch? END;
 whenBranch: WHEN expression THEN expression;
 elseBranch: ELSE expression;
 
 aggregateCallStatement:
-    (unaryOpertion* doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
+    ((unaryOpertion* | negativeOperation*) doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
     | (unaryOpertion* doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
     ;
 callStatement:
@@ -201,7 +202,7 @@ callStatement:
         | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN expression COMMA datePart RPAREN)
         | (doCall=DATEADD LPAREN expression COMMA datePart COMMA expression RPAREN)
         | (doCall=DATEDIFF LPAREN expression COMMA expression COMMA datePart RPAREN)
-        | (negativeOperation* doCall=ISNULL LPAREN expression COMMA expression RPAREN)
+        | ((negativeOperation* | unaryOpertion*) doCall=ISNULL LPAREN expression COMMA expression RPAREN)
         | (doCall=CAST LPAREN expression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
@@ -231,12 +232,12 @@ withoutAggregateMember:
     ) (
         (REFS mdo)
         | (negativeOperation* LIKE withoutAggregateExpression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
-        | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? LPAREN ((withoutAggregateExpression (COMMA withoutAggregateExpression)*) | subquery) RPAREN)
+        | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN withoutAggregateExpression (COMMA withoutAggregateExpression)* RPAREN) | inlineSubquery))
         | (negativeOperation* BETWEEN withoutAggregateExpression AND withoutAggregateExpression)
         | (IS negativeOperation* literal=NULL)
     )?
     ;
-withoutAggregateCaseStatement: CASE withoutAggregateExpression? withoutAggregateWhenBranch+ withoutAggregateElseBranch? END;
+withoutAggregateCaseStatement: negativeOperation* CASE withoutAggregateExpression? withoutAggregateWhenBranch+ withoutAggregateElseBranch? END;
 withoutAggregateWhenBranch: WHEN withoutAggregateExpression THEN withoutAggregateExpression;
 withoutAggregateElseBranch: ELSE withoutAggregateExpression;
 withoutAggregateCallStatement:
@@ -249,7 +250,7 @@ withoutAggregateCallStatement:
         | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN withoutAggregateExpression COMMA datePart RPAREN)
         | (doCall=DATEADD LPAREN withoutAggregateExpression COMMA datePart COMMA withoutAggregateExpression RPAREN)
         | (doCall=DATEDIFF LPAREN withoutAggregateExpression COMMA withoutAggregateExpression COMMA datePart RPAREN)
-        | (negativeOperation* doCall=ISNULL LPAREN withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
+        | ((negativeOperation* | unaryOpertion*) doCall=ISNULL LPAREN withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
         | (negativeOperation* doCall=CAST LPAREN withoutAggregateExpression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
@@ -399,6 +400,19 @@ id: // возможные идентификаторы
     | WEEK
     | WEEKDAY
     | YEAR
+    // виртуальные таблицы
+    | ACTUAL_ACTION_PERIOD_VT
+    | BALANCE_VT
+    | BALANCE_AND_TURNOVERS_VT
+    | BOUNDARIES_VT
+    | DR_CR_TURNOVERS_VT
+    | EXT_DIMENSIONS_VT
+    | RECORDS_WITH_EXT_DIMENSIONS_VT
+    | SCHEDULE_DATA_VT
+    | SLICEFIRST_VT
+    | SLICELAST_VT
+    | TASK_BY_PERFORMER_VT
+    | TURNOVERS_VT
     // системные поля
     | ROUTEPOINT_FIELD
     ;

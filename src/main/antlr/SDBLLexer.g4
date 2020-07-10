@@ -51,6 +51,7 @@ MUL: '*';
 QUOTIENT: '/';
 AMPERSAND: '&' -> pushMode(PARAMETER_MODE);
 BAR: '|';
+BRACE: '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 
 // KEYWORDS         RU                                                                          EN
 ALL:            RU_V RU_S RU_E                                                              | A L L;
@@ -289,7 +290,7 @@ DOT_ROUTEPOINT_FIELD    : ROUTEPOINT_FIELD -> type(ROUTEPOINT_FIELD), popMode;
 // VIRTUAL TABLES                 RU                                                                  EN
 ACTUAL_ACTION_PERIOD_VT:
                 (RU_F RU_A RU_K RU_T RU_I RU_CH RU_E RU_S RU_K RU_I RU_J RU_P RU_E RU_R RU_I RU_O RU_D RU_D RU_E RU_J RU_S RU_T RU_V RU_I RU_YA
-                                                                                            | A C T U A L A C T I O N P E R I O D) -> popMode;
+                                                                                             | A C T U A L A C T I O N P E R I O D) -> popMode;
 BALANCE_VT:     (BALANCE_RU                                                                  | BALANCE_EN) -> popMode;
 BALANCE_AND_TURNOVERS_VT:
                 (BALANCE_RU RU_I TURNOVERS_RU                                                | BALANCE_EN A N D TURNOVERS_EN) -> popMode;
@@ -306,7 +307,14 @@ SLICEFIRST_VT:  (RU_S RU_R RU_E RU_Z RU_P RU_E RU_R RU_V RU_Y RU_H              
 SLICELAST_VT:   (RU_S RU_R RU_E RU_Z RU_P RU_O RU_S RU_L RU_E RU_D RU_N RU_I RU_H            | S L I C E L A S T) -> popMode;
 TASK_BY_PERFORMER_VT:
                 (RU_Z RU_A RU_D RU_A RU_CH RU_I RU_P RU_O RU_I RU_S RU_P RU_O RU_L RU_N RU_I RU_T RU_E RU_L RU_YU
-                                                                                            | T A S K B Y P E R F O R M E R) -> popMode;
+                                                                                             | T A S K B Y P E R F O R M E R) -> popMode;
 TURNOVERS_VT:   (TURNOVERS_RU                                                                | TURNOVERS_EN) -> popMode;
 
 DOT_IDENTIFIER          : (LETTER ( LETTER | DIGIT )*) -> type(IDENTIFIER), popMode;
+
+mode BRACE_MODE;
+BRACE_WHITE_SPACE   : [ \n\r\t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
+BRACE_IDENTIFIER    : LETTER (LETTER | DIGIT)* -> channel(HIDDEN);
+BRACE_START         : '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
+BRACE_END           : '}' -> channel(HIDDEN), type(UNKNOWN), popMode;
+BRACE_UKNOWN        : . -> channel(HIDDEN), type(UNKNOWN);
