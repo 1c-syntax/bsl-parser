@@ -179,12 +179,13 @@ member:
           (REFS mdo)
         | (negativeOperation* LIKE expression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
         | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN expression (COMMA expression)* RPAREN) | inlineSubquery))
-        | (negativeOperation* BETWEEN expression AND expression)
+        | (negativeOperation* BETWEEN pairStatement)
         | (IS negativeOperation* literal=NULL)
     )?
     ;
+pairStatement: expression AND expression;
 
-caseStatement: negativeOperation* CASE expression? whenBranch+ elseBranch? END;
+caseStatement: (unaryOpertion* | negativeOperation*) CASE expression? whenBranch+ elseBranch? END;
 whenBranch: WHEN expression THEN expression;
 elseBranch: ELSE expression;
 
@@ -203,7 +204,7 @@ callStatement:
         | (doCall=DATEADD LPAREN expression COMMA datePart COMMA expression RPAREN)
         | (doCall=DATEDIFF LPAREN expression COMMA expression COMMA datePart RPAREN)
         | ((negativeOperation* | unaryOpertion*) doCall=ISNULL LPAREN expression COMMA expression RPAREN)
-        | (doCall=CAST LPAREN expression AS (
+        | ((negativeOperation* | unaryOpertion*) doCall=CAST LPAREN expression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
             | (STRING (LPAREN DECIMAL RPAREN)?)
@@ -233,11 +234,12 @@ withoutAggregateMember:
         (REFS mdo)
         | (negativeOperation* LIKE withoutAggregateExpression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
         | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN withoutAggregateExpression (COMMA withoutAggregateExpression)* RPAREN) | inlineSubquery))
-        | (negativeOperation* BETWEEN withoutAggregateExpression AND withoutAggregateExpression)
+        | (negativeOperation* BETWEEN withoutAggregatePairStatement)
         | (IS negativeOperation* literal=NULL)
     )?
     ;
-withoutAggregateCaseStatement: negativeOperation* CASE withoutAggregateExpression? withoutAggregateWhenBranch+ withoutAggregateElseBranch? END;
+withoutAggregatePairStatement: withoutAggregateExpression AND withoutAggregateExpression;
+withoutAggregateCaseStatement: (unaryOpertion* | negativeOperation*) CASE withoutAggregateExpression? withoutAggregateWhenBranch+ withoutAggregateElseBranch? END;
 withoutAggregateWhenBranch: WHEN withoutAggregateExpression THEN withoutAggregateExpression;
 withoutAggregateElseBranch: ELSE withoutAggregateExpression;
 withoutAggregateCallStatement:
@@ -251,7 +253,7 @@ withoutAggregateCallStatement:
         | (doCall=DATEADD LPAREN withoutAggregateExpression COMMA datePart COMMA withoutAggregateExpression RPAREN)
         | (doCall=DATEDIFF LPAREN withoutAggregateExpression COMMA withoutAggregateExpression COMMA datePart RPAREN)
         | ((negativeOperation* | unaryOpertion*) doCall=ISNULL LPAREN withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
-        | (negativeOperation* doCall=CAST LPAREN withoutAggregateExpression AS (
+        | ((negativeOperation* | unaryOpertion*) doCall=CAST LPAREN withoutAggregateExpression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
             | (STRING (LPAREN DECIMAL RPAREN)?)
