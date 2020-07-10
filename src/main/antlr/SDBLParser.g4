@@ -164,34 +164,33 @@ joinPart:
 groupByItems: withoutAggregateExpression (COMMA withoutAggregateExpression)*;
 
 // EXPRESSIONS
-expression: member (operation member)*;
+expression: member (boolOperation member)*;
 member:
-    (
-          (negativeOperation* ((LPAREN expression (COMMA expression)* RPAREN) | parameter | field))
-        | (unaryOpertion* ((LPAREN expression RPAREN) | parameter | field))
-        | (negativeOperation* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
-        | (unaryOpertion* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
-        | (literal=(STR | UNDEFINED))                                   // другого нельзя
-        | callStatement
-        | aggregateCallStatement
-        | caseStatement
-    ) (
-          (REFS mdo)
-        | (negativeOperation* LIKE expression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
-        | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN expression (COMMA expression)* RPAREN) | inlineSubquery))
-        | (negativeOperation* BETWEEN pairStatement)
-        | (IS negativeOperation* literal=NULL)
-    )?
+    (leftStatement ((compareOperation | binaryOperation) leftStatement)*)
+    | (leftStatement REFS mdo)
+    | (leftStatement negativeOperation=NOT? LIKE expression ESCAPE escape=STR)
+    | (leftStatement negativeOperation=NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN expression (COMMA expression)* RPAREN) | inlineSubquery))
+    | (leftStatement negativeOperation=NOT? BETWEEN betweenStatement)
+    | (leftStatement IS negativeOperation=NOT? literal=NULL)
     ;
-pairStatement: expression AND expression;
-
-caseStatement: (unaryOpertion* | negativeOperation*) CASE expression? whenBranch+ elseBranch? END;
+leftStatement:
+    (negativeOperation=NOT* (LPAREN expression (COMMA expression)+ RPAREN))
+    | ((negativeOperation=NOT | unaryOpertion=MINUS)* ((LPAREN expression RPAREN) | parameter | field))
+    | (negativeOperation=NOT* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
+    | (unaryOpertion=MINUS* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
+    | (literal=(STR | UNDEFINED))                                   // другого нельзя
+    | callStatement
+    | aggregateCallStatement
+    | caseStatement
+    ;
+betweenStatement: leftStatement AND leftStatement;
+caseStatement: (negativeOperation=NOT | unaryOpertion=MINUS)* CASE expression? whenBranch+ elseBranch? END;
 whenBranch: WHEN expression THEN expression;
 elseBranch: ELSE expression;
 
 aggregateCallStatement:
-    ((unaryOpertion* | negativeOperation*) doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
-    | (unaryOpertion* doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
+    ((negativeOperation=NOT | unaryOpertion=MINUS)* doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
+    | (unaryOpertion=MINUS* doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
     ;
 callStatement:
          (doCall=DATETIME LPAREN (parameter | DECIMAL) COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL)
@@ -203,15 +202,15 @@ callStatement:
         | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN expression COMMA datePart RPAREN)
         | (doCall=DATEADD LPAREN expression COMMA datePart COMMA expression RPAREN)
         | (doCall=DATEDIFF LPAREN expression COMMA expression COMMA datePart RPAREN)
-        | ((negativeOperation* | unaryOpertion*) doCall=ISNULL LPAREN expression COMMA expression RPAREN)
-        | ((negativeOperation* | unaryOpertion*) doCall=CAST LPAREN expression AS (
+        | ((negativeOperation=NOT | unaryOpertion=MINUS)* doCall=ISNULL LPAREN expression COMMA expression RPAREN)
+        | ((negativeOperation=NOT | unaryOpertion=MINUS)* doCall=CAST LPAREN expression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
             | (STRING (LPAREN DECIMAL RPAREN)?)
             | DATE
             | mdo
           ) RPAREN (DOT id)*)
-        | (negativeOperation* doCall=VALUE LPAREN (
+        | (negativeOperation=NOT* doCall=VALUE LPAREN (
             (mdo DOT ROUTEPOINT_FIELD DOT IDENTIFIER)       // для точки маршрута бизнес процесса
             | (id DOT id)                                   // для системного перечисления
             | (mdo DOT fieldName=id?)                       // может быть просто точка - аналог пустой ссылки
@@ -220,26 +219,26 @@ callStatement:
 
 // WITHOUT AGGREGATE EXPRESSION
 // без использования агрегатные ф-ии
-withoutAggregateExpression: withoutAggregateMember (operation withoutAggregateMember)*;
+withoutAggregateExpression: withoutAggregateMember (boolOperation withoutAggregateMember)*;
 withoutAggregateMember:
-    (
-          (negativeOperation* ((LPAREN withoutAggregateExpression (COMMA withoutAggregateExpression)* RPAREN) | parameter | field))
-        | (unaryOpertion* ((LPAREN withoutAggregateExpression RPAREN) | parameter | field))
-        | (negativeOperation* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
-        | (unaryOpertion* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
-        | (literal=(STR | UNDEFINED))                                   // другого нельзя
-        | withoutAggregateCallStatement
-        | withoutAggregateCaseStatement
-    ) (
-        (REFS mdo)
-        | (negativeOperation* LIKE withoutAggregateExpression ESCAPE escape=STR) // TODO подумать, как сделать проверку на один символ для ESCAPE
-        | (negativeOperation* IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN withoutAggregateExpression (COMMA withoutAggregateExpression)* RPAREN) | inlineSubquery))
-        | (negativeOperation* BETWEEN withoutAggregatePairStatement)
-        | (IS negativeOperation* literal=NULL)
-    )?
+    (withoutLeftStatement ((compareOperation | binaryOperation) withoutLeftStatement)?)
+    | (withoutLeftStatement REFS mdo)
+    | (withoutLeftStatement negativeOperation=NOT? LIKE withoutAggregateExpression ESCAPE escape=STR)
+    | (withoutLeftStatement negativeOperation=NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN withoutAggregateExpression (COMMA withoutAggregateExpression)* RPAREN) | inlineSubquery))
+    | (withoutLeftStatement negativeOperation=NOT? BETWEEN withoutAggregateBetweenStatement)
+    | (withoutLeftStatement IS negativeOperation=NOT? literal=NULL)
     ;
-withoutAggregatePairStatement: withoutAggregateExpression AND withoutAggregateExpression;
-withoutAggregateCaseStatement: (unaryOpertion* | negativeOperation*) CASE withoutAggregateExpression? withoutAggregateWhenBranch+ withoutAggregateElseBranch? END;
+withoutLeftStatement:
+    (negativeOperation=NOT* (LPAREN withoutAggregateExpression (COMMA withoutAggregateExpression)+ RPAREN))
+    | ((negativeOperation=NOT | unaryOpertion=MINUS)* ((LPAREN withoutAggregateExpression RPAREN) | parameter | field))
+    | (negativeOperation=NOT* literal=(TRUE | FALSE | NULL))            // для булева и null можно только отрицание
+    | (unaryOpertion=MINUS* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
+    | (literal=(STR | UNDEFINED))                                   // другого нельзя
+    | withoutAggregateCallStatement
+    | withoutAggregateCaseStatement
+    ;
+withoutAggregateBetweenStatement: withoutLeftStatement AND withoutLeftStatement;
+withoutAggregateCaseStatement: (negativeOperation=NOT | unaryOpertion=MINUS)* CASE withoutAggregateExpression? withoutAggregateWhenBranch+ withoutAggregateElseBranch? END;
 withoutAggregateWhenBranch: WHEN withoutAggregateExpression THEN withoutAggregateExpression;
 withoutAggregateElseBranch: ELSE withoutAggregateExpression;
 withoutAggregateCallStatement:
@@ -252,8 +251,8 @@ withoutAggregateCallStatement:
         | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN withoutAggregateExpression COMMA datePart RPAREN)
         | (doCall=DATEADD LPAREN withoutAggregateExpression COMMA datePart COMMA withoutAggregateExpression RPAREN)
         | (doCall=DATEDIFF LPAREN withoutAggregateExpression COMMA withoutAggregateExpression COMMA datePart RPAREN)
-        | ((negativeOperation* | unaryOpertion*) doCall=ISNULL LPAREN withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
-        | ((negativeOperation* | unaryOpertion*) doCall=CAST LPAREN withoutAggregateExpression AS (
+        | ((negativeOperation=NOT | unaryOpertion=MINUS)* doCall=ISNULL LPAREN withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
+        | ((negativeOperation=NOT | unaryOpertion=MINUS)* doCall=CAST LPAREN withoutAggregateExpression AS (
             BOOLEAN
             | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
             | (STRING (LPAREN DECIMAL RPAREN)?)
@@ -275,7 +274,11 @@ havingExpression: expression;
 totalsItemExpression: expression;
 
 parameter: AMPERSAND parameterName=PARAMETER_IDENTIFIER; // любые символы
-field: (tableName=id DOT)* fieldName=id;
+field:
+    ((mdo DOT (tableName=id DOT)*)
+    | (tableName=id DOT)+)?
+    (fieldName=id)
+    ;
 alias: AS? id;
 
 mdo: mdoType DOT mdoName=id; // полное имя объекта метаданных
@@ -319,11 +322,8 @@ datePart: MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR | TENDAYS | HALFYE
 
 // OPERATION
 boolOperation       : OR | AND;
-negativeOperation   : NOT;
-unaryOpertion       : MINUS;
 binaryOperation     : PLUS | MINUS | MUL | QUOTIENT;
 compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
-operation           : binaryOperation | compareOperation | boolOperation;
 
 id: // возможные идентификаторы
     IDENTIFIER // просто идентификатор
