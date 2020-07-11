@@ -141,16 +141,19 @@ dataSource:
     (   (LPAREN dataSource RPAREN)
         | inlineSubquery
         | table
-        | temparyTable
         | virtualTable
         | parameter
     ) alias? joinPart*
     ;
 
-table: mdo (DOT inlineTable=id)?;
-temparyTable: tableName=id;
+table:
+    mdo
+    | (mdo (DOT tableName=id)+)
+    | tableName=id
+;
 virtualTable:
-    (mdo DOT virtualTableName (LPAREN virtualTableParameters RPAREN)?)
+      (mdo DOT virtualTableName (LPAREN virtualTableParameters RPAREN))
+    | (mdo DOT virtualTableName)
     | (FILTER_CRITERION_TYPE DOT id LPAREN parameter? RPAREN) // для критерия отбора ВТ не указывается
     ;
 // todo надо для каждого типа ВТ свои параметры прописать, пока - какие-то выажения
@@ -221,7 +224,9 @@ callStatement:
 // без использования агрегатные ф-ии
 withoutAggregateExpression: withoutAggregateMember (boolOperation withoutAggregateMember)*;
 withoutAggregateMember:
-    (withoutLeftStatement ((compareOperation | binaryOperation) withoutLeftStatement)?)
+    withoutLeftStatement
+    | (withoutLeftStatement (binaryOperation withoutLeftStatement)*
+        (compareOperation (withoutLeftStatement (binaryOperation withoutLeftStatement)*)+)?)
     | (withoutLeftStatement REFS mdo)
     | (withoutLeftStatement negativeOperation=NOT? LIKE withoutAggregateExpression ESCAPE escape=STR)
     | (withoutLeftStatement negativeOperation=NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? ((LPAREN withoutAggregateExpression (COMMA withoutAggregateExpression)* RPAREN) | inlineSubquery))
@@ -246,7 +251,7 @@ withoutAggregateCallStatement:
             (COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL) (COMMA (parameter | DECIMAL)))? RPAREN)
         | (doCall=TYPE LPAREN (mdo | type) RPAREN)
         | (doCall=SUBSTRING LPAREN withoutAggregateExpression COMMA withoutAggregateExpression COMMA withoutAggregateExpression RPAREN)
-        | (doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN withoutAggregateExpression RPAREN)
+        | (unaryOpertion=MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN withoutAggregateExpression RPAREN)
         | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN withoutAggregateExpression RPAREN)
         | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN withoutAggregateExpression COMMA datePart RPAREN)
         | (doCall=DATEADD LPAREN withoutAggregateExpression COMMA datePart COMMA withoutAggregateExpression RPAREN)
@@ -275,9 +280,7 @@ totalsItemExpression: expression;
 
 parameter: AMPERSAND parameterName=PARAMETER_IDENTIFIER; // любые символы
 field:
-    ((mdo DOT (tableName=id DOT)*)
-    | (tableName=id DOT)+)?
-    (fieldName=id)
+    (tableName=id DOT)* (fieldName=id)
     ;
 alias: AS? id;
 
