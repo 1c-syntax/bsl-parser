@@ -69,3 +69,4 @@ fabric.properties
 \.idea/sonarlint-state\.xml
 
 \.idea/sonarlint\.xml
+**/antlr/.antlr/**
