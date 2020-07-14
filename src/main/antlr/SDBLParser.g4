@@ -40,7 +40,7 @@ dropTableQuery: DROP temparyTableName=identifier;
 
 // SELECT
 // запрос на выборку данных, может состять из подзапроса или подзапроса с временной таблицей
-selectQuery: (subquery ordersAndTotals) | (temparyTableSubquery orders indexing);
+selectQuery: (subquery ordersAndTotals) | (temparyTableSubquery orders? indexing);
 
 // SUBQUERIES
 // различные виды подзапросов
@@ -116,7 +116,7 @@ temparyTableSelectedField:
     ) alias
     ;
 // помещение во временную таблицу
-into: temparyTableName=identifier;
+into: INTO temparyTableName=identifier;
 // источники данных для временной таблицы
 temparyTableFrom: (FROM temparyTableDataSources)?;
 // перечень таблиц-источников данных для выборки
@@ -129,7 +129,7 @@ indexing: (INDEX by=(BY_EN | PO_RU) indexingItem (COMMA indexingItem)*)?;
 indexingItem: parameter | column;
 
 // вложенный подзапрос
-inlineSubquery: LPAREN subquery orders RPAREN;
+inlineSubquery: LPAREN subquery orders? RPAREN;
 
 // COMMON FOR QUERIES
 
@@ -179,7 +179,7 @@ totalsGroup:
     ;
 
 // только упорядочивание
-orders: (ORDER by=(BY_EN | PO_RU) ordersItems)?;
+orders: ORDER by=(BY_EN | PO_RU) ordersItems;
 ordersItems: ordersItem (COMMA ordersItem)*;
 ordersItem: ordersExpression orderDirection? alias;
 orderDirection: ASC | DESC | (hierarhy=(HIERARCHY_EN | HIERARCHYA_RU) DESC?);
@@ -230,16 +230,363 @@ having: (HAVING havingExpression)?;
 
 // EXPRESSIONS
 // все виды выражений
-selectExpression:;
-inlineTableExpression:;
-virtualTableExpression:;
-joinExpression:;
-whereExpression:;
-groupByExpression:;
-havingExpression:;
-totalsItemExpression:;
-totalsGroupExpression:;
-ordersExpression:;
+selectExpression        : selectMember (boolOperation selectMember)*;
+inlineTableExpression   : inlineTableMember (boolOperation inlineTableMember)*;
+virtualTableExpression  : virtualTableMember (boolOperation virtualTableMember)*;
+joinExpression          : joinMember (boolOperation joinMember)*;
+whereExpression         : whereMember (boolOperation whereMember)*;
+groupByExpression       : groupByMember (boolOperation groupByMember)*;
+havingExpression        : havingMember (boolOperation havingMember)*;
+totalsItemExpression    : totalsItemMember (boolOperation totalsItemMember)*;
+totalsGroupExpression   : totalsGroupMember (boolOperation totalsGroupMember)*;
+ordersExpression        : ordersMember (boolOperation ordersMember)*;
+
+// MEMBERS
+// члены выражений
+selectMember:
+      selectStatement
+    | selectBinaryStatement
+    | selectComparyStatement
+    | (selectStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
+    | (LPAREN selectStatement (COMMA selectStatement)+ RPAREN IN (inlineSubquery | ( LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
+    | (selectStatement IS NOT? NULL)
+    | (selectStatement REFS mdo)
+    | (selectStatement NOT? BETWEEN selectBetweenStatement)
+    | (selectStatement NOT? LIKE selectStatement ESCAPE escape=STR)
+    ;
+inlineTableMember:
+      inlineTableStatement
+    | inlineTableBinaryStatement
+    | inlineTableComparyStatement
+    ;
+virtualTableMember:
+      virtualTableStatement
+    | virtualTableBinaryStatement
+    | virtualTableComparyStatement
+    | (virtualTableStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
+    | (LPAREN virtualTableStatement (COMMA virtualTableStatement)+ RPAREN IN (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
+    | (virtualTableStatement IS NOT? NULL)
+    | (virtualTableStatement REFS mdo)
+    | (virtualTableStatement NOT? BETWEEN virtualTableBetweenStatement)
+    | (virtualTableStatement NOT? LIKE virtualTableStatement ESCAPE escape=STR)
+    ;
+joinMember:
+      joinStatement
+    | joinBinaryStatement
+    | joinComparyStatement
+    | (joinStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
+    | (LPAREN joinStatement (COMMA joinStatement)+ RPAREN IN (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
+    | (joinStatement IS NOT? NULL)
+    | (joinStatement REFS mdo)
+    | (joinStatement NOT? BETWEEN joinBetweenStatement)
+    | (joinStatement NOT? LIKE joinStatement ESCAPE escape=STR)
+    ;
+whereMember:
+      whereStatement
+    | whereBinaryStatement
+    | whereComparyStatement
+    | (whereStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
+    | (LPAREN whereStatement (COMMA whereStatement)+ RPAREN IN (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
+    | (whereStatement IS NOT? NULL)
+    | (whereStatement REFS mdo)
+    | (whereStatement NOT? BETWEEN whereBetweenStatement)
+    | (whereStatement NOT? LIKE whereStatement ESCAPE escape=STR)
+    ;
+groupByMember:
+      groupByStatement
+    | groupByBinaryStatement
+    | groupByComparyStatement
+    | (groupByStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
+    | (LPAREN groupByStatement (COMMA groupByStatement)+ RPAREN IN (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
+    | (groupByStatement IS NOT? NULL)
+    | (groupByStatement REFS mdo)
+    | (groupByStatement NOT? BETWEEN groupByBetweenStatement)
+    | (groupByStatement NOT? LIKE groupByStatement ESCAPE escape=STR)
+    ;
+havingMember:
+      havingStatement
+    | havingBinaryStatement
+    | havingComparyStatement
+    | (havingStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
+    | (LPAREN havingStatement (COMMA havingStatement)+ RPAREN IN (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
+    | (havingStatement IS NOT? NULL)
+    | (havingStatement REFS mdo)
+    ;
+totalsItemMember:
+      totalsItemStatement
+    | totalsItemBinaryStatement
+    | totalsItemComparyStatement
+    ;
+totalsGroupMember:
+      totalsGroupStatement
+    | totalsGroupBinaryStatement
+    | totalsGroupComparyStatement
+    ;
+ordersMember:
+      ordersStatement
+    | ordersBinaryStatement
+    | ordersComparyStatement
+    | (ordersStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
+    | (LPAREN ordersStatement (COMMA ordersStatement)+ RPAREN IN (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
+    ;
+
+// STATEMENTS
+// части выражения
+selectStatement:
+      (LPAREN selectExpression RPAREN)
+    | (NOT+ LPAREN selectExpression RPAREN)
+    | (MINUS+ LPAREN selectExpression RPAREN)
+    | statement
+    | selectAggrMathCallStatement
+    | selectAggrCountCallStatement
+    | selectCastStatement
+    | selectCaseStatement
+    | ((NOT* | MINUS*) doCall=ISNULL LPAREN selectExpression COMMA selectExpression RPAREN)
+    | (doCall=DATEADD LPAREN selectExpression COMMA datePart COMMA selectExpression RPAREN)
+    | (doCall=DATEDIFF LPAREN selectExpression COMMA selectExpression COMMA datePart RPAREN)
+    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN selectExpression COMMA datePart RPAREN)
+    | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN selectExpression RPAREN)
+    | (doCall=SUBSTRING LPAREN selectExpression COMMA selectExpression COMMA selectExpression RPAREN)
+    | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN selectExpression RPAREN)
+    ;
+selectBinaryStatement: selectStatement (binaryOperation selectStatement)+;
+selectComparyStatement: (selectBinaryStatement | selectStatement) compareOperation (selectBinaryStatement | selectStatement);
+selectCaseStatement: (NOT* | MINUS*) CASE selectExpression? selectWhenBranch+ selectElseBranch? END;
+selectWhenBranch: WHEN selectExpression THEN selectExpression;
+selectElseBranch: ELSE selectExpression;
+selectAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN selectExpression RPAREN;
+selectAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? selectExpression | MUL) RPAREN;
+selectCastStatement:
+    (NOT* | MINUS*) doCall=CAST LPAREN selectExpression AS (
+          BOOLEAN
+        | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+        | (STRING (LPAREN DECIMAL RPAREN)?)
+        | DATE
+        | mdo
+        ) RPAREN (DOT identifier)*;
+selectBetweenStatement: selectExpression AND selectExpression;
+
+inlineTableStatement:
+      (LPAREN inlineTableExpression RPAREN)
+    | (NOT+ LPAREN inlineTableExpression RPAREN)
+    | (MINUS+ LPAREN inlineTableExpression RPAREN)
+    | inlineTableCaseStatement
+    | ((NOT* | MINUS*) doCall=DATEADD LPAREN inlineTableCaseStatement COMMA datePart COMMA inlineTableCaseStatement RPAREN)
+    | (doCall=DATEDIFF LPAREN inlineTableCaseStatement COMMA inlineTableCaseStatement COMMA datePart RPAREN)
+    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN inlineTableCaseStatement COMMA datePart RPAREN)
+    | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN inlineTableCaseStatement RPAREN)
+    | (doCall=SUBSTRING LPAREN inlineTableExpression COMMA inlineTableExpression COMMA inlineTableExpression RPAREN)
+    ;
+inlineTableBinaryStatement: inlineTableStatement (binaryOperation inlineTableStatement)+;
+inlineTableComparyStatement: (selectBinaryStatement | inlineTableBinaryStatement) compareOperation (inlineTableBinaryStatement | inlineTableStatement);
+inlineTableCaseStatement: (NOT* | MINUS*) CASE inlineTableExpression? inlineTableWhenBranch+ inlineTableElseBranch? END;
+inlineTableWhenBranch: WHEN inlineTableExpression THEN inlineTableExpression;
+inlineTableElseBranch: ELSE inlineTableExpression;
+
+virtualTableStatement:
+      (LPAREN virtualTableExpression RPAREN)
+    | (NOT+ LPAREN virtualTableExpression RPAREN)
+    | (MINUS+ LPAREN virtualTableExpression RPAREN)
+    | statement
+    | virtualTableCaseStatement
+    | ((NOT* | MINUS*) doCall=ISNULL LPAREN virtualTableExpression COMMA virtualTableExpression RPAREN)
+    | (doCall=DATEADD LPAREN virtualTableExpression COMMA datePart COMMA virtualTableExpression RPAREN)
+    | (doCall=DATEDIFF LPAREN virtualTableExpression COMMA virtualTableExpression COMMA datePart RPAREN)
+    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN virtualTableExpression COMMA datePart RPAREN)
+    | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN virtualTableExpression RPAREN)
+    | (doCall=SUBSTRING LPAREN virtualTableExpression COMMA virtualTableExpression COMMA virtualTableExpression RPAREN)
+    ;
+virtualTableBinaryStatement: virtualTableStatement (binaryOperation virtualTableStatement)+;
+virtualTableComparyStatement: (virtualTableBinaryStatement | virtualTableStatement) compareOperation (virtualTableBinaryStatement | virtualTableStatement);
+virtualTableCaseStatement: (NOT* | MINUS*) CASE virtualTableExpression? virtualTableWhenBranch+ virtualTableElseBranch? END;
+virtualTableWhenBranch: WHEN virtualTableExpression THEN virtualTableExpression;
+virtualTableElseBranch: ELSE virtualTableExpression;
+virtualTableBetweenStatement: virtualTableExpression AND virtualTableExpression;
+
+joinStatement:
+      (LPAREN joinExpression RPAREN)
+    | (NOT+ LPAREN joinExpression RPAREN)
+    | (MINUS+ LPAREN joinExpression RPAREN)
+    | statement
+    | joinCastStatement
+    | joinCaseStatement
+    | ((NOT* | MINUS*) doCall=ISNULL LPAREN joinExpression COMMA joinExpression RPAREN)
+    | (doCall=DATEADD LPAREN joinExpression COMMA datePart COMMA joinExpression RPAREN)
+    | (doCall=DATEDIFF LPAREN joinExpression COMMA joinExpression COMMA datePart RPAREN)
+    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN joinExpression COMMA datePart RPAREN)
+    | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN joinExpression RPAREN)
+    | (doCall=SUBSTRING LPAREN joinExpression COMMA joinExpression COMMA joinExpression RPAREN)
+    ;
+joinBinaryStatement: joinStatement (binaryOperation joinStatement)+;
+joinComparyStatement: (joinBinaryStatement | joinStatement) compareOperation (joinBinaryStatement | joinStatement);
+joinCaseStatement: (NOT* | MINUS*) CASE joinExpression? joinWhenBranch+ joinElseBranch? END;
+joinWhenBranch: WHEN joinExpression THEN joinExpression;
+joinElseBranch: ELSE joinExpression;
+joinCastStatement:
+    (NOT* | MINUS*) doCall=CAST LPAREN joinExpression AS (
+          BOOLEAN
+        | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+        | (STRING (LPAREN DECIMAL RPAREN)?)
+        | DATE
+        | mdo
+        ) RPAREN (DOT identifier)*;
+joinBetweenStatement: joinExpression AND joinExpression;
+
+whereStatement:
+      (LPAREN whereExpression RPAREN)
+    | (NOT+ LPAREN whereExpression RPAREN)
+    | (MINUS+ LPAREN whereExpression RPAREN)
+    | statement
+    | whereCastStatement
+    | whereCaseStatement
+    | ((NOT* | MINUS*) doCall=ISNULL LPAREN whereExpression COMMA whereExpression RPAREN)
+    | (doCall=DATEADD LPAREN whereExpression COMMA datePart COMMA whereExpression RPAREN)
+    | (doCall=DATEDIFF LPAREN whereExpression COMMA whereExpression COMMA datePart RPAREN)
+    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN whereExpression COMMA datePart RPAREN)
+    | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN whereExpression RPAREN)
+    | (doCall=SUBSTRING LPAREN whereExpression COMMA whereExpression COMMA whereExpression RPAREN)
+    ;
+whereBinaryStatement: whereStatement (binaryOperation whereStatement)+;
+whereComparyStatement: (whereBinaryStatement | whereStatement) compareOperation (whereBinaryStatement | whereStatement);
+whereCaseStatement: (NOT* | MINUS*) CASE whereExpression? whereWhenBranch+ whereElseBranch? END;
+whereWhenBranch: WHEN whereExpression THEN whereExpression;
+whereElseBranch: ELSE whereExpression;
+whereCastStatement:
+    (NOT* | MINUS*) doCall=CAST LPAREN whereExpression AS (
+          BOOLEAN
+        | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+        | (STRING (LPAREN DECIMAL RPAREN)?)
+        | DATE
+        | mdo
+        ) RPAREN (DOT identifier)*;
+whereBetweenStatement: whereExpression AND whereExpression;
+
+groupByStatement:
+      (LPAREN groupByExpression RPAREN)
+    | (NOT+ LPAREN groupByExpression RPAREN)
+    | (MINUS+ LPAREN groupByExpression RPAREN)
+    | statement
+    | groupByCastStatement
+    | groupByCaseStatement
+    | ((NOT* | MINUS*) doCall=ISNULL LPAREN groupByExpression COMMA groupByExpression RPAREN)
+    | (doCall=DATEADD LPAREN groupByExpression COMMA datePart COMMA groupByExpression RPAREN)
+    | (doCall=DATEDIFF LPAREN groupByExpression COMMA groupByExpression COMMA datePart RPAREN)
+    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN groupByExpression COMMA datePart RPAREN)
+    | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN groupByExpression RPAREN)
+    | (doCall=SUBSTRING LPAREN groupByExpression COMMA groupByExpression COMMA groupByExpression RPAREN)
+    | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN groupByExpression RPAREN)
+    ;
+groupByBinaryStatement: groupByStatement (binaryOperation groupByStatement)+;
+groupByComparyStatement: (groupByBinaryStatement | groupByStatement) compareOperation (groupByBinaryStatement | groupByStatement);
+groupByCaseStatement: (NOT* | MINUS*) CASE groupByExpression? groupByWhenBranch+ groupByElseBranch? END;
+groupByWhenBranch: WHEN groupByExpression THEN groupByExpression;
+groupByElseBranch: ELSE groupByExpression;
+groupByCastStatement:
+    (NOT* | MINUS*) doCall=CAST LPAREN groupByExpression AS (
+          BOOLEAN
+        | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+        | (STRING (LPAREN DECIMAL RPAREN)?)
+        | DATE
+        | mdo
+        ) RPAREN (DOT identifier)*;
+groupByBetweenStatement: groupByExpression AND groupByExpression;
+
+havingStatement:
+      (LPAREN havingExpression RPAREN)
+    | (NOT+ LPAREN havingExpression RPAREN)
+    | (MINUS+ LPAREN havingExpression RPAREN)
+    | statement
+    | havingAggrMathCallStatement
+    | havingAggrCountCallStatement
+    | havingCastStatement
+    | havingCaseStatement
+    | ((NOT* | MINUS*) doCall=ISNULL LPAREN havingExpression COMMA havingExpression RPAREN)
+    | (doCall=DATEADD LPAREN havingExpression COMMA datePart COMMA havingExpression RPAREN)
+    | (doCall=DATEDIFF LPAREN havingExpression COMMA havingExpression COMMA datePart RPAREN)
+    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN havingExpression COMMA datePart RPAREN)
+    | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN havingExpression RPAREN)
+    | (doCall=SUBSTRING LPAREN havingExpression COMMA havingExpression COMMA havingExpression RPAREN)
+    ;
+havingBinaryStatement: havingStatement (binaryOperation havingStatement)+;
+havingComparyStatement: (havingBinaryStatement | havingStatement) compareOperation (havingBinaryStatement | havingStatement);
+havingCaseStatement: (NOT* | MINUS*) CASE havingExpression? havingWhenBranch+ havingElseBranch? END;
+havingWhenBranch: WHEN havingExpression THEN havingExpression;
+havingElseBranch: ELSE havingExpression;
+havingAggrMathCallStatement: (NOT* | MINUS*) doCall=(SUM | AVG | MIN | MAX) LPAREN havingExpression RPAREN;
+havingAggrCountCallStatement: MINUS* doCall=COUNT LPAREN (DISTINCT? havingExpression | MUL) RPAREN;
+havingCastStatement:
+    (NOT* | MINUS*) doCall=CAST LPAREN havingExpression AS (
+          BOOLEAN
+        | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+        | (STRING (LPAREN DECIMAL RPAREN)?)
+        | DATE
+        | mdo
+        ) RPAREN (DOT identifier)*;
+
+totalsItemStatement:
+    (LPAREN totalsItemExpression RPAREN)
+    | statement
+    | totalsItemAggrMathCallStatement
+    | totalsItemAggrCountCallStatement
+    | totalsItemCastStatement
+    | totalsItemCaseStatement
+    | ((NOT* | MINUS*) doCall=ISNULL LPAREN totalsItemExpression COMMA totalsItemExpression RPAREN)
+    ;
+totalsItemBinaryStatement: totalsItemStatement (binaryOperation totalsItemStatement)+;
+totalsItemComparyStatement: (totalsItemBinaryStatement | totalsItemStatement) compareOperation (totalsItemBinaryStatement | totalsItemStatement);
+totalsItemCaseStatement: (NOT* | MINUS*) CASE totalsItemExpression? totalsItemWhenBranch+ totalsItemElseBranch? END;
+totalsItemWhenBranch: WHEN totalsItemExpression THEN totalsItemExpression;
+totalsItemElseBranch: ELSE totalsItemExpression;
+totalsItemAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN totalsItemExpression RPAREN;
+totalsItemAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? totalsItemExpression | MUL) RPAREN;
+totalsItemCastStatement:
+    (NOT* | MINUS*) doCall=CAST LPAREN totalsItemExpression AS (
+          BOOLEAN
+        | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+        | (STRING (LPAREN DECIMAL RPAREN)?)
+        | DATE
+        | mdo
+        ) RPAREN (DOT identifier)*;
+
+totalsGroupStatement:
+    (LPAREN totalsGroupExpression RPAREN)
+    | statement
+    | totalsGroupCaseStatement
+    ;
+totalsGroupBinaryStatement: totalsGroupStatement (binaryOperation totalsGroupStatement)+;
+totalsGroupComparyStatement: (totalsGroupBinaryStatement | totalsGroupStatement) compareOperation (totalsGroupBinaryStatement | totalsGroupStatement);
+totalsGroupCaseStatement: (NOT* | MINUS*) CASE totalsGroupExpression? totalsGroupWhenBranch+ totalsGroupElseBranch? END;
+totalsGroupWhenBranch: WHEN totalsGroupExpression THEN totalsGroupExpression;
+totalsGroupElseBranch: ELSE totalsGroupExpression;
+
+ordersStatement:
+    (LPAREN ordersExpression RPAREN)
+    | statement
+    | ordersAggrMathCallStatement
+    | ordersAggrCountCallStatement
+    | ordersItemCastStatement
+    | ordersCaseStatement
+    | ((NOT* | MINUS*) doCall=ISNULL LPAREN ordersExpression COMMA ordersExpression RPAREN)
+    | (doCall=DATEADD LPAREN ordersExpression COMMA datePart COMMA ordersExpression RPAREN)
+    | (doCall=DATEDIFF LPAREN ordersExpression COMMA ordersExpression COMMA datePart RPAREN)
+    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN ordersExpression COMMA datePart RPAREN)
+    | (doCall=SUBSTRING LPAREN ordersExpression COMMA ordersExpression COMMA ordersExpression RPAREN)
+    ;
+ordersBinaryStatement: ordersStatement (binaryOperation ordersStatement)+;
+ordersComparyStatement: (ordersBinaryStatement | ordersStatement) compareOperation (ordersBinaryStatement | ordersStatement);
+ordersCaseStatement: (NOT* | MINUS*) CASE ordersExpression? ordersWhenBranch+ ordersElseBranch? END;
+ordersWhenBranch: WHEN ordersExpression THEN ordersExpression;
+ordersElseBranch: ELSE ordersExpression;
+ordersAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN ordersExpression RPAREN;
+ordersAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? ordersExpression | MUL) RPAREN;
+ordersItemCastStatement:
+    (NOT* | MINUS*) doCall=CAST LPAREN ordersExpression AS (
+          BOOLEAN
+        | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
+        | (STRING (LPAREN DECIMAL RPAREN)?)
+        | DATE
+        | mdo
+        ) RPAREN (DOT identifier)*;
 
 // COMMON
 // Общие правила, без окраски
@@ -394,8 +741,27 @@ boolOperation       : OR | AND;                                                 
 binaryOperation     : PLUS | MINUS | MUL | QUOTIENT;                                            // математические операторы
 compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;   // операторы сраневния
 
-
-
+// части выражения, используемые везде
+statement:
+    ((NOT* | MINUS*) column)
+    | ((NOT* | MINUS*) parameter)
+    | (NOT* literal=(TRUE | FALSE | NULL))
+    | (MINUS* literal=(DECIMAL | FLOAT))
+    | (literal=(STR | UNDEFINED))
+    | (doCall=DATETIME LPAREN
+                                          (parameter | DECIMAL) COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL)
+       /* эта часть может быть опущена */ (COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL) (COMMA (parameter | DECIMAL)))?
+       RPAREN
+      )
+    | (doCall=VALUE LPAREN
+        (
+              (mdo DOT ROUTEPOINT_FIELD DOT IDENTIFIER)     // для точки маршрута бизнес процесса
+            | (identifier DOT identifier)                   // для системного перечисления
+            | (mdo DOT name=identifier?)                    // может быть просто точка - аналог пустой ссылки
+        ) RPAREN
+      )
+    | (doCall=TYPE LPAREN (mdo | type) RPAREN)
+;
 
 
 
@@ -406,44 +772,21 @@ compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN
 
 //selectExpression: selectMember (boolOperation selectMember)*;
 //selectMember:
-//      selectStatement
-//    | (selectStatement (binaryOperation selectStatement)* compareOperation selectStatement (binaryOperation selectStatement)*)
-//    | (selectStatement (binaryOperation selectStatement)+)
-//    | (LPAREN selectStatement (COMMA selectStatement)+ RPAREN)
-//    | (selectStatement IN LPAREN (inlineSubquery | (selectStatement (COMMA selectStatement)*)) RPAREN)
-//    | (selectStatement REFS mdo)
-//    | (selectStatement IS NOT? NULL)
-//    | (selectStatement NOT? BETWEEN selectBetweenStatement)
-//    ;
-//
+//    |
+//    |
+
 //selectStatement:
-//      statement
-//    | (LPAREN statement RPAREN)
-//    | (LPAREN selectExpression RPAREN)
-//    | (doCall=ISNULL LPAREN selectExpression COMMA selectExpression RPAREN)
-//    | (doCall=DATEADD LPAREN selectExpression COMMA datePart COMMA selectExpression RPAREN)
-//    | (doCall=DATEDIFF LPAREN selectExpression COMMA selectExpression COMMA datePart RPAREN)
-//    | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN selectExpression COMMA datePart RPAREN)
-//    | (doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN selectExpression RPAREN)
+
+
+//
 //    | selectCastStatement
 //    | selectAggrMathCallStatement
 //    | selectAggrCountCallStatement
 //    | selectCaseStatement
-//    ;
-//selectBetweenStatement: selectExpression AND selectExpression;
-//selectCaseStatement: CASE selectExpression? selectWhenBranch+ selectElseBranch? END;
-//selectWhenBranch: WHEN selectExpression THEN selectExpression;
-//selectElseBranch: ELSE selectExpression;
-//selectAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN selectExpression RPAREN;
-//selectAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? selectExpression | MUL) RPAREN;
-//selectCastStatement:
-//    (NOT* | MINUS*) doCall=CAST LPAREN selectExpression AS (
-//          BOOLEAN
-//        | (NUMBER (LPAREN DECIMAL (COMMA DECIMAL)? RPAREN)?)
-//        | (STRING (LPAREN DECIMAL RPAREN)?)
-//        | DATE
-//        | mdo
-//        ) RPAREN (DOT id)*;
+
+
+
+
 //
 
 //
@@ -637,21 +980,7 @@ compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN
 //
 //
 //// COMMON RULES
-//statement   :
-//    ((NOT* | MINUS*) column)
-//    | ((NOT* | MINUS*) parameter)
-//    | (doCall=VALUE LPAREN
-//        (
-//              (mdo DOT ROUTEPOINT_FIELD DOT IDENTIFIER)     // для точки маршрута бизнес процесса
-//            | (id DOT id)                                   // для системного перечисления
-//            | (mdo DOT name=id?)                            // может быть просто точка - аналог пустой ссылки
-//        ) RPAREN
-//      )
-//    | (NOT* literal=(TRUE | FALSE | NULL))                  // для булева и null можно только отрицание
-//    | (MINUS* literal=(DECIMAL | FLOAT))                    // для чисел возможно можно унарные
-//    | (literal=(STR | UNDEFINED))
-//    | (doCall=DATETIME LPAREN (parameter | DECIMAL) COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL)
-//        (COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL) (COMMA (parameter | DECIMAL)))? RPAREN)
+
 //
 //    ;
 //
