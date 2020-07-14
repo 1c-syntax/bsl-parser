@@ -247,8 +247,10 @@ selectMember:
       selectStatement
     | selectBinaryStatement
     | selectComparyStatement
-    | (NOT* selectStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
-    | (NOT* LPAREN selectStatement (COMMA selectStatement)+ RPAREN IN (inlineSubquery | ( LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
+    | (selectStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
+    | (LPAREN selectStatement (COMMA selectStatement)+ RPAREN NOT? IN (inlineSubquery | ( LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
+    | (NOT+ selectStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
+    | (NOT+ LPAREN selectStatement (COMMA selectStatement)+ RPAREN NOT? IN (inlineSubquery | ( LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
     | (selectStatement IS NOT? NULL)
     | (selectStatement REFS mdo)
     | (selectStatement NOT? BETWEEN selectBetweenStatement)
@@ -263,8 +265,10 @@ virtualTableMember:
       virtualTableStatement
     | virtualTableBinaryStatement
     | virtualTableComparyStatement
-    | (NOT* virtualTableStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
-    | (NOT* LPAREN virtualTableStatement (COMMA virtualTableStatement)+ RPAREN IN (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
+    | (virtualTableStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
+    | (LPAREN virtualTableStatement (COMMA virtualTableStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
+    | (NOT+ virtualTableStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
+    | (NOT+ LPAREN virtualTableStatement (COMMA virtualTableStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
     | (virtualTableStatement IS NOT? NULL)
     | (virtualTableStatement REFS mdo)
     | (virtualTableStatement NOT? BETWEEN virtualTableBetweenStatement)
@@ -274,8 +278,10 @@ joinMember:
       joinStatement
     | joinBinaryStatement
     | joinComparyStatement
-    | (NOT* joinStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
-    | (NOT* LPAREN joinStatement (COMMA joinStatement)+ RPAREN IN (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
+    | (joinStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
+    | (LPAREN joinStatement (COMMA joinStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
+    | (NOT+ joinStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
+    | (NOT+ LPAREN joinStatement (COMMA joinStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
     | (joinStatement IS NOT? NULL)
     | (joinStatement REFS mdo)
     | (joinStatement NOT? BETWEEN joinBetweenStatement)
@@ -285,8 +291,10 @@ whereMember:
       whereStatement
     | whereBinaryStatement
     | whereComparyStatement
-    | (NOT* whereStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
-    | (NOT* LPAREN whereStatement (COMMA whereStatement)+ RPAREN IN (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
+    | (whereStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
+    | (LPAREN whereStatement (COMMA whereStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
+    | (NOT+ whereStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
+    | (NOT+ LPAREN whereStatement (COMMA whereStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
     | (whereStatement IS NOT? NULL)
     | (whereStatement REFS mdo)
     | (whereStatement NOT? BETWEEN whereBetweenStatement)
@@ -296,8 +304,10 @@ groupByMember:
       groupByStatement
     | groupByBinaryStatement
     | groupByComparyStatement
-    | (NOT* groupByStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
-    | (NOT* LPAREN groupByStatement (COMMA groupByStatement)+ RPAREN IN (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
+    | (groupByStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
+    | (LPAREN groupByStatement (COMMA groupByStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
+    | (NOT+ groupByStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
+    | (NOT+ LPAREN groupByStatement (COMMA groupByStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
     | (groupByStatement IS NOT? NULL)
     | (groupByStatement REFS mdo)
     | (groupByStatement NOT? BETWEEN groupByBetweenStatement)
@@ -307,8 +317,10 @@ havingMember:
       havingStatement
     | havingBinaryStatement
     | havingComparyStatement
-    | (NOT* havingStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
-    | (NOT* LPAREN havingStatement (COMMA havingStatement)+ RPAREN IN (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
+    | (havingStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
+    | (LPAREN havingStatement (COMMA havingStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
+    | (NOT+ havingStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
+    | (NOT+ LPAREN havingStatement (COMMA havingStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
     | (havingStatement IS NOT? NULL)
     | (havingStatement REFS mdo)
     ;
@@ -316,6 +328,9 @@ totalsItemMember:
       totalsItemStatement
     | totalsItemBinaryStatement
     | totalsItemComparyStatement
+    | (totalsItemStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN totalsItemStatement (COMMA totalsItemStatement)*) RPAREN))
+    | (NOT+ totalsItemStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN totalsItemStatement (COMMA totalsItemStatement)*) RPAREN))
+    | (totalsItemStatement IS NOT? NULL)
     ;
 totalsGroupMember:
       totalsGroupStatement
@@ -326,8 +341,10 @@ ordersMember:
       ordersStatement
     | ordersBinaryStatement
     | ordersComparyStatement
-    | (NOT* ordersStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
-    | (NOT* LPAREN ordersStatement (COMMA ordersStatement)+ RPAREN IN (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
+    | (ordersStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
+    | (LPAREN ordersStatement (COMMA ordersStatement)+ RPAREN IN (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
+    | (NOT+ ordersStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
+    | (NOT+ LPAREN ordersStatement (COMMA ordersStatement)+ RPAREN IN (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
     ;
 
 // STATEMENTS
@@ -354,8 +371,13 @@ selectComparyStatement: (selectBinaryStatement | selectStatement) compareOperati
 selectCaseStatement: (CASE | (MINUS+ CASE) | (NOT+ CASE)) selectExpression? selectWhenBranch+ selectElseBranch? END;
 selectWhenBranch: WHEN selectExpression THEN selectExpression;
 selectElseBranch: ELSE selectExpression;
-selectAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN selectExpression RPAREN;
-selectAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? selectExpression | MUL) RPAREN;
+selectAggrMathCallStatement:
+    (
+          (doCall=(SUM | AVG | MIN | MAX))
+        | (MINUS+ doCall=(SUM | AVG | MIN | MAX))
+        | (MOT+ doCall=(SUM | AVG | MIN | MAX))
+    ) LPAREN selectExpression RPAREN;
+selectAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (MOT+ doCall=COUNT)) LPAREN (DISTINCT? selectExpression | MUL) RPAREN;
 selectCastStatement:
     (doCall=CAST | (NOT+ doCall=CAST) | (MINUS doCall=CAST)) LPAREN selectExpression AS (
           BOOLEAN
@@ -521,8 +543,13 @@ havingComparyStatement: (havingBinaryStatement | havingStatement) compareOperati
 havingCaseStatement: (CASE | (MINUS+ CASE) | (NOT+ CASE)) havingExpression? havingWhenBranch+ havingElseBranch? END;
 havingWhenBranch: WHEN havingExpression THEN havingExpression;
 havingElseBranch: ELSE havingExpression;
-havingAggrMathCallStatement: (NOT* | MINUS*) doCall=(SUM | AVG | MIN | MAX) LPAREN havingExpression RPAREN;
-havingAggrCountCallStatement: MINUS* doCall=COUNT LPAREN (DISTINCT? havingExpression | MUL) RPAREN;
+havingAggrMathCallStatement:
+    (
+          (doCall=(SUM | AVG | MIN | MAX))
+        | (MINUS+ doCall=(SUM | AVG | MIN | MAX))
+        | (MOT+ doCall=(SUM | AVG | MIN | MAX))
+    ) LPAREN havingExpression RPAREN;
+havingAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (MOT+ doCall=COUNT)) LPAREN (DISTINCT? havingExpression | MUL) RPAREN;
 havingCastStatement:
     (doCall=CAST | (NOT+ doCall=CAST) | (MINUS doCall=CAST)) LPAREN havingExpression AS (
           BOOLEAN
@@ -546,8 +573,13 @@ totalsItemComparyStatement: (totalsItemBinaryStatement | totalsItemStatement) co
 totalsItemCaseStatement: (CASE | (MINUS+ CASE) | (NOT+ CASE)) totalsItemExpression? totalsItemWhenBranch+ totalsItemElseBranch? END;
 totalsItemWhenBranch: WHEN totalsItemExpression THEN totalsItemExpression;
 totalsItemElseBranch: ELSE totalsItemExpression;
-totalsItemAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN totalsItemExpression RPAREN;
-totalsItemAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? totalsItemExpression | MUL) RPAREN;
+totalsItemAggrMathCallStatement:
+    (
+          (doCall=(SUM | AVG | MIN | MAX))
+        | (MINUS+ doCall=(SUM | AVG | MIN | MAX))
+        | (MOT+ doCall=(SUM | AVG | MIN | MAX))
+    ) LPAREN totalsItemExpression RPAREN;
+totalsItemAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (MOT+ doCall=COUNT)) LPAREN (DISTINCT? totalsItemExpression | MUL) RPAREN;
 totalsItemCastStatement:
     (doCall=CAST | (NOT+ doCall=CAST) | (MINUS doCall=CAST)) LPAREN totalsItemExpression AS (
           BOOLEAN
@@ -586,8 +618,13 @@ ordersComparyStatement: (ordersBinaryStatement | ordersStatement) compareOperati
 ordersCaseStatement: (CASE | (MINUS+ CASE) | (NOT+ CASE)) ordersExpression? ordersWhenBranch+ ordersElseBranch? END;
 ordersWhenBranch: WHEN ordersExpression THEN ordersExpression;
 ordersElseBranch: ELSE ordersExpression;
-ordersAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN ordersExpression RPAREN;
-ordersAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? ordersExpression | MUL) RPAREN;
+ordersAggrMathCallStatement:
+    (
+          (doCall=(SUM | AVG | MIN | MAX))
+        | (MINUS+ doCall=(SUM | AVG | MIN | MAX))
+        | (MOT+ doCall=(SUM | AVG | MIN | MAX))
+    ) LPAREN ordersExpression RPAREN;
+ordersAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (MOT+ doCall=COUNT)) LPAREN (DISTINCT? ordersExpression | MUL) RPAREN;
 ordersItemCastStatement:
     (doCall=CAST | (NOT+ doCall=CAST) | (MINUS doCall=CAST)) LPAREN ordersExpression AS (
           BOOLEAN
