@@ -26,6 +26,221 @@ options {
     contextSuperClass = 'BSLParserRuleContext';
 }
 
+// ROOT
+// основная структура пакета запросов
+queryPackage: queries (SEMICOLON queries)* SEMICOLON? EOF;
+
+// QUERY
+// описание элемента пакета
+queries: dropTableQuery | selectQuery;
+
+// DROP TABLE
+// удаление временной таблицы, где temparyTableName идентификатор временной таблицы
+dropTableQuery: DROP temparyTableName=identifier;
+
+// SELECT
+// запрос на выборку данных, может состять из подзапроса или подзапроса с временной таблицей
+selectQuery: (subquery ordersAndTotals) | (temparyTableSubquery orders indexing);
+
+// SUBQUERIES
+// различные виды подзапросов
+
+// простой подзапрос для выборки данных, состоит из первого запроса (main) и объединений с остальными
+subquery: main=query union*;
+// объединение запросов
+union: UNION all=ALL? query;
+// структура запроса
+query:
+    SELECT limitations
+    selectedFields
+    from
+    where
+    groupBy
+    having
+    forUpdate
+    ;
+// выбираемые поля
+selectedFields: selectedField (COMMA selectedField)*;
+selectedField:
+    (
+          (emptyTable=EMPTYTABLE DOT LPAREN emptyTableFields RPAREN)
+        | ((tableName=identifier DOT)* inlineTable=identifier DOT LPAREN inlineTableFields RPAREN)
+        | ((tableName=identifier DOT)* MUL)
+        | selectExpression
+    ) alias
+    ;
+// поле-пустая таблица
+emptyTableFields: emptyTableField (COMMA emptyTableField)*;
+// само поле состоит только из алиаса (который вообще может быть пустым)
+emptyTableField: alias;
+// поле-вложенная таблица (табличная часть)
+inlineTableFields: inlineTableField (COMMA inlineTableField)*;
+// поле вложенной таблицы
+inlineTableField: inlineTableExpression alias;
+// источник данных запроса
+from: (FROM dataSources)?;
+
+// подзапрос с выборкой данных во временную таблицу, состоит из первого запроса с помещением во временню таблицу (main)
+// и объединения с "обычными" запросами
+temparyTableSubquery: main=temparyTableMainQuery temparyTableUnion*;
+// объединение запросов
+temparyTableUnion: UNION all=ALL? temparyTableQuery;
+// структура запроса помещения во временную таблицу (основной)
+temparyTableMainQuery:
+    SELECT limitations
+    temparyTableSelectedFields
+    into
+    temparyTableFrom
+    where
+    groupBy
+    having
+    forUpdate
+    ;
+// структура запроса помещения во временную таблицу (объединение)
+temparyTableQuery:
+    SELECT limitations
+    temparyTableSelectedFields
+    temparyTableFrom
+    where
+    groupBy
+    having
+    forUpdate
+    ;
+// выбираемые поля временной таблицы
+temparyTableSelectedFields: temparyTableSelectedField (COMMA temparyTableSelectedField)*;
+temparyTableSelectedField:
+    (
+          ((tableName=identifier DOT)* MUL)
+        | (doCall=RECORDAUTONUMBER LPAREN RPAREN)
+        | selectExpression
+    ) alias
+    ;
+// помещение во временную таблицу
+into: temparyTableName=identifier;
+// источники данных для временной таблицы
+temparyTableFrom: (FROM temparyTableDataSources)?;
+// перечень таблиц-источников данных для выборки
+temparyTableDataSources: (dataSources | parameterTable) (COMMA dataSources | parameterTable)*;
+// таблица как параметр, соединяться ни с чем не может
+parameterTable: parameter alias;
+// индексирование во временной таблице
+indexing: (INDEX by=(BY_EN | PO_RU) indexingItem (COMMA indexingItem)*)?;
+// поле индексирования, может быть колонкой или параметром
+indexingItem: parameter | column;
+
+// вложенный подзапрос
+inlineSubquery: LPAREN subquery orders RPAREN;
+
+// COMMON FOR QUERIES
+
+// конструкция для изменения, может содержать перечень таблиц, которые необходимо заблокировать для изменения
+forUpdate: (FOR UPDATE mdo?)?;
+
+// ограничения выборки, для ускорения анализа развернуты все варианты
+limitations:
+    (ALLOWED DISTINCT top)
+    | (ALLOWED top DISTINCT)
+    | (top ALLOWED DISTINCT)
+    | (top DISTINCT ALLOWED)
+    | (DISTINCT ALLOWED top)
+    | (DISTINCT top ALLOWED)
+    | (ALLOWED DISTINCT)
+    | (ALLOWED top)
+    | (DISTINCT ALLOWED)
+    | (DISTINCT top)
+    | (top ALLOWED | DISTINCT)
+    | (top DISTINCT)
+    | ((ALLOWED | DISTINCT | top)?)
+    ;
+// выборка первых N элементов, где count - количество элементов
+top: TOP count=DECIMAL+;
+
+// упорядочивание и итоги
+ordersAndTotals:
+    (
+          (AUTOORDER orders totals)
+        | (orders AUTOORDER totals)
+        | (orders totals AUTOORDER)
+        | (AUTOORDER (orders | totals)?)
+        | (orders (AUTOORDER | totals)?)
+        | (totals AUTOORDER?)
+    )?
+    ;
+// итоги
+totals: TOTALS totalsItems? by=(BY_EN | PO_RU) totalsGroups;
+totalsItems: totalsItem (COMMA totalsItem)*;
+totalsItem: totalsItemExpression alias;
+totalsGroups: totalsGroup (COMMA totalsGroup)*;
+totalsGroup:
+    (
+        OVERALL
+        | totalsGroupExpression
+    ) alias
+    ;
+
+// только упорядочивание
+orders: (ORDER by=(BY_EN | PO_RU) ordersItems)?;
+ordersItems: ordersItem (COMMA ordersItem)*;
+ordersItem: ordersExpression orderDirection? alias;
+orderDirection: ASC | DESC | (hierarhy=(HIERARCHY_EN | HIERARCHYA_RU) DESC?);
+
+// перечень таблиц-источников данных для выборки
+dataSources: dataSource (COMMA dataSource)*;
+// варианты источников данных
+dataSource:
+    (
+          (LPAREN dataSource RPAREN)
+        | inlineSubquery
+        | table
+        | virtualTable
+    ) alias joinPart*
+    ;
+
+// истоник-таблица, может быть временной таблице или таблицей объекта метаданных
+table:
+      mdo
+    | (mdo (DOT tableName=identifier)+)
+    | tableName=identifier
+    ;
+// виртуальная таблица объекта метаданных
+virtualTable:
+      (mdo DOT virtualTableName (LPAREN virtualTableParameters RPAREN))
+    | (mdo DOT virtualTableName)
+    | (FILTER_CRITERION_TYPE DOT identifier LPAREN parameter? RPAREN) // для критерия отбора имя ВТ не указывается
+    ;
+// параметры виртуальной таблицы, могут отсутствовать, могут быть просто запятые, без значений
+virtualTableParameters: virtualTableParameter (COMMA virtualTableParameter)*;
+virtualTableParameter: virtualTableExpression?;
+
+// соединения таблиц
+joinPart:
+    (INNER? | ((LEFT | RIGHT | FULL) OUTER?))           // тип соединения
+    JOIN dataSource on=(ON_EN | PO_RU) joinExpression   // имя таблицы и соединение
+    ;
+
+// условия выборки
+where: (WHERE whereExpression)?;
+
+// группировка данных
+groupBy: (GROUP by=(BY_EN | PO_RU) groupByItems)?;
+groupByItems: groupByExpression (COMMA groupByExpression)*;
+
+// условия на аггрегированные данные
+having: (HAVING havingExpression)?;
+
+// EXPRESSIONS
+// все виды выражений
+selectExpression:;
+inlineTableExpression:;
+virtualTableExpression:;
+joinExpression:;
+whereExpression:;
+groupByExpression:;
+havingExpression:;
+totalsItemExpression:;
+totalsGroupExpression:;
+ordersExpression:;
+
 // COMMON
 // Общие правила, без окраски
 
@@ -189,36 +404,6 @@ compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN
 
 
 
-//
-//// ROOT
-//// пакет запросов, запросы и удаления таблицы должны разделяться через запятую
-//queries: queryStatement (SEMICOLON queryStatement)* SEMICOLON? EOF;
-//queryStatement: selectSubquery | dropTableSubquery;
-//
-//dropTableSubquery: DROP temparyTableName=id;
-//selectSubquery: subquery ordersAndTotals /*(subquery ordersAndTotalsStatement?) | (subqueryTemparyTable ordersStatement? */indexing;
-//
-//inlineSubquery: LPAREN subquery /*ordersStatement?*/ RPAREN;
-//subquery: query union*;
-//query:
-//    SELECT limitations
-//    selectedFields
-//    into
-//    from
-//    where
-//    groupBy
-//    having
-//    forUpdate
-//    ;
-//
-//union: UNION ALL? query;
-//
-//selectedFields: selectedField (COMMA selectedField)*;
-//selectedField:
-//    selectExpression
-//    alias
-//    ;
-//
 //selectExpression: selectMember (boolOperation selectMember)*;
 //selectMember:
 //      selectStatement
@@ -260,46 +445,10 @@ compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN
 //        | mdo
 //        ) RPAREN (DOT id)*;
 //
-//limitations:
-//    (ALLOWED DISTINCT top)
-//    | (ALLOWED top DISTINCT)
-//    | (top ALLOWED DISTINCT)
-//    | (top DISTINCT ALLOWED)
-//    | (DISTINCT ALLOWED top)
-//    | (DISTINCT top ALLOWED)
-//    | (ALLOWED DISTINCT)
-//    | (ALLOWED top)
-//    | (DISTINCT ALLOWED)
-//    | (DISTINCT top)
-//    | (top ALLOWED)
-//    | (top DISTINCT)
-//    | ((ALLOWED | DISTINCT | top)?)
-//    ;
-//top: TOP DECIMAL+;
+
 //
-//into: (INTO temparyTableName=id)?;
-//
-//from: (FROM dataSources)?;
-//dataSources: dataSource (COMMA dataSource)*;
-//dataSource:
-//    (
-//          (LPAREN dataSource RPAREN)
-//        | inlineSubquery
-//        | table
-//        | virtualTable
-//        | parameter
-//    ) alias joinPart*
-//    ;
-//table:
-//      mdo
-//    | (mdo (DOT tableName=id)+)
-//    | tableName=id
-//    ;
-//virtualTable:
-//      (mdo DOT virtualTableName (LPAREN virtualTableParameters RPAREN))
-//    | (mdo DOT virtualTableName)
-//    | (FILTER_CRITERION_TYPE DOT id LPAREN parameter? RPAREN) // для критерия отбора ВТ не указывается
-//    ;
+
+
 //
 //// todo надо для каждого типа ВТ свои параметры прописать, пока - какие-то выажения
 //virtualTableParameters: virtualTableExpression? (COMMA virtualTableExpression?)*;
@@ -315,10 +464,7 @@ compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN
 //    | (LPAREN virtualTableExpression RPAREN)
 //    ;
 //
-//joinPart:
-//    (INNER? | ((LEFT | RIGHT | FULL) OUTER?))                       // тип соединения
-//    JOIN dataSource on=(ON_EN | PO_RU) joinExpression   // имя таблицы и соединение
-//    ;
+
 //joinExpression: joinMember (boolOperation joinMember)*;
 //joinMember:
 //      joinStatement
@@ -438,9 +584,6 @@ compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN
 //havingAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN havingExpression RPAREN;
 //havingAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? havingExpression | MUL) RPAREN;
 //
-//forUpdate:;
-//indexing: (INDEX by=(BY_EN | PO_RU) indexingItem (COMMA indexingItem)*)?;
-//indexingItem: parameter | column;
 //
 //ordersAndTotals:
 //    (
@@ -453,9 +596,7 @@ compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN
 //    )?
 //    ;
 //
-//totals: (TOTALS totalsItems? by=(BY_EN | PO_RU) totalsGroups)?;
-//totalsItems: totalsItem (COMMA totalsItem)*;
-//totalsItem: totalsItemExpression alias;
+
 //totalsItemExpression:
 //      (totalsItemMember (boolOperation (totalsItemMember | (LPAREN totalsItemMember RPAREN)))*)
 //    | (LPAREN totalsItemMember RPAREN (boolOperation (totalsItemMember | (LPAREN totalsItemMember RPAREN)))*)
@@ -474,13 +615,7 @@ compareOperation    : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN
 //totalsItemAggrMathCallStatement: doCall=(SUM | AVG | MIN | MAX) LPAREN totalsItemExpression RPAREN;
 //totalsItemAggrCountCallStatement: doCall=COUNT LPAREN (DISTINCT? totalsItemExpression | MUL) RPAREN;
 //
-//totalsGroups: totalsGroup (COMMA totalsGroup)*;
-//totalsGroup:
-//    (
-//        OVERALL
-//        | totalsGroupExpression
-//    ) alias
-//    ;
+
 //totalsGroupExpression:
 //    statement;
 //
