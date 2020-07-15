@@ -375,9 +375,9 @@ selectAggrMathCallStatement:
     (
           (doCall=(SUM | AVG | MIN | MAX))
         | (MINUS+ doCall=(SUM | AVG | MIN | MAX))
-        | (MOT+ doCall=(SUM | AVG | MIN | MAX))
+        | (NOT+ doCall=(SUM | AVG | MIN | MAX))
     ) LPAREN selectExpression RPAREN;
-selectAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (MOT+ doCall=COUNT)) LPAREN (DISTINCT? selectExpression | MUL) RPAREN;
+selectAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (NOT+ doCall=COUNT)) LPAREN (DISTINCT? selectExpression | MUL) RPAREN;
 selectCastStatement:
     (doCall=CAST | (NOT+ doCall=CAST) | (MINUS doCall=CAST)) LPAREN selectExpression AS (
           BOOLEAN
@@ -547,9 +547,9 @@ havingAggrMathCallStatement:
     (
           (doCall=(SUM | AVG | MIN | MAX))
         | (MINUS+ doCall=(SUM | AVG | MIN | MAX))
-        | (MOT+ doCall=(SUM | AVG | MIN | MAX))
+        | (NOT+ doCall=(SUM | AVG | MIN | MAX))
     ) LPAREN havingExpression RPAREN;
-havingAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (MOT+ doCall=COUNT)) LPAREN (DISTINCT? havingExpression | MUL) RPAREN;
+havingAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (NOT+ doCall=COUNT)) LPAREN (DISTINCT? havingExpression | MUL) RPAREN;
 havingCastStatement:
     (doCall=CAST | (NOT+ doCall=CAST) | (MINUS doCall=CAST)) LPAREN havingExpression AS (
           BOOLEAN
@@ -577,9 +577,9 @@ totalsItemAggrMathCallStatement:
     (
           (doCall=(SUM | AVG | MIN | MAX))
         | (MINUS+ doCall=(SUM | AVG | MIN | MAX))
-        | (MOT+ doCall=(SUM | AVG | MIN | MAX))
+        | (NOT+ doCall=(SUM | AVG | MIN | MAX))
     ) LPAREN totalsItemExpression RPAREN;
-totalsItemAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (MOT+ doCall=COUNT)) LPAREN (DISTINCT? totalsItemExpression | MUL) RPAREN;
+totalsItemAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (NOT+ doCall=COUNT)) LPAREN (DISTINCT? totalsItemExpression | MUL) RPAREN;
 totalsItemCastStatement:
     (doCall=CAST | (NOT+ doCall=CAST) | (MINUS doCall=CAST)) LPAREN totalsItemExpression AS (
           BOOLEAN
@@ -622,9 +622,9 @@ ordersAggrMathCallStatement:
     (
           (doCall=(SUM | AVG | MIN | MAX))
         | (MINUS+ doCall=(SUM | AVG | MIN | MAX))
-        | (MOT+ doCall=(SUM | AVG | MIN | MAX))
+        | (NOT+ doCall=(SUM | AVG | MIN | MAX))
     ) LPAREN ordersExpression RPAREN;
-ordersAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (MOT+ doCall=COUNT)) LPAREN (DISTINCT? ordersExpression | MUL) RPAREN;
+ordersAggrCountCallStatement: ((doCall=COUNT) | (MINUS+ doCall=COUNT) | (NOT+ doCall=COUNT)) LPAREN (DISTINCT? ordersExpression | MUL) RPAREN;
 ordersItemCastStatement:
     (doCall=CAST | (NOT+ doCall=CAST) | (MINUS doCall=CAST)) LPAREN ordersExpression AS (
           BOOLEAN
