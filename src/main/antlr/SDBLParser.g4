@@ -254,7 +254,7 @@ selectMember:
     | (selectStatement IS NOT? NULL)
     | (selectStatement REFS mdo)
     | (selectStatement NOT? BETWEEN selectBetweenStatement)
-    | (selectStatement NOT? LIKE selectStatement ESCAPE escape=STR)
+    | (selectStatement NOT? LIKE selectStatement (ESCAPE escape=STR)?)
     ;
 inlineTableMember:
       inlineTableStatement
@@ -272,7 +272,7 @@ virtualTableMember:
     | (virtualTableStatement IS NOT? NULL)
     | (virtualTableStatement REFS mdo)
     | (virtualTableStatement NOT? BETWEEN virtualTableBetweenStatement)
-    | (virtualTableStatement NOT? LIKE virtualTableStatement ESCAPE escape=STR)
+    | (virtualTableStatement NOT? LIKE virtualTableStatement (ESCAPE escape=STR)?)
     ;
 joinMember:
       joinStatement
@@ -285,7 +285,7 @@ joinMember:
     | (joinStatement IS NOT? NULL)
     | (joinStatement REFS mdo)
     | (joinStatement NOT? BETWEEN joinBetweenStatement)
-    | (joinStatement NOT? LIKE joinStatement ESCAPE escape=STR)
+    | (joinStatement NOT? LIKE joinStatement (ESCAPE escape=STR)?)
     ;
 whereMember:
       whereStatement
@@ -298,7 +298,7 @@ whereMember:
     | (whereStatement IS NOT? NULL)
     | (whereStatement REFS mdo)
     | (whereStatement NOT? BETWEEN whereBetweenStatement)
-    | (whereStatement NOT? LIKE whereStatement ESCAPE escape=STR)
+    | (whereStatement NOT? LIKE whereStatement (ESCAPE escape=STR)?)
     ;
 groupByMember:
       groupByStatement
@@ -311,7 +311,7 @@ groupByMember:
     | (groupByStatement IS NOT? NULL)
     | (groupByStatement REFS mdo)
     | (groupByStatement NOT? BETWEEN groupByBetweenStatement)
-    | (groupByStatement NOT? LIKE groupByStatement ESCAPE escape=STR)
+    | (groupByStatement NOT? LIKE groupByStatement (ESCAPE escape=STR)?)
     ;
 havingMember:
       havingStatement
@@ -447,6 +447,7 @@ joinStatement:
     | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN joinExpression COMMA datePart RPAREN)
     | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN joinExpression RPAREN)
     | (doCall=SUBSTRING LPAREN joinExpression COMMA joinExpression COMMA joinExpression RPAREN)
+    | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN joinExpression RPAREN)
     ;
 joinBinaryStatement: joinStatement (binaryOperation joinStatement)+;
 joinComparyStatement: (joinBinaryStatement | joinStatement) compareOperation (joinBinaryStatement | joinStatement);
