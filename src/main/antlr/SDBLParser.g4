@@ -199,7 +199,7 @@ dataSource:
 // истоник-таблица, может быть временной таблице или таблицей объекта метаданных
 table:
       mdo
-    | (mdo (DOT tableName=identifier)+)
+    | (mdo (DOT identifierWithoutTT)+)
     | tableName=identifier
     ;
 // виртуальная таблица объекта метаданных
@@ -393,6 +393,7 @@ inlineTableStatement:
     | (NOT+ LPAREN inlineTableExpression RPAREN)
     | (MINUS+ LPAREN inlineTableExpression RPAREN)
     | inlineTableCaseStatement
+    | statement
     | ((NOT* | MINUS*) doCall=DATEADD LPAREN inlineTableCaseStatement COMMA datePart COMMA inlineTableCaseStatement RPAREN)
     | (doCall=DATEDIFF LPAREN inlineTableCaseStatement COMMA inlineTableCaseStatement COMMA datePart RPAREN)
     | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN inlineTableCaseStatement COMMA datePart RPAREN)
@@ -729,6 +730,87 @@ identifier:
     | SLICELAST_VT
     | TASK_BY_PERFORMER_VT
     | TURNOVERS_VT
+    // системные поля
+    | ROUTEPOINT_FIELD
+    ;
+// для отзделения временных таблиц
+identifierWithoutTT:
+    IDENTIFIER // просто идентификатор объекта
+    // типы метаданных
+    | BUSINESS_PROCESS_TYPE
+    | CATALOG_TYPE
+    | DOCUMENT_TYPE
+    | INFORMATION_REGISTER_TYPE
+    | CONSTANT_TYPE
+    | FILTER_CRITERION_TYPE
+    | EXCHANGE_PLAN_TYPE
+    | SEQUENCE_TYPE
+    | DOCUMENT_JOURNAL_TYPE
+    | ENUM_TYPE
+    | CHART_OF_CHARACTERISTIC_TYPES_TYPE
+    | CHART_OF_ACCOUNTS_TYPE
+    | CHART_OF_CALCULATION_TYPES_TYPE
+    | ACCUMULATION_REGISTER_TYPE
+    | ACCOUNTING_REGISTER_TYPE
+    | CALCULATION_REGISTER_TYPE
+    | TASK_TYPE
+    | EXTERNAL_DATA_SOURCE_TYPE
+    // ключевые слова
+    | ALL
+    | DROP
+    | END
+    | FULL
+    | HIERARCHY_EN
+    | HIERARCHII_RU
+    | HIERARCHYA_RU
+    | INDEX
+    | ISNULL
+    | JOIN
+    | LEFT
+    | ORDER
+    | OUTER
+    | RIGHT
+    | SELECT
+    | TOTALS
+    | UNION
+    | AVG
+    | BEGINOFPERIOD
+    | BOOLEAN
+    | COUNT
+    | DATE
+    | DATEADD
+    | DATEDIFF
+    | DATETIME
+    | DAY
+    | DAYOFYEAR
+    | EMPTYTABLE
+    | ENDOFPERIOD
+    | HALFYEAR
+    | HOUR
+    | MAX
+    | MIN
+    | MINUTE
+    | MONTH
+    | NUMBER
+    | QUARTER
+    | ONLY
+    | PERIODS
+    | REFS
+    | PRESENTATION
+    | RECORDAUTONUMBER
+    | REFPRESENTATION
+    | SECOND
+    | STRING
+    | SUBSTRING
+    | SUM
+    | TENDAYS
+    | TYPE
+    | UPDATE
+    | VALUE
+    | VALUETYPE
+    | WEEK
+    | WEEKDAY
+    | YEAR
     // системные поля
     | ROUTEPOINT_FIELD
     ;
