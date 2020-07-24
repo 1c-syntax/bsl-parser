@@ -22,48 +22,34 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.atn.PredictionMode;
 
 import java.io.InputStream;
 
 public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext> {
   public SDBLTokenizer(String content) {
-    super(content, new SDBLLexer(CharStreams.fromString(""), true), null);
+    super(content, new SDBLLexer(CharStreams.fromString(""), true), null, SDBLParser.class);
   }
 
   protected SDBLTokenizer(String content, Lexer lexer) {
-    super(content, lexer, null);
+    super(content, lexer, null, SDBLParser.class);
   }
 
   protected SDBLTokenizer(String content, Lexer lexer, Parser parser) {
-    super(content, lexer, parser);
+    super(content, lexer, parser, SDBLParser.class);
   }
 
   protected SDBLTokenizer(InputStream content, Lexer lexer) {
-    super(content, lexer, null);
+    super(content, lexer, null, SDBLParser.class);
   }
 
   protected SDBLTokenizer(InputStream content, Lexer lexer, Parser parser) {
-    super(content, lexer, parser);
+    super(content, lexer, parser, parser.getClass());
   }
 
   @Override
-  protected SDBLParser.QueryPackageContext computeAST() {
-    if (parser == null) {
-      parser = new SDBLParser(getTokenStream());
-    }
-
-    parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-    try {
-      parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-      return ((SDBLParser) parser).queryPackage();
-    } catch (Exception ex) {
-      parser.reset(); // rewind input stream
-      parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-    }
+  protected SDBLParser.QueryPackageContext rootAST() {
     return ((SDBLParser) parser).queryPackage();
   }
 }

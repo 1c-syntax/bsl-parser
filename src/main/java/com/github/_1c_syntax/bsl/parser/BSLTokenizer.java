@@ -22,48 +22,34 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.atn.PredictionMode;
 
 import java.io.InputStream;
 
 public class BSLTokenizer extends Tokenizer<BSLParser.FileContext> {
   public BSLTokenizer(String content) {
-    super(content, new BSLLexer(CharStreams.fromString(""), true), null);
+    super(content, new BSLLexer(CharStreams.fromString(""), true), null, BSLParser.class);
   }
 
   protected BSLTokenizer(String content, Lexer lexer) {
-    super(content, lexer, null);
+    super(content, lexer, null, BSLParser.class);
   }
 
   protected BSLTokenizer(String content, Lexer lexer, Parser parser) {
-    super(content, lexer, parser);
+    super(content, lexer, parser, BSLParser.class);
   }
 
   protected BSLTokenizer(InputStream content, Lexer lexer) {
-    super(content, lexer, null);
+    super(content, lexer, null, BSLParser.class);
   }
 
   protected BSLTokenizer(InputStream content, Lexer lexer, Parser parser) {
-    super(content, lexer, parser);
+    super(content, lexer, parser, parser.getClass());
   }
 
   @Override
-  protected BSLParser.FileContext computeAST() {
-    if (parser == null) {
-      parser = new BSLParser(getTokenStream());
-    }
-
-    parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-    try {
-      parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-      return ((BSLParser) parser).file();
-    } catch (Exception ex) {
-      parser.reset(); // rewind input stream
-      parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-    }
+  protected BSLParser.FileContext rootAST() {
     return ((BSLParser) parser).file();
   }
 

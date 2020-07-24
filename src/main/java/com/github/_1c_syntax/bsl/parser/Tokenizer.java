@@ -30,12 +30,15 @@ import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,22 +49,24 @@ import static org.antlr.v4.runtime.Token.EOF;
 abstract public class Tokenizer<T extends BSLParserRuleContext> {
 
   private final InputStream content;
-  private Lexer lexer;
+  private final Lexer lexer;
   protected Parser parser;
   private final Lazy<CommonTokenStream> tokenStream = new Lazy<>(this::computeTokenStream);
   private final Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
   private final Lazy<T> ast = new Lazy<>(this::computeAST);
+  private final Class parserClass;
 
-  protected Tokenizer(String content, Lexer lexer, Parser parser) {
-    this(IOUtils.toInputStream(content, StandardCharsets.UTF_8), lexer, parser);
+  protected Tokenizer(String content, Lexer lexer, Parser parser, Class<?> parserClass) {
+    this(IOUtils.toInputStream(content, StandardCharsets.UTF_8), lexer, parser, parserClass);
   }
 
-  protected Tokenizer(InputStream content, Lexer lexer, Parser parser) {
+  protected Tokenizer(InputStream content, Lexer lexer, Parser parser, Class<?> parserClass) {
     requireNonNull(content);
     requireNonNull(lexer);
     this.content = content;
     this.lexer = lexer;
     this.parser = parser;
+    this.parserClass = parserClass;
   }
 
   public List<Token> getTokens() {
@@ -83,7 +88,22 @@ abstract public class Tokenizer<T extends BSLParserRuleContext> {
     return tokensTemp;
   }
 
-  abstract protected T computeAST();
+  private T computeAST() {
+    if (parser == null) {
+      parser = createParser(getTokenStream());
+    }
+    parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+    try {
+      parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+      return rootAST();
+    } catch (Exception ex) {
+      parser.reset(); // rewind input stream
+      parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+    }
+    return rootAST();
+  }
+
+  abstract protected T rootAST();
 
   private CommonTokenStream computeTokenStream() {
 
@@ -99,11 +119,7 @@ abstract public class Tokenizer<T extends BSLParserRuleContext> {
       throw new RuntimeException(e);
     }
 
-    if (lexer == null) {
-      lexer = new BSLLexer(input, true);
-    } else {
-      lexer.setInputStream(input);
-    }
+    lexer.setInputStream(input);
     lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
 
     CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
@@ -117,4 +133,13 @@ abstract public class Tokenizer<T extends BSLParserRuleContext> {
     return tokenStreamUnboxed;
   }
 
+  @SuppressWarnings("unchecked")
+  private Parser createParser(CommonTokenStream tokenStream) {
+    try {
+      return (Parser) parserClass.getDeclaredConstructor(TokenStream.class)
+        .newInstance(tokenStream);
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }
