@@ -22,34 +22,15 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 
-import java.io.InputStream;
-
-public class BSLTokenizer extends Tokenizer<BSLParser.FileContext> {
+public class BSLTokenizer extends Tokenizer<BSLParser.FileContext, BSLParser> {
   public BSLTokenizer(String content) {
-    super(content, new BSLLexer(CharStreams.fromString(""), true), null, BSLParser.class);
-  }
-
-  protected BSLTokenizer(String content, Lexer lexer) {
-    super(content, lexer, null, BSLParser.class);
-  }
-
-  protected BSLTokenizer(String content, Lexer lexer, Parser parser) {
-    super(content, lexer, parser, BSLParser.class);
-  }
-
-  protected BSLTokenizer(InputStream content, Lexer lexer) {
-    super(content, lexer, null, BSLParser.class);
-  }
-
-  protected BSLTokenizer(InputStream content, Lexer lexer, Parser parser) {
-    super(content, lexer, parser, parser.getClass());
+    super(content, new BSLLexer(CharStreams.fromString(""), true), BSLParser.class);
   }
 
   @Override
-  protected BSLParser.FileContext rootAST() {
+  protected BSLParser.FileContext rootAST(Parser parser) {
     return ((BSLParser) parser).file();
   }
 

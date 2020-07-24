@@ -22,34 +22,15 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 
-import java.io.InputStream;
-
-public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext> {
+public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDBLParser> {
   public SDBLTokenizer(String content) {
-    super(content, new SDBLLexer(CharStreams.fromString(""), true), null, SDBLParser.class);
-  }
-
-  protected SDBLTokenizer(String content, Lexer lexer) {
-    super(content, lexer, null, SDBLParser.class);
-  }
-
-  protected SDBLTokenizer(String content, Lexer lexer, Parser parser) {
-    super(content, lexer, parser, SDBLParser.class);
-  }
-
-  protected SDBLTokenizer(InputStream content, Lexer lexer) {
-    super(content, lexer, null, SDBLParser.class);
-  }
-
-  protected SDBLTokenizer(InputStream content, Lexer lexer, Parser parser) {
-    super(content, lexer, parser, parser.getClass());
+    super(content, new SDBLLexer(CharStreams.fromString(""), true), SDBLParser.class);
   }
 
   @Override
-  protected SDBLParser.QueryPackageContext rootAST() {
+  protected SDBLParser.QueryPackageContext rootAST(Parser parser) {
     return ((SDBLParser) parser).queryPackage();
   }
 }
