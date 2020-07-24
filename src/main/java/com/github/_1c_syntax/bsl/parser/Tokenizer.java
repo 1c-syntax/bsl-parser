@@ -22,7 +22,14 @@
 package com.github._1c_syntax.bsl.parser;
 
 import com.github._1c_syntax.utils.Lazy;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.Token;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
