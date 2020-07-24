@@ -22,7 +22,6 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Parser;
 
 public class BSLTokenizer extends Tokenizer<BSLParser.FileContext, BSLParser> {
   public BSLTokenizer(String content) {
@@ -30,8 +29,8 @@ public class BSLTokenizer extends Tokenizer<BSLParser.FileContext, BSLParser> {
   }
 
   @Override
-  protected BSLParser.FileContext rootAST(Parser parser) {
-    return ((BSLParser) parser).file();
+  protected BSLParser.FileContext rootAST() {
+    return parser.file();
   }
 
 }

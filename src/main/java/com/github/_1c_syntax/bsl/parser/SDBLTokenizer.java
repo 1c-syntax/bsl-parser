@@ -22,7 +22,6 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Parser;
 
 public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDBLParser> {
   public SDBLTokenizer(String content) {
@@ -30,7 +29,7 @@ public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDB
   }
 
   @Override
-  protected SDBLParser.QueryPackageContext rootAST(Parser parser) {
-    return ((SDBLParser) parser).queryPackage();
+  protected SDBLParser.QueryPackageContext rootAST() {
+    return parser.queryPackage();
   }
 }

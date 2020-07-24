@@ -54,6 +54,7 @@ abstract public class Tokenizer<T extends BSLParserRuleContext, P extends Parser
   private final Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
   private final Lazy<T> ast = new Lazy<>(this::computeAST);
   private final Class<P> parserClass;
+  protected P parser;
 
   protected Tokenizer(String content, Lexer lexer, Class<P> parserClass) {
     this(IOUtils.toInputStream(content, StandardCharsets.UTF_8), lexer, parserClass);
@@ -87,19 +88,19 @@ abstract public class Tokenizer<T extends BSLParserRuleContext, P extends Parser
   }
 
   private T computeAST() {
-    var parser = createParser(getTokenStream());
+    parser = createParser(getTokenStream());
     parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
     try {
       parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-      return rootAST(parser);
+      return rootAST();
     } catch (Exception ex) {
       parser.reset(); // rewind input stream
       parser.getInterpreter().setPredictionMode(PredictionMode.LL);
     }
-    return rootAST(parser);
+    return rootAST();
   }
 
-  abstract protected T rootAST(Parser parser);
+  abstract protected T rootAST();
 
   private CommonTokenStream computeTokenStream() {
 
