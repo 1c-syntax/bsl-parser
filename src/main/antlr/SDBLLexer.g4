@@ -317,4 +317,4 @@ BRACE_WHITE_SPACE   : [ \n\r\t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
 BRACE_IDENTIFIER    : LETTER (LETTER | DIGIT)* -> channel(HIDDEN);
 BRACE_START         : '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 BRACE_END           : '}' -> channel(HIDDEN), type(UNKNOWN), popMode;
-BRACE_UKNOWN        : . -> channel(HIDDEN), type(UNKNOWN);
+BRACE_UNKNOWN       : . -> channel(HIDDEN), type(UNKNOWN);
