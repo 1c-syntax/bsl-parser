@@ -21,65 +21,17 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
-import org.antlr.v4.runtime.*;
-import org.apache.commons.io.IOUtils;
+import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-class BSLLexerTest {
+class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
 
-  private BSLLexer lexer;
-
-  private List<Token> getTokens(int mode, String inputString) {
-    CharStream input;
-
-    try (
-      InputStream inputStream = IOUtils.toInputStream(inputString, StandardCharsets.UTF_8);
-      UnicodeBOMInputStream ubis = new UnicodeBOMInputStream(inputStream);
-      Reader inputStreamReader = new InputStreamReader(ubis, StandardCharsets.UTF_8)
-    ) {
-      ubis.skipBOM();
-      CodePointCharStream inputTemp = CharStreams.fromReader(inputStreamReader);
-      input = new CaseChangingCharStream(inputTemp);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    if (lexer == null) {
-      lexer = new BSLLexer(input, true);
-    } else {
-      lexer.setInputStream(input);
-    }
-    lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
-    lexer.pushMode(mode);
-
-    CommonTokenStream tempTokenStream = new CommonTokenStream(lexer);
-    tempTokenStream.fill();
-
-    return tempTokenStream.getTokens();
-  }
-
-  private void assertMatch(String inputString, Integer... expectedTokens) {
-    assertMatch(BSLLexer.DEFAULT_MODE, inputString, expectedTokens);
-  }
-
-  private void assertMatch(int mode, String inputString, Integer... expectedTokens) {
-    List<Token> tokens = getTokens(mode, inputString);
-    Integer[] tokenTypes = tokens.stream()
-      .filter(token -> token.getChannel() == BSLLexer.DEFAULT_TOKEN_CHANNEL)
-      .filter(token -> token.getType() != Token.EOF)
-      .map(Token::getType)
-      .toArray(Integer[]::new);
-    assertArrayEquals(expectedTokens, tokenTypes);
+  BSLLexerTest() {
+    super(BSLLexer.class);
   }
 
   @Test
@@ -209,23 +161,23 @@ class BSLLexerTest {
     assertMatch("|\"", BSLLexer.STRINGTAIL);
     assertMatch("|aaa\"", BSLLexer.STRINGTAIL);
     assertMatch("А = \"строка\" + \"строка\";",
-            BSLLexer.IDENTIFIER,
-            BSLLexer.ASSIGN,
-            BSLLexer.STRING,
-            BSLLexer.PLUS,
-            BSLLexer.STRING,
-            BSLLexer.SEMICOLON
+      BSLLexer.IDENTIFIER,
+      BSLLexer.ASSIGN,
+      BSLLexer.STRING,
+      BSLLexer.PLUS,
+      BSLLexer.STRING,
+      BSLLexer.SEMICOLON
     );
     assertMatch("\"\"\"\"", BSLLexer.STRING);
     assertMatch("|СПЕЦСИМВОЛ \"\"~\"\"\"", BSLLexer.STRINGTAIL);
     assertMatch("\"Минимальная версия платформы \"\"1С:Предприятие 8\"\" указана выше рекомендуемой.", BSLLexer.STRINGSTART);
     assertMatch("А = \" \n | А \"\"\"\" + А \n  |\";",
-            BSLLexer.IDENTIFIER,
-            BSLLexer.ASSIGN,
-            BSLLexer.STRINGSTART,
-            BSLLexer.STRINGPART,
-            BSLLexer.STRINGTAIL,
-            BSLLexer.SEMICOLON);
+      BSLLexer.IDENTIFIER,
+      BSLLexer.ASSIGN,
+      BSLLexer.STRINGSTART,
+      BSLLexer.STRINGPART,
+      BSLLexer.STRINGTAIL,
+      BSLLexer.SEMICOLON);
   }
 
   @Test

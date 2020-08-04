@@ -23,9 +23,7 @@ package com.github._1c_syntax.bsl.parser;
 
 import com.github._1c_syntax.utils.Lazy;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -56,7 +54,7 @@ public class BSLParserRuleContext extends ParserRuleContext {
   }
 
   private List<Token> computeTokens() {
-    if ( children == null ) {
+    if (children == null) {
       return Collections.emptyList();
     }
 

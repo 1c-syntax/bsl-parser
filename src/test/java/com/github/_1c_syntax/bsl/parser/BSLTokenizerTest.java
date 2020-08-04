@@ -23,42 +23,41 @@ package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TokenizerTest {
+class BSLTokenizerTest {
 
-    @Test
-    void computeTokens() {
-        // given
-        Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда КонецЕсли");
+  @Test
+  void computeTokens() {
+    // given
+    BSLTokenizer tokenizer = new BSLTokenizer("Если Условие() Тогда КонецЕсли");
 
-        // when
-        final List<Token> tokens = tokenizer.getTokens();
+    // when
+    final List<Token> tokens = tokenizer.getTokens();
 
-        // then
-        assertThat(tokens).hasSize(10);
-        assertThat(tokens.get(9).getType()).isEqualTo(Lexer.EOF);
-        assertThat(tokens.get(9).getChannel()).isEqualTo(Lexer.HIDDEN);
-    }
+    // then
+    assertThat(tokens).hasSize(10);
+    assertThat(tokens.get(9).getType()).isEqualTo(Lexer.EOF);
+    assertThat(tokens.get(9).getChannel()).isEqualTo(Lexer.HIDDEN);
+  }
 
-    @Test
-    void computeAST() {
-        // given
-        Tokenizer tokenizer = new Tokenizer("Если Условие() Тогда КонецЕсли");
+  @Test
+  void computeAST() {
+    // given
+    BSLTokenizer tokenizer = new BSLTokenizer("Если Условие() Тогда КонецЕсли");
 
-        // when
-        final BSLParser.FileContext ast = tokenizer.getAst();
+    // when
+    final BSLParser.FileContext ast = tokenizer.getAst();
 
-        // then
-        BSLParser.FileCodeBlockContext fileCodeBlock = ast.fileCodeBlock();
-        assertThat(fileCodeBlock).isNotNull();
-        assertThat(fileCodeBlock.getStart().getType()).isEqualTo(BSLParser.IF_KEYWORD);
-        assertThat(fileCodeBlock.getStop().getType()).isEqualTo(BSLParser.ENDIF_KEYWORD);
-    }
+    // then
+    BSLParser.FileCodeBlockContext fileCodeBlock = ast.fileCodeBlock();
+    assertThat(fileCodeBlock).isNotNull();
+    assertThat(fileCodeBlock.getStart().getType()).isEqualTo(BSLParser.IF_KEYWORD);
+    assertThat(fileCodeBlock.getStop().getType()).isEqualTo(BSLParser.ENDIF_KEYWORD);
+  }
 
 }
