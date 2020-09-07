@@ -43,6 +43,8 @@ preproc_if       : PREPROC_IF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
 preproc_elsif    : PREPROC_ELSIF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
 preproc_else     : PREPROC_ELSE_KEYWORD;
 preproc_endif    : PREPROC_ENDIF_KEYWORD;
+preproc_insert   : HASH PREPROC_INSERT_SYMBOL codeBlock HASH PREPROC_ENDINSERT_SYMBOL;
+preproc_delete   : HASH PREPROC_DELETE_SYMBOL codeBlock HASH PREPROC_ENDDELETE_SYMBOL;
 
 preproc_expression
     : ( PREPROC_NOT_KEYWORD? (PREPROC_LPAREN preproc_expression PREPROC_RPAREN ) )
@@ -82,15 +84,18 @@ preproc_boolOperation
     ;
 
 preprocessor
-    : HASH
+    : (HASH
         (regionStart
-        | regionEnd
-        | preproc_if
-        | preproc_elsif
-        | preproc_else
-        | preproc_endif
-        | use
+            | regionEnd
+            | preproc_if
+            | preproc_elsif
+            | preproc_else
+            | preproc_endif
+            | use
         )
+      )
+    | preproc_insert
+    | preproc_delete
     ;
 
 // compiler directives
