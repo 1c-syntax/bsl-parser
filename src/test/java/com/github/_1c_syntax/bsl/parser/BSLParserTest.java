@@ -257,6 +257,22 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   }
 
   @Test
+  void testPreprocDelete() {
+    setInput("#Удаление\n f = 2; \n #КонецУдаления");
+    assertMatches(parser.preprocessor());
+    setInput("#Удаление\n#КонецУдаления");
+    assertMatches(parser.preprocessor());
+  }
+
+  @Test
+  void testPreprocInsert() {
+    setInput("#Вставка\n f = 2; \n #КонецВставки");
+    assertMatches(parser.preprocessor());
+    setInput("#Вставка\n#КонецВставки");
+    assertMatches(parser.preprocessor());
+  }
+
+  @Test
   void testPreprocInsertBreakCondition() {
     setInput("If true or false\n" +
             "    #If Server Then\n" +
@@ -736,7 +752,6 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     assertNotMatches(parser.doCall());
 
   }
-
 
   @Test
   void TestAccessProperty() {
