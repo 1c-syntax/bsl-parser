@@ -241,7 +241,7 @@ statement
 assignment       : lValue preprocessor* ASSIGN (preprocessor* expression)?;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
-expression       : member (preprocessor* operation preprocessor* member preprocessor*)*;
+expression       : member (preprocessor* operation preprocessor* member)*;
 operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | compareOperation;
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;

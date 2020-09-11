@@ -273,34 +273,6 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   }
 
   @Test
-  void testPreprocInsertBreakCondition() {
-    setInput("If true or false\n" +
-            "    #If Server Then\n" +
-            "        Or true\n" +
-            "    #EndIf\n" +
-            "    Then\n" +
-            "EndIf;");
-    assertMatches(parser.ifBranch());
-
-    setInput("while (true \n" +
-            "    #If Server Then\n" +
-            "        Or true\n" +
-            "    #EndIf\n" +
-            "    ) do\n" +
-            "enddo;");
-    assertMatches(parser.whileStatement());
-
-    setInput("a = false \n" +
-            "    #If Server Then\n" +
-            "        Or true\n" +
-            "    #else\n" +
-            "        Or false\n" +
-            "    #EndIf\n" +
-            "    and true;");
-    assertMatches(parser.statement());
-  }
-
-  @Test
   void TestCompilerDirectiveSymbol() {
 
     setInput("&НаКлиенте");
