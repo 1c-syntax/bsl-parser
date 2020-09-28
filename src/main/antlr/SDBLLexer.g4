@@ -50,7 +50,6 @@ GREATER: '>';
 MUL: '*';
 QUOTIENT: '/';
 AMPERSAND: '&' -> pushMode(PARAMETER_MODE);
-BAR: '|';
 BRACE: '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 
 // KEYWORDS         RU                                                                          EN
