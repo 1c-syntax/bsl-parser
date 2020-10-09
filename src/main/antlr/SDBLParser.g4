@@ -254,7 +254,7 @@ selectMember:
     | (selectStatement IS NOT? NULL)
     | (selectStatement REFS mdo)
     | (selectStatement NOT? BETWEEN selectBetweenStatement)
-    | (selectStatement NOT? LIKE selectStatement (ESCAPE escape=STR)?)
+    | (selectStatement NOT? LIKE selectStatement (ESCAPE escape=multiString)?)
     ;
 inlineTableMember:
       inlineTableStatement
@@ -272,7 +272,7 @@ virtualTableMember:
     | (virtualTableStatement IS NOT? NULL)
     | (virtualTableStatement REFS mdo)
     | (virtualTableStatement NOT? BETWEEN virtualTableBetweenStatement)
-    | (virtualTableStatement NOT? LIKE virtualTableStatement (ESCAPE escape=STR)?)
+    | (virtualTableStatement NOT? LIKE virtualTableStatement (ESCAPE escape=multiString)?)
     ;
 joinMember:
       joinStatement
@@ -285,7 +285,7 @@ joinMember:
     | (joinStatement IS NOT? NULL)
     | (joinStatement REFS mdo)
     | (joinStatement NOT? BETWEEN joinBetweenStatement)
-    | (joinStatement NOT? LIKE joinStatement (ESCAPE escape=STR)?)
+    | (joinStatement NOT? LIKE joinStatement (ESCAPE escape=multiString)?)
     ;
 whereMember:
       whereStatement
@@ -298,7 +298,7 @@ whereMember:
     | (whereStatement IS NOT? NULL)
     | (whereStatement REFS mdo)
     | (whereStatement NOT? BETWEEN whereBetweenStatement)
-    | (whereStatement NOT? LIKE whereStatement (ESCAPE escape=STR)?)
+    | (whereStatement NOT? LIKE whereStatement (ESCAPE escape=multiString)?)
     ;
 groupByMember:
       groupByStatement
@@ -311,7 +311,7 @@ groupByMember:
     | (groupByStatement IS NOT? NULL)
     | (groupByStatement REFS mdo)
     | (groupByStatement NOT? BETWEEN groupByBetweenStatement)
-    | (groupByStatement NOT? LIKE groupByStatement (ESCAPE escape=STR)?)
+    | (groupByStatement NOT? LIKE groupByStatement (ESCAPE escape=multiString)?)
     ;
 havingMember:
       havingStatement
@@ -880,7 +880,7 @@ statement:
     | (MINUS+ parameter)
     | (NOT* literal=(TRUE | FALSE | NULL))
     | (MINUS* literal=(DECIMAL | FLOAT))
-    | (literal=(STR | UNDEFINED))
+    | ((multiString | UNDEFINED))
     | (doCall=DATETIME LPAREN
                                           (parameter | DECIMAL) COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL)
        /* эта часть может быть опущена */ (COMMA (parameter | DECIMAL) COMMA (parameter | DECIMAL) (COMMA (parameter | DECIMAL)))?
@@ -895,6 +895,8 @@ statement:
       )
     | (doCall=TYPE LPAREN (mdo | type) RPAREN)
 ;
+
+multiString: STR+;
 
 // todo
 // [?] Добавить системные перечисления

@@ -70,3 +70,4 @@ fabric.properties
 
 \.idea/sonarlint\.xml
 **/antlr/.antlr/**
+*.java.orig
