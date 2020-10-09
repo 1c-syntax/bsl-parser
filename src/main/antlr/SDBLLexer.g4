@@ -276,7 +276,8 @@ UNKNOWN: . -> channel(HIDDEN);
 
 mode STRINGS;
 STRFULL:  (~["\n\r] | '""')* '"' -> type(STR), popMode;
-STRPART:  (~["\n\r] | '""')* [\n\r] -> type(STR);
+SKIPNEWLINE: [\n\r] -> channel(HIDDEN), type(WHITE_SPACE);
+STRPART:  (~["\n\r] | '""')+ -> type(STR);
 
 // PARAMETERS
 mode PARAMETER_MODE;
