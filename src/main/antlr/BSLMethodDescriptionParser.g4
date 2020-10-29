@@ -8,7 +8,7 @@ options {
 // структура описания
 methodDescription: depricate? description? parameters? callOptions? retursValues? examples? EOF;
 
-depricate: SPACE* DEPRICATE_KEYWORD SPACE depricateDescription EOL;
+depricate: SPACE* DEPRICATE_KEYWORD SPACE depricateDescription EOL?;
 depricateDescription: ~EOL*;
 
 description: descriptionString* EOF?;
