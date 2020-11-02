@@ -8,14 +8,17 @@ public BSLMethodDescriptionLexer(CharStream input, boolean crAwareCostructor) {
 }
 }
 
-HYPERLINK: ( S E E | RU_S RU_M '.') ' ' LETTER (LETTER | DIGIT)* ('.' LETTER (LETTER | DIGIT)*)*;
+HYPERLINK:
+    ( S E E | RU_S RU_M '.') ' '
+    LETTER (LETTER | DIGIT)* ('.' LETTER (LETTER | DIGIT)*)*
+    ('(' ~[\n\r]* ')')*;
 
 // KEYWORDS
 PARAMETERS_KEYWORD:     (P A R A M E T E R S        | RU_P RU_A RU_R RU_A RU_M RU_E RU_T RU_R RU_Y) ':';
 RETURNS_KEYWORD:        (R E T U R N S              | (RU_V RU_O RU_Z RU_V RU_R RU_A RU_SCH RU_A RU_E RU_M RU_O RU_E ' ' RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_E)) ':';
 EXAMPLE_KEYWORD:        (E X A M P L E              | RU_P RU_R RU_I RU_M RU_E RU_R) ':';
 CALL_OPTIONS_KEYWORD:   (C A L L ' ' O P T I O N S  | RU_V RU_A RU_R RU_I RU_A RU_N RU_T RU_Y ' ' RU_V RU_Y RU_Z RU_O RU_V RU_A) ':';
-DEPRICATE_KEYWORD:      (D E P R I C A T E          | RU_U RU_S RU_T RU_A RU_R RU_E RU_L RU_A) '.';
+DEPRECATE_KEYWORD:      (D E P R E C A T E          | RU_U RU_S RU_T RU_A RU_R RU_E RU_L RU_A) '.';
 
 // COMMON
 EOL     : '\r'? '\n';
