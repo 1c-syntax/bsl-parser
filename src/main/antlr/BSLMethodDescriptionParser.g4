@@ -32,6 +32,7 @@ callOptionsString: ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL)+ EOL*;
 retursValues: SPACE* RETURNS_KEYWORD (EOL retursValuesString*)?;
 retursValuesString:
     retursValueString
+    | subParameterString
     | typeWithDescription
     | typeWithoutDescription
     | (~(EXAMPLE_KEYWORD | EOL)+ EOL*);
