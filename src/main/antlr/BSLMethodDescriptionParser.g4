@@ -64,7 +64,7 @@ retursValueString: SPACE* types spitter typeDescription;
 examples: SPACE* EXAMPLE_KEYWORD (EOL examplesString*)?;
 examplesString: ~EOL+ EOL*;
 
-typeWithDescription: spitter (types spitter)? typeDescription;
+typeWithDescription: spitter types spitter? typeDescription;
 typeWithoutDescription: spitter types spitter? EOL*;
 typeDescription: ~EOL+ EOL*;
 
