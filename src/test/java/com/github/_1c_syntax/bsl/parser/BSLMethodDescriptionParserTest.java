@@ -100,9 +100,9 @@ class BSLMethodDescriptionParserTest
     assertThat(nodes).hasSize(1);
     assertThat(nodes.get(0).getText()).isEqualTo(" Использовать другой метод");
     nodes = getNodes("Устарела.Использовать другой метод\n",
-      BSLMethodDescriptionParser.RULE_deprecateDescription);
+      BSLMethodDescriptionParser.RULE_description);
     assertThat(nodes).hasSize(1);
-    assertThat(nodes.get(0).getText()).isEqualTo("Использовать другой метод");
+    assertThat(nodes.get(0).getText()).isEqualTo("Устарела.Использовать другой метод\n");
   }
 
   @Test

@@ -81,9 +81,7 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.ANYSYMBOL,
       BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL,
-      BSLMethodDescriptionLexer.WORD,
+      BSLMethodDescriptionLexer.DOTSWORD,
       BSLMethodDescriptionLexer.ANYSYMBOL,
       BSLMethodDescriptionLexer.ANYSYMBOL,
       BSLMethodDescriptionLexer.SPACE,
@@ -92,9 +90,7 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.ANYSYMBOL,
       BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL,
-      BSLMethodDescriptionLexer.WORD,
+      BSLMethodDescriptionLexer.DOTSWORD,
       BSLMethodDescriptionLexer.ANYSYMBOL,
       BSLMethodDescriptionLexer.ANYSYMBOL,
       BSLMethodDescriptionLexer.SPACE,
@@ -105,11 +101,11 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
   void testParameters() {
     assertMatch("Параметры", BSLMethodDescriptionLexer.WORD);
     assertMatch("Parameters", BSLMethodDescriptionLexer.WORD);
-    assertMatch("NoParameters:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.ANYSYMBOL);
+    assertMatch("NoParameters:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
     assertMatch("Параметры:", BSLMethodDescriptionLexer.PARAMETERS_KEYWORD);
     assertMatch("Parameters:", BSLMethodDescriptionLexer.PARAMETERS_KEYWORD);
     assertMatch("Параметры :", BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE, BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.SPACE, BSLMethodDescriptionLexer.COLON);
   }
 
   @Test
@@ -123,21 +119,21 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
     assertMatch("RETURNS :",
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
     assertMatch("Возвращаемое значение:", BSLMethodDescriptionLexer.RETURNS_KEYWORD);
     assertMatch("RETURNS:", BSLMethodDescriptionLexer.RETURNS_KEYWORD);
     assertMatch("НеВозвращаемое значение:",
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
     assertMatch("НЕRETURNS:",
       BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
   }
 
   @Test
@@ -146,17 +142,17 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
     assertMatch("ПримерЫ", BSLMethodDescriptionLexer.WORD);
     assertMatch("Example", BSLMethodDescriptionLexer.WORD);
     assertMatch("Examples", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Примеры:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.ANYSYMBOL);
-    assertMatch("Examples:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.ANYSYMBOL);
+    assertMatch("Примеры:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
+    assertMatch("Examples:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
     assertMatch("Пример:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
     assertMatch("Example:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
     assertMatch("Пример :",
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
     assertMatch("NoExample:",
       BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
   }
 
   @Test
@@ -173,25 +169,25 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
     assertMatch("Call options :",
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
     assertMatch("Варианты вызова:", BSLMethodDescriptionLexer.CALL_OPTIONS_KEYWORD);
     assertMatch("Call options:", BSLMethodDescriptionLexer.CALL_OPTIONS_KEYWORD);
     assertMatch("Вариант вызова:",
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
     assertMatch("Call option:",
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
   }
 
   @Test
@@ -207,6 +203,6 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
       BSLMethodDescriptionLexer.ANYSYMBOL);
     assertMatch("Deprecate:",
       BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL);
+      BSLMethodDescriptionLexer.COLON);
   }
 }
