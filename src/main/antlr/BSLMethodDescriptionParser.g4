@@ -59,13 +59,14 @@ retursValuesString:
     | typeWithDescription
     | typeWithoutDescription
     | (~(EXAMPLE_KEYWORD | EOL)+ EOL*);
-retursValueString: SPACE* types spitter typeDescription;
+retursValueString: SPACE* types typeDescriptionString;
 
 examples: SPACE* EXAMPLE_KEYWORD (EOL examplesString*)?;
 examplesString: ~EOL+ EOL*;
 
-typeWithDescription: spitter types spitter? typeDescription;
+typeWithDescription: spitter types typeDescriptionString;
 typeWithoutDescription: spitter types spitter? EOL*;
+typeDescriptionString: spitter? typeDescription;
 typeDescription: ~EOL+ EOL*;
 
 spitter: SPACE* DASH SPACE*;
