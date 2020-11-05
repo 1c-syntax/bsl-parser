@@ -42,11 +42,10 @@ parametersString:
     parameterString
     | subParameterString
     | typeWithDescription
-    | typeWithoutDescription
     | (~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*)
 ;
-parameterString: SPACE* parameterName (typeWithDescription | typeWithoutDescription);
-subParameterString: SPACE* starPreffix SPACE* parameterName (typeWithDescription | typeWithoutDescription);
+parameterString: SPACE* parameterName typeWithDescription;
+subParameterString: SPACE* starPreffix SPACE* parameterName typeWithDescription;
 parameterName: WORD;
 
 callOptions: SPACE* CALL_OPTIONS_KEYWORD (EOL callOptionsString*)?;
@@ -57,16 +56,14 @@ retursValuesString:
     retursValueString
     | subParameterString
     | typeWithDescription
-    | typeWithoutDescription
     | (~(EXAMPLE_KEYWORD | EOL)+ EOL*);
 retursValueString: SPACE* types typeDescriptionString;
 
 examples: SPACE* EXAMPLE_KEYWORD (EOL examplesString*)?;
 examplesString: ~EOL+ EOL*;
 
-typeWithDescription: spitter types typeDescriptionString;
-typeWithoutDescription: spitter types spitter? EOL*;
-typeDescriptionString: spitter? typeDescription;
+typeWithDescription: spitter types typeDescriptionString EOL*;
+typeDescriptionString: spitter? typeDescription?;
 typeDescription: ~EOL+ EOL*;
 
 spitter: SPACE* DASH SPACE*;
