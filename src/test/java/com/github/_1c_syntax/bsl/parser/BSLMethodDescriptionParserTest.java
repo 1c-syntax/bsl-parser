@@ -178,16 +178,16 @@ class BSLMethodDescriptionParserTest
   @Test
   void testReturns() {
     var nodes = getNodes("//returns",
-      BSLMethodDescriptionParser.RULE_retursValues);
+      BSLMethodDescriptionParser.RULE_returnsValues);
     assertThat(nodes).isEmpty();
     nodes = getNodes("returns:\nboolean - description",
-      BSLMethodDescriptionParser.RULE_retursValues);
+      BSLMethodDescriptionParser.RULE_returnsValues);
     assertThat(nodes).hasSize(1);
     nodes = getNodes("returns:\nboolean - description\nExample:",
-      BSLMethodDescriptionParser.RULE_retursValuesString);
+      BSLMethodDescriptionParser.RULE_returnsValuesString);
     assertThat(nodes).hasSize(1);
     nodes = getNodes("returns:\n - ref - description\n - boolean - description\nExample:",
-      BSLMethodDescriptionParser.RULE_retursValuesString);
+      BSLMethodDescriptionParser.RULE_returnsValuesString);
     assertThat(nodes).hasSize(2);
   }
 

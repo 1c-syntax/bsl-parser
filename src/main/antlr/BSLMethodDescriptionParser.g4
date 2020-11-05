@@ -29,7 +29,7 @@ options {
 }
 
 // структура описания
-methodDescription: deprecate? description? parameters? callOptions? retursValues? examples? EOF;
+methodDescription: deprecate? description? parameters? callOptions? returnsValues? examples? EOF;
 
 deprecate: SPACE* DEPRECATE_KEYWORD deprecateDescription? EOL?;
 deprecateDescription: ~EOL+;
@@ -51,13 +51,13 @@ parameterName: WORD;
 callOptions: SPACE* CALL_OPTIONS_KEYWORD (EOL callOptionsString*)?;
 callOptionsString: ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL)+ EOL*;
 
-retursValues: SPACE* RETURNS_KEYWORD (EOL retursValuesString*)?;
-retursValuesString:
-    retursValueString
+returnsValues: SPACE* RETURNS_KEYWORD (EOL returnsValuesString*)?;
+returnsValuesString:
+    returnsValueString
     | subParameterString
     | typeWithDescription
     | (~(EXAMPLE_KEYWORD | EOL)+ EOL*);
-retursValueString: SPACE* types typeDescriptionString;
+returnsValueString: SPACE* types typeDescriptionString;
 
 examples: SPACE* EXAMPLE_KEYWORD (EOL examplesString*)?;
 examplesString: ~EOL+ EOL*;
