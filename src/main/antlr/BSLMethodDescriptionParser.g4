@@ -3,7 +3,6 @@
  *
  * Copyright © 2018-2020
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Gryzlov <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
- * @author Maximov Valery <maximovvalery@gmail.com>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
  *
@@ -20,7 +19,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-
+/**
+ * @author Maximov Valery <maximovvalery@gmail.com>
+ */
 parser grammar BSLMethodDescriptionParser;
 
 options {

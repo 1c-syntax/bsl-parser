@@ -68,7 +68,7 @@ class BSLMethodDescriptionParserTest
     setInput("");
     assertNotMatches(parser.deprecate());
     setInput("Устарела");
-    assertNotMatches(parser.deprecate());
+    assertMatches(parser.deprecate());
     setInput("Описание\nУстарела");
     assertNotMatches(parser.deprecate());
     setInput("Описание\nУстарела.");

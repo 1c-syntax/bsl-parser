@@ -192,17 +192,17 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
 
   @Test
   void testDeprecate() {
-    assertMatch("Устарела", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Deprecate", BSLMethodDescriptionLexer.WORD);
+    assertMatch("Устарела", BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
+    assertMatch("Deprecate", BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
     assertMatch("Depricate", BSLMethodDescriptionLexer.WORD);
     assertMatch("Устарела.", BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
     assertMatch("Deprecate.", BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
     assertMatch("Устарела .",
-      BSLMethodDescriptionLexer.WORD,
+      BSLMethodDescriptionLexer.DEPRECATE_KEYWORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.ANYSYMBOL);
     assertMatch("Deprecate:",
-      BSLMethodDescriptionLexer.WORD,
+      BSLMethodDescriptionLexer.DEPRECATE_KEYWORD,
       BSLMethodDescriptionLexer.COLON);
   }
 }
