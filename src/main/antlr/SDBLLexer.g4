@@ -269,10 +269,15 @@ fragment LETTER: [\p{Letter}] | '_';
 
 DECIMAL     : DIGIT+;
 FLOAT       : DIGIT+ '.' DIGIT*;
-STR         : '"' (~["] | '""')* '"';
+STR         : '"' -> pushMode(STRINGS);
 INCORRECT_IDENTIFIER  : DIGIT+ LETTER (LETTER | DIGIT)*;
 IDENTIFIER  : LETTER (LETTER | DIGIT)*;
 UNKNOWN: . -> channel(HIDDEN);
+
+mode STRINGS;
+STRFULL:  (~["\n\r] | '""')* '"' -> type(STR), popMode;
+SKIPNEWLINE: [\n\r][ \t\f]* -> channel(HIDDEN), type(WHITE_SPACE);
+STRPART:  (~["\n\r] | '""')+ -> type(STR);
 
 // PARAMETERS
 mode PARAMETER_MODE;
