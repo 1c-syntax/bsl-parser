@@ -30,7 +30,14 @@ options {
 }
 
 // структура описания
-methodDescription: deprecate? description? parameters? callOptions? returnsValues? examples? EOF;
+methodDescription:
+    (
+          (deprecate? description? parameters? callOptions? returnsValues? examples?)
+        | (deprecate? description? parameters? examples? returnsValues? callOptions?)
+        | (deprecate? description? parameters? callOptions? examples? returnsValues?)
+        | (deprecate? description? parameters? callOptions? examples? returnsValues?)
+        | (deprecate? description? parameters? examples? callOptions? returnsValues?)
+    ) EOF;
 
 deprecate: SPACE* DEPRECATE_KEYWORD deprecateDescription? EOL?;
 deprecateDescription: ~EOL+;
@@ -57,11 +64,11 @@ returnsValuesString:
     returnsValueString
     | subParameterString
     | typeWithDescription
-    | (~(EXAMPLE_KEYWORD | EOL)+ EOL*);
+    | (~(EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*);
 returnsValueString: SPACE* types typeDescriptionString;
 
 examples: SPACE* EXAMPLE_KEYWORD (EOL examplesString*)?;
-examplesString: ~EOL+ EOL*;
+examplesString: (~(RETURNS_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*);
 
 typeWithDescription: spitter types typeDescriptionString EOL*;
 typeDescriptionString: spitter? typeDescription?;
