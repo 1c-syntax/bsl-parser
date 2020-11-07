@@ -129,6 +129,9 @@ license {
     exclude("**/*.tokens")
     exclude("**/*.interp")
     exclude("**/*.g4")
+    exclude("**/*.bsl")
+    exclude("**/*.orig")
+    exclude("**/*.gitkeep")
     strictCheck = true
     mapping("java", "SLASHSTAR_STYLE")
 }

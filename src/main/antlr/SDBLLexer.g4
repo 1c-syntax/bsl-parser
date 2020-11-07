@@ -19,6 +19,9 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
+/**
+ * @author Maximov Valery <maximovvalery@gmail.com>
+ */
 lexer grammar SDBLLexer;
 
 @members {
