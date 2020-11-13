@@ -61,17 +61,22 @@ callOptionsString: ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL)+ EOL*;
 
 returnsValues: SPACE* RETURNS_KEYWORD (EOL returnsValuesString*)?;
 returnsValuesString:
-    returnsValueString
-    | subParameterString
+    subParameterString
     | typeWithDescription
-    | (~(EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*);
-returnsValueString: SPACE* types typeDescriptionString;
+    | returnsValueString
+    | (~(EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*)
+    ;
+returnsValueString: SPACE* types typeDescriptionString EOL*;
 
 examples: SPACE* EXAMPLE_KEYWORD (EOL examplesString*)?;
 examplesString: (~(RETURNS_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*);
 
-typeWithDescription: spitter types typeDescriptionString EOL*;
-typeDescriptionString: spitter? typeDescription?;
+typeWithDescription: spitter types typeDescriptionString? EOL*;
+typeDescriptionString:
+    (spitter typeDescription)
+    | typeDescription
+    | spitter
+    ;
 typeDescription: ~EOL+ EOL*;
 
 spitter: SPACE* DASH SPACE*;
