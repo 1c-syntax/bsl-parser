@@ -314,7 +314,7 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
 
     assertMatch("НеопределенО", BSLLexer.UNDEFINED);
     assertMatch("UNDEFINeD", BSLLexer.UNDEFINED);
-    assertMatch("Поле.ЛОЖЬ", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    assertMatch("Поле.НЕОПРЕДЕЛЕНО", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
     assertMatch("Field.UNDEFINED", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
 
     assertMatch("NUlL", BSLLexer.NULL);
