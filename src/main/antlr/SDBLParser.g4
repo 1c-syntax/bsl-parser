@@ -402,6 +402,7 @@ inlineTableStatement:
     | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN inlineTableCaseStatement COMMA datePart RPAREN)
     | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN inlineTableCaseStatement RPAREN)
     | (doCall=SUBSTRING LPAREN inlineTableExpression COMMA inlineTableExpression COMMA inlineTableExpression RPAREN)
+    | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN inlineTableExpression RPAREN)
     ;
 inlineTableBinaryStatement: inlineTableStatement (binaryOperation inlineTableStatement)+;
 inlineTableComparyStatement: (selectBinaryStatement | inlineTableBinaryStatement) compareOperation (inlineTableBinaryStatement | inlineTableStatement);
