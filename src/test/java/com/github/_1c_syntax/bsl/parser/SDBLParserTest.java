@@ -21,7 +21,13 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.Trees;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
 
@@ -52,6 +58,17 @@ public class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
     setInput("Выбрать 1, \n" +
       "Уничтожить Б");
     assertMatches(parser.queries());
+
+    var textQuery = "Выбрать Таблица.Ссылка \n Из &Таблица Как Таблица";
+
+    setInput(textQuery);
+    assertMatches(parser.queries());
+    var nodes = getNodes(textQuery,
+      SDBLParser.RULE_selectQuery);
+    assertThat(nodes).hasSize(1);
+    nodes = getNodes(textQuery,
+      SDBLParser.RULE_parameterTable);
+    assertThat(nodes).hasSize(1);
   }
 
   @Test
@@ -63,6 +80,10 @@ public class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
     assertMatches(parser.queries());
     setInput("drop");
     assertNotMatches(parser.queries());
+
   }
 
+  private ArrayList<ParseTree> getNodes(String text, int rule) {
+    return new ArrayList<>(Trees.findAllRuleNodes((new SDBLTokenizer(text)).getAst(), rule));
+  }
 }

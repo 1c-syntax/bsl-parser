@@ -92,7 +92,7 @@ temparyTableUnion: UNION all=ALL? temparyTableQuery;
 temparyTableMainQuery:
     SELECT limitations
     temparyTableSelectedFields
-    into
+    into?
     temparyTableFrom
     where
     groupBy
