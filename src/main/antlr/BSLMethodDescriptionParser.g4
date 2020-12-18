@@ -39,59 +39,55 @@ methodDescription:
     ) EOF;
 
 // deprecate
-deprecate: SPACE? DEPRECATE_KEYWORD (SPACE deprecateDescription)? EOL?;
+deprecate: startPart DEPRECATE_KEYWORD (SPACE deprecateDescription)? EOL?;
 deprecateDescription: ~(SPACE | EOL) ~EOL*;
 
 // description
 descriptionBlock: hyperlinkBlock | description;
 description: descriptionString+;
 descriptionString:
-      (SPACE? ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
-    | (SPACE EOL)
-    | EOL
+      (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+    | (startPart EOL)
     ;
 
 // examples
-examples: SPACE? EXAMPLE_KEYWORD (EOL examplesString*)?;
+examples: startPart EXAMPLE_KEYWORD (EOL examplesString*)?;
 examplesString:
-      (SPACE? ~(CALL_OPTIONS_KEYWORD | RETURNS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
-    | (SPACE EOL?)
-    | EOL
+      (startPart ~(CALL_OPTIONS_KEYWORD | RETURNS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+    | (startPart EOL?)
     ;
 
 // callOptions
-callOptions: SPACE? CALL_OPTIONS_KEYWORD (EOL callOptionsString*)?;
+callOptions: startPart CALL_OPTIONS_KEYWORD (EOL callOptionsString*)?;
 callOptionsString:
-      (SPACE? ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL | SPACE) ~EOL* EOL?)
-    | (SPACE EOL?)
-    | EOL
+      (startPart ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+    | (startPart EOL?)
     ;
 
 // parameters
-parameters: SPACE? PARAMETERS_KEYWORD (EOL (hyperlinkBlock | parameterString+)?)?;
+parameters: startPart PARAMETERS_KEYWORD SPACE? (EOL (hyperlinkBlock | parameterString+)?)?;
 parameterString:
       parameter
+    | (startPart typesBlock)
     | subParameter
-    | typeDescription
-    | (SPACE EOL)
-    | EOL
+    | (startPart typeDescription)
+    | (startPart EOL?)
     ;
-parameter: SPACE? parameterName typesBlock;
-subParameter: SPACE? STAR SPACE? parameterName typesBlock;
+parameter: startPart parameterName typesBlock;
+subParameter: startPart STAR SPACE? parameterName typesBlock;
 parameterName: WORD;
 
 // returnsValues
-returnsValues: SPACE? RETURNS_KEYWORD (EOL (hyperlinkBlock | returnsValuesString+)?)?;
+returnsValues: startPart RETURNS_KEYWORD SPACE? (EOL (hyperlinkBlock | returnsValuesString+)?)?;
 returnsValuesString:
     returnsValue
-    | typesBlock
+    | (startPart typesBlock)
     | subParameter
-    | typeDescription
-    | (SPACE EOL)
-    | EOL
+    | (startPart typeDescription)
+    | (startPart EOL?)
 ;
 
-returnsValue: SPACE? type ((spitter typeDescription?) | EOL);
+returnsValue: startPart type spitter typeDescription?;
 
 typesBlock: spitter type ((spitter typeDescription?) | EOL);
 
@@ -111,4 +107,5 @@ hyperlinkType: HYPERLINK;
 
 spitter: SPACE? DASH SPACE?;
 
-hyperlinkBlock: EOL* SPACE? HYPERLINK SPACE? EOL*;
+hyperlinkBlock: (startPart EOL)* startPart hyperlinkType SPACE? (EOL startPart)*;
+startPart: SPACE? COMMENT SPACE?;
