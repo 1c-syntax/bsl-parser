@@ -43,7 +43,7 @@ deprecate: startPart DEPRECATE_KEYWORD (SPACE deprecateDescription)? EOL?;
 deprecateDescription: ~(SPACE | EOL) ~EOL*;
 
 // description
-descriptionBlock: hyperlinkBlock | description;
+descriptionBlock: (hyperlinkBlock | description) EOL?;
 description: descriptionString+;
 descriptionString:
       (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
