@@ -65,7 +65,7 @@ callOptionsString:
     ;
 
 // parameters
-parameters: startPart PARAMETERS_KEYWORD SPACE? (EOL (hyperlinkBlock | parameterString+)?)?;
+parameters: startPart PARAMETERS_KEYWORD SPACE? (EOL (hyperlinkBlock | parameterString+)?)? EOL?;
 parameterString:
       parameter
     | (startPart typesBlock)
@@ -78,7 +78,7 @@ subParameter: startPart STAR SPACE? parameterName typesBlock;
 parameterName: WORD;
 
 // returnsValues
-returnsValues: startPart RETURNS_KEYWORD SPACE? (EOL (hyperlinkBlock | returnsValuesString+)?)?;
+returnsValues: startPart RETURNS_KEYWORD SPACE? (EOL (hyperlinkBlock | returnsValuesString+)?)? EOL?;
 returnsValuesString:
     returnsValue
     | (startPart typesBlock)
