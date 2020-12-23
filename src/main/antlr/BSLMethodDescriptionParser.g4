@@ -87,7 +87,7 @@ returnsValuesString:
     | (startPart EOL?)
 ;
 
-returnsValue: startPart type spitter typeDescription?;
+returnsValue: startPart type ((spitter typeDescription?) | EOL);
 
 typesBlock: spitter type ((spitter typeDescription?) | EOL);
 
