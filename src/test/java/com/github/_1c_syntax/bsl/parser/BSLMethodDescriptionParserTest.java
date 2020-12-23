@@ -97,11 +97,11 @@ class BSLMethodDescriptionParserTest
       BSLMethodDescriptionParser.RULE_deprecateDescription);
     assertThat(nodes).hasSize(1);
     assertThat(nodes.get(0).getText()).isEqualTo("Использовать другой метод");
-    nodes = getNodes("//Устарела. Использовать другой метод\n",
+    nodes = getNodes("//Устарела. Использовать другой метод",
       BSLMethodDescriptionParser.RULE_deprecateDescription);
     assertThat(nodes).hasSize(1);
     assertThat(nodes.get(0).getText()).isEqualTo("Использовать другой метод");
-    nodes = getNodes("//Устарела.Использовать другой метод\n",
+    nodes = getNodes("//Устарела.Использовать другой метод",
       BSLMethodDescriptionParser.RULE_description);
     assertThat(nodes).hasSize(1);
     assertThat(nodes.get(0).getText()).isEqualTo("//Устарела.Использовать другой метод\n");
@@ -365,11 +365,11 @@ class BSLMethodDescriptionParserTest
       new Pair(BSLMethodDescriptionParser.RULE_parameterName, 33),
       new Pair(BSLMethodDescriptionParser.RULE_returnsValues, 1),
       new Pair(BSLMethodDescriptionParser.RULE_returnsValuesString, 316),
-      new Pair(BSLMethodDescriptionParser.RULE_returnsValue, 2),
+      new Pair(BSLMethodDescriptionParser.RULE_returnsValue, 12),
       new Pair(BSLMethodDescriptionParser.RULE_typesBlock, 36),
-      new Pair(BSLMethodDescriptionParser.RULE_typeDescription, 276),
-      new Pair(BSLMethodDescriptionParser.RULE_type, 38),
-      new Pair(BSLMethodDescriptionParser.RULE_simpleType, 38),
+      new Pair(BSLMethodDescriptionParser.RULE_typeDescription, 266),
+      new Pair(BSLMethodDescriptionParser.RULE_type, 48),
+      new Pair(BSLMethodDescriptionParser.RULE_simpleType, 48),
       new Pair(BSLMethodDescriptionParser.RULE_listTypes, 0),
       new Pair(BSLMethodDescriptionParser.RULE_complexType, 0),
       new Pair(BSLMethodDescriptionParser.RULE_hyperlinkType, 0),
