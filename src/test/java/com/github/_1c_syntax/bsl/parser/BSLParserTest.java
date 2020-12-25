@@ -301,6 +301,16 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   }
 
   @Test
+  void testPreprocBreakString() {
+    setInput("\"выбрать\n" +
+      "#Удаление\n" +
+      "|часть строки\n" +
+      "#Удаление\n" +
+      "|конец строки\"");
+    assertMatches(parser.multilineString());
+  }
+
+  @Test
   void TestCompilerDirectiveSymbol() {
 
     setInput("&НаКлиенте");

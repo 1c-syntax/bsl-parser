@@ -225,7 +225,7 @@ paramList        : param (COMMA param)*;
 param            : VAL_KEYWORD? IDENTIFIER (ASSIGN defaultValue)?;
 defaultValue     : constValue;
 constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
-multilineString  : STRINGSTART (STRINGPART | BAR)* STRINGTAIL;
+multilineString  : STRINGSTART (STRINGPART | BAR | preprocessor)* STRINGTAIL;
 string           : (STRING | multilineString)+;
 statement
      : (
