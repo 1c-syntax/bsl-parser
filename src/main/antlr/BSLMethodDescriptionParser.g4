@@ -32,58 +32,80 @@ options {
 // структура описания
 methodDescription:
     (
-          (deprecate? description? parameters? callOptions? returnsValues? examples?)
-        | (deprecate? description? parameters? examples? returnsValues? callOptions?)
-        | (deprecate? description? parameters? callOptions? examples? returnsValues?)
-        | (deprecate? description? parameters? callOptions? examples? returnsValues?)
-        | (deprecate? description? parameters? examples? callOptions? returnsValues?)
+          (deprecate? descriptionBlock? parameters? callOptions? returnsValues? examples?)
+        | (deprecate? descriptionBlock? parameters? examples? returnsValues? callOptions?)
+        | (deprecate? descriptionBlock? parameters? callOptions? examples? returnsValues?)
+        | (deprecate? descriptionBlock? parameters? examples? callOptions? returnsValues?)
     ) EOF;
 
-deprecate: SPACE* DEPRECATE_KEYWORD deprecateDescription? EOL?;
-deprecateDescription: ~EOL+;
+// deprecate
+deprecate: startPart DEPRECATE_KEYWORD (SPACE deprecateDescription)? EOL?;
+deprecateDescription: ~(SPACE | EOL) ~EOL*;
 
-description: EOL* descriptionString+;
-descriptionString: ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*;
+// description
+descriptionBlock: (hyperlinkBlock | description) EOL?;
+description: descriptionString+;
+descriptionString:
+      (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+    | (startPart EOL)
+    ;
 
-parameters: SPACE* PARAMETERS_KEYWORD (EOL parametersString*)?;
-parametersString:
-    parameterString
-    | subParameterString
-    | typeWithDescription
-    | (~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*)
-;
-parameterString: SPACE* parameterName typeWithDescription;
-subParameterString: SPACE* starPreffix SPACE* parameterName typeWithDescription;
+// examples
+examples: startPart EXAMPLE_KEYWORD (EOL examplesString*)?;
+examplesString:
+      (startPart ~(CALL_OPTIONS_KEYWORD | RETURNS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+    | (startPart EOL?)
+    ;
+
+// callOptions
+callOptions: startPart CALL_OPTIONS_KEYWORD (EOL callOptionsString*)?;
+callOptionsString:
+      (startPart ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+    | (startPart EOL?)
+    ;
+
+// parameters
+parameters: startPart PARAMETERS_KEYWORD SPACE? (EOL (hyperlinkBlock | parameterString+)?)? EOL?;
+parameterString:
+      parameter
+    | (startPart typesBlock)
+    | subParameter
+    | (startPart typeDescription)
+    | (startPart EOL?)
+    ;
+parameter: startPart parameterName typesBlock;
+subParameter: startPart STAR SPACE? parameterName typesBlock;
 parameterName: WORD;
 
-callOptions: SPACE* CALL_OPTIONS_KEYWORD (EOL callOptionsString*)?;
-callOptionsString: ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL)+ EOL*;
-
-returnsValues: SPACE* RETURNS_KEYWORD (EOL returnsValuesString*)?;
+// returnsValues
+returnsValues: startPart RETURNS_KEYWORD SPACE? (EOL (hyperlinkBlock | returnsValuesString+)?)? EOL?;
 returnsValuesString:
-    subParameterString
-    | typeWithDescription
-    | returnsValueString
-    | (~(EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*)
-    ;
-returnsValueString: SPACE* types typeDescriptionString EOL*;
+    returnsValue
+    | (startPart typesBlock)
+    | subParameter
+    | (startPart typeDescription)
+    | (startPart EOL?)
+;
 
-examples: SPACE* EXAMPLE_KEYWORD (EOL examplesString*)?;
-examplesString: (~(RETURNS_KEYWORD | CALL_OPTIONS_KEYWORD | EOL)+ EOL*);
+returnsValue: startPart type ((spitter typeDescription?) | EOL);
 
-typeWithDescription: spitter types typeDescriptionString? EOL*;
-typeDescriptionString:
-    (spitter typeDescription)
-    | typeDescription
-    | spitter
-    ;
-typeDescription: ~EOL+ EOL*;
+typesBlock: spitter type ((spitter typeDescription?) | EOL);
 
-spitter: SPACE* DASH SPACE*;
-starPreffix: STAR+;
-types:
-    HYPERLINK
-    | COMPLEX_TYPE
-    | ((WORD | DOTSWORD) COLON)
-    | ((WORD | DOTSWORD) (COMMA SPACE* (WORD | DOTSWORD))*)
+typeDescription:
+    SPACE? ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | SPACE | STAR) ~EOL* EOL;
+
+type:
+    hyperlinkType
+    | listTypes
+    | (simpleType COLON?)
+    | complexType
     ;
+simpleType: (WORD | DOTSWORD);
+listTypes: simpleType (COMMA SPACE? simpleType)+;
+complexType: COMPLEX_TYPE;
+hyperlinkType: HYPERLINK;
+
+spitter: SPACE? DASH SPACE?;
+
+hyperlinkBlock: (startPart EOL)* startPart hyperlinkType SPACE? (EOL startPart)*;
+startPart: SPACE? COMMENT SPACE?;

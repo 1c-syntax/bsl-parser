@@ -52,12 +52,12 @@ DEPRECATE_KEYWORD:      (D E P R E C A T E          | RU_U RU_S RU_T RU_A RU_R R
 // COMMON
 EOL     : '\r'? '\n';
 SPACE   : [ \t]+;
-STAR    : '*';
+STAR    : '*'+;
 DASH    : [-–];
 COLON   : ':';
 COMMA   : ',';
 // OTHER
-COMMENT : '//' -> channel(HIDDEN);
+COMMENT : '//';
 WORD    : LETTER (LETTER | DIGIT)*;
 DOTSWORD: LETTER (LETTER | DIGIT)* ('.' LETTER (LETTER | DIGIT)*)+;
 
