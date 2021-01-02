@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright © 2018-2020
+ * Copyright © 2018-2021
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Gryzlov <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -493,4 +493,12 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
 
   }
 
+  @Test
+  void testPreproc_DeleteInsert() {
+    assertMatchChannel(BSLLexer.HIDDEN, "#Insert\n", BSLLexer.PREPROC_INSERT);
+    assertMatchChannel(BSLLexer.HIDDEN, "#КонецВставки\n", BSLLexer.PREPROC_ENDINSERT);
+    assertMatchChannel(BSLLexer.PREPROC_DELETE_CHANNEL, "#Удаление\n", BSLLexer.PREPROC_DELETE);
+    assertMatchChannel(BSLLexer.PREPROC_DELETE_MODE, BSLLexer.PREPROC_DELETE_CHANNEL,
+      "#EndDelete\n", BSLLexer.PREPROC_ENDDELETE);
+  }
 }

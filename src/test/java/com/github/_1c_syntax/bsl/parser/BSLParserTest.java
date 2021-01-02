@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright © 2018-2020
+ * Copyright © 2018-2021
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Gryzlov <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -22,6 +22,8 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
@@ -275,28 +277,28 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   @Test
   void testPreprocInsertBreakCondition() {
     setInput("If true or false\n" +
-            "    #If Server Then\n" +
-            "        Or true\n" +
-            "    #EndIf\n" +
-            "    Then\n" +
-            "EndIf;");
+      "    #If Server Then\n" +
+      "        Or true\n" +
+      "    #EndIf\n" +
+      "    Then\n" +
+      "EndIf;");
     assertMatches(parser.ifBranch());
 
     setInput("while (true \n" +
-            "    #If Server Then\n" +
-            "        Or true\n" +
-            "    #EndIf\n" +
-            "    ) do\n" +
-            "enddo;");
+      "    #If Server Then\n" +
+      "        Or true\n" +
+      "    #EndIf\n" +
+      "    ) do\n" +
+      "enddo;");
     assertMatches(parser.whileStatement());
 
     setInput("a = false \n" +
-            "    #If Server Then\n" +
-            "        Or true\n" +
-            "    #else\n" +
-            "        Or false\n" +
-            "    #EndIf\n" +
-            "    and true;");
+      "    #If Server Then\n" +
+      "        Or true\n" +
+      "    #else\n" +
+      "        Or false\n" +
+      "    #EndIf\n" +
+      "    and true;");
     assertMatches(parser.statement());
   }
 
@@ -305,7 +307,7 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     setInput("\"выбрать\n" +
       "#Удаление\n" +
       "|часть строки\n" +
-      "#Удаление\n" +
+      "#КонецУдаления\n" +
       "|конец строки\"");
     assertMatches(parser.multilineString());
   }
@@ -1052,5 +1054,41 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     setInput("Попытка A = 1; Исключение B = 2; КонецПопытки");
     assertMatches(parser.tryStatement());
 
+  }
+
+  @Test
+  void TestDeletePreproc() {
+
+    setInput("&ИзменениеИКонтроль(\"ПроверитьЗавершитьДоговорВАрхиве\")\n" +
+      "Функция ХФ164150_ПроверитьЗавершитьДоговорВАрхиве(ДоговорОбъект, ДопНастройки, ИмяРеквизитаДатаОкончания)\n" +
+      "\tТекущаяДата   = НачалоДня(ТекущаяДатаСеанса());\n" +
+      "\t#Удаление\n" +
+      "\tЕсли СтароеУсловие\n" +
+      "\t#КонецУдаления\n" +
+      "\t#Вставка\n" +
+      "\tНовоеУсловие = Выражение;\n" +
+      "\tЕсли НовоеУсловие\n" +
+      "\t#КонецВставки\n" +
+      "\t\tИ ЧастьСтарогоУсловия Тогда\n" +
+      "\t\t    Возврат Истина;\n" +
+      "\tКонецЕсли;\n" +
+      "\tВозврат Ложь;\n" +
+      "КонецФункции");
+    var file = parser.file();
+    assertMatches(file);
+    var subs = file.subs();
+    assertMatches(subs);
+    var listSubs = subs.sub();
+    listSubs.forEach(this::assertMatches);
+    var func = listSubs.get(0);
+    assertMatches(func);
+    assertThat(func.getText())
+      .doesNotContain("#Удаление")
+      .doesNotContain("#КонецУдаления")
+      .doesNotContain("#ЕслиСтароеУсловие")
+      .doesNotContain("#Вставка")
+      .doesNotContain("#КонецВставки")
+      .contains("ИЧастьСтарогоУсловияТогда")
+    ;
   }
 }
