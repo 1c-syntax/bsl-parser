@@ -43,10 +43,6 @@ preproc_if       : PREPROC_IF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
 preproc_elsif    : PREPROC_ELSIF_KEYWORD preproc_expression PREPROC_THEN_KEYWORD;
 preproc_else     : PREPROC_ELSE_KEYWORD;
 preproc_endif    : PREPROC_ENDIF_KEYWORD;
-preproc_insert   : PREPROC_INSERT_SYMBOL;
-preproc_delete   : PREPROC_DELETE_SYMBOL;
-preproc_endinsert: PREPROC_ENDINSERT_SYMBOL;
-preproc_enddelete: PREPROC_ENDDELETE_SYMBOL;
 
 preproc_expression
     : ( PREPROC_NOT_KEYWORD? (PREPROC_LPAREN preproc_expression PREPROC_RPAREN ) )
@@ -71,10 +67,6 @@ preproc_symbol
     | PREPROC_EXTERNALCONNECTION_SYMBOL
     | PREPROC_THINCLIENT_SYMBOL
     | PREPROC_WEBCLIENT_SYMBOL
-    | PREPROC_INSERT_SYMBOL
-    | PREPROC_ENDINSERT_SYMBOL
-    | PREPROC_DELETE_SYMBOL
-    | PREPROC_ENDDELETE_SYMBOL
     | preproc_unknownSymbol
     ;
 preproc_unknownSymbol
@@ -94,10 +86,6 @@ preprocessor
         | preproc_else
         | preproc_endif
         | use
-        | preproc_insert
-        | preproc_delete
-        | preproc_endinsert
-        | preproc_enddelete
       )
     ;
 

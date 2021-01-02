@@ -511,30 +511,6 @@ PREPROC_SERVER_SYMBOL
       RU_S RU_E RU_R RU_V RU_E RU_R
     | S E R V E R
     ;
-// todo больше не используется, в будущем будет удален
-PREPROC_INSERT_SYMBOL
-    :
-      RU_V RU_S RU_T RU_A RU_V RU_K RU_A
-    | I N S E R T
-    ;
-// todo больше не используется, в будущем будет удален
-PREPROC_ENDINSERT_SYMBOL
-    :
-      RU_K RU_O RU_N RU_E RU_C RU_V RU_S RU_T RU_A RU_V RU_K RU_I
-    | E N D I N S E R T
-    ;
-// todo больше не используется, в будущем будет удален
-PREPROC_DELETE_SYMBOL
-    :
-      RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_E
-    | D E L E T E
-    ;
-// todo больше не используется, в будущем будет удален
-PREPROC_ENDDELETE_SYMBOL
-    :
-      RU_K RU_O RU_N RU_E RU_C RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_YA
-    | E N D D E L E T E
-    ;
 
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
