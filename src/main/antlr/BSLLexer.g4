@@ -1,7 +1,7 @@
 /**
  * This file is a part of BSL Parser.
  *
- * Copyright © 2018-2020
+ * Copyright © 2018-2021
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Gryzlov <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -20,6 +20,11 @@
  * License along with BSL Parser.
  */
 lexer grammar BSLLexer;
+
+channels {
+    // для хранения удаленного блока
+    PREPROC_DELETE_CHANNEL
+}
 
 @members {
 public BSLLexer(CharStream input, boolean crAwareCostructor) {
@@ -56,6 +61,30 @@ QUOTIENT: '/';
 MODULO: '%';
 QUESTION: '?';
 AMPERSAND: '&' -> pushMode(ANNOTATION_MODE);
+PREPROC_DELETE
+    : '#' [ \t]*
+    (
+          RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_E
+        | D E L E T E
+    ) [ \t]* [\r\n]
+    -> pushMode(PREPROC_DELETE_MODE), channel(PREPROC_DELETE_CHANNEL)
+    ;
+PREPROC_INSERT
+    : '#' [ \t]*
+    (
+          RU_V RU_S RU_T RU_A RU_V RU_K RU_A
+        | I N S E R T
+    ) [ \t]* [\r\n]
+    -> channel(HIDDEN)
+    ;
+PREPROC_ENDINSERT
+    : '#' [ \t]*
+    (
+          RU_K RU_O RU_N RU_E RU_C RU_V RU_S RU_T RU_A RU_V RU_K RU_I
+        | E N D I N S E R T
+    ) [ \t]* [\r\n]
+    -> channel(HIDDEN)
+    ;
 HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 
 SQUOTE: '\'';
@@ -482,26 +511,6 @@ PREPROC_SERVER_SYMBOL
       RU_S RU_E RU_R RU_V RU_E RU_R
     | S E R V E R
     ;
-PREPROC_INSERT_SYMBOL
-    :
-      RU_V RU_S RU_T RU_A RU_V RU_K RU_A
-    | I N S E R T
-    ;
-PREPROC_ENDINSERT_SYMBOL
-    :
-      RU_K RU_O RU_N RU_E RU_C RU_V RU_S RU_T RU_A RU_V RU_K RU_I
-    | E N D I N S E R T
-    ;
-PREPROC_DELETE_SYMBOL
-    :
-      RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_E
-    | D E L E T E
-    ;
-PREPROC_ENDDELETE_SYMBOL
-    :
-      RU_K RU_O RU_N RU_E RU_C RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_YA
-    | E N D D E L E T E
-    ;
 
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
@@ -624,3 +633,14 @@ DOT_WHITE_SPACE
        type(WHITE_SPACE)
     ;
 DOT_IDENTIFIER : LETTER ( LETTER | DIGIT )* -> type(IDENTIFIER), popMode;
+
+mode PREPROC_DELETE_MODE;
+PREPROC_ENDDELETE
+    : '#' [ \t]*
+    (
+          RU_K RU_O RU_N RU_E RU_C RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_YA
+        | E N D D E L E T E
+    )
+    [ \t]* [\r\n]
+    -> popMode, channel(PREPROC_DELETE_CHANNEL);
+PREPROC_DELETE_ANY: . -> channel(PREPROC_DELETE_CHANNEL);
