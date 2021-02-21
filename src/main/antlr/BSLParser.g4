@@ -149,8 +149,8 @@ subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : (preprocessor | compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : (preprocessor | compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+procDeclaration  : (preprocessor | compilerDirective | annotation)* ASYNC_KEYWORD? PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : (preprocessor | compilerDirective | annotation)* ASYNC_KEYWORD? FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
 subCodeBlock     : subVars? codeBlock;
 
 // statements
@@ -173,9 +173,10 @@ whileStatement    : WHILE_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 forStatement      : FOR_KEYWORD IDENTIFIER ASSIGN expression TO_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO_KEYWORD codeBlock ENDDO_KEYWORD;
 tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDTRY_KEYWORD;
-returnStatement   : RETURN_KEYWORD expression?;
+returnStatement   : RETURN_KEYWORD (waitStatement | expression)?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
-callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
+callStatement     : (((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall);
+waitStatement     : WAIT_KEYWORD (IDENTIFIER | callStatement);
 
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
@@ -218,9 +219,9 @@ string           : (STRING | multilineString)+;
 statement
      : (
         (
-            ( label (callStatement | compoundStatement | assignment | preprocessor)?)
+            ( label (callStatement | waitStatement | compoundStatement | assignment | preprocessor)?)
             |
-            (callStatement | compoundStatement | assignment| preprocessor)
+            (callStatement | waitStatement | compoundStatement | assignment| preprocessor)
         )
         SEMICOLON?
     )

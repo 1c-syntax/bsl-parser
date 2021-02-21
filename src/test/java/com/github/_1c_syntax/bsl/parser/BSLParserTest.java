@@ -1075,4 +1075,66 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
       .contains("ИЧастьСтарогоУсловияТогда")
     ;
   }
+
+  @Test
+  void TestAsync() {
+
+    setInput("&ИзменениеИКонтроль(\"Тест\")\n" +
+      "Асинх Функция Тест(Параметры)\n" +
+      "\tВозврат Ложь;\n" +
+      "КонецФункции");
+    var file = parser.file();
+    assertMatches(file);
+    var subs = file.subs();
+    assertMatches(subs);
+    var listSubs = subs.sub();
+    listSubs.forEach(this::assertMatches);
+    var func = listSubs.get(0);
+    assertMatches(func);
+    var funcDeclare = func.function().funcDeclaration();
+    assertMatches(funcDeclare.ASYNC_KEYWORD());
+
+    setInput("&НаКлиенте\n" +
+      "Асинх Процедура Тест(Параметры)\n" +
+      "\tВозврат;\n" +
+      "КонецПроцедуры");
+    file = parser.file();
+    assertMatches(file);
+    subs = file.subs();
+    assertMatches(subs);
+    listSubs = subs.sub();
+    listSubs.forEach(this::assertMatches);
+    var proc = listSubs.get(0);
+    assertMatches(proc);
+    var procDeclare = proc.procedure().procDeclaration();
+    assertMatches(procDeclare.ASYNC_KEYWORD());
+  }
+
+  @Test
+  void TestWait() {
+
+    setInput("Асинх Процедура Test()\n" +
+      "Ждать КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1     \n" +
+      "Файлы = Ждать НайтиФайлыАсинх(ИсхКаталог, \"*\", Ложь); //2\n" +
+      "Сч = Ждать КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1\n" +
+      "Об = КопироватьФайлАсинх(ИсхФайл, ЦелФайл); \n" +
+      "Ждать Об;\n" +
+      "EndProcedure");
+    var file = parser.file();
+    assertMatches(file);
+    var subs = file.subs();
+    assertMatches(subs);
+    var listSubs = subs.sub();
+    listSubs.forEach(this::assertMatches);
+    var proc = listSubs.get(0);
+    assertMatches(proc);
+    var subCodeblock = proc.procedure().subCodeBlock();
+    assertMatches(subCodeblock);
+    var codeBlock = subCodeblock.codeBlock();
+    assertMatches(codeBlock);
+    var statements = codeBlock.statement();
+    statements.forEach(this::assertMatches);
+    assertThat(statements.stream().filter(statementContext -> statementContext.waitStatement() != null))
+      .hasSize(4);
+  }
 }

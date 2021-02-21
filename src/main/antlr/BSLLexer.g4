@@ -348,6 +348,14 @@ REMOVEHANDLER_KEYWORD
      RU_U RU_D RU_A RU_L RU_I RU_T RU_SOFT_SIGN RU_O RU_B RU_R RU_A RU_B RU_O RU_T RU_CH RU_I RU_K
     | R E M O V E H A N D L E R
     ;
+ASYNC_KEYWORD
+    : RU_A RU_S RU_I RU_N RU_H
+    | A S Y N C
+    ;
+WAIT_KEYWORD
+    : RU_ZH RU_D RU_A RU_T RU_SOFT_SIGN
+    | W A I T
+    ;
 
 fragment LETTER: [\p{Letter}] | '_';
 IDENTIFIER : LETTER ( LETTER | DIGIT )*;

@@ -491,6 +491,15 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
     assertMatch("Поле.УДАЛИТЬОБРАБОТЧИК", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
     assertMatch("Field.REMOVEHANDLER", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
 
+    assertMatch("АсинХ", BSLLexer.ASYNC_KEYWORD);
+    assertMatch("ASYNc", BSLLexer.ASYNC_KEYWORD);
+    assertMatch("Поле.Асинх", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    assertMatch("Field.ASYNC", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+
+    assertMatch("ЖдатЬ", BSLLexer.WAIT_KEYWORD);
+    assertMatch("WAIt", BSLLexer.WAIT_KEYWORD);
+    assertMatch("Поле.ждАть", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    assertMatch("Field.WaIT", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
