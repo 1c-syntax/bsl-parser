@@ -175,7 +175,7 @@ forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO
 tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD (waitStatement | expression)?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
-callStatement     : (((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall);
+callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
 waitStatement     : WAIT_KEYWORD (IDENTIFIER | callStatement);
 
 labelName         : IDENTIFIER;
