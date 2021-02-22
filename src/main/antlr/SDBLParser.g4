@@ -38,12 +38,12 @@ queryPackage: queries (SEMICOLON queries)* SEMICOLON? EOF;
 queries: dropTableQuery | selectQuery;
 
 // DROP TABLE
-// удаление временной таблицы, где temparyTableName идентификатор временной таблицы
-dropTableQuery: DROP temparyTableName=identifier;
+// удаление временной таблицы, где temporaryTableName идентификатор временной таблицы
+dropTableQuery: DROP temporaryTableName=identifier;
 
 // SELECT
 // запрос на выборку данных, может состять из подзапроса или подзапроса с временной таблицей
-selectQuery: (subquery ordersAndTotals) | (temparyTableSubquery orders? indexing);
+selectQuery: (subquery ordersAndTotals) | (temporaryTableSubquery orders? indexing);
 
 // SUBQUERIES
 // различные виды подзапросов
@@ -85,33 +85,33 @@ from: (FROM dataSources)?;
 
 // подзапрос с выборкой данных во временную таблицу, состоит из первого запроса с помещением во временню таблицу (main)
 // и объединения с "обычными" запросами
-temparyTableSubquery: main=temparyTableMainQuery temparyTableUnion*;
+temporaryTableSubquery: main=temporaryTableMainQuery temporaryTableUnion*;
 // объединение запросов
-temparyTableUnion: UNION all=ALL? temparyTableQuery;
+temporaryTableUnion: UNION all=ALL? temporaryTableQuery;
 // структура запроса помещения во временную таблицу (основной)
-temparyTableMainQuery:
+temporaryTableMainQuery:
     SELECT limitations
-    temparyTableSelectedFields
+    temporaryTableSelectedFields
     into?
-    temparyTableFrom
+    temporaryTableFrom
     where
     groupBy
     having
     forUpdate
     ;
 // структура запроса помещения во временную таблицу (объединение)
-temparyTableQuery:
+temporaryTableQuery:
     SELECT limitations
-    temparyTableSelectedFields
-    temparyTableFrom
+    temporaryTableSelectedFields
+    temporaryTableFrom
     where
     groupBy
     having
     forUpdate
     ;
 // выбираемые поля временной таблицы
-temparyTableSelectedFields: temparyTableSelectedField (COMMA temparyTableSelectedField)*;
-temparyTableSelectedField:
+temporaryTableSelectedFields: temporaryTableSelectedField (COMMA temporaryTableSelectedField)*;
+temporaryTableSelectedField:
     (
           ((tableName=identifier DOT)* MUL)
         | (doCall=RECORDAUTONUMBER LPAREN RPAREN)
@@ -119,11 +119,11 @@ temparyTableSelectedField:
     ) alias
     ;
 // помещение во временную таблицу
-into: INTO temparyTableName=identifier;
+into: INTO temporaryTableName=identifier;
 // источники данных для временной таблицы
-temparyTableFrom: (FROM temparyTableDataSources)?;
+temporaryTableFrom: (FROM temporaryTableDataSources)?;
 // перечень таблиц-источников данных для выборки
-temparyTableDataSources: (dataSources | parameterTable) (COMMA dataSources | parameterTable)*;
+temporaryTableDataSources: (dataSources | parameterTable) (COMMA dataSources | parameterTable)*;
 // таблица как параметр, соединяться ни с чем не может
 parameterTable: parameter alias;
 // индексирование во временной таблице
