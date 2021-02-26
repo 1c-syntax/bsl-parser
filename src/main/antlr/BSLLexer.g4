@@ -600,7 +600,7 @@ ANNOTATION_WHITE_SPACE
        type(WHITE_SPACE)
     ;
 
-ANNOTATION_UKNOWN
+ANNOTATION_UNKNOWN
     : .
     -> channel(HIDDEN)
     ;
