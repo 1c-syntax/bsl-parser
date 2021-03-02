@@ -47,7 +47,7 @@ descriptionBlock: (hyperlinkBlock | description) EOL?;
 description: descriptionString+;
 descriptionString:
       (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
-    | (startPart EOL)
+    | (startPart EOL?)
     ;
 
 // examples
