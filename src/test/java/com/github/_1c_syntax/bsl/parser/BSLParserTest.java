@@ -1119,6 +1119,12 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
       "Сч = Ждать КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1\n" +
       "Об = КопироватьФайлАсинх(ИсхФайл, ЦелФайл); \n" +
       "Ждать Об;\n" +
+      "если Ждать Об тогда \n" +
+      "  возврат;\n" +
+      "конецесли;\n" +
+      "если Ждать мояФункция(а) тогда \n" +
+      "  возврат;\n" +
+      "конецесли;\n" +
       "EndProcedure");
     var file = parser.file();
     assertMatches(file);
@@ -1134,7 +1140,8 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     assertMatches(codeBlock);
     var statements = codeBlock.statement();
     statements.forEach(this::assertMatches);
-    assertThat(statements.stream().filter(statementContext -> statementContext.waitStatement() != null))
-      .hasSize(4);
+    assertThat(statements.stream().filter(statementContext -> statementContext.callStatement() != null))
+      .hasSize(1);
+
   }
 }
