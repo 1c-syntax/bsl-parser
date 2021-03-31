@@ -235,13 +235,20 @@ operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | comp
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;
 unaryModifier    : NOT_KEYWORD | MINUS | PLUS;
-member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ) modifier*);
+member
+    : unaryModifier?
+    (
+        constValue
+        | complexIdentifier
+        | (( LPAREN expression RPAREN ) modifier*)
+        | (WAIT_KEYWORD (IDENTIFIER | globalMethodCall))
+    );
 newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
 typeName         : IDENTIFIER;
 methodCall       : methodName doCall;
 globalMethodCall : methodName doCall;
 methodName       : IDENTIFIER;
-complexIdentifier: ((WAIT_KEYWORD? IDENTIFIER) | newExpression | ternaryOperator | (WAIT_KEYWORD? globalMethodCall)) modifier*;
+complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) modifier*;
 modifier         : accessProperty | accessIndex| accessCall;
 acceptor         : modifier* (accessProperty | accessIndex);
 lValue           : (IDENTIFIER | globalMethodCall) acceptor?;
