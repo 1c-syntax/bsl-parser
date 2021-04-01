@@ -149,8 +149,8 @@ subs             : sub+;
 sub              : procedure | function;
 procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
 function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : (preprocessor | compilerDirective | annotation)* PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : (preprocessor | compilerDirective | annotation)* FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+procDeclaration  : (preprocessor | compilerDirective | annotation)* ASYNC_KEYWORD? PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : (preprocessor | compilerDirective | annotation)* ASYNC_KEYWORD? FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
 subCodeBlock     : subVars? codeBlock;
 
 // statements
@@ -175,7 +175,8 @@ forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO
 tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
-callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
+callStatement     : WAIT_KEYWORD? (((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall);
+waitStatement     : WAIT_KEYWORD IDENTIFIER;
 
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
@@ -218,9 +219,9 @@ string           : (STRING | multilineString)+;
 statement
      : (
         (
-            ( label (callStatement | compoundStatement | assignment | preprocessor)?)
+            ( label (callStatement | waitStatement | compoundStatement | assignment | preprocessor)?)
             |
-            (callStatement | compoundStatement | assignment| preprocessor)
+            (callStatement | waitStatement | compoundStatement | assignment| preprocessor)
         )
         SEMICOLON?
     )
@@ -234,7 +235,14 @@ operation        : PLUS | MINUS | MUL | QUOTIENT | MODULO | boolOperation | comp
 compareOperation : LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL;
 boolOperation    : OR_KEYWORD | AND_KEYWORD;
 unaryModifier    : NOT_KEYWORD | MINUS | PLUS;
-member           : unaryModifier? (constValue | complexIdentifier | ( LPAREN expression RPAREN ) modifier*);
+member
+    : unaryModifier?
+    (
+        constValue
+        | complexIdentifier
+        | (( LPAREN expression RPAREN ) modifier*)
+        | (WAIT_KEYWORD (IDENTIFIER | globalMethodCall))
+    );
 newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
 typeName         : IDENTIFIER;
 methodCall       : methodName doCall;
