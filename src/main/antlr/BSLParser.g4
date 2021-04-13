@@ -67,6 +67,9 @@ preproc_symbol
     | PREPROC_EXTERNALCONNECTION_SYMBOL
     | PREPROC_THINCLIENT_SYMBOL
     | PREPROC_WEBCLIENT_SYMBOL
+    | PREPROC_LINUX
+    | PREPROC_WINDOWS
+    | PREPROC_MACOS
     | preproc_unknownSymbol
     ;
 preproc_unknownSymbol

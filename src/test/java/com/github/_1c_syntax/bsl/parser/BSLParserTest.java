@@ -110,6 +110,9 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     setInput("Если ТонкийКлиент И ВебКлиент Тогда", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_if());
 
+    setInput("Если MacOS ИЛИ Linux Тогда", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_if());
+
     setInput("Если", BSLLexer.PREPROCESSOR_MODE);
     assertNotMatches(parser.preproc_if());
 
@@ -119,6 +122,9 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   void testPreproc_elseif() {
 
     setInput("ИначеЕсли Клиент Тогда", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_elsif());
+
+    setInput("ИначеЕсли WINDOWS Тогда", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_elsif());
 
     setInput("ИначеЕсли", BSLLexer.PREPROCESSOR_MODE);
@@ -209,6 +215,30 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
     setInput("Сервер", BSLLexer.PREPROCESSOR_MODE);
     assertNotMatches(parser.preproc_unknownSymbol());
+
+
+    setInput("WINdows", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("Linux", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("MacOS", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("MacОS", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_unknownSymbol());
+    setInput("WINdows", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("Linux", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("MacOS", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
+    setInput("MacОS", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_unknownSymbol());
 
   }
 
