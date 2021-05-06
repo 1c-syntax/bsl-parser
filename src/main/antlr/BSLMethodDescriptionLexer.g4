@@ -57,6 +57,7 @@ DASH    : [-–];
 COLON   : ':';
 COMMA   : ',';
 // OTHER
+OF      : ( O F | RU_I RU_Z);
 COMMENT : '//';
 WORD    : LETTER (LETTER | DIGIT)*;
 DOTSWORD: LETTER (LETTER | DIGIT)* ('.' LETTER (LETTER | DIGIT)*)+;
