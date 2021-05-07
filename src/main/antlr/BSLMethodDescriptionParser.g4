@@ -100,7 +100,7 @@ type:
     | (simpleType COLON?)
     | complexType
     ;
-simpleType: (WORD | DOTSWORD | (WORD SPACE OF SPACE WORD));
+simpleType: (WORD | DOTSWORD);
 listTypes: simpleType (COMMA SPACE? simpleType)+;
 complexType: COMPLEX_TYPE;
 hyperlinkType: HYPERLINK;
