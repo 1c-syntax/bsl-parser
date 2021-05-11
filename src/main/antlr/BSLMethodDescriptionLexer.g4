@@ -39,7 +39,7 @@ HYPERLINK:
 
 COMPLEX_TYPE:
     LETTER (LETTER | DIGIT)* ' '
-    ( O F | F R O M | RU_I RU_Z  ) ' '
+    ( O F | C O N T A I N S | RU_I RU_Z  ) ' '
     LETTER (LETTER | DIGIT)* ('.' LETTER (LETTER | DIGIT)*)* ':'?;
 
 // KEYWORDS
