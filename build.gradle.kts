@@ -31,7 +31,7 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-val antlrVersion = "4.7.4"
+val antlrVersion = "4.9.0"
 val antlrGroupId = "com.tunnelvisionlabs"
 val antlrArtifactId = "antlr4"
 val junitVersion = "5.6.0-RC1"
