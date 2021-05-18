@@ -7,7 +7,7 @@ plugins {
     jacoco
     java
     antlr
-    id("com.github.hierynomus.license") version "0.15.0"
+    id("com.github.hierynomus.license") version "0.16.1"
     id("org.sonarqube") version "2.8"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
     id("com.github.ben-manes.versions") version "0.27.0"
