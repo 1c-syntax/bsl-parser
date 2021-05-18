@@ -2,13 +2,13 @@ import java.net.URI
 import java.util.*
 
 plugins {
-    maven
+    `maven-publish`
     idea
     jacoco
-    java
+    `java-library`
     antlr
-    id("com.github.hierynomus.license") version "0.15.0"
-    id("org.sonarqube") version "2.8"
+    id("com.github.hierynomus.license") version "0.16.1"
+    id("org.sonarqube") version "3.2.0"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("me.champeau.gradle.jmh") version "0.5.0"
@@ -37,17 +37,17 @@ val antlrArtifactId = "antlr4"
 val junitVersion = "5.6.0-RC1"
 
 dependencies {
-    compile(antlrGroupId, antlrArtifactId, antlrVersion)
+    implementation(antlrGroupId, antlrArtifactId, antlrVersion)
     antlr(antlrGroupId, antlrArtifactId, antlrVersion)
 
     implementation("com.github.1c-syntax", "utils", "0.2.1")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
-    testRuntime("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
     testImplementation("org.assertj", "assertj-core", "3.14.0")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    compile("commons-io", "commons-io", "2.6")
+    implementation("commons-io", "commons-io", "2.6")
 }
 
 sourceSets {
@@ -64,6 +64,10 @@ sourceSets {
 sourceSets.jmh {
     java.srcDirs("src/main/jmh")
     resources.srcDirs("src/jmh/resources")
+}
+
+tasks.processTestResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 idea {
@@ -122,7 +126,6 @@ tasks.jacocoTestReport {
 
 license {
     header = rootProject.file("license/HEADER.txt")
-
     ext["year"] = "2018-" + Calendar.getInstance().get(Calendar.YEAR)
     ext["name"] = "Alexey Sosnoviy <labotamy@gmail.com>, Nikita Gryzlov <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>"
     ext["project"] = "BSL Parser"
