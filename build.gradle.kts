@@ -157,3 +157,55 @@ sonarqube {
         property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
     }
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            artifact(tasks["jar"])
+
+            pom {
+                description.set("Collection of parsers for Language 1C (BSL) in ANTLR4 format.")
+                url.set("https://github.com/1c-syntax/bsl-parser")
+                licenses {
+                    license {
+                        name.set("GNU LGPL 3")
+                        url.set("https://www.gnu.org/licenses/lgpl-3.0.txt")
+                        distribution.set("repo")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("asosnoviy")
+                        name.set("Alexey Sosnoviy")
+                        email.set("labotamy@gmail.com")
+                        url.set("https://github.com/asosnoviy")
+                        organization.set("1c-syntax")
+                        organizationUrl.set("https://github.com/1c-syntax")
+                    }
+                    developer {
+                        id.set("nixel2007")
+                        name.set("Nikita Gryzlov")
+                        email.set("nixel2007@gmail.com")
+                        url.set("https://github.com/nixel2007")
+                        organization.set("1c-syntax")
+                        organizationUrl.set("https://github.com/1c-syntax")
+                    }
+                    developer {
+                        id.set("dmpas")
+                        name.set("Sergey Batanov")
+                        email.set("sergey.batanov@dmpas.ru")
+                        url.set("https://github.com/dmpas")
+                        organization.set("1c-syntax")
+                        organizationUrl.set("https://github.com/1c-syntax")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/1c-syntax/bsl-parser.git")
+                    developerConnection.set("scm:git:git@github.com:1c-syntax/bsl-parser.git")
+                    url.set("https://github.com/1c-syntax/bsl-parser")
+                }
+            }
+        }
+    }
+}
