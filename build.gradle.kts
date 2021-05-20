@@ -161,7 +161,6 @@ sonarqube {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            from(components["java"])
             artifact(tasks["jar"])
 
             pom {
