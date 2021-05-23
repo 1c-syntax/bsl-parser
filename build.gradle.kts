@@ -12,6 +12,8 @@ plugins {
     id("com.github.gradle-git-version-calculator") version "1.1.0"
     id("com.github.ben-manes.versions") version "0.38.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
+    id("io.freefair.javadoc-links") version "6.0.0-m2"
+    id("io.freefair.javadoc-utf-8") version "6.0.0-m2"
 }
 
 repositories {
@@ -25,6 +27,8 @@ version = gitVersionCalculator.calculateVersion("v")
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
+    withJavadocJar()
 }
 
 tasks.withType<JavaCompile> {
@@ -64,6 +68,11 @@ sourceSets {
 sourceSets.jmh {
     java.srcDirs("src/main/jmh")
     resources.srcDirs("src/jmh/resources")
+}
+
+// [bug] https://youtrack.jetbrains.com/issue/KT-46165
+tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 tasks.processTestResources {
@@ -161,8 +170,7 @@ sonarqube {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            artifact(tasks["jar"])
-
+            from(components["java"])
             pom {
                 description.set("Collection of parsers for Language 1C (BSL) in ANTLR4 format.")
                 url.set("https://github.com/1c-syntax/bsl-parser")

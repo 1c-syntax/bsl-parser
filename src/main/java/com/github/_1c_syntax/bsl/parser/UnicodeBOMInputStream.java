@@ -34,22 +34,20 @@ import java.io.PushbackInputStream;
  * (Byte Order Mark) at its beginning, as defined by
  * <a href="http://www.faqs.org/rfcs/rfc3629.html">RFC 3629 - UTF-8, a
  * transformation format of ISO 10646</a>
- *
- * <p>The
- * <a href="http://www.unicode.org/unicode/faq/utf_bom.html">Unicode FAQ</a>
- * defines 5 types of BOMs:<ul>
- * <li><pre>00 00 FE FF  = UTF-32, big-endian</pre></li>
- * <li><pre>FF FE 00 00  = UTF-32, little-endian</pre></li>
- * <li><pre>FE FF        = UTF-16, big-endian</pre></li>
- * <li><pre>FF FE        = UTF-16, little-endian</pre></li>
- * <li><pre>EF BB BF     = UTF-8</pre></li>
- * </ul></p>
- *
- * <p>Use the {@link #getBOM()} method to know whether a BOM has been detected
+ * <p>
+ * The <a href="http://www.unicode.org/unicode/faq/utf_bom.html">Unicode FAQ</a>
+ * defines 5 types of BOMs:
+ * - <pre>00 00 FE FF  = UTF-32, big-endian</pre>
+ * - <pre>FF FE 00 00  = UTF-32, little-endian</pre>
+ * - <pre>FE FF        = UTF-16, big-endian</pre>
+ * - <pre>FF FE        = UTF-16, little-endian</pre>
+ * - <pre>EF BB BF     = UTF-8</pre>
+ * <p>
+ * Use the {@link #getBOM()} method to know whether a BOM has been detected
  * or not.
- * </p>
- * <p>Use the {@link #skipBOM()} method to remove the detected BOM from the
- * wrapped <code>InputStream</code> object.</p>
+ * <p>
+ * Use the {@link #skipBOM()} method to remove the detected BOM from the
+ * wrapped <code>InputStream</code> object.
  *
  * @author Gregory Pakosz
  * @version 1.0
@@ -131,12 +129,13 @@ public class UnicodeBOMInputStream extends InputStream {
       return description;
     }
 
+
     /**
-     * Returns the bytes corresponding to this <code>BOM</code> value.
+     * @return Returns the bytes corresponding to this <code>BOM</code> value.
      */
     public byte[] getBytes() {
       final int length = bytes.length;
-      final byte[] result = new byte[length];
+      var result = new byte[length];
 
       // make a defensive copy
       System.arraycopy(bytes, 0, result, 0, length);
