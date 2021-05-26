@@ -509,5 +509,10 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
     assertMatchChannel(BSLLexer.PREPROC_DELETE_CHANNEL, "#Удаление\n", BSLLexer.PREPROC_DELETE);
     assertMatchChannel(BSLLexer.PREPROC_DELETE_MODE, BSLLexer.PREPROC_DELETE_CHANNEL,
       "#EndDelete\n", BSLLexer.PREPROC_ENDDELETE);
+    assertMatchChannel(BSLLexer.PREPROC_DELETE_CHANNEL, "#Удаление\r\n", BSLLexer.PREPROC_DELETE);
+    assertMatchChannel(BSLLexer.PREPROC_DELETE_CHANNEL, "#Удаление\r\n#EndDelete\n", BSLLexer.PREPROC_DELETE,
+      BSLLexer.PREPROC_ENDDELETE);
+    assertMatchChannel(BSLLexer.PREPROC_DELETE_MODE, BSLLexer.PREPROC_DELETE_CHANNEL,
+      "#EndDelete\r\n", BSLLexer.PREPROC_ENDDELETE);
   }
 }

@@ -66,7 +66,7 @@ PREPROC_DELETE
     (
           RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_E
         | D E L E T E
-    ) [ \t]* [\r\n]
+    ) [ \t]* '\r'?'\n'
     -> pushMode(PREPROC_DELETE_MODE), channel(PREPROC_DELETE_CHANNEL)
     ;
 PREPROC_INSERT
@@ -653,6 +653,6 @@ PREPROC_ENDDELETE
           RU_K RU_O RU_N RU_E RU_C RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_YA
         | E N D D E L E T E
     )
-    [ \t]* [\r\n]
+    [ \t]* '\r'?'\n'
     -> popMode, channel(PREPROC_DELETE_CHANNEL);
 PREPROC_DELETE_ANY: . -> channel(PREPROC_DELETE_CHANNEL);
