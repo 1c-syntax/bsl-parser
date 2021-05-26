@@ -504,8 +504,8 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
 
   @Test
   void testPreproc_DeleteInsert() {
-    assertMatchChannel(BSLLexer.HIDDEN, "#Insert\n", BSLLexer.PREPROC_INSERT);
-    assertMatchChannel(BSLLexer.HIDDEN, "#КонецВставки\n", BSLLexer.PREPROC_ENDINSERT);
+    assertMatchChannel(BSLLexer.HIDDEN, "#Insert\n", BSLLexer.PREPROC_INSERT, BSLLexer.WHITE_SPACE);
+    assertMatchChannel(BSLLexer.HIDDEN, "#КонецВставки\n", BSLLexer.PREPROC_ENDINSERT, BSLLexer.WHITE_SPACE);
     assertMatchChannel(BSLLexer.PREPROC_DELETE_CHANNEL, "#Удаление\n", BSLLexer.PREPROC_DELETE);
     assertMatchChannel(BSLLexer.PREPROC_DELETE_MODE, BSLLexer.PREPROC_DELETE_CHANNEL,
       "#EndDelete\n", BSLLexer.PREPROC_ENDDELETE);
@@ -514,5 +514,9 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
       BSLLexer.PREPROC_ENDDELETE);
     assertMatchChannel(BSLLexer.PREPROC_DELETE_MODE, BSLLexer.PREPROC_DELETE_CHANNEL,
       "#EndDelete\r\n", BSLLexer.PREPROC_ENDDELETE);
+    assertMatchChannel(BSLLexer.PREPROC_DELETE_CHANNEL, "# Удаление \r\n f", BSLLexer.PREPROC_DELETE,
+      BSLLexer.PREPROC_DELETE_ANY);
+    assertMatchChannel(BSLLexer.PREPROC_DELETE_CHANNEL, "#Удаление\r", BSLLexer.PREPROC_DELETE,
+      BSLLexer.PREPROC_DELETE_ANY);
   }
 }

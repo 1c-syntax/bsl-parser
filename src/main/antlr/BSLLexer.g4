@@ -66,7 +66,7 @@ PREPROC_DELETE
     (
           RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_E
         | D E L E T E
-    ) [ \t]* '\r'?'\n'
+    )
     -> pushMode(PREPROC_DELETE_MODE), channel(PREPROC_DELETE_CHANNEL)
     ;
 PREPROC_INSERT
@@ -74,7 +74,7 @@ PREPROC_INSERT
     (
           RU_V RU_S RU_T RU_A RU_V RU_K RU_A
         | I N S E R T
-    ) [ \t]* [\r\n]
+    )
     -> channel(HIDDEN)
     ;
 PREPROC_ENDINSERT
@@ -82,7 +82,7 @@ PREPROC_ENDINSERT
     (
           RU_K RU_O RU_N RU_E RU_C RU_V RU_S RU_T RU_A RU_V RU_K RU_I
         | E N D I N S E R T
-    ) [ \t]* [\r\n]
+    )
     -> channel(HIDDEN)
     ;
 HASH: '#' -> pushMode(PREPROCESSOR_MODE);
@@ -528,7 +528,7 @@ PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
 PREPROC_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
 PREPROC_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
-PREPROC_NEWLINE: [\r\n] -> popMode, channel(HIDDEN);
+PREPROC_NEWLINE: '\r'?'\n' -> popMode, channel(HIDDEN);
 
 PREPROC_ANY: ~[\r\n];
 
@@ -653,6 +653,8 @@ PREPROC_ENDDELETE
           RU_K RU_O RU_N RU_E RU_C RU_U RU_D RU_A RU_L RU_E RU_N RU_I RU_YA
         | E N D D E L E T E
     )
-    [ \t]* '\r'?'\n'
     -> popMode, channel(PREPROC_DELETE_CHANNEL);
+PREPROC_DELETE_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
+PREPROC_DELETE_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN), type(PREPROC_LINE_COMMENT);
+PREPROC_DELETE_NEWLINE: '\r'?'\n' -> channel(HIDDEN), type(PREPROC_NEWLINE);
 PREPROC_DELETE_ANY: . -> channel(PREPROC_DELETE_CHANNEL);
