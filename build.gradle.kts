@@ -52,6 +52,13 @@ dependencies {
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation("commons-io", "commons-io", "2.6")
+
+    // lsp4j core
+    api("org.eclipse.lsp4j", "org.eclipse.lsp4j", "0.12.0")
+
+    // stat analysis
+    compileOnly("com.google.code.findbugs", "jsr305", "3.0.2")
+
 }
 
 sourceSets {
@@ -202,6 +209,14 @@ publishing {
                         name.set("Sergey Batanov")
                         email.set("sergey.batanov@dmpas.ru")
                         url.set("https://github.com/dmpas")
+                        organization.set("1c-syntax")
+                        organizationUrl.set("https://github.com/1c-syntax")
+                    }
+                    developer {
+                        id.set("theshadowco")
+                        name.set("Valery Maximov")
+                        email.set("maximovvalery@gmail.com")
+                        url.set("https://github.com/theshadowco")
                         organization.set("1c-syntax")
                         organizationUrl.set("https://github.com/1c-syntax")
                     }

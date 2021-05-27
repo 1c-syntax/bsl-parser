@@ -25,6 +25,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Trees;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import utils.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -426,7 +427,7 @@ class BSLMethodDescriptionParserTest
   }
 
   private void checkSource(String filePath, Pair... rules) {
-    var exampleString = getSourceFromFile(filePath);
+    var exampleString = TestUtils.getSourceFromFile(filePath);
     setInput(exampleString);
     assertMatches(parser.methodDescription());
     var ast = getAst(exampleString);
