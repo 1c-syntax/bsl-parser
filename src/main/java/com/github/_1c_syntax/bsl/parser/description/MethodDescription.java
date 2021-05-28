@@ -24,10 +24,9 @@ package com.github._1c_syntax.bsl.parser.description;
 import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionTokenizer;
 import com.github._1c_syntax.bsl.parser.description.support.DescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.ParameterDescription;
-import com.github._1c_syntax.bsl.parser.description.support.Ranges;
+import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import com.github._1c_syntax.bsl.parser.description.support.TypeDescription;
 import org.antlr.v4.runtime.Token;
-import org.eclipse.lsp4j.Range;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,7 +79,7 @@ public final class MethodDescription implements SourceDefinedSymbolDescription {
   /**
    * Диапазон, в котором располагается описание.
    */
-  private final Range range;
+  private final SimpleRange range;
 
   MethodDescription(List<Token> comments) {
     description = comments.stream()
@@ -98,7 +97,7 @@ public final class MethodDescription implements SourceDefinedSymbolDescription {
     examples = DescriptionReader.readExamples(ast);
     parameters = DescriptionReader.readParameters(ast);
     returnedValue = DescriptionReader.readReturnedValue(ast);
-    range = Ranges.create(comments);
+    range = SimpleRange.create(comments);
   }
 
   @Override
@@ -127,7 +126,7 @@ public final class MethodDescription implements SourceDefinedSymbolDescription {
   }
 
   @Override
-  public Range getRange() {
+  public SimpleRange getSimpleRange() {
     return range;
   }
 

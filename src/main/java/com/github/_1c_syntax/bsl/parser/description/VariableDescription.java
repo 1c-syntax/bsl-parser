@@ -23,9 +23,8 @@ package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionTokenizer;
 import com.github._1c_syntax.bsl.parser.description.support.DescriptionReader;
-import com.github._1c_syntax.bsl.parser.description.support.Ranges;
+import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
-import org.eclipse.lsp4j.Range;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -70,7 +69,7 @@ public final class VariableDescription implements SourceDefinedSymbolDescription
   /**
    * Диапазон, в котором располагается описание.
    */
-  private final Range range;
+  private final SimpleRange range;
 
   /**
    * Описание "висячего" комментария
@@ -89,7 +88,7 @@ public final class VariableDescription implements SourceDefinedSymbolDescription
     var tokenizer = new BSLMethodDescriptionTokenizer(description);
     var ast = requireNonNull(tokenizer.getAst());
 
-    range = Ranges.create(comments);
+    range = SimpleRange.create(comments);
     purposeDescription = DescriptionReader.readPurposeDescription(ast);
     link = DescriptionReader.readLink(ast);
     deprecated = ast.deprecate() != null;
@@ -127,7 +126,7 @@ public final class VariableDescription implements SourceDefinedSymbolDescription
   }
 
   @Override
-  public Range getRange() {
+  public SimpleRange getSimpleRange() {
     return range;
   }
 

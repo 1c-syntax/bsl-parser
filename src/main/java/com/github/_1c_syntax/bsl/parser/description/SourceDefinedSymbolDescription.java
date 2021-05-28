@@ -21,9 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import com.github._1c_syntax.bsl.parser.description.support.Ranges;
-import org.antlr.v4.runtime.Token;
-import org.eclipse.lsp4j.Range;
+import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 
 /**
  * Базовый интерфейс объектов, имеющих описание
@@ -73,16 +71,5 @@ public interface SourceDefinedSymbolDescription {
    *
    * @return Область описания
    */
-  Range getRange();
-
-  /**
-   * Проверяет вхождение области заданной двумя пограничными токенами в область описания
-   *
-   * @param first Токен левого верхнего угла области
-   * @param last  Токен нижнего правого узла области
-   * @return Признак вхождения
-   */
-  default boolean contains(Token first, Token last) {
-    return org.eclipse.lsp4j.util.Ranges.containsRange(getRange(), Ranges.create(first, last));
-  }
+  SimpleRange getSimpleRange();
 }

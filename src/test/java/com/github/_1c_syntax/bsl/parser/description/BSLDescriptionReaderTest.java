@@ -24,10 +24,9 @@ package com.github._1c_syntax.bsl.parser.description;
 import com.github._1c_syntax.bsl.parser.BSLParser;
 import com.github._1c_syntax.bsl.parser.BSLTokenizer;
 import com.github._1c_syntax.bsl.parser.description.support.ParameterDescription;
+import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import com.github._1c_syntax.bsl.parser.description.support.TypeDescription;
 import org.antlr.v4.runtime.Token;
-import org.eclipse.lsp4j.Position;
-import org.eclipse.lsp4j.Range;
 import org.junit.jupiter.api.Test;
 import utils.TestUtils;
 
@@ -96,7 +95,7 @@ class BSLDescriptionReaderTest {
       "Произвольный", "", 0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getRange(), create(75, 20)))
+      Objects.equals(methodDescription.getSimpleRange(), create(75, 20)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0), "Структура", "параметры выполнения задания:",
@@ -134,7 +133,7 @@ class BSLDescriptionReaderTest {
       0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getRange(), create(7, 2)))
+      Objects.equals(methodDescription.getSimpleRange(), create(7, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
@@ -187,7 +186,7 @@ class BSLDescriptionReaderTest {
       "Строка", "см. синтакс-помощник платформы.", 0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getRange(), create(23, 2)))
+      Objects.equals(methodDescription.getSimpleRange(), create(23, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
@@ -224,7 +223,7 @@ class BSLDescriptionReaderTest {
       "Строка", "Описание строки", 0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getRange(), create(10, 2)))
+      Objects.equals(methodDescription.getSimpleRange(), create(10, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
@@ -248,7 +247,7 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getParameters()).isEmpty();
 
     assertThat(
-      Objects.equals(methodDescription.getRange(), create(329, 2)))
+      Objects.equals(methodDescription.getSimpleRange(), create(329, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
@@ -304,7 +303,7 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(methodDescription.getRange(), create(329, 2)))
+      Objects.equals(methodDescription.getSimpleRange(), create(329, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).isEmpty();
     assertThat(methodDescription.getParameters()).hasSize(1);
@@ -400,7 +399,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(variableDescription.getRange(), create(0, 22)))
+      Objects.equals(variableDescription.getSimpleRange(), create(0, 22)))
       .isTrue();
   }
 
@@ -421,7 +420,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(variableDescription.getRange(), create(0, 22)))
+      Objects.equals(variableDescription.getSimpleRange(), create(0, 22)))
       .isTrue();
 
     assertThat(variableDescription.getTrailingDescription().get().getDescription()).isEqualTo(exampleString2);
@@ -448,7 +447,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(variableDescription.getRange(), create(1, 32)))
+      Objects.equals(variableDescription.getSimpleRange(), create(1, 32)))
       .isTrue();
   }
 
@@ -467,7 +466,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEqualTo("НоваяПеременная");
 
     assertThat(
-      Objects.equals(variableDescription.getRange(), create(0, 22)))
+      Objects.equals(variableDescription.getSimpleRange(), create(0, 22)))
       .isTrue();
   }
 
@@ -502,7 +501,7 @@ class BSLDescriptionReaderTest {
     assertThat(type.isHyperlink()).isEqualTo(isHyperlink);
   }
 
-  private Range create(int endLine, int endChar) {
-    return new Range(new Position(0, 0), new Position(endLine, endChar));
+  private SimpleRange create(int endLine, int endChar) {
+    return new SimpleRange(0, 0, endLine, endChar);
   }
 }
