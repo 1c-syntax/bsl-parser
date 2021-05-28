@@ -22,6 +22,7 @@
 package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
+import org.antlr.v4.runtime.Token;
 
 /**
  * Базовый интерфейс объектов, имеющих описание
@@ -72,4 +73,15 @@ public interface SourceDefinedSymbolDescription {
    * @return Область описания
    */
   SimpleRange getSimpleRange();
+
+  /**
+   * Проверяет вхождение области заданной двумя пограничными токенами в область описания
+   *
+   * @param first Токен левого верхнего угла области
+   * @param last  Токен нижнего правого узла области
+   * @return Признак вхождения
+   */
+  default boolean contains(Token first, Token last) {
+    return SimpleRange.containsRange(getSimpleRange(), SimpleRange.create(first, last));
+  }
 }

@@ -57,6 +57,35 @@ public final class SimpleRange {
     this.endCharacter = endCharacter;
   }
 
+  /**
+   * Проверяет вхождение второй области в первую
+   *
+   * @param bigger  Первая область
+   * @param smaller Вторая область
+   * @return Признак вхождения второй в первую
+   */
+  public static boolean containsRange(SimpleRange bigger, SimpleRange smaller) {
+    if (bigger.getStartLine() > smaller.getStartLine()
+      || bigger.getEndLine() < smaller.getEndLine()) {
+      return false;
+    }
+
+    if (bigger.getStartLine() == smaller.getStartLine()
+      && bigger.getStartCharacter() > smaller.getStartCharacter()) {
+      return false;
+    }
+
+    return bigger.getEndLine() != smaller.getEndLine()
+      || bigger.getEndCharacter() >= smaller.getEndCharacter();
+  }
+
+  /**
+   * Создает новую область по токенам углов области
+   *
+   * @param startToken Токен левого верхнего угла
+   * @param endToken   Токен правого нижнего узла
+   * @return Созданная область
+   */
   public static SimpleRange create(Token startToken, Token endToken) {
     int startLine = startToken.getLine() - 1;
     int startChar = startToken.getCharPositionInLine();
@@ -71,6 +100,12 @@ public final class SimpleRange {
     return new SimpleRange(startLine, startChar, endLine, endChar);
   }
 
+  /**
+   * Создает область по списку токенов
+   *
+   * @param tokens Список токенов области
+   * @return Созданная область
+   */
   public static SimpleRange create(List<Token> tokens) {
     if (tokens.isEmpty()) {
       return new SimpleRange(0, 0, 0, 0);

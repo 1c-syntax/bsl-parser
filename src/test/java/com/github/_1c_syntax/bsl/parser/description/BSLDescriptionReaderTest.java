@@ -305,6 +305,9 @@ class BSLDescriptionReaderTest {
     assertThat(
       Objects.equals(methodDescription.getSimpleRange(), create(329, 2)))
       .isTrue();
+
+    assertThat(methodDescription.contains(tokens.get(1), tokens.get(7))).isTrue();
+
     assertThat(methodDescription.getReturnedValue()).isEmpty();
     assertThat(methodDescription.getParameters()).hasSize(1);
     var firstParameter = methodDescription.getParameters().get(0);
