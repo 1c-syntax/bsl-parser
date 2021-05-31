@@ -51,7 +51,7 @@ selectQuery: (subquery ordersAndTotals) | (temporaryTableSubquery orders? indexi
 // простой подзапрос для выборки данных, состоит из первого запроса (main) и объединений с остальными
 subquery: main=query union*;
 // объединение запросов
-union: UNION all=ALL? query;
+union: (UNION | UNION_ALL) query;
 // структура запроса
 query:
     SELECT limitations
@@ -87,13 +87,13 @@ from: (FROM dataSources)?;
 // и объединения с "обычными" запросами
 temporaryTableSubquery: main=temporaryTableMainQuery temporaryTableUnion*;
 // объединение запросов
-temporaryTableUnion: UNION all=ALL? temporaryTableQuery;
+temporaryTableUnion: (UNION | UNION_ALL) temporaryTableQuery;
 // структура запроса помещения во временную таблицу (основной)
 temporaryTableMainQuery:
     SELECT limitations
     temporaryTableSelectedFields
-    into?
-    temporaryTableFrom
+    into
+    from
     where
     groupBy
     having
@@ -103,7 +103,7 @@ temporaryTableMainQuery:
 temporaryTableQuery:
     SELECT limitations
     temporaryTableSelectedFields
-    temporaryTableFrom
+    from
     where
     groupBy
     having
@@ -120,14 +120,10 @@ temporaryTableSelectedField:
     ;
 // помещение во временную таблицу
 into: INTO temporaryTableName=identifier;
-// источники данных для временной таблицы
-temporaryTableFrom: (FROM temporaryTableDataSources)?;
-// перечень таблиц-источников данных для выборки
-temporaryTableDataSources: (dataSources | parameterTable) (COMMA dataSources | parameterTable)*;
 // таблица как параметр, соединяться ни с чем не может
 parameterTable: parameter alias;
 // индексирование во временной таблице
-indexing: (INDEX by=(BY_EN | PO_RU) indexingItem (COMMA indexingItem)*)?;
+indexing: (INDEX_BY indexingItem (COMMA indexingItem)*)?;
 // поле индексирования, может быть колонкой или параметром
 indexingItem: parameter | column;
 
@@ -137,7 +133,7 @@ inlineSubquery: LPAREN subquery orders? RPAREN;
 // COMMON FOR QUERIES
 
 // конструкция для изменения, может содержать перечень таблиц, которые необходимо заблокировать для изменения
-forUpdate: (FOR UPDATE mdo?)?;
+forUpdate: (FOR_UPDATE mdo?)?;
 
 // ограничения выборки, для ускорения анализа развернуты все варианты
 limitations:
@@ -182,10 +178,10 @@ totalsGroup:
     ;
 
 // только упорядочивание
-orders: ORDER by=(BY_EN | PO_RU) ordersItems;
+orders: ORDER_BY ordersItems;
 ordersItems: ordersItem (COMMA ordersItem)*;
 ordersItem: ordersExpression orderDirection? alias;
-orderDirection: ASC | DESC | (hierarhy=(HIERARCHY_EN | HIERARCHYA_RU) DESC?);
+orderDirection: ASC | DESC | (HIERARCHY DESC?);
 
 // перечень таблиц-источников данных для выборки
 dataSources: dataSource (COMMA dataSource)*;
@@ -196,6 +192,7 @@ dataSource:
         | inlineSubquery
         | table
         | virtualTable
+        | parameterTable
     ) alias joinPart*
     ;
 
@@ -217,15 +214,15 @@ virtualTableParameter: virtualTableExpression?;
 
 // соединения таблиц
 joinPart:
-    (INNER? | ((LEFT | RIGHT | FULL) OUTER?))           // тип соединения
-    JOIN dataSource on=(ON_EN | PO_RU) joinExpression   // имя таблицы и соединение
+    (INNER_JOIN | LEFT_JOIN | RIGHT_JOIN | FULL_JOIN | JOIN)           // тип соединения
+    dataSource on=(ON_EN | PO_RU) joinExpression   // имя таблицы и соединение
     ;
 
 // условия выборки
 where: (WHERE whereExpression)?;
 
 // группировка данных
-groupBy: (GROUP by=(BY_EN | PO_RU) groupByItems)?;
+groupBy: (GROUP_BY groupByItems)?;
 groupByItems: groupByExpression (COMMA groupByExpression)*;
 
 // условия на аггрегированные данные
@@ -250,9 +247,9 @@ selectMember:
       selectStatement
     | selectBinaryStatement
     | selectComparyStatement
-    | (selectStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
+    | (selectStatement NOT? in (inlineSubquery | (LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
     | (LPAREN selectStatement (COMMA selectStatement)+ RPAREN NOT? IN (inlineSubquery | ( LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
-    | (NOT+ selectStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
+    | (NOT+ selectStatement NOT? in (inlineSubquery | (LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
     | (NOT+ LPAREN selectStatement (COMMA selectStatement)+ RPAREN NOT? IN (inlineSubquery | ( LPAREN selectStatement (COMMA selectStatement)*) RPAREN))
     | (selectStatement IS NOT? NULL)
     | (selectStatement REFS mdo)
@@ -268,9 +265,9 @@ virtualTableMember:
       virtualTableStatement
     | virtualTableBinaryStatement
     | virtualTableComparyStatement
-    | (virtualTableStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
+    | (virtualTableStatement NOT? in (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
     | (LPAREN virtualTableStatement (COMMA virtualTableStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
-    | (NOT+ virtualTableStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
+    | (NOT+ virtualTableStatement NOT? in (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
     | (NOT+ LPAREN virtualTableStatement (COMMA virtualTableStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN virtualTableStatement (COMMA virtualTableStatement)*) RPAREN))
     | (virtualTableStatement IS NOT? NULL)
     | (virtualTableStatement REFS mdo)
@@ -281,9 +278,9 @@ joinMember:
       joinStatement
     | joinBinaryStatement
     | joinComparyStatement
-    | (joinStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
+    | (joinStatement NOT? in (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
     | (LPAREN joinStatement (COMMA joinStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
-    | (NOT+ joinStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
+    | (NOT+ joinStatement NOT? in (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
     | (NOT+ LPAREN joinStatement (COMMA joinStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN joinStatement (COMMA joinStatement)*) RPAREN))
     | (joinStatement IS NOT? NULL)
     | (joinStatement REFS mdo)
@@ -294,9 +291,9 @@ whereMember:
       whereStatement
     | whereBinaryStatement
     | whereComparyStatement
-    | (whereStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
+    | (whereStatement NOT? in (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
     | (LPAREN whereStatement (COMMA whereStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
-    | (NOT+ whereStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
+    | (NOT+ whereStatement NOT? in (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
     | (NOT+ LPAREN whereStatement (COMMA whereStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN whereStatement (COMMA whereStatement)*) RPAREN))
     | (whereStatement IS NOT? NULL)
     | (whereStatement REFS mdo)
@@ -307,9 +304,9 @@ groupByMember:
       groupByStatement
     | groupByBinaryStatement
     | groupByComparyStatement
-    | (groupByStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
+    | (groupByStatement NOT? in (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
     | (LPAREN groupByStatement (COMMA groupByStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
-    | (NOT+ groupByStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
+    | (NOT+ groupByStatement NOT? in (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
     | (NOT+ LPAREN groupByStatement (COMMA groupByStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN groupByStatement (COMMA groupByStatement)*) RPAREN))
     | (groupByStatement IS NOT? NULL)
     | (groupByStatement REFS mdo)
@@ -320,9 +317,9 @@ havingMember:
       havingStatement
     | havingBinaryStatement
     | havingComparyStatement
-    | (havingStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
+    | (havingStatement NOT? in (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
     | (LPAREN havingStatement (COMMA havingStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
-    | (NOT+ havingStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
+    | (NOT+ havingStatement NOT? in (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
     | (NOT+ LPAREN havingStatement (COMMA havingStatement)+ RPAREN NOT? IN (inlineSubquery | (LPAREN havingStatement (COMMA havingStatement)*) RPAREN))
     | (havingStatement IS NOT? NULL)
     | (havingStatement REFS mdo)
@@ -331,8 +328,8 @@ totalsItemMember:
       totalsItemStatement
     | totalsItemBinaryStatement
     | totalsItemComparyStatement
-    | (totalsItemStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN totalsItemStatement (COMMA totalsItemStatement)*) RPAREN))
-    | (NOT+ totalsItemStatement NOT? IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN totalsItemStatement (COMMA totalsItemStatement)*) RPAREN))
+    | (totalsItemStatement NOT? in (inlineSubquery | (LPAREN totalsItemStatement (COMMA totalsItemStatement)*) RPAREN))
+    | (NOT+ totalsItemStatement NOT? in (inlineSubquery | (LPAREN totalsItemStatement (COMMA totalsItemStatement)*) RPAREN))
     | (totalsItemStatement IS NOT? NULL)
     ;
 totalsGroupMember:
@@ -344,9 +341,9 @@ ordersMember:
       ordersStatement
     | ordersBinaryStatement
     | ordersComparyStatement
-    | (ordersStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
+    | (ordersStatement in (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
     | (LPAREN ordersStatement (COMMA ordersStatement)+ RPAREN IN (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
-    | (NOT+ ordersStatement IN (hierarhy=(HIERARCHY_EN | HIERARCHII_RU))? (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
+    | (NOT+ ordersStatement in (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
     | (NOT+ LPAREN ordersStatement (COMMA ordersStatement)+ RPAREN IN (inlineSubquery | (LPAREN ordersStatement (COMMA ordersStatement)*) RPAREN))
     ;
 
@@ -482,6 +479,7 @@ whereStatement:
     | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN whereExpression COMMA datePart RPAREN)
     | (MINUS* doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN whereExpression RPAREN)
     | (doCall=SUBSTRING LPAREN whereExpression COMMA whereExpression COMMA whereExpression RPAREN)
+    | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION) LPAREN whereExpression RPAREN)
     ;
 whereBinaryStatement: whereStatement (binaryOperation whereStatement)+;
 whereComparyStatement: (whereBinaryStatement | whereStatement) compareOperation (whereBinaryStatement | whereStatement);
@@ -666,20 +664,10 @@ identifier:
     | TASK_TYPE
     | EXTERNAL_DATA_SOURCE_TYPE
     // ключевые слова
-    | ALL
     | DROP
     | END
-    | FULL
-    | HIERARCHY_EN
-    | HIERARCHII_RU
-    | HIERARCHYA_RU
-    | INDEX
     | ISNULL
     | JOIN
-    | LEFT
-    | ORDER
-    | OUTER
-    | RIGHT
     | SELECT
     | TOTALS
     | UNION
@@ -715,7 +703,6 @@ identifier:
     | SUM
     | TENDAYS
     | TYPE
-    | UPDATE
     | VALUE
     | VALUETYPE
     | WEEK
@@ -760,20 +747,10 @@ identifierWithoutTT:
     | TASK_TYPE
     | EXTERNAL_DATA_SOURCE_TYPE
     // ключевые слова
-    | ALL
     | DROP
     | END
-    | FULL
-    | HIERARCHY_EN
-    | HIERARCHII_RU
-    | HIERARCHYA_RU
-    | INDEX
     | ISNULL
     | JOIN
-    | LEFT
-    | ORDER
-    | OUTER
-    | RIGHT
     | SELECT
     | TOTALS
     | UNION
@@ -809,7 +786,6 @@ identifierWithoutTT:
     | SUM
     | TENDAYS
     | TYPE
-    | UPDATE
     | VALUE
     | VALUETYPE
     | WEEK
@@ -828,6 +804,8 @@ alias       : (AS? name=identifier)?;
 column      : (tableName=identifier DOT)* name=identifier;
 // параметр, может быть и таблицей, где name - идентификатор параметра
 parameter   : AMPERSAND name=PARAMETER_IDENTIFIER;
+
+in          : (IN | IN_HIERARCHY);
 
 // имена виртуальных таблиц
 virtualTableName:
