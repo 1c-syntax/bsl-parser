@@ -1174,4 +1174,32 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
       .hasSize(1);
 
   }
+
+  @Test
+  void TestNoWait() {
+
+    setInput("Процедура Test()\n" +
+      "Ждать = КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1     \n" +
+      "если Ждать тогда \n" +
+      "  возврат;\n" +
+      "конецесли;\n" +
+      "если Ждать > мояФункция(а) тогда \n" +
+      "  возврат;\n" +
+      "конецесли;\n" +
+      "EndProcedure");
+    var file = parser.file();
+    assertMatches(file);
+    var subs = file.subs();
+    assertMatches(subs);
+    var listSubs = subs.sub();
+    listSubs.forEach(this::assertMatches);
+    var proc = listSubs.get(0);
+    assertMatches(proc);
+    var subCodeblock = proc.procedure().subCodeBlock();
+    assertMatches(subCodeblock);
+    var codeBlock = subCodeblock.codeBlock();
+    assertMatches(codeBlock);
+    var statements = codeBlock.statement();
+    statements.forEach(this::assertMatches);
+  }
 }

@@ -32,6 +32,7 @@ public BSLLexer(CharStream input, boolean crAwareCostructor) {
   _interp = new CRAwareLexerATNSimulator(this, _ATN);
   validateInputStream(_ATN, input);
 }
+boolean isAsync = false;
 }
 
 // commons
@@ -189,14 +190,14 @@ FUNCTION_KEYWORD
     | F U N C T I O N
     ;
 ENDPROCEDURE_KEYWORD
-    :
-     RU_K RU_O RU_N RU_E RU_C RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_Y
-    | E N D P R O C E D U R E
+    : {isAsync = false;}
+     (RU_K RU_O RU_N RU_E RU_C RU_P RU_R RU_O RU_C RU_E RU_D RU_U RU_R RU_Y
+    | E N D P R O C E D U R E)
     ;
 ENDFUNCTION_KEYWORD
-    :
-     RU_K RU_O RU_N RU_E RU_C RU_F RU_U RU_N RU_K RU_C RU_I RU_I
-    | E N D F U N C T I O N
+    : {isAsync = false;}
+     (RU_K RU_O RU_N RU_E RU_C RU_F RU_U RU_N RU_K RU_C RU_I RU_I
+    | E N D F U N C T I O N)
     ;
 EXPORT_KEYWORD
     :
@@ -349,12 +350,12 @@ REMOVEHANDLER_KEYWORD
     | R E M O V E H A N D L E R
     ;
 ASYNC_KEYWORD
-    : RU_A RU_S RU_I RU_N RU_H
-    | A S Y N C
+    : {isAsync = true;} (RU_A RU_S RU_I RU_N RU_H
+    | A S Y N C)
     ;
 WAIT_KEYWORD
-    : RU_ZH RU_D RU_A RU_T RU_SOFT_SIGN
-    | W A I T
+    : {isAsync}? (RU_ZH RU_D RU_A RU_T RU_SOFT_SIGN
+    | W A I T)
     ;
 
 fragment LETTER: [\p{Letter}] | '_';
