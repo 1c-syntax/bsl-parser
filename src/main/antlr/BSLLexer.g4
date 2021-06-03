@@ -32,7 +32,7 @@ public BSLLexer(CharStream input, boolean crAwareCostructor) {
   _interp = new CRAwareLexerATNSimulator(this, _ATN);
   validateInputStream(_ATN, input);
 }
-boolean isAsync = false;
+private boolean isAsync = false;
 }
 
 // commons
