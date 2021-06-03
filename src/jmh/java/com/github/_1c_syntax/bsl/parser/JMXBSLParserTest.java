@@ -21,40 +21,72 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
-import org.apache.commons.io.FileUtils;
+import org.antlr.v4.runtime.Parser;
 import org.apache.commons.io.IOUtils;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.Param;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.util.ClassUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 
-//@BenchmarkMode(Mode.SampleTime)
-//@Warmup(iterations = 2) // число итераций для прогрева нашей функции
-//@Measurement(iterations = 2, batchSize = 2)
-//@State(Scope.Thread)
+@BenchmarkMode(Mode.SampleTime)
+@Warmup(iterations = 2) // число итераций для прогрева нашей функции
+@Measurement(iterations = 2, batchSize = 2)
+@State(Scope.Thread)
 public class JMXBSLParserTest {
 
-  //@Param({"true", "false"})
-  public boolean liteParser;
+  @Param({"BSLLexer"})
+  public String lexerClassName;
+  @Param({"BSLParser"})
+  public String parserClassName;
+  @Param({"file"})
+  public String parserRootASTMethodName;
 
   private String content;
 
-  {
-    try {
-      content = FileUtils.readFileToString(new File("C:/git/1c-syntax/bsl-parser/src/jmh/resources/Module.bsl"), StandardCharsets.UTF_8);
+  public JMXBSLParserTest() {
+    final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    try (InputStream inputStream = classLoader.getResourceAsStream("Module.bsl")) {
+      assert inputStream != null;
+      content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-  //@Benchmark
-  public void testCharStream() {
-    Tokenizer tokenizer = new Tokenizer(content);
+  @Benchmark
+  public void parserTest()
+    throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+    var parserClass = (Class<Parser>) ClassUtils.loadClass(
+      "com.github._1c_syntax.bsl.parser." + parserClassName);
+    var parserRootASTMethod = parserClass.getMethod(parserRootASTMethodName);
+    var lexerClass = (Class<Lexer>) ClassUtils.loadClass(
+      "com.github._1c_syntax.bsl.parser." + lexerClassName);
+    var lexer = (Lexer) lexerClass.getDeclaredConstructors()[0]
+      .newInstance(CharStreams.fromString(""), true);
+
+    var tokenizer = new Tokenizer<>(content, lexer, parserClass) {
+
+      @Override
+      protected BSLParserRuleContext rootAST() {
+        try {
+          return (BSLParserRuleContext) parserRootASTMethod.invoke(parser);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+          throw new RuntimeException("Error: ", e);
+        }
+      }
+    };
     tokenizer.getAst();
   }
 
