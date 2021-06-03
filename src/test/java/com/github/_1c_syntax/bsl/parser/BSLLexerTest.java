@@ -103,8 +103,8 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
   @Test
   void testCRCR() {
     List<Token> tokens = getTokens(BSLLexer.DEFAULT_MODE, "\r\n\r\r\n");
-    assert tokens.get(0).getLine() == 1;
-    assert tokens.get(1).getLine() == 4;
+    assertThat(tokens.get(0).getLine()).isEqualTo(1);
+    assertThat(tokens.get(1).getLine()).isEqualTo(4);
   }
 
   @Test

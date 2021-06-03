@@ -36,6 +36,10 @@ methodDescription:
         | (deprecate? descriptionBlock? parameters? examples? returnsValues? callOptions?)
         | (deprecate? descriptionBlock? parameters? callOptions? examples? returnsValues?)
         | (deprecate? descriptionBlock? parameters? examples? callOptions? returnsValues?)
+        | (descriptionBlock? parameters? callOptions? returnsValues? examples? deprecate?)
+        | (descriptionBlock? parameters? examples? returnsValues? callOptions? deprecate?)
+        | (descriptionBlock? parameters? callOptions? examples? returnsValues? deprecate?)
+        | (descriptionBlock? parameters? examples? callOptions? returnsValues? deprecate?)
     ) EOF;
 
 // deprecate
@@ -46,7 +50,7 @@ deprecateDescription: ~(SPACE | EOL) ~EOL*;
 descriptionBlock: (hyperlinkBlock | description) EOL?;
 description: descriptionString+;
 descriptionString:
-      (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+      (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | DEPRECATE_KEYWORD | EOL | SPACE) ~EOL* EOL?)
     | (startPart EOL)
     ;
 

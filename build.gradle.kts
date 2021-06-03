@@ -46,12 +46,19 @@ dependencies {
 
     implementation("com.github.1c-syntax", "utils", "0.2.1")
 
+    // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
+    implementation("commons-beanutils", "commons-beanutils", "1.9.4")
+
     testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
     testImplementation("org.assertj", "assertj-core", "3.14.0")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation("commons-io", "commons-io", "2.6")
+
+    // stat analysis
+    compileOnly("com.google.code.findbugs", "jsr305", "3.0.2")
+
 }
 
 sourceSets {
@@ -161,7 +168,6 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_bsl-parser")
         property("sonar.projectName", "BSL Parser")
-        property("sonar.scm.exclusions.disabled", "true")
         property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
     }
 }
@@ -202,6 +208,14 @@ publishing {
                         name.set("Sergey Batanov")
                         email.set("sergey.batanov@dmpas.ru")
                         url.set("https://github.com/dmpas")
+                        organization.set("1c-syntax")
+                        organizationUrl.set("https://github.com/1c-syntax")
+                    }
+                    developer {
+                        id.set("theshadowco")
+                        name.set("Valery Maximov")
+                        email.set("maximovvalery@gmail.com")
+                        url.set("https://github.com/theshadowco")
                         organization.set("1c-syntax")
                         organizationUrl.set("https://github.com/1c-syntax")
                     }

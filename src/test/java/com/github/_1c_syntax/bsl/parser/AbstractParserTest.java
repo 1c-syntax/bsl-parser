@@ -32,10 +32,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -145,16 +143,5 @@ abstract class AbstractParserTest<P extends Parser, L extends Lexer> {
       (parseTree) -> assertThat(parseTree.getChildCount()).isEqualTo(0),
       (parseTree) -> assertThrows(RecognitionException.class, () -> assertMatches(tree))
     );
-  }
-
-  protected String getSourceFromFile(String filePath) {
-    try {
-      return FileUtils.readFileToString(
-        new File(filePath),
-        StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      e.printStackTrace();
-      return "";
-    }
   }
 }
