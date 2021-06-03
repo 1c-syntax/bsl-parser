@@ -41,7 +41,7 @@ public class BSLParserRuleContext extends ParserRuleContext {
    */
   private final Lazy<String> text = new Lazy<>(super::getText);
   /**
-   * Ленивое хранение токенов узал
+   * Ленивое хранение токенов узла
    */
   private final Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
 
