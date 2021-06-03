@@ -31,9 +31,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Расширение базового класса контекста парсера
+ */
 public class BSLParserRuleContext extends ParserRuleContext {
 
+  /**
+   * Ленивое хранение текста узла
+   */
   private final Lazy<String> text = new Lazy<>(super::getText);
+  /**
+   * Ленивое хранение токенов узал
+   */
   private final Lazy<List<Token>> tokens = new Lazy<>(this::computeTokens);
 
   public BSLParserRuleContext() {
@@ -42,25 +51,6 @@ public class BSLParserRuleContext extends ParserRuleContext {
 
   public BSLParserRuleContext(ParserRuleContext parent, int invokingStateNumber) {
     super(parent, invokingStateNumber);
-  }
-
-  @Override
-  public String getText() {
-    return text.getOrCompute();
-  }
-
-  public List<Token> getTokens() {
-    return tokens.getOrCompute();
-  }
-
-  private List<Token> computeTokens() {
-    if (children == null) {
-      return Collections.emptyList();
-    }
-
-    List<Token> results = new ArrayList<>();
-    getTokensFromParseTree(this, results);
-    return Collections.unmodifiableList(results);
   }
 
   private static void getTokensFromParseTree(ParseTree tree, List<Token> tokens) {
@@ -75,4 +65,34 @@ public class BSLParserRuleContext extends ParserRuleContext {
       }
     }
   }
+
+  @Override
+  public String getText() {
+    return text.getOrCompute();
+  }
+
+  public List<Token> getTokens() {
+    return tokens.getOrCompute();
+  }
+
+  @Override
+  public BSLParserRuleContext getParent() {
+    return (BSLParserRuleContext) super.getParent();
+  }
+
+  @Override
+  public BSLParserRuleContext getRuleContext() {
+    return (BSLParserRuleContext) super.getRuleContext();
+  }
+
+  private List<Token> computeTokens() {
+    if (children == null) {
+      return Collections.emptyList();
+    }
+
+    List<Token> results = new ArrayList<>();
+    getTokensFromParseTree(this, results);
+    return Collections.unmodifiableList(results);
+  }
+
 }
