@@ -22,13 +22,25 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.Token;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
+
+  private static final Pattern PROCEDURE_PATTERN = Pattern.compile("^процедура\\s",
+    Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.MULTILINE);
+  private static final Pattern FUNCTION_PATTERN = Pattern.compile("^Функция\\s",
+    Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.MULTILINE);
 
   BSLLexerTest() {
     super(BSLLexer.class);
@@ -545,5 +557,67 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
       BSLLexer.PREPROC_DELETE_ANY);
     assertMatchChannel(BSLLexer.PREPROC_DELETE_CHANNEL, "#Удаление\r", BSLLexer.PREPROC_DELETE,
       BSLLexer.PREPROC_DELETE_ANY);
+  }
+
+  @Test
+  void checkAsyncModeMapping() {
+    String content;
+    final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    try (InputStream inputStream = classLoader.getResourceAsStream("Module.bsl")) {
+      assert inputStream != null;
+      content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new RuntimeException("Error: ", e);
+    }
+
+    var asyncContent = PROCEDURE_PATTERN.matcher(content).replaceAll("Асинх Процедура ");
+    asyncContent = FUNCTION_PATTERN.matcher(asyncContent).replaceAll("Асинх Функция ");
+
+    var tokensCount = 76441;
+    var asyncCount = 438;
+    var asyncSpaceCount = 438;
+    var tokens = getTokens(BSLLexer.DEFAULT_MODE, content);
+    assertThat(tokens).hasSize(tokensCount);
+
+    // проверка наличия всех токенов в фикстуре
+    var tokenTypes = tokens.stream().map(Token::getType).collect(Collectors.toSet());
+    for (int i = 1; i <= BSLLexer.VOCABULARY.getMaxTokenType(); i++) {
+      if (BSLLexer.WAIT_KEYWORD == i // этих токенов быть не должно
+        || BSLLexer.ASYNC_KEYWORD == i
+        || BSLLexer.PREPROC_EXCLAMATION_MARK == i
+        || BSLLexer.PREPROC_STRING == i
+        || BSLLexer.PREPROC_USE_KEYWORD == i
+        || BSLLexer.PREPROC_LINUX == i
+        || BSLLexer.PREPROC_WINDOWS == i
+        || BSLLexer.PREPROC_MACOS == i
+        || BSLLexer.PREPROC_ANY == i
+        || BSLLexer.ANNOTATION_UNKNOWN == i
+        || BSLLexer.PREPROC_DELETE_ANY == i
+        || BSLLexer.UNKNOWN == i) {
+        assertThat(tokenTypes).doesNotContain(i);
+      } else {
+        assertThat(tokenTypes).contains(i);
+      }
+    }
+
+    var asyncTokens = getTokens(BSLLexer.DEFAULT_MODE, asyncContent);
+    assertThat(asyncTokens).hasSize(tokensCount + asyncCount + asyncSpaceCount);
+
+    // убираем лишние токены Асинх и пробел после него
+    for (int i = asyncTokens.size() - 1; i > 0; i--) {
+      var token = asyncTokens.get(i);
+      if (token.getType() == BSLLexer.ASYNC_KEYWORD) {
+        asyncTokens.remove(i);
+        asyncTokens.remove(i);
+        i--;
+      }
+    }
+
+    assertThat(asyncTokens).hasSize(tokensCount);
+
+    // должны быть равны
+    assertArrayEquals(tokens.stream().map(Token::getType).toArray(),
+      asyncTokens.stream().map(Token::getType).toArray());
   }
 }

@@ -6,7 +6,8 @@
 // Текст лицензии доступен по ссылке:
 // https://creativecommons.org/licenses/by/4.0/legalcode
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// модуль дополнен для использования в качестве фикстуры
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 #Область ПрограммныйИнтерфейс
 
 // Получает значение настройки плана обмена по ее имени.
@@ -15117,4 +15118,37 @@
 	
 КонецФункции
 
+#КонецОбласти
+
+#Область Дополнение
+&AtServer
+&Server
+&AtClient
+&Client
+&ATSERVERNOCONTEXT
+&ATCLIENTATSERVERNOCONTEXT
+&ATCLIENTATSERVER
+&После
+&Вместо
+&Перед
+&ИзменениеИКонтроль
+Функция ДополнениеФикстуры()
+    ~Метка:
+        f = 1%2;
+    Goto ~Метка;
+    #delete
+    #enddelete
+    #insert
+    #endinsert
+    #if (client or server and MOBILEAPPCLIENT OR MOBILEAPPSERVER) or EXTERNALCONNECTION AND THINCLIENT AND WEBCLIENT then
+    #elsif not MOBILECLIENT OR THICKCLIENTORDINARYAPPLICATION AND THICKCLIENTMANAGEDAPPLICATION     or AtServer or AtClient then //d
+    #else
+    #endif
+    d = null;
+    d = 1.2;
+    execute("d = 0");
+    addHandler f();
+    removeHandler f();
+    d = неопределено;
+КонецФункции
 #КонецОбласти

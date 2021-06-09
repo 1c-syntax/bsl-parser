@@ -87,7 +87,7 @@ PREPROC_ENDINSERT
     ;
 HASH: '#' -> pushMode(PREPROCESSOR_MODE);
 
-SQUOTE: '\'';
+fragment SQUOTE: '\'';
 BAR: '|';
 TILDA: '~' -> pushMode(LABEL_MODE);
 
@@ -362,10 +362,7 @@ PREPROC_EXCLAMATION_MARK: '!';
 PREPROC_LPAREN: '(';
 PREPROC_RPAREN: ')';
 
-PREPROC_STRINGSTART: '"' (~["\n\r])*;
 PREPROC_STRING: '"' (~["\n\r])* '"';
-PREPROC_STRINGTAIL: BAR (~["\n\r])* '"';
-PREPROC_STRINGPART: BAR (~["\n\r])*;
 
 PREPROC_USE_KEYWORD
     :
@@ -687,7 +684,6 @@ Async_PREPROC_INSERT: PREPROC_INSERT -> type(PREPROC_INSERT), channel(HIDDEN);
 Async_PREPROC_ENDINSERT: PREPROC_ENDINSERT -> type(PREPROC_ENDINSERT), channel(HIDDEN);
 
 Async_HASH: HASH -> type(HASH), pushMode(PREPROCESSOR_MODE);
-Async_SQUOTE: SQUOTE -> type(SQUOTE);
 Async_BAR: BAR -> type(BAR);
 Async_TILDA: TILDA -> type(TILDA), pushMode(LABEL_MODE);
 
