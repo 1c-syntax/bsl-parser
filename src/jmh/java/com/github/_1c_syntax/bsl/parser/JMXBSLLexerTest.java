@@ -21,9 +21,11 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.UnicodeCharStream;
 import org.apache.commons.io.IOUtils;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -46,9 +48,15 @@ import java.nio.charset.StandardCharsets;
 @State(Scope.Thread)
 public class JMXBSLLexerTest {
 
-  @Param({"BSLLexer"})
+  @Param({
+    "BSLLexer"
+    //, "BSLLexerOld"
+  })
   public String lexerClassName;
-  @Param({"BSLParser"})
+  @Param({
+    "BSLParser"
+    //, "BSLParserOld"
+  })
   public String parserClassName;
   @Param({"file"})
   public String parserRootASTMethodName;
@@ -73,8 +81,8 @@ public class JMXBSLLexerTest {
     var parserRootASTMethod = parserClass.getMethod(parserRootASTMethodName);
     var lexerClass = (Class<Lexer>) ClassUtils.loadClass(
       "com.github._1c_syntax.bsl.parser." + lexerClassName);
-    var lexer = (Lexer) lexerClass.getDeclaredConstructors()[0]
-      .newInstance(CharStreams.fromString(""), true);
+    var lexer = (Lexer) lexerClass.getConstructor(CharStream.class)
+      .newInstance(CharStreams.fromString(""));
 
     var tokenizer = new Tokenizer<>(content, lexer, parserClass) {
 

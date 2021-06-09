@@ -496,10 +496,37 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
     assertMatch("Поле.Асинх", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
     assertMatch("Field.ASYNC", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
 
-    assertMatch("ЖдатЬ", BSLLexer.WAIT_KEYWORD);
-    assertMatch("WAIt", BSLLexer.WAIT_KEYWORD);
+    assertMatch("ЖдатЬ", BSLLexer.IDENTIFIER);
+    assertMatch("WAIt", BSLLexer.IDENTIFIER);
     assertMatch("Поле.ждАть", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
     assertMatch("Field.WaIT", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+
+    assertMatch("асинх функция а() ЖдатЬ Б(); КонецФункции",
+      BSLLexer.ASYNC_KEYWORD,
+      BSLLexer.FUNCTION_KEYWORD,
+      BSLLexer.IDENTIFIER,
+      BSLLexer.LPAREN,
+      BSLLexer.RPAREN,
+      BSLLexer.WAIT_KEYWORD,
+      BSLLexer.IDENTIFIER,
+      BSLLexer.LPAREN,
+      BSLLexer.RPAREN,
+      BSLLexer.SEMICOLON,
+      BSLLexer.ENDFUNCTION_KEYWORD
+    );
+    assertMatch("async function a() wait b(); endfunction",
+      BSLLexer.ASYNC_KEYWORD,
+      BSLLexer.FUNCTION_KEYWORD,
+      BSLLexer.IDENTIFIER,
+      BSLLexer.LPAREN,
+      BSLLexer.RPAREN,
+      BSLLexer.WAIT_KEYWORD,
+      BSLLexer.IDENTIFIER,
+      BSLLexer.LPAREN,
+      BSLLexer.RPAREN,
+      BSLLexer.SEMICOLON,
+      BSLLexer.ENDFUNCTION_KEYWORD
+    );
   }
 
   @Test
