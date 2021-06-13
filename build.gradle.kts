@@ -8,7 +8,7 @@ plugins {
     `java-library`
     antlr
     id("com.github.hierynomus.license") version "0.16.1"
-    id("org.sonarqube") version "3.2.0"
+    id("org.sonarqube") version "3.3"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
     id("com.github.ben-manes.versions") version "0.39.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
