@@ -21,9 +21,21 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.UnicodeCharStream;
 import org.apache.commons.io.IOUtils;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.Param;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.util.ClassUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,8 +48,18 @@ import java.nio.charset.StandardCharsets;
 @State(Scope.Thread)
 public class JMXBSLLexerTest {
 
-  @Param({"BSLLexer"})
+  @Param({
+    "BSLLexer"
+    //, "BSLLexerOld"
+  })
   public String lexerClassName;
+  @Param({
+    "BSLParser"
+    //, "BSLParserOld"
+  })
+  public String parserClassName;
+  @Param({"file"})
+  public String parserRootASTMethodName;
 
   private String content;
 
@@ -52,13 +74,27 @@ public class JMXBSLLexerTest {
   }
 
   @Benchmark
-  public void testCharStream()
-    throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+  public void lexerTest()
+    throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+    var parserClass = (Class<Parser>) ClassUtils.loadClass(
+      "com.github._1c_syntax.bsl.parser." + parserClassName);
+    var parserRootASTMethod = parserClass.getMethod(parserRootASTMethodName);
+    var lexerClass = (Class<Lexer>) ClassUtils.loadClass(
+      "com.github._1c_syntax.bsl.parser." + lexerClassName);
+    var lexer = (Lexer) lexerClass.getConstructor(CharStream.class)
+      .newInstance(CharStreams.fromString(""));
 
-    Class<Lexer> lexerClass = (Class<Lexer>) Class.forName("com.github._1c_syntax.bsl.parser." + lexerClassName);
-    Lexer lexer = (Lexer) lexerClass.getDeclaredConstructors()[0].newInstance((Object) null, true);
+    var tokenizer = new Tokenizer<>(content, lexer, parserClass) {
 
-    Tokenizer tokenizer = new Tokenizer(content, lexer);
+      @Override
+      protected BSLParserRuleContext rootAST() {
+        try {
+          return (BSLParserRuleContext) parserRootASTMethod.invoke(parser);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+          throw new RuntimeException("Error: ", e);
+        }
+      }
+    };
     tokenizer.getTokens();
   }
 }

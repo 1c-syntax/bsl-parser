@@ -22,10 +22,15 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.Lexer;
 
 public class BSLTokenizer extends Tokenizer<BSLParser.FileContext, BSLParser> {
   public BSLTokenizer(String content) {
     super(content, new BSLLexer(CharStreams.fromString(""), true), BSLParser.class);
+  }
+
+  public BSLTokenizer(String content, Lexer lexer) {
+    super(content, lexer, BSLParser.class);
   }
 
   @Override
