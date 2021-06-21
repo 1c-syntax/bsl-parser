@@ -56,7 +56,6 @@ AMPERSAND: '&' -> pushMode(PARAMETER_MODE);
 BRACE: '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 
 // KEYWORDS         RU                                                                          EN
-ALL:            RU_V RU_S RU_E                                                              | A L L;
 ALLOWED:        RU_R RU_A RU_Z RU_R RU_E RU_SH RU_E RU_N RU_N RU_Y RU_E                     | A L L O W E D;
 AND:            RU_I                                                                        | A N D;
 AS:             RU_K RU_A RU_K                                                              | A S;
@@ -74,40 +73,26 @@ ELSE:           RU_I RU_N RU_A RU_CH RU_E                                       
 END:            RU_K RU_O RU_N RU_E RU_C                                                    | E N D;
 ESCAPE:         RU_S RU_P RU_E RU_C RU_S RU_I RU_M RU_V RU_O RU_L                           | E S C A P E;
 FALSE:          RU_L RU_O RU_ZH RU_SOFT_SIGN                                                | F A L S E;
-FOR:            RU_D RU_L RU_YA                                                             | F O R;
 FROM:           RU_I RU_Z                                                                   | F R O M;
-FULL:           RU_P RU_O RU_L RU_N RU_O RU_E                                               | F U L L;
-GROUP:          RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN    | G R O U P;
 HAVING:         RU_I RU_M RU_E RU_YU RU_SCH RU_I RU_E                                       | H A V I N G;
-HIERARCHY_EN:                                                                                 H I E R A R C H Y;
-HIERARCHII_RU:  RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_I;
-HIERARCHYA_RU:  RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_YA;
-IN:             RU_V                                                                        | I N;
-INDEX:          RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN    | I N D E X;
-INNER:          RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E                           | I N N E R;
+HIERARCHY:      RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_YA                                    | H I E R A R C H Y;
 INTO:           RU_P RU_O RU_M RU_E RU_S RU_T RU_I RU_T RU_SOFT_SIGN                        | I N T O;
 IS:             RU_E RU_S RU_T RU_SOFT_SIGN                                                 | I S;
 ISNULL:         RU_E RU_S RU_T RU_SOFT_SIGN N U L L                                         | I S N U L L;
-JOIN:           RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E                           | J O I N;
-LEFT:           RU_L RU_E RU_V RU_O RU_E                                                    | L E F T;
 LIKE:           RU_P RU_O RU_D RU_O RU_B RU_N RU_O                                          | L I K E;
 NOT:            RU_N RU_E                                                                   | N O T;
 NULL:                                                                                         N U L L;
 OF:                                                                                           O F;
 ON_EN:                                                                                        O N;
 OR:             RU_I RU_L RU_I                                                              | O R;
-ORDER:          RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_T RU_SOFT_SIGN            | O R D E R;
-OUTER:          RU_V RU_N RU_E RU_SH RU_N RU_E RU_E                                         | O U T E R;
 OVERALL:        RU_O RU_B RU_SCH RU_I RU_E                                                  | O V E R A L L;
 PO_RU:          RU_P RU_O;
-RIGHT:          RU_P RU_R RU_A RU_V RU_O RU_E                                               | R I G H T;
 SELECT:         RU_V RU_Y RU_B RU_R RU_A RU_T RU_SOFT_SIGN                                  | S E L E C T;
 THEN:           RU_T RU_O RU_G RU_D RU_A                                                    | T H E N;
 TOP:            RU_P RU_E RU_R RU_V RU_Y RU_E                                               | T O P;
 TOTALS:         RU_I RU_T RU_O RU_G RU_I                                                    | T O T A L S;
 TRUE:           RU_I RU_S RU_T RU_I RU_N RU_A                                               | T R U E;
 UNDEFINED:      RU_N RU_E RU_O RU_P RU_R RU_E RU_D RU_E RU_L RU_E RU_N RU_O                 | U N D E F I N E D;
-UNION:          RU_O RU_B RU_SOLID_SIGN RU_E RU_D RU_I RU_N RU_I RU_T RU_SOFT_SIGN          | U N I O N;
 WHEN:           RU_K RU_O RU_G RU_D RU_A                                                    | W H E N;
 WHERE:          RU_G RU_D RU_E                                                              | W H E R E;
 
@@ -147,7 +132,6 @@ SUBSTRING:      RU_P RU_O RU_D RU_S RU_T RU_R RU_O RU_K RU_A                    
 SUM:            RU_S RU_U RU_M RU_M RU_A                                                    | S U M;
 TENDAYS:        RU_D RU_E RU_K RU_A RU_D RU_A                                               | T E N D A Y S;
 TYPE:           RU_T RU_I RU_P                                                              | T Y P E;
-UPDATE:         RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_YA                               | U P D A T E;
 VALUE:          RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_E                                    | V A L U E;
 VALUETYPE:      RU_T RU_I RU_P RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_YA                    | V A L U E T Y P E;
 WEEK:           RU_N RU_E RU_D RU_E RU_L RU_YA                                              | W E E K;
@@ -193,6 +177,41 @@ TASK_TYPE:      RU_Z RU_A RU_D RU_A RU_CH RU_A                                  
 // FIELDS                 RU                                                                  EN
 ROUTEPOINT_FIELD:   RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A      | R O U T E P O I N T;
 
+// compex keywords
+INDEX_BY:  (RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | I N D E X)
+           KEYWORD_SPLIT BY_PART;
+
+GROUP_BY:  (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | G R O U P)
+           KEYWORD_SPLIT BY_PART;
+
+ORDER_BY:  (RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_T RU_SOFT_SIGN          | O R D E R)
+           KEYWORD_SPLIT BY_PART;
+
+RIGHT_JOIN  : (RU_P RU_R RU_A RU_V RU_O RU_E | R I G H T) KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
+LEFT_JOIN   : (RU_L RU_E RU_V RU_O RU_E | L E F T) KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
+INNER_JOIN  : (RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E | I N N E R) KEYWORD_SPLIT JOIN_PART;
+FULL_JOIN   : (RU_P RU_O RU_L RU_N RU_O RU_E | F U L L) KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
+JOIN        : JOIN_PART;
+
+FOR_UPDATE  : (RU_D RU_L RU_YA | F O R)
+              KEYWORD_SPLIT
+              (RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_YA | U P D A T E);
+
+UNION_ALL   : UNION_PART KEYWORD_SPLIT (RU_V RU_S RU_E | A L L);
+UNION       : UNION_PART;
+
+IN_HIERARCHY: (RU_V | I N)
+              KEYWORD_SPLIT
+              (RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_I | H I E R A R C H Y);
+IN:           (RU_V | I N);
+
+// keywords fragments
+fragment KEYWORD_SPLIT: [ \r\n\t]+;
+fragment BY_PART    : (RU_P RU_O  | B Y);
+fragment JOIN_PART  : (RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E | J O I N);
+fragment OUTER_PART : (RU_V RU_N RU_E RU_SH RU_N RU_E RU_E | O U T E R);
+fragment UNION_PART : (RU_O RU_B RU_SOLID_SIGN RU_E RU_D RU_I RU_N RU_I RU_T RU_SOFT_SIGN | U N I O N);
+// tables
 fragment BALANCE_RU: RU_O RU_S RU_T RU_A RU_T RU_K RU_I;
 fragment BALANCE_EN: B A L A N C E;
 fragment DOCUMENT_RU: RU_D RU_O RU_K RU_U RU_M RU_E RU_N RU_T;
