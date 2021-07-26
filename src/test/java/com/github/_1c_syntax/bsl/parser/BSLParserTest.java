@@ -1178,8 +1178,8 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   @Test
   void TestNoWait() {
 
-    setInput("Процедура Test()\n" +
-      "Ждать = КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1     \n" +
+    setInput("Процедура Test(Парам1, Ждать, wAit)\n" +
+      "Ждать = КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог, Ждать, wait); //1     \n" +
       "если Ждать тогда \n" +
       "  возврат;\n" +
       "конецесли;\n" +
@@ -1195,6 +1195,8 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     listSubs.forEach(this::assertMatches);
     var proc = listSubs.get(0);
     assertMatches(proc);
+    var param = proc.procedure().procDeclaration().paramList().param(1);
+    assertMatches(param);
     var subCodeblock = proc.procedure().subCodeBlock();
     assertMatches(subCodeblock);
     var codeBlock = subCodeblock.codeBlock();
