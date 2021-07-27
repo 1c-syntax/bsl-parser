@@ -40,7 +40,7 @@ HYPERLINK:
 COMPLEX_TYPE:
     LETTER (LETTER | DIGIT)* ' '
     ( O F | C O N T A I N S | RU_I RU_Z  ) ' '
-    LETTER (LETTER | DIGIT)* ('.' LETTER (LETTER | DIGIT)*)* ':'?;
+    (LETTER (LETTER | DIGIT)* ('.' LETTER (LETTER | DIGIT)*)* | HYPERLINK) ':'?;
 
 // KEYWORDS
 PARAMETERS_KEYWORD:     (P A R A M E T E R S        | RU_P RU_A RU_R RU_A RU_M RU_E RU_T RU_R RU_Y) ':';
