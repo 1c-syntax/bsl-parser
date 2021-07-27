@@ -388,6 +388,34 @@ class BSLDescriptionReaderTest {
   }
 
   @Test
+  void parseMethodDescription9() {
+    var exampleString =
+      "// Параметры:\n" +
+      "//  Параметр - Массив из см. МойКлассныйМодуль.МойКлассныйКонструктор - Моё классное описание";
+    var tokens = getTokensFromString(exampleString);
+    var methodDescription = BSLDescriptionReader.parseMethodDescription(tokens);
+
+    assertThat(methodDescription).isNotNull();
+    assertThat(methodDescription.getDescription()).isEqualTo(exampleString);
+    assertThat(methodDescription.getPurposeDescription()).isEmpty();
+    assertThat(methodDescription.getCallOptions()).isEmpty();
+    assertThat(methodDescription.getDeprecationInfo()).isEmpty();
+    assertThat(methodDescription.getExamples()).isEmpty();
+    assertThat(methodDescription.getLink()).isEmpty();
+    assertThat(methodDescription.getParameters()).hasSize(1);
+
+    var firstParameter = methodDescription.getParameters().get(0);
+
+    checkParameter(firstParameter,
+      "Параметр", 1, "", false);
+    checkType(firstParameter.getTypes().get(0),
+      "Массив из см. МойКлассныйМодуль.МойКлассныйКонструктор", "Моё классное описание",
+      0, "", false);
+
+    assertThat(methodDescription.getReturnedValue()).isEmpty();
+  }
+
+  @Test
   void parseVariableDescription() {
     var exampleString = "// Описание переменной";
     var tokens = getTokensFromString(exampleString);
@@ -472,6 +500,8 @@ class BSLDescriptionReaderTest {
       Objects.equals(variableDescription.getSimpleRange(), create(0, 22)))
       .isTrue();
   }
+
+
 
   private List<Token> getTokensFromString(String exampleString) {
     var tokenizer = new BSLTokenizer(exampleString);
