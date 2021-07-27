@@ -121,7 +121,7 @@ temporaryTableSelectedField:
 // помещение во временную таблицу
 into: INTO temporaryTableName=identifier;
 // таблица как параметр, соединяться ни с чем не может
-parameterTable: parameter alias;
+parameterTable: parameter;
 // индексирование во временной таблице
 indexing: (INDEX_BY indexingItem (COMMA indexingItem)*)?;
 // поле индексирования, может быть колонкой или параметром
