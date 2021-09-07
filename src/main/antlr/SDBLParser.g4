@@ -344,7 +344,7 @@ virtualTable:
             | ACTUAL_ACTION_PERIOD_VT
             | SCHEDULE_DATA_VT
             | TASK_BY_PERFORMER_VT
-        ) (LPAREN (virtualTableParameters+=searchConditions)* (COMMA (virtualTableParameters+=searchConditions)*)* RPAREN)?)
+        ) (LPAREN (virtualTableParameters+=searchConditions?)? (COMMA (virtualTableParameters+=searchConditions?)?)* RPAREN)?)
     | (type=FILTER_CRITERION_TYPE DOT tableName=identifier LPAREN parameter? RPAREN) // для критерия отбора имя ВТ не указывается
     ;
 
