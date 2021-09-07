@@ -52,7 +52,7 @@ selectQuery:
           (autoorder=AUTOORDER orders=orderBy totals=totalBy)
         | (orders=orderBy autoorder=AUTOORDER totals=totalBy)
         | (orders=orderBy totals=totalBy autoorder=AUTOORDER)
-        | (AUTOORDER (orders=orderBy | totals=totalBy)?)
+        | (autoorder=AUTOORDER (orders=orderBy | totals=totalBy)?)
         | (orders=orderBy (autoorder=AUTOORDER | totals=totalBy)?)
         | (totals=totalBy autoorder=AUTOORDER?)
     )?
