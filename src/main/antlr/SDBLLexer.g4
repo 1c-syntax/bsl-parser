@@ -68,7 +68,7 @@ CASE:           RU_V RU_Y RU_B RU_O RU_R                                        
 CAST:           RU_V RU_Y RU_R RU_A RU_Z RU_I RU_T RU_SOFT_SIGN                             | C A S T;
 DESC:           RU_U RU_B RU_Y RU_V                                                         | D E S C;
 DISTINCT:       RU_R RU_A RU_Z RU_L RU_I RU_CH RU_N RU_Y RU_E                               | D I S T I N C T;
-DROP:           (RU_U RU_N RU_I RU_CH RU_T RU_O RU_ZH RU_I RU_T RU_SOFT_SIGN                 | D R O P) -> pushMode(ID_MODE);
+DROP:           (RU_U RU_N RU_I RU_CH RU_T RU_O RU_ZH RU_I RU_T RU_SOFT_SIGN                | D R O P) -> pushMode(ID_MODE);
 ELSE:           RU_I RU_N RU_A RU_CH RU_E                                                   | E L S E;
 END:            RU_K RU_O RU_N RU_E RU_C                                                    | E N D;
 ESCAPE:         RU_S RU_P RU_E RU_C RU_S RU_I RU_M RU_V RU_O RU_L                           | E S C A P E;
@@ -314,7 +314,7 @@ PARAMETER_IDENTIFIER    : IDENTIFIER -> popMode;
 PARAMETER_UKNOWN        : . -> channel(HIDDEN), type(UNKNOWN);
 
 mode DOT_MODE;
-DOT_WHITE_SPACE         : [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
+DOT_WHITE_SPACE         : WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
 DOT_MUL                 : MUL -> type(MUL), popMode;
 DOT_LPAREN              : LPAREN -> type(LPAREN), popMode;
 DOT_RPAREN              : RPAREN -> type(RPAREN), popMode;
@@ -354,5 +354,19 @@ BRACE_END           : '}' -> channel(HIDDEN), type(UNKNOWN), popMode;
 BRACE_UNKNOWN       : . -> channel(HIDDEN), type(UNKNOWN);
 
 mode ID_MODE;
+ID_BOOLEAN:        BOOLEAN -> type(BOOLEAN), popMode;
+ID_NUMBER:        NUMBER -> type(NUMBER), popMode;
+ID_STRING:        STRING -> type(STRING), popMode;
+ID_DATE:        DATE -> type(DATE), popMode;
+ID_BUSINESS_PROCESS_TYPE: BUSINESS_PROCESS_TYPE -> type(BUSINESS_PROCESS_TYPE);
+ID_CATALOG_TYPE: CATALOG_TYPE -> type(CATALOG_TYPE);
+ID_CHART_OF_ACCOUNTS_TYPE: CHART_OF_ACCOUNTS_TYPE -> type(CHART_OF_ACCOUNTS_TYPE);
+ID_CHART_OF_CALCULATION_TYPES_TYPE: CHART_OF_CALCULATION_TYPES_TYPE -> type(CHART_OF_CALCULATION_TYPES_TYPE);
+ID_CHART_OF_CHARACTERISTIC_TYPES_TYPE: CHART_OF_CHARACTERISTIC_TYPES_TYPE -> type(CHART_OF_CHARACTERISTIC_TYPES_TYPE);
+ID_DOCUMENT_TYPE: DOCUMENT_TYPE -> type(DOCUMENT_TYPE);
+ID_ENUM_TYPE: ENUM_TYPE -> type(ENUM_TYPE);
+ID_EXCHANGE_PLAN_TYPE: EXCHANGE_PLAN_TYPE -> type(EXCHANGE_PLAN_TYPE);
+ID_TASK_TYPE: TASK_TYPE -> type(TASK_TYPE);
+ID_DOT: DOT -> type(DOT), pushMode(DOT_MODE), popMode;
 ID_IDENTIFIER    : IDENTIFIER -> type(IDENTIFIER), popMode;
 ID_UNKNOWN       : . -> channel(HIDDEN), type(UNKNOWN);

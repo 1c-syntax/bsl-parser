@@ -68,7 +68,7 @@ subquery:
     ;
 
 // объединение запросов
-union: (UNION | UNION_ALL) (query | subquery); // ? подумать, может и не стоит так закапывать
+union: (UNION | UNION_ALL) query orderBy?;
 
 // структура запроса
 query:
@@ -168,7 +168,7 @@ periodic: PERIODS
 column:
       mdoName=identifier (DOT columnNames+=identifier)+
     | columnNames+=identifier
-    | mdo DOT (DOT columnNames+=identifier)+
+    | mdo (DOT columnNames+=identifier)+
     ;
 
 // EXPRESSION
@@ -180,8 +180,7 @@ expression:
     | column
     | bracketExpression
     | unaryExpression
-    | expression binaryOperation=(MUL | QUOTIENT) expression
-    | expression binaryOperation=(PLUS | MINUS) expression
+    | expression binaryOperation=(MUL | QUOTIENT | PLUS | MINUS) expression
     ;
 
 // Примитивные выражения
@@ -189,8 +188,8 @@ primitiveExpression:
       NULL
     | UNDEFINED
     | multiString
-    | (sign? DECIMAL)
-    | (sign? FLOAT)
+    | DECIMAL
+    | FLOAT
     | booleanValue=(TRUE | FALSE)
     | (DATETIME LPAREN
             year=datePart COMMA month=datePart COMMA day=datePart
@@ -203,16 +202,13 @@ primitiveExpression:
 
 // условные выражения (если...то...иначе)
 caseExpression:
-      (CASE caseExp=expression caseBranch+ (ELSE elseExp=expression)? END)
-    | (CASE caseBranch+ (ELSE elseExp=expression)? END)
-    | (caseBranch (ELSE elseExp=expression)? END)
+      (CASE caseExp=expression caseBranch+ (ELSE elseExp=searchCondition)? END)
+    | (CASE caseBranch+ (ELSE elseExp=searchCondition)? END)
+    | (caseBranch (ELSE elseExp=searchCondition)? END)
     ;
 
 // ветка со своим условием и результатом
-caseBranch:
-      (WHEN expression THEN expression)
-    | (WHEN searchCondition THEN expression)
-    ;
+caseBranch: WHEN searchCondition THEN searchCondition;
 
 // выражение в скобках
 // в скобках может быть либо подзапрос либо другое выражение
@@ -226,6 +222,7 @@ functionCall:
       aggregateFunctions
     | builtInFunctions
     | valueFunction
+    | (castFunction (DOT columnNames+=identifier)*)
 ;
 
 // встроенные функции
@@ -237,13 +234,6 @@ builtInFunctions:
     | (doCall=DATEDIFF LPAREN first=expression COMMA second=expression COMMA periodType=(SECOND | MINUTE | HOUR | DAY | MONTH | QUARTER | YEAR) RPAREN)
     | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION | GROUPEDBY) LPAREN value=expression RPAREN)
     | (doCall=ISNULL LPAREN first=expression COMMA second=expression RPAREN)
-    | (doCall=CAST LPAREN value=expression AS (
-              type=BOOLEAN
-            | (type=NUMBER (LPAREN len=DECIMAL (COMMA prec=DECIMAL)? RPAREN)?)
-            | (type=STRING (LPAREN len=DECIMAL RPAREN)?)
-            | type=DATE
-            | mdo
-      ) RPAREN)
 ;
 
 // агрегатные ф-ии
@@ -280,6 +270,16 @@ valueFunction: doCall=VALUE LPAREN
     ) RPAREN
     ;
 
+castFunction:
+    (doCall=CAST LPAREN value=expression AS (
+              type=BOOLEAN
+            | (type=NUMBER (LPAREN len=DECIMAL (COMMA prec=DECIMAL)? RPAREN)?)
+            | (type=STRING (LPAREN len=DECIMAL RPAREN)?)
+            | type=DATE
+            | mdo
+      ) RPAREN)
+   ;
+
 // выражения-условия отбора
 searchCondition:
       NOT* (predicate | (LPAREN searchCondition RPAREN))
@@ -296,6 +296,7 @@ predicate:
     | (expression NOT* LIKE expression (ESCAPE escape=multiString)?)    // выражение подобно выражение [ESC-последовательность]
     | (expression IS NOT? NULL)                                         // выражение ЕСТЬ NULL / ЕСТЬ НЕ NULL
     | (expression REFS mdo)                                             // выражение ССЫЛКА МДО
+    | expression                                                        // булево выражение
     ;
 
 // список выражений
@@ -340,7 +341,7 @@ virtualTable:
             | ACTUAL_ACTION_PERIOD_VT
             | SCHEDULE_DATA_VT
             | TASK_BY_PERFORMER_VT
-        ) (LPAREN virtualTableParameters+=expression (COMMA virtualTableParameters+=expression)* RPAREN)?)
+        ) (LPAREN virtualTableParameters+=searchCondition (COMMA virtualTableParameters+=searchCondition)* RPAREN)?)
     | (type=FILTER_CRITERION_TYPE DOT tableName=identifier LPAREN parameter? RPAREN) // для критерия отбора имя ВТ не указывается
     ;
 
@@ -472,4 +473,5 @@ mdo: type=(
         | CALCULATION_REGISTER_TYPE
         | TASK_TYPE
         | EXTERNAL_DATA_SOURCE_TYPE
-     ) DOT tableName=identifier;
+     ) DOT tableName=identifier
+;
