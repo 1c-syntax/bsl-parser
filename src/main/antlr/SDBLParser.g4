@@ -117,7 +117,7 @@ selectedField:
 asterisk: (tableName=identifier DOT)* MUL;
 
 // поле выборки-выражение, алиас может быть
-expressionField: expression alias?;
+expressionField: searchConditions alias?;
 
 // поле выборки-поле табицы или NULL
 columnField:
