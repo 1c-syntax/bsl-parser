@@ -74,11 +74,11 @@ union: (UNION | UNION_ALL) query orderBy?;
 query:
     SELECT limitations?
     columns=selectedFields
-    (INTO temporaryTableName=identifier)? // table_identifier?
+    (INTO temporaryTableName=identifier)?
     (FROM from=dataSources)?
-    (WHERE where=searchCondition)?
+    (WHERE where=searchConditions)?
     (GROUP_BY groupBy=groupByItem)?
-    (HAVING having=searchCondition)?
+    (HAVING having=searchConditions)?
     (FOR_UPDATE forUpdate=mdo?)?
     (INDEX_BY indexes+=indexingItem (COMMA indexes+=indexingItem)*)?
     ;
@@ -122,8 +122,6 @@ expressionField: expression alias?;
 // поле выборки-поле табицы или NULL
 columnField:
     (
-    //column
-    //|
     NULL
     | recordAutoNumberFunction
     ) alias?;
@@ -202,13 +200,13 @@ primitiveExpression:
 
 // условные выражения (если...то...иначе)
 caseExpression:
-      (CASE caseExp=expression caseBranch+ (ELSE elseExp=searchCondition)? END)
-    | (CASE caseBranch+ (ELSE elseExp=searchCondition)? END)
-    | (caseBranch (ELSE elseExp=searchCondition)? END)
+      (CASE caseExp=expression caseBranch+ (ELSE elseExp=searchConditions)? END)
+    | (CASE caseBranch+ (ELSE elseExp=searchConditions)? END)
+    | (caseBranch (ELSE elseExp=searchConditions)? END)
     ;
 
 // ветка со своим условием и результатом
-caseBranch: WHEN searchCondition THEN searchCondition;
+caseBranch: WHEN searchConditions THEN searchConditions;
 
 // выражение в скобках
 // в скобках может быть либо подзапрос либо другое выражение
@@ -281,11 +279,11 @@ castFunction:
    ;
 
 // выражения-условия отбора
-searchCondition:
-      NOT* (predicate | (LPAREN searchCondition RPAREN))
-    | searchCondition AND searchCondition
-    | searchCondition OR searchCondition
+searchConditions:
+      condidions+=searchCondition
+      ((AND | OR) condidions+=searchCondition)*
     ;
+searchCondition: NOT* (predicate | (LPAREN searchConditions RPAREN));
 
 // логическое выражение
 predicate:
@@ -341,7 +339,7 @@ virtualTable:
             | ACTUAL_ACTION_PERIOD_VT
             | SCHEDULE_DATA_VT
             | TASK_BY_PERFORMER_VT
-        ) (LPAREN virtualTableParameters+=searchCondition (COMMA virtualTableParameters+=searchCondition)* RPAREN)?)
+        ) (LPAREN virtualTableParameters+=searchConditions (COMMA virtualTableParameters+=searchConditions)* RPAREN)?)
     | (type=FILTER_CRITERION_TYPE DOT tableName=identifier LPAREN parameter? RPAREN) // для критерия отбора имя ВТ не указывается
     ;
 
@@ -351,7 +349,7 @@ parameterTable: parameter;
 // соединения таблиц
 joinPart:
     joinType=(INNER_JOIN | LEFT_JOIN | RIGHT_JOIN | FULL_JOIN | JOIN)    // тип соединения
-    source=dataSource (ON_EN | PO_RU) condition=searchCondition          // имя таблицы и соединение
+    source=dataSource (ON_EN | PO_RU) condition=searchConditions          // имя таблицы и соединение
     ;
 
 // алиас для поля, таблицы ...

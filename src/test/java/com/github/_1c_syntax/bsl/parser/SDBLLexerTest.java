@@ -28,7 +28,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
+class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
   protected SDBLLexerTest() {
     super(SDBLLexer.class);
   }
