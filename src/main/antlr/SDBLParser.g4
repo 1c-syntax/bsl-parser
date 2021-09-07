@@ -283,19 +283,24 @@ searchConditions:
       condidions+=searchCondition
       ((AND | OR) condidions+=searchCondition)*
     ;
-searchCondition: NOT* (predicate | (LPAREN searchConditions RPAREN));
+searchCondition: NOT* (
+      booleanPredicate=expression // булево
+    | likePredicate
+    | isNullPredicate
+    | comparePredicate
+    | betweenPredicate
+    | inPredicate
+    | refsPredicate
+    | (LPAREN searchConditions RPAREN)
+    );
 
-// логическое выражение
-predicate:
-                                                                        // сравнение выражений
-      (expression compareOperation=(LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL) expression)
-    | (expression BETWEEN expression AND expression)                    // выражение МЕЖДУ выражение1 И выражение2
-    | (expression NOT* (IN | IN_HIERARCHY) LPAREN (subquery | expressionList) RPAREN)    // выражение В (подзапрос/список)
-    | (expression NOT* LIKE expression (ESCAPE escape=multiString)?)    // выражение подобно выражение [ESC-последовательность]
-    | (expression IS NOT? NULL)                                         // выражение ЕСТЬ NULL / ЕСТЬ НЕ NULL
-    | (expression REFS mdo)                                             // выражение ССЫЛКА МДО
-    | expression                                                        // булево выражение
-    ;
+likePredicate: expression NOT* LIKE expression (ESCAPE escape=multiString)?;    // выражение подобно выражение [ESC-последовательность]
+isNullPredicate: expression IS NOT? NULL;                                       // выражение ЕСТЬ NULL / ЕСТЬ НЕ NULL
+// сравнение выражений
+comparePredicate: expression compareOperation=(LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL) expression;
+betweenPredicate: expression BETWEEN expression AND expression;                                 // выражение МЕЖДУ выражение1 И выражение2
+inPredicate: expression NOT* (IN | IN_HIERARCHY) LPAREN (subquery | expressionList) RPAREN;     // выражение В (подзапрос/список)
+refsPredicate: expression REFS mdo;                                             // выражение ССЫЛКА МДО
 
 // список выражений
 expressionList: exp+=expression (COMMA exp+=expression)*;

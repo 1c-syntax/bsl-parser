@@ -89,7 +89,6 @@ class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
       pair(SDBLParser.RULE_castFunction, 0),
       pair(SDBLParser.RULE_searchConditions, 5),
       pair(SDBLParser.RULE_searchCondition, 29),
-      pair(SDBLParser.RULE_predicate, 28),
       pair(SDBLParser.RULE_expressionList, 0),
       pair(SDBLParser.RULE_dataSources, 1),
       pair(SDBLParser.RULE_dataSource, 3),
@@ -103,7 +102,12 @@ class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
       pair(SDBLParser.RULE_multiString, 0),
       pair(SDBLParser.RULE_sign, 24),
       pair(SDBLParser.RULE_parameter, 48),
-      pair(SDBLParser.RULE_mdo, 1)
+      pair(SDBLParser.RULE_mdo, 1),
+      pair(SDBLParser.RULE_likePredicate, 0),
+      pair(SDBLParser.RULE_comparePredicate, 3),
+      pair(SDBLParser.RULE_betweenPredicate, 24),
+      pair(SDBLParser.RULE_inPredicate, 0),
+      pair(SDBLParser.RULE_refsPredicate, 0)
     );
   }
 
