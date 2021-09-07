@@ -316,8 +316,8 @@ dataSource:
     ;
 
 tableSource:
-      (table alias?)
-    | (virtualTable alias?)
+      (virtualTable alias?)
+    | (table alias?)
     | (parameterTable alias?)
     | (LPAREN subquery RPAREN alias?)
     ;
