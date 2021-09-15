@@ -173,6 +173,12 @@ sonarqube {
     }
 }
 
+artifacts {
+    archives(tasks["jar"])
+    archives(tasks["sourcesJar"])
+    archives(tasks["javadocJar"])
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
