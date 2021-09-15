@@ -1091,8 +1091,9 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     var file = parser.file();
     assertMatches(file);
     var subs = file.subs();
-    assertMatches(subs);
-    var listSubs = subs.sub();
+    subs.forEach(this::assertMatches);
+
+    var listSubs = subs.get(0).sub();
     listSubs.forEach(this::assertMatches);
     var func = listSubs.get(0);
     assertMatches(func);
@@ -1116,8 +1117,8 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     var file = parser.file();
     assertMatches(file);
     var subs = file.subs();
-    assertMatches(subs);
-    var listSubs = subs.sub();
+    subs.forEach(this::assertMatches);
+    var listSubs = subs.get(0).sub();
     listSubs.forEach(this::assertMatches);
     var func = listSubs.get(0);
     assertMatches(func);
@@ -1131,9 +1132,8 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     file = parser.file();
     assertMatches(file);
     subs = file.subs();
-    assertMatches(subs);
-    listSubs = subs.sub();
-    listSubs.forEach(this::assertMatches);
+    subs.forEach(this::assertMatches);
+    listSubs = subs.get(0).sub();
     var proc = listSubs.get(0);
     assertMatches(proc);
     var procDeclare = proc.procedure().procDeclaration();
@@ -1159,9 +1159,8 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     var file = parser.file();
     assertMatches(file);
     var subs = file.subs();
-    assertMatches(subs);
-    var listSubs = subs.sub();
-    listSubs.forEach(this::assertMatches);
+    subs.forEach(this::assertMatches);
+    var listSubs = subs.get(0).sub();
     var proc = listSubs.get(0);
     assertMatches(proc);
     var subCodeblock = proc.procedure().subCodeBlock();
@@ -1190,8 +1189,8 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     var file = parser.file();
     assertMatches(file);
     var subs = file.subs();
-    assertMatches(subs);
-    var listSubs = subs.sub();
+    subs.forEach(this::assertMatches);
+    var listSubs = subs.get(0).sub();
     listSubs.forEach(this::assertMatches);
     var proc = listSubs.get(0);
     assertMatches(proc);
