@@ -19,3 +19,7 @@ Collection of parsers for Language 1C (BSL) in ANTLR4 format.
 - Парсер языка 1С (BSL). Правила лексера и грамматики основаны на BNF/JFlex правилах из репозитория [IntelliJ Idea OneScript Support](https://github.com/dmpas/idea-onescript) за авторством Сергея Батанова ([@dmpas](https://github.com/dmpas)).
 - Парсер языка запросов 1С (SDBL)
 - Парсер описаний методов
+
+## Сайт проекта (документация)
+- [Релизная версия](https://1c-syntax.github.io/bsl-parser/)
+- [Текущая (Develop) версия](https://1c-syntax.github.io/bsl-parser/dev/)
