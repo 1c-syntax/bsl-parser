@@ -1,0 +1,16 @@
+name: javadoc
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: 11
+        distribution: 'adopt'
+    - name: Check javadoc build
+      run: ./gradlew javadoc --stacktrace

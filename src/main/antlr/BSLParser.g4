@@ -252,7 +252,7 @@ methodCall       : methodName doCall;
 globalMethodCall : methodName doCall;
 methodName       : IDENTIFIER;
 complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) modifier*;
-modifier         : accessProperty | accessIndex| accessCall;
+modifier         : accessProperty | accessIndex | accessCall;
 acceptor         : modifier* (accessProperty | accessIndex);
 lValue           : (IDENTIFIER | globalMethodCall) acceptor?;
 accessCall       : DOT methodCall;

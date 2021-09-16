@@ -12,7 +12,7 @@ plugins {
     id("com.github.gradle-git-version-calculator") version "1.1.0"
     id("com.github.ben-manes.versions") version "0.39.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
-    id("io.freefair.javadoc-links") version "6.1.0"
+    id("io.freefair.javadoc-links") version "6.2.0"
     id("io.freefair.javadoc-utf-8") version "6.1.0"
 }
 
@@ -140,6 +140,15 @@ tasks.jacocoTestReport {
     }
 }
 
+tasks.javadoc {
+    options {
+        this as StandardJavadocDocletOptions
+        links(
+            "https://javadoc.io/doc/org.antlr/antlr4-runtime/latest"
+        )
+    }
+}
+
 license {
     header = rootProject.file("license/HEADER.txt")
     ext["year"] = "2018-" + Calendar.getInstance().get(Calendar.YEAR)
@@ -171,6 +180,12 @@ sonarqube {
         property("sonar.scm.exclusions.disabled", "true")
         property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
     }
+}
+
+artifacts {
+    archives(tasks["jar"])
+    archives(tasks["sourcesJar"])
+    archives(tasks["javadocJar"])
 }
 
 publishing {
