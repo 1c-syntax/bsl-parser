@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.github._1c_syntax.bsl.parser"},{"l":"com.github._1c_syntax.bsl.parser.description"},{"l":"com.github._1c_syntax.bsl.parser.description.support"}]
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.github._1c_syntax.bsl.parser"},{"l":"com.github._1c_syntax.bsl.parser.description"},{"l":"com.github._1c_syntax.bsl.parser.description.support"}];updateSearchResults();
