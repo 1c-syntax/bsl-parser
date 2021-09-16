@@ -8,6 +8,7 @@ on:
     paths:
     - 'docs/**'
     - 'src/main/java/**'
+    - 'src/main/antlr/**'
     - 'mkdocs.yml'
     - 'mkdocs.en.yml'
     - '.github/workflows/gh-pages.yml'
