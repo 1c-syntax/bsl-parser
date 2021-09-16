@@ -140,6 +140,15 @@ tasks.jacocoTestReport {
     }
 }
 
+tasks.javadoc {
+    options {
+        this as StandardJavadocDocletOptions
+        links(
+            "https://javadoc.io/doc/org.antlr/antlr4-runtime/latest"
+        )
+    }
+}
+
 license {
     header = rootProject.file("license/HEADER.txt")
     ext["year"] = "2018-" + Calendar.getInstance().get(Calendar.YEAR)
