@@ -80,14 +80,14 @@ loadScripts(document, 'script');</script>
 <section class="description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code>org.antlr.v4.runtime.CharStream</code>, <code>org.antlr.v4.runtime.IntStream</code>, <code>org.antlr.v4.runtime.UnicodeCharStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/CharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">CharStream</a></code>, <code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code>, <code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/UnicodeCharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">UnicodeCharStream</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">CaseChangingCharStream</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
+implements <a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/UnicodeCharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">UnicodeCharStream</a></span></div>
 <div class="block">This class supports case-insensitive lexing by wrapping an existing
- <code>CharStream</code> and forcing the lexer to see either upper or
+ <a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/CharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link"><code>CharStream</code></a> and forcing the lexer to see either upper or
  lowercase characters. Grammar literals should then be either upper or
  lower case such as 'BEGIN' or 'begin'. The text of the character
  stream is unaffected. Example: input 'BeGiN' would match lexer rule
@@ -101,8 +101,8 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <section class="field-summary" id="field.summary">
 <h2>Field Summary</h2>
 <div class="inherited-list">
-<h3 id="fields.inherited.from.class.org.antlr.v4.runtime.IntStream">Fields inherited from interface&nbsp;org.antlr.v4.runtime.IntStream</h3>
-<code>EOF, UNKNOWN_SOURCE_NAME</code></div>
+<h3 id="fields.inherited.from.class.org.antlr.v4.runtime.IntStream">Fields inherited from interface&nbsp;org.antlr.v4.runtime.<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></h3>
+<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#EOF" title="class or interface in org.antlr.v4.runtime" class="external-link">EOF</a>, <a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#UNKNOWN_SOURCE_NAME" title="class or interface in org.antlr.v4.runtime" class="external-link">UNKNOWN_SOURCE_NAME</a></code></div>
 </section>
 </li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -113,9 +113,9 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><span class="member-name-link"><a href="#%3Cinit%3E(org.antlr.v4.runtime.UnicodeCharStream)">CaseChangingCharStream</a></span>&#8203;(org.antlr.v4.runtime.UnicodeCharStream&nbsp;stream)</code></div>
+<div class="col-constructor-name even-row-color"><code><span class="member-name-link"><a href="#%3Cinit%3E(org.antlr.v4.runtime.UnicodeCharStream)">CaseChangingCharStream</a></span>&#8203;(<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/UnicodeCharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">UnicodeCharStream</a>&nbsp;stream)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Constructs a new CaseChangingCharStream wrapping the given <code>UnicodeCharStream</code> forcing
+<div class="block">Constructs a new CaseChangingCharStream wrapping the given <a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/UnicodeCharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link"><code>UnicodeCharStream</code></a> forcing
  all characters to upper case.</div>
 </div>
 </div>
@@ -139,7 +139,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#getSourceName()">getSourceName</a></span>()</code></div>
 <div class="col-last odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#getText(org.antlr.v4.runtime.misc.Interval)">getText</a></span>&#8203;(org.antlr.v4.runtime.misc.Interval&nbsp;interval)</code></div>
+<div class="col-second even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#getText(org.antlr.v4.runtime.misc.Interval)">getText</a></span>&#8203;(<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/misc/Interval.html" title="class or interface in org.antlr.v4.runtime.misc" class="external-link">Interval</a>&nbsp;interval)</code></div>
 <div class="col-last even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#index()">index</a></span>()</code></div>
@@ -182,8 +182,8 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <li>
 <section class="detail" id="&lt;init&gt;(org.antlr.v4.runtime.UnicodeCharStream)">
 <h3>CaseChangingCharStream</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">CaseChangingCharStream</span>&#8203;<span class="parameters">(org.antlr.v4.runtime.UnicodeCharStream&nbsp;stream)</span></div>
-<div class="block">Constructs a new CaseChangingCharStream wrapping the given <code>UnicodeCharStream</code> forcing
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">CaseChangingCharStream</span>&#8203;<span class="parameters">(<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/UnicodeCharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">UnicodeCharStream</a>&nbsp;stream)</span></div>
+<div class="block">Constructs a new CaseChangingCharStream wrapping the given <a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/UnicodeCharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link"><code>UnicodeCharStream</code></a> forcing
  all characters to upper case.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -202,10 +202,10 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <li>
 <section class="detail" id="getText(org.antlr.v4.runtime.misc.Interval)">
 <h3>getText</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getText</span>&#8203;<span class="parameters">(org.antlr.v4.runtime.misc.Interval&nbsp;interval)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getText</span>&#8203;<span class="parameters">(<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/misc/Interval.html" title="class or interface in org.antlr.v4.runtime.misc" class="external-link">Interval</a>&nbsp;interval)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>getText</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.CharStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/CharStream.html#getText(org.antlr.v4.runtime.misc.Interval)" title="class or interface in org.antlr.v4.runtime" class="external-link">getText</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/CharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">CharStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -215,7 +215,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">consume</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>consume</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.IntStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#consume()" title="class or interface in org.antlr.v4.runtime" class="external-link">consume</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -225,7 +225,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">LA</span>&#8203;<span class="parameters">(int&nbsp;i)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>LA</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.IntStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#LA(int)" title="class or interface in org.antlr.v4.runtime" class="external-link">LA</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -235,7 +235,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">mark</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>mark</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.IntStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#mark()" title="class or interface in org.antlr.v4.runtime" class="external-link">mark</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -245,7 +245,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">release</span>&#8203;<span class="parameters">(int&nbsp;marker)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>release</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.IntStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#release(int)" title="class or interface in org.antlr.v4.runtime" class="external-link">release</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -255,7 +255,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">index</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>index</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.IntStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#index()" title="class or interface in org.antlr.v4.runtime" class="external-link">index</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -265,7 +265,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">seek</span>&#8203;<span class="parameters">(int&nbsp;index)</span></div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>seek</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.IntStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#seek(int)" title="class or interface in org.antlr.v4.runtime" class="external-link">seek</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -275,7 +275,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">size</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>size</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.IntStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#size()" title="class or interface in org.antlr.v4.runtime" class="external-link">size</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -285,7 +285,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSourceName</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>getSourceName</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.IntStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html#getSourceName()" title="class or interface in org.antlr.v4.runtime" class="external-link">getSourceName</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/IntStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">IntStream</a></code></dd>
 </dl>
 </section>
 </li>
@@ -295,7 +295,7 @@ implements org.antlr.v4.runtime.UnicodeCharStream</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">supportsUnicodeCodePoints</span>()</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code>supportsUnicodeCodePoints</code>&nbsp;in interface&nbsp;<code>org.antlr.v4.runtime.UnicodeCharStream</code></dd>
+<dd><code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/UnicodeCharStream.html#supportsUnicodeCodePoints()" title="class or interface in org.antlr.v4.runtime" class="external-link">supportsUnicodeCodePoints</a></code>&nbsp;in interface&nbsp;<code><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/UnicodeCharStream.html" title="class or interface in org.antlr.v4.runtime" class="external-link">UnicodeCharStream</a></code></dd>
 </dl>
 </section>
 </li>
