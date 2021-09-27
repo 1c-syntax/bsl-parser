@@ -106,32 +106,31 @@ top: TOP count=DECIMAL;
 // поля выборки
 selectedFields: fields+=selectedField (COMMA fields+=selectedField)*;
 selectedField:
-      asterisk
-    | columnField
-    | emptyTableField
-    | inlineTableField
-    | expressionField
+    (
+          asteriskField
+        | columnField
+        | emptyTableField
+        | inlineTableField
+        | expressionField
+    )
+    alias?
     ;
 
 // поле выборки-звездочка, либо имя таблицы.* либо просто *. Алиаса не бывает
-asterisk: (tableName=identifier DOT)* MUL;
+asteriskField: (tableName=identifier DOT)* MUL;
 
 // поле выборки-выражение, алиас может быть
-expressionField: searchConditions alias?;
+expressionField: searchConditions;
 
 // поле выборки-поле табицы или NULL
-columnField:
-    (
-    NULL
-    | recordAutoNumberFunction
-    ) alias?;
+columnField: NULL | recordAutoNumberFunction;
 
 // поле выборки-пустая таблица
-emptyTableField: emptyTable=EMPTYTABLE DOT LPAREN emptyTableColumns RPAREN alias?;
+emptyTableField: emptyTable=EMPTYTABLE DOT LPAREN emptyTableColumns RPAREN;
 emptyTableColumns: columns+=alias (COMMA columns+=alias)*;
 
 // поле выборки-табличная часть
-inlineTableField: inlineTable=column DOT LPAREN inlineTableFields=selectedFields RPAREN alias?;
+inlineTableField: inlineTable=column DOT LPAREN inlineTableFields=selectedFields RPAREN;
 
 // функция автономерзаписи может быть использована только как поле выборки
 recordAutoNumberFunction: doCall=RECORDAUTONUMBER LPAREN RPAREN;
@@ -311,15 +310,10 @@ dataSources: tables+=dataSource (COMMA tables+=dataSource)*;
 // варианты источников данных
 dataSource:
       (LPAREN dataSource RPAREN)
-    | (tableSource joins+=joinPart*)
-    | (LPAREN tableSource RPAREN joins+=joinPart*)
-    ;
-
-tableSource:
-      (virtualTable alias?)
-    | (table alias?)
-    | (parameterTable alias?)
-    | (LPAREN subquery RPAREN alias?)
+    | ((
+          ((virtualTable | table | parameterTable) alias?)
+        | (LPAREN (virtualTable | table | parameterTable | subquery) RPAREN alias?)
+      ) joins+=joinPart*)
     ;
 
 // источник-физическая таблица либо ВТ
@@ -344,9 +338,12 @@ virtualTable:
             | ACTUAL_ACTION_PERIOD_VT
             | SCHEDULE_DATA_VT
             | TASK_BY_PERFORMER_VT
-        ) (LPAREN (virtualTableParameters+=searchConditions?)? (COMMA (virtualTableParameters+=searchConditions?)?)* RPAREN)?)
+        ) (LPAREN virtualTableParameters+=virtualTableParameter (COMMA virtualTableParameters+=virtualTableParameter)* RPAREN)?)
     | (type=FILTER_CRITERION_TYPE DOT tableName=identifier LPAREN parameter? RPAREN) // для критерия отбора имя ВТ не указывается
     ;
+
+// параметр виртуальной таблицы может быть опущен
+virtualTableParameter: searchConditions?;
 
 // таблица как параметр, соединяться ни с чем не может
 parameterTable: parameter;
