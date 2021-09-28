@@ -414,6 +414,40 @@ class BSLMethodDescriptionParserTest
     );
   }
 
+  @Test
+  @DisplayName("Parse 'src/test/resources/methodDescription/example9.bsl'")
+  void testExample9() {
+    checkSource("src/test/resources/methodDescription/example9.bsl",
+      new Pair(BSLMethodDescriptionParser.RULE_deprecate, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_deprecateDescription, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_descriptionBlock, 1),
+      new Pair(BSLMethodDescriptionParser.RULE_description, 1),
+      new Pair(BSLMethodDescriptionParser.RULE_descriptionString, 6),
+      new Pair(BSLMethodDescriptionParser.RULE_examples, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_examplesString, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_callOptions, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_callOptionsString, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_parameters, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_parameterString, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_parameter, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_subParameter, 23),
+      new Pair(BSLMethodDescriptionParser.RULE_parameterName, 23),
+      new Pair(BSLMethodDescriptionParser.RULE_returnsValues, 1),
+      new Pair(BSLMethodDescriptionParser.RULE_returnsValuesString, 43),
+      new Pair(BSLMethodDescriptionParser.RULE_returnsValue, 2),
+      new Pair(BSLMethodDescriptionParser.RULE_typesBlock, 25),
+      new Pair(BSLMethodDescriptionParser.RULE_typeDescription, 42),
+      new Pair(BSLMethodDescriptionParser.RULE_type, 27),
+      new Pair(BSLMethodDescriptionParser.RULE_simpleType, 31),
+      new Pair(BSLMethodDescriptionParser.RULE_listTypes, 7),
+      new Pair(BSLMethodDescriptionParser.RULE_complexType, 2),
+      new Pair(BSLMethodDescriptionParser.RULE_hyperlinkType, 1),
+      new Pair(BSLMethodDescriptionParser.RULE_spitter, 52),
+      new Pair(BSLMethodDescriptionParser.RULE_hyperlinkBlock, 0),
+      new Pair(BSLMethodDescriptionParser.RULE_startPart, 50)
+    );
+  }
+
   private ArrayList<ParseTree> getNodes(String text, int rule) {
     return new ArrayList<>(Trees.findAllRuleNodes((new BSLMethodDescriptionTokenizer(text)).getAst(), rule));
   }
