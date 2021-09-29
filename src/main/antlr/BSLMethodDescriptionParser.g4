@@ -105,7 +105,7 @@ type:
     | complexType
     ;
 simpleType: (WORD | DOTSWORD);
-listTypes: simpleType (COMMA SPACE? simpleType)+;
+listTypes: (simpleType | complexType | hyperlinkType) (COMMA SPACE? (simpleType | complexType | hyperlinkType))+;
 complexType: COMPLEX_TYPE;
 hyperlinkType: HYPERLINK;
 
