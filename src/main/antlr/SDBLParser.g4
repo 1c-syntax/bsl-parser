@@ -218,7 +218,7 @@ unaryExpression: sign expression;
 functionCall:
       aggregateFunctions
     | builtInFunctions
-    | valueFunction
+    | (valueFunction (DOT columnNames+=identifier)*)
     | (castFunction (DOT columnNames+=identifier)*)
 ;
 
