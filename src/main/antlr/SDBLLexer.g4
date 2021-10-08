@@ -173,50 +173,37 @@ INFORMATION_REGISTER_TYPE:
 SEQUENCE_TYPE:
                 RU_P RU_O RU_S RU_L RU_E RU_D RU_O RU_V RU_A RU_T RU_E RU_L RU_SOFT_SIGN RU_N RU_O RU_S RU_T RU_SOFT_SIGN
                                                                                             | S E Q U E N C E;
-TASK_TYPE:      RU_Z RU_A RU_D RU_A RU_CH RU_A                                              | T A S K;
+TASK_TYPE    :  RU_Z RU_A RU_D RU_A RU_CH RU_A                                              | T A S K;
 
 // FIELDS                 RU                                                                  EN
 ROUTEPOINT_FIELD:   RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A      | R O U T E P O I N T;
 
 // compex keywords
-INDEX_BY:  (RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | I N D E X)
-           KEYWORD_SPLIT BY_PART;
+INDEX: (RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | I N D E X);
+GROUP: (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | G R O U P);
+ORDER: (RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_T RU_SOFT_SIGN          | O R D E R);
 
-GROUP_BY:  (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | G R O U P)
-           KEYWORD_SPLIT BY_PART;
+GROUPEDBY: (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_N RU_O RU_P RU_O | G R O U P E D B Y);
 
-ORDER_BY:  (RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_T RU_SOFT_SIGN              | O R D E R)
-           KEYWORD_SPLIT BY_PART;
+GROUPING : (RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_U RU_YU RU_SCH RU_I RU_M             | G R O U P I N G);
+SET      : (RU_N RU_A RU_B RU_O RU_R RU_A RU_M | S E T);
 
-GROUPEDBY   : (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_N RU_O RU_P RU_O | G R O U P E D B Y);
+RIGHT  : (RU_P RU_R RU_A RU_V RU_O RU_E                        | R I G H T);
+LEFT   : (RU_L RU_E RU_V RU_O RU_E                             | L E F T);
+INNER  : (RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E    | I N N E R);
+FULL   : (RU_P RU_O RU_L RU_N RU_O RU_E                        | F U L L);
+JOIN   : (RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E    | J O I N);
+OUTER  : (RU_V RU_N RU_E RU_SH RU_N RU_E RU_E                  | O U T E R);
 
-GROUPING_SET: (RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_U RU_YU RU_SCH RU_I RU_M             | G R O U P I N G)
-               KEYWORD_SPLIT (RU_N RU_A RU_B RU_O RU_R RU_A RU_M | S E T);
+FOR         : (RU_D RU_L RU_YA | F O R);
+UPDATE      : (RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_YA | U P D A T E);
 
-RIGHT_JOIN  : (RU_P RU_R RU_A RU_V RU_O RU_E | R I G H T)                     KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
-LEFT_JOIN   : (RU_L RU_E RU_V RU_O RU_E | L E F T)                            KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
-INNER_JOIN  : (RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E | I N N E R) KEYWORD_SPLIT JOIN_PART;
-FULL_JOIN   : (RU_P RU_O RU_L RU_N RU_O RU_E | F U L L)                       KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
-JOIN        : JOIN_PART;
+ALL         : (RU_V RU_S RU_E | A L L);
+UNION       : (RU_O RU_B RU_SOLID_SIGN RU_E RU_D RU_I RU_N RU_I RU_T RU_SOFT_SIGN | U N I O N);
 
-FOR_UPDATE  : (RU_D RU_L RU_YA | F O R)
-              KEYWORD_SPLIT
-              (RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_YA | U P D A T E);
+HIERARCHY_FOR_IN: (RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_I | H I E R A R C H Y);
+IN              :(RU_V | I N);
 
-UNION_ALL   : UNION_PART KEYWORD_SPLIT (RU_V RU_S RU_E | A L L);
-UNION       : UNION_PART;
-
-IN_HIERARCHY: (RU_V | I N)
-              KEYWORD_SPLIT
-              (RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_I | H I E R A R C H Y);
-IN:           (RU_V | I N);
-
-// keywords fragments
-fragment KEYWORD_SPLIT: [ \r\n\t]+;
-fragment BY_PART    : (RU_P RU_O  | B Y);
-fragment JOIN_PART  : (RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E | J O I N);
-fragment OUTER_PART : (RU_V RU_N RU_E RU_SH RU_N RU_E RU_E | O U T E R);
-fragment UNION_PART : (RU_O RU_B RU_SOLID_SIGN RU_E RU_D RU_I RU_N RU_I RU_T RU_SOFT_SIGN | U N I O N);
 // tables
 fragment BALANCE_RU : RU_O RU_S RU_T RU_A RU_T RU_K RU_I;
 fragment BALANCE_EN : B A L A N C E;
