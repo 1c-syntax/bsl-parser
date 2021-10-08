@@ -22,10 +22,15 @@
 package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.Lexer;
 
 public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDBLParser> {
   public SDBLTokenizer(String content) {
     super(content, new SDBLLexer(CharStreams.fromString(""), true), SDBLParser.class);
+  }
+
+  public SDBLTokenizer(String content, Lexer lexer) {
+    super(content, lexer, SDBLParser.class);
   }
 
   @Override
