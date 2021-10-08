@@ -161,7 +161,6 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
     assertMatch("#Region ElsIf", BSLLexer.HASH, BSLLexer.PREPROC_REGION, BSLLexer.PREPROC_IDENTIFIER);
     assertMatch("#Region Else", BSLLexer.HASH, BSLLexer.PREPROC_REGION, BSLLexer.PREPROC_IDENTIFIER);
     assertMatch("#Region EndIf", BSLLexer.HASH, BSLLexer.PREPROC_REGION, BSLLexer.PREPROC_IDENTIFIER);
-
   }
 
   @Test
@@ -619,5 +618,16 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
     // должны быть равны
     assertArrayEquals(tokens.stream().map(Token::getType).toArray(),
       asyncTokens.stream().map(Token::getType).toArray());
+  }
+
+  @Test
+  void testComments() {
+    // анализируется канал HIDDEN
+    assertMatchChannel(BSLLexer.HIDDEN, "// Комментарий", BSLLexer.LINE_COMMENT);
+    assertMatchChannel(BSLLexer.HIDDEN, "#if server then // Комментарий",
+      BSLLexer.WHITE_SPACE, BSLLexer.WHITE_SPACE, BSLLexer.WHITE_SPACE,
+      BSLLexer.LINE_COMMENT);
+    assertMatchChannel(BSLLexer.HIDDEN, "#Insert // Комментарий",
+      BSLLexer.PREPROC_INSERT, BSLLexer.WHITE_SPACE, BSLLexer.LINE_COMMENT);
   }
 }

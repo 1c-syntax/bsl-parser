@@ -518,7 +518,7 @@ PREPROC_MACOS   : M A C O S;
 PREPROC_IDENTIFIER : LETTER ( LETTER | DIGIT )*;
 
 PREPROC_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
-PREPROC_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
+PREPROC_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN), type(LINE_COMMENT);
 PREPROC_NEWLINE: '\r'?'\n' -> popMode, channel(HIDDEN);
 
 PREPROC_ANY: ~[\r\n];
@@ -646,7 +646,7 @@ PREPROC_ENDDELETE
     )
     -> popMode, channel(PREPROC_DELETE_CHANNEL);
 PREPROC_DELETE_WHITE_SPACE: [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
-PREPROC_DELETE_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN), type(PREPROC_LINE_COMMENT);
+PREPROC_DELETE_LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN), type(LINE_COMMENT);
 PREPROC_DELETE_NEWLINE: '\r'?'\n' -> channel(HIDDEN), type(PREPROC_NEWLINE);
 PREPROC_DELETE_ANY: . -> channel(PREPROC_DELETE_CHANNEL);
 
