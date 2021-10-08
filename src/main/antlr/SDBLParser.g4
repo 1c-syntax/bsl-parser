@@ -68,7 +68,7 @@ subquery:
     ;
 
 // объединение запросов
-union: (UNION | UNION_ALL) query orderBy?;
+union: UNION ALL? query orderBy?;
 
 // структура запроса
 query:
@@ -77,10 +77,10 @@ query:
     (INTO temporaryTableName=identifier)?
     (FROM from=dataSources)?
     (WHERE where=searchConditions)?
-    (GROUP_BY groupBy=groupByItem)?
+    (GROUP (BY_EN | PO_RU) groupBy=groupByItem)?
     (HAVING having=searchConditions)?
-    (FOR_UPDATE forUpdate=mdo?)?
-    (INDEX_BY indexes+=indexingItem (COMMA indexes+=indexingItem)*)?
+    (FOR UPDATE forUpdate=mdo?)?
+    (INDEX (BY_EN | PO_RU) indexes+=indexingItem (COMMA indexes+=indexingItem)*)?
     ;
 
 // различные ограничения выборки, для ускорения анализа развернуты все варианты
@@ -136,7 +136,7 @@ inlineTableField: inlineTable=column DOT LPAREN inlineTableFields=selectedFields
 recordAutoNumberFunction: doCall=RECORDAUTONUMBER LPAREN RPAREN;
 
 groupByItem:
-    GROUPING_SET LPAREN (LPAREN groupingSet+=expressionList RPAREN (COMMA LPAREN groupingSet+=expressionList RPAREN)*) RPAREN
+    GROUPING SET LPAREN (LPAREN groupingSet+=expressionList RPAREN (COMMA LPAREN groupingSet+=expressionList RPAREN)*) RPAREN
     | (groupBy+=expression (COMMA groupBy+=expression)*)
     ;
 
@@ -144,7 +144,7 @@ groupByItem:
 indexingItem: parameter | column;
 
 // упорядочивание
-orderBy: ORDER_BY orders+=ordersByExpession (COMMA orders+=ordersByExpession)?;
+orderBy: ORDER (BY_EN | PO_RU) orders+=ordersByExpession (COMMA orders+=ordersByExpession)?;
 ordersByExpession: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY direction=DESC?))?;
 
 // итоги
@@ -298,7 +298,7 @@ isNullPredicate: expression IS NOT? NULL;                                       
 // сравнение выражений
 comparePredicate: expression compareOperation=(LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL) expression;
 betweenPredicate: expression BETWEEN expression AND expression;                                 // выражение МЕЖДУ выражение1 И выражение2
-inPredicate: expression NOT* (IN | IN_HIERARCHY) LPAREN (subquery | expressionList) RPAREN;     // выражение В (подзапрос/список)
+inPredicate: expression NOT* IN HIERARCHY_FOR_IN? LPAREN (subquery | expressionList) RPAREN;     // выражение В (подзапрос/список)
 refsPredicate: expression REFS mdo;                                             // выражение ССЫЛКА МДО
 
 // список выражений
@@ -350,7 +350,13 @@ parameterTable: parameter;
 
 // соединения таблиц
 joinPart:
-    joinType=(INNER_JOIN | LEFT_JOIN | RIGHT_JOIN | FULL_JOIN | JOIN)    // тип соединения
+    (   // тип соединения
+          (joinType=RIGHT outerJoin=OUTER? JOIN)
+        | (joinType=LEFT outerJoin=OUTER? JOIN)
+        | (joinType=FULL outerJoin=OUTER? JOIN)
+        | (joinType=INNER JOIN)
+        | (joinType=JOIN)
+    )
     source=dataSource (ON_EN | PO_RU) condition=searchConditions          // имя таблицы и соединение
     ;
 
