@@ -142,8 +142,8 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
     assertMatch("ПримерЫ", BSLMethodDescriptionLexer.WORD);
     assertMatch("Example", BSLMethodDescriptionLexer.WORD);
     assertMatch("Examples", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Примеры:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
-    assertMatch("Examples:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
+    assertMatch("Примеры:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
+    assertMatch("Examples:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
     assertMatch("Пример:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
     assertMatch("Example:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
     assertMatch("Пример :",
