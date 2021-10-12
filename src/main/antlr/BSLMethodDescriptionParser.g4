@@ -106,8 +106,11 @@ type:
     ;
 simpleType: (WORD | DOTSWORD);
 listTypes: (simpleType | complexType | hyperlinkType) (COMMA SPACE? (simpleType | complexType | hyperlinkType))+;
-complexType: COMPLEX_TYPE;
-hyperlinkType: HYPERLINK;
+
+complexType:
+    collection=(WORD | DOTSWORD) SPACE OF_KEYWORD SPACE type;
+hyperlinkType:
+    SEE_KEYWORD SPACE link=(WORD | DOTSWORD) (LPAREN linkParams=~(EOL)* RPAREN)?;
 
 spitter: SPACE? DASH SPACE?;
 
