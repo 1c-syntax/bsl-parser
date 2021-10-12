@@ -107,12 +107,15 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code><a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a></code></div>
-<div class="col-second even-row-color"><code><span class="member-name-link"><a href="#name">name</a></span></code></div>
+<div class="col-first even-row-color"><code><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><span class="member-name-link"><a href="#columnNames">columnNames</a></span></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code><a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a></code></div>
-<div class="col-second odd-row-color"><code><span class="member-name-link"><a href="#tableName">tableName</a></span></code></div>
+<div class="col-second odd-row-color"><code><span class="member-name-link"><a href="#identifier">identifier</a></span></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code><a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a></code></div>
+<div class="col-second even-row-color"><code><span class="member-name-link"><a href="#mdoName">mdoName</a></span></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 <div class="inherited-list">
 <h3 id="fields.inherited.from.class.org.antlr.v4.runtime.ParserRuleContext">Fields inherited from class&nbsp;org.antlr.v4.runtime.<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/ParserRuleContext.html" title="class or interface in org.antlr.v4.runtime" class="external-link">ParserRuleContext</a></h3>
@@ -171,6 +174,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a></code></div>
 <div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#identifier(int)">identifier</a></span>&#8203;(int&nbsp;i)</code></div>
 <div class="col-last odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><a href="SDBLParser.MdoContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.MdoContext</a></code></div>
+<div class="col-second even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#mdo()">mdo</a></span>()</code></div>
+<div class="col-last even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -198,15 +204,21 @@ loadScripts(document, 'script');</script>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="tableName">
-<h3>tableName</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a></span>&nbsp;<span class="element-name">tableName</span></div>
+<section class="detail" id="mdoName">
+<h3>mdoName</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a></span>&nbsp;<span class="element-name">mdoName</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="name">
-<h3>name</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a></span>&nbsp;<span class="element-name">name</span></div>
+<section class="detail" id="identifier">
+<h3>identifier</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a></span>&nbsp;<span class="element-name">identifier</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="columnNames">
+<h3>columnNames</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/16/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="SDBLParser.IdentifierContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.IdentifierContext</a>&gt;</span>&nbsp;<span class="element-name">columnNames</span></div>
 </section>
 </li>
 </ul>
@@ -254,6 +266,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="DOT(int)">
 <h3>DOT</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/tree/TerminalNode.html" title="class or interface in org.antlr.v4.runtime.tree" class="external-link">TerminalNode</a></span>&nbsp;<span class="element-name">DOT</span>&#8203;<span class="parameters">(int&nbsp;i)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="mdo()">
+<h3>mdo</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SDBLParser.MdoContext.html" title="class in com.github._1c_syntax.bsl.parser">SDBLParser.MdoContext</a></span>&nbsp;<span class="element-name">mdo</span>()</div>
 </section>
 </li>
 <li>
