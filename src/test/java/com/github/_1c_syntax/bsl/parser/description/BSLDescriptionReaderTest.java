@@ -391,7 +391,7 @@ class BSLDescriptionReaderTest {
   void parseMethodDescription9() {
     var exampleString =
       "// Параметры:\n" +
-      "//  Параметр - Массив из см. МойКлассныйМодуль.МойКлассныйКонструктор - Моё классное описание";
+        "//  Параметр - Массив из см. МойКлассныйМодуль.МойКлассныйКонструктор - Моё классное описание";
     var tokens = getTokensFromString(exampleString);
     var methodDescription = BSLDescriptionReader.parseMethodDescription(tokens);
 
@@ -501,7 +501,95 @@ class BSLDescriptionReaderTest {
       .isTrue();
   }
 
+  @Test
+  void parseMethodDescription10() {
+    var filePath = "src/test/resources/methodDescription/example10.bsl";
+    var exampleString = TestUtils.getSourceFromFile(filePath);
+    var tokens = getTokensFromString(exampleString);
+    var methodDescription = BSLDescriptionReader.parseMethodDescription(tokens);
 
+    assertThat(methodDescription).isNotNull();
+    assertThat(methodDescription.getDescription()).isEqualTo(exampleString);
+    assertThat(methodDescription.getPurposeDescription()).isEqualTo(
+      "Развернуть каждый элемент коллекции в процессор коллекций.\n" +
+        "Позволяет расширить имеющуюся коллекцию.\n" +
+        "Например, разворачивание массива массивов сделает новый массив, содержащий все элементы всех массивов.\n" +
+        "Конвейерный метод.");
+    assertThat(methodDescription.getCallOptions()).isEmpty();
+    assertThat(methodDescription.getDeprecationInfo()).isEmpty();
+    assertThat(methodDescription.getExamples()).hasSize(8)
+      .anyMatch("1:"::equals)
+      .anyMatch("ПроцессорКоллекций.Развернуть(\"Результат = ПроцессорыКоллекций.ИзСтроки(Элемент);\");"::equals)
+      .anyMatch("2:"::equals)
+      .anyMatch("Процедура МояФункцияРазворачивания(Результат, ДополнительныеПараметры) Экспорт"::equals)
+      .anyMatch("Результат = ПроцессорыКоллекций.ИзСтроки(ДополнительныеПараметры.Элемент);"::equals)
+      .anyMatch("КонецПроцедуры"::equals)
+      .anyMatch("ФункцияРазворачивания = Новый ОписаниеОповещения(\"МояФункцияРазворачивания\", ЭтотОбъект);"::equals)
+      .anyMatch("ПроцессорКоллекций.Развернуть(ФункцияРазворачивания);"::equals)
+    ;
+    assertThat(methodDescription.getLink()).isEmpty();
+    assertThat(methodDescription.getParameters()).hasSize(2);
+
+    checkParameter(methodDescription.getParameters().get(0),
+      "ФункцияРазворачивания", 2, "", false);
+    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
+      "Строка", "функция разворачивания.", 0, "", false);
+    checkType(methodDescription.getParameters().get(0).getTypes().get(1),
+      "ОписаниеОповещения", "функция разворачивания.\n" +
+        "В случае передачи Строки формируется служебное описание оповещения, в контексте которого заданы переменные\n" +
+        "\"Результат\", \"ДополнительныеПараметры\", \"Элемент\".\n" +
+        "В случае передачи ОписанияОповещения обработчик данного описания должен содержать два параметра\n" +
+        "(имена произвольные):", 2, "", false);
+
+    checkParameter(methodDescription.getParameters().get(0).getTypes().get(1).getParameters().get(0),
+      "Результат", 1, "", false);
+    checkType(methodDescription.getParameters().get(0).getTypes().get(1).getParameters().get(0).getTypes().get(0),
+      "ПроцессорКоллекций", "Переменная, в которую должен быть\n" +
+        "помещен результат работы функции в виде ПроцессораКоллекций.", 0, "", false);
+
+    checkParameter(methodDescription.getParameters().get(0).getTypes().get(1).getParameters().get(1),
+      "ДополнительныеПараметры", 1, "", false);
+    checkType(methodDescription.getParameters().get(0).getTypes().get(1).getParameters().get(1).getTypes().get(0),
+      "Структура", "Структура параметров, передаваемая функции разворачивания.", 0, "", false);
+
+    checkParameter(methodDescription.getParameters().get(1), "ДополнительныеПараметры", 1, "", false);
+    checkType(methodDescription.getParameters().get(1).getTypes().get(0),
+      "Структура", "Структура дополнительных параметров, передаваемая функции разворачивания.\n" +
+        "Служит для передачи дополнительных данных из прикладного кода в функцию разворачивания.\n" +
+        "По умолчанию содержит одно значение - Элемент.", 0, "", false);
+
+    assertThat(
+      Objects.equals(methodDescription.getSimpleRange(), create(75, 20)))
+      .isFalse();
+    assertThat(methodDescription.getReturnedValue()).hasSize(1);
+    checkType(methodDescription.getReturnedValue().get(0), "ПроцессорКоллекций",
+      "Инстанс класса \"ПроцессорКоллекций\".",
+      0, "", false);
+  }
+
+  @Test
+  void parseComplexType() {
+    var exampleString = "// Параметры:\n" +
+      "// Параметр - Список из Массив из Список из См. Мой.Метод(СПараметром)";
+    var tokens = getTokensFromString(exampleString);
+    var methodDescription = BSLDescriptionReader.parseMethodDescription(tokens);
+
+    assertThat(methodDescription).isNotNull();
+    assertThat(methodDescription.getDescription()).isEqualTo(exampleString);
+    assertThat(methodDescription.getPurposeDescription()).isEmpty();
+    assertThat(methodDescription.getCallOptions()).isEmpty();
+    assertThat(methodDescription.getDeprecationInfo()).isEmpty();
+    assertThat(methodDescription.getExamples()).isEmpty();
+    assertThat(methodDescription.getLink()).isEmpty();
+    assertThat(methodDescription.getParameters()).hasSize(1);
+    assertThat(methodDescription.getReturnedValue()).isEmpty();
+
+    checkParameter(methodDescription.getParameters().get(0),
+      "Параметр", 1, "", false);
+    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
+      "Список из Массив из Список из См. Мой.Метод(СПараметром)", "", 0, "", false);
+
+  }
 
   private List<Token> getTokensFromString(String exampleString) {
     var tokenizer = new BSLTokenizer(exampleString);

@@ -58,7 +58,7 @@ BRACE: '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 // KEYWORDS         RU                                                                          EN
 ALLOWED:        RU_R RU_A RU_Z RU_R RU_E RU_SH RU_E RU_N RU_N RU_Y RU_E                     | A L L O W E D;
 AND:            RU_I                                                                        | A N D;
-AS:             RU_K RU_A RU_K                                                              | A S;
+AS:             (RU_K RU_A RU_K                                                             | A S) -> pushMode(ID_MODE);
 ASC:            RU_V RU_O RU_Z RU_R                                                         | A S C;
 AUTOORDER:      RU_A RU_V RU_T RU_O RU_U RU_P RU_O RU_R RU_YA RU_D RU_O
                     RU_CH RU_I RU_V RU_A RU_N RU_I RU_E                                     | A U T O O R D E R;
@@ -68,7 +68,7 @@ CASE:           RU_V RU_Y RU_B RU_O RU_R                                        
 CAST:           RU_V RU_Y RU_R RU_A RU_Z RU_I RU_T RU_SOFT_SIGN                             | C A S T;
 DESC:           RU_U RU_B RU_Y RU_V                                                         | D E S C;
 DISTINCT:       RU_R RU_A RU_Z RU_L RU_I RU_CH RU_N RU_Y RU_E                               | D I S T I N C T;
-DROP:           RU_U RU_N RU_I RU_CH RU_T RU_O RU_ZH RU_I RU_T RU_SOFT_SIGN                 | D R O P;
+DROP:           (RU_U RU_N RU_I RU_CH RU_T RU_O RU_ZH RU_I RU_T RU_SOFT_SIGN                | D R O P) -> pushMode(ID_MODE);
 ELSE:           RU_I RU_N RU_A RU_CH RU_E                                                   | E L S E;
 END:            RU_K RU_O RU_N RU_E RU_C                                                    | E N D;
 ESCAPE:         RU_S RU_P RU_E RU_C RU_S RU_I RU_M RU_V RU_O RU_L                           | E S C A P E;
@@ -108,6 +108,7 @@ DATETIME:       RU_D RU_A RU_T RU_A RU_V RU_R RU_E RU_M RU_YA                   
 DAY:            RU_D RU_E RU_N RU_SOFT_SIGN                                                 | D A Y;
 DAYOFYEAR:      RU_D RU_E RU_N RU_SOFT_SIGN RU_G RU_O RU_D RU_A                             | D A Y O F Y E A R;
 EMPTYTABLE:     RU_P RU_U RU_S RU_T RU_A RU_YA RU_T RU_A RU_B RU_L RU_I RU_C RU_A           | E M P T Y T A B L E;
+EMPTYREF:       RU_P RU_U RU_S RU_T RU_A RU_YA RU_S RU_S RU_Y RU_L RU_K RU_A                | E M P T Y R E F;
 ENDOFPERIOD:    RU_K RU_O RU_N RU_E RU_C RU_P RU_E RU_R RU_I RU_O RU_D RU_A                 | E N D O F P E R I O D;
 HALFYEAR:       RU_P RU_O RU_L RU_U RU_G RU_O RU_D RU_I RU_E                                | H A L F Y E A R;
 HOUR:           RU_CH RU_A RU_S                                                             | H O U R;
@@ -140,7 +141,7 @@ YEAR:           RU_G RU_O RU_D                                                  
 
 // MDO TYPES                RU                                                                  EN
 ACCOUNTING_REGISTER_TYPE:
-                REGISTER_RU RU_B RU_U RU_H RU_G RU_A RU_L RU_T RU_E RU_R RU_I RU_I     | A C C O U N T I N G REGISTER_EN;
+                REGISTER_RU RU_B RU_U RU_H RU_G RU_A RU_L RU_T RU_E RU_R RU_I RU_I          | A C C O U N T I N G REGISTER_EN;
 ACCUMULATION_REGISTER_TYPE:
                 REGISTER_RU RU_N RU_A RU_K RU_O RU_P RU_L RU_E RU_N RU_I RU_YA              | A C C U M U L A T I O N REGISTER_EN;
 BUSINESS_PROCESS_TYPE:
@@ -172,54 +173,46 @@ INFORMATION_REGISTER_TYPE:
 SEQUENCE_TYPE:
                 RU_P RU_O RU_S RU_L RU_E RU_D RU_O RU_V RU_A RU_T RU_E RU_L RU_SOFT_SIGN RU_N RU_O RU_S RU_T RU_SOFT_SIGN
                                                                                             | S E Q U E N C E;
-TASK_TYPE:      RU_Z RU_A RU_D RU_A RU_CH RU_A                                              | T A S K;
+TASK_TYPE    :  RU_Z RU_A RU_D RU_A RU_CH RU_A                                              | T A S K;
 
 // FIELDS                 RU                                                                  EN
 ROUTEPOINT_FIELD:   RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A      | R O U T E P O I N T;
 
 // compex keywords
-INDEX_BY:  (RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | I N D E X)
-           KEYWORD_SPLIT BY_PART;
+INDEX: (RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | I N D E X);
+GROUP: (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | G R O U P);
+ORDER: (RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_T RU_SOFT_SIGN          | O R D E R);
 
-GROUP_BY:  (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | G R O U P)
-           KEYWORD_SPLIT BY_PART;
+GROUPEDBY: (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_N RU_O RU_P RU_O | G R O U P E D B Y);
 
-ORDER_BY:  (RU_U RU_P RU_O RU_R RU_YA RU_D RU_O RU_CH RU_I RU_T RU_SOFT_SIGN          | O R D E R)
-           KEYWORD_SPLIT BY_PART;
+GROUPING : (RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_U RU_YU RU_SCH RU_I RU_M             | G R O U P I N G);
+SET      : (RU_N RU_A RU_B RU_O RU_R RU_A RU_M | S E T);
 
-RIGHT_JOIN  : (RU_P RU_R RU_A RU_V RU_O RU_E | R I G H T) KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
-LEFT_JOIN   : (RU_L RU_E RU_V RU_O RU_E | L E F T) KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
-INNER_JOIN  : (RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E | I N N E R) KEYWORD_SPLIT JOIN_PART;
-FULL_JOIN   : (RU_P RU_O RU_L RU_N RU_O RU_E | F U L L) KEYWORD_SPLIT (OUTER_PART KEYWORD_SPLIT)? JOIN_PART;
-JOIN        : JOIN_PART;
+RIGHT  : (RU_P RU_R RU_A RU_V RU_O RU_E                        | R I G H T);
+LEFT   : (RU_L RU_E RU_V RU_O RU_E                             | L E F T);
+INNER  : (RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E    | I N N E R);
+FULL   : (RU_P RU_O RU_L RU_N RU_O RU_E                        | F U L L);
+JOIN   : (RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E    | J O I N);
+OUTER  : (RU_V RU_N RU_E RU_SH RU_N RU_E RU_E                  | O U T E R);
 
-FOR_UPDATE  : (RU_D RU_L RU_YA | F O R)
-              KEYWORD_SPLIT
-              (RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_YA | U P D A T E);
+FOR         : (RU_D RU_L RU_YA | F O R);
+UPDATE      : (RU_I RU_Z RU_M RU_E RU_N RU_E RU_N RU_I RU_YA | U P D A T E);
 
-UNION_ALL   : UNION_PART KEYWORD_SPLIT (RU_V RU_S RU_E | A L L);
-UNION       : UNION_PART;
+ALL         : (RU_V RU_S RU_E | A L L);
+UNION       : (RU_O RU_B RU_SOLID_SIGN RU_E RU_D RU_I RU_N RU_I RU_T RU_SOFT_SIGN | U N I O N);
 
-IN_HIERARCHY: (RU_V | I N)
-              KEYWORD_SPLIT
-              (RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_I | H I E R A R C H Y);
-IN:           (RU_V | I N);
+HIERARCHY_FOR_IN: (RU_I RU_E RU_R RU_A RU_R RU_H RU_I RU_I | H I E R A R C H Y);
+IN              :(RU_V | I N);
 
-// keywords fragments
-fragment KEYWORD_SPLIT: [ \r\n\t]+;
-fragment BY_PART    : (RU_P RU_O  | B Y);
-fragment JOIN_PART  : (RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E | J O I N);
-fragment OUTER_PART : (RU_V RU_N RU_E RU_SH RU_N RU_E RU_E | O U T E R);
-fragment UNION_PART : (RU_O RU_B RU_SOLID_SIGN RU_E RU_D RU_I RU_N RU_I RU_T RU_SOFT_SIGN | U N I O N);
 // tables
-fragment BALANCE_RU: RU_O RU_S RU_T RU_A RU_T RU_K RU_I;
-fragment BALANCE_EN: B A L A N C E;
+fragment BALANCE_RU : RU_O RU_S RU_T RU_A RU_T RU_K RU_I;
+fragment BALANCE_EN : B A L A N C E;
 fragment DOCUMENT_RU: RU_D RU_O RU_K RU_U RU_M RU_E RU_N RU_T;
 fragment DOCUMENT_EN: D O C U M E N T;
 fragment EXT_DIMENSIONS_RU: RU_S RU_U RU_B RU_K RU_O RU_N RU_T RU_O;
 fragment EXT_DIMENSIONS_EN: E X T D I M E N S I O N S;
-fragment PLAN_RU: RU_P RU_L RU_A RU_N;
-fragment PLAN_EN: C H A R T O F;
+fragment PLAN_RU    : RU_P RU_L RU_A RU_N;
+fragment PLAN_EN    : C H A R T O F;
 fragment REGISTER_RU: RU_R RU_E RU_G RU_I RU_S RU_T RU_R;
 fragment REGISTER_EN: R E G I S T E R;
 fragment TURNOVERS_RU: RU_O RU_B RU_O RU_R RU_O RU_T RU_Y;
@@ -294,25 +287,27 @@ FLOAT       : DIGIT+ '.' DIGIT*;
 STR         : '"' -> pushMode(STRINGS);
 INCORRECT_IDENTIFIER  : DIGIT+ LETTER (LETTER | DIGIT)*;
 IDENTIFIER  : LETTER (LETTER | DIGIT)*;
-UNKNOWN: . -> channel(HIDDEN);
+UNKNOWN     : . -> channel(HIDDEN);
 
 mode STRINGS;
-STRFULL:  (~["\n\r] | '""')* '"' -> type(STR), popMode;
-SKIPNEWLINE: [\n\r][ \t\f]* -> channel(HIDDEN), type(WHITE_SPACE);
-STRPART:  (~["\n\r] | '""')+ -> type(STR);
+STRFULL     :  (~["\n\r] | '""')* '"' -> type(STR), popMode;
+SKIPNEWLINE : [\n\r][ \t\f]* -> channel(HIDDEN), type(WHITE_SPACE);
+STRPART     :  (~["\n\r] | '""')+ -> type(STR);
 
 // PARAMETERS
 mode PARAMETER_MODE;
-PARAMETER_WHITE_SPACE   : [ \n\r\t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
-PARAMETER_IDENTIFIER    : LETTER (LETTER | DIGIT)* -> popMode;
+PARAMETER_WHITE_SPACE   : WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
+PARAMETER_IDENTIFIER    : IDENTIFIER -> popMode;
 PARAMETER_UKNOWN        : . -> channel(HIDDEN), type(UNKNOWN);
 
 mode DOT_MODE;
-DOT_WHITE_SPACE         : [ \t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
+DOT_WHITE_SPACE         : WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
 DOT_MUL                 : MUL -> type(MUL), popMode;
 DOT_LPAREN              : LPAREN -> type(LPAREN), popMode;
 DOT_RPAREN              : RPAREN -> type(RPAREN), popMode;
 DOT_ROUTEPOINT_FIELD    : ROUTEPOINT_FIELD -> type(ROUTEPOINT_FIELD), popMode;
+DOT_EMPTYREF            : EMPTYREF -> type(EMPTYREF), popMode;
+
 // VIRTUAL TABLES                 RU                                                                  EN
 ACTUAL_ACTION_PERIOD_VT:
                 (RU_F RU_A RU_K RU_T RU_I RU_CH RU_E RU_S RU_K RU_I RU_J RU_P RU_E RU_R RU_I RU_O RU_D RU_D RU_E RU_J RU_S RU_T RU_V RU_I RU_YA
@@ -336,11 +331,29 @@ TASK_BY_PERFORMER_VT:
                                                                                              | T A S K B Y P E R F O R M E R) -> popMode;
 TURNOVERS_VT:   (TURNOVERS_RU                                                                | TURNOVERS_EN) -> popMode;
 
-DOT_IDENTIFIER          : (LETTER ( LETTER | DIGIT )*) -> type(IDENTIFIER), popMode;
+DOT_IDENTIFIER      : IDENTIFIER -> type(IDENTIFIER), popMode;
 
 mode BRACE_MODE;
-BRACE_WHITE_SPACE   : [ \n\r\t\f]+ -> channel(HIDDEN), type(WHITE_SPACE);
-BRACE_IDENTIFIER    : LETTER (LETTER | DIGIT)* -> channel(HIDDEN);
+BRACE_WHITE_SPACE   : WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
+BRACE_IDENTIFIER    : IDENTIFIER -> channel(HIDDEN);
 BRACE_START         : '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 BRACE_END           : '}' -> channel(HIDDEN), type(UNKNOWN), popMode;
 BRACE_UNKNOWN       : . -> channel(HIDDEN), type(UNKNOWN);
+
+mode ID_MODE;
+ID_BOOLEAN          : BOOLEAN -> type(BOOLEAN), popMode;
+ID_NUMBER           : NUMBER -> type(NUMBER), popMode;
+ID_STRING           : STRING -> type(STRING), popMode;
+ID_DATE             : DATE -> type(DATE), popMode;
+ID_BUSINESS_PROCESS_TYPE    : BUSINESS_PROCESS_TYPE -> type(BUSINESS_PROCESS_TYPE), popMode;
+ID_CATALOG_TYPE             : CATALOG_TYPE -> type(CATALOG_TYPE), popMode;
+ID_CHART_OF_ACCOUNTS_TYPE   : CHART_OF_ACCOUNTS_TYPE -> type(CHART_OF_ACCOUNTS_TYPE), popMode;
+ID_CHART_OF_CALCULATION_TYPES_TYPE      : CHART_OF_CALCULATION_TYPES_TYPE -> type(CHART_OF_CALCULATION_TYPES_TYPE), popMode;
+ID_CHART_OF_CHARACTERISTIC_TYPES_TYPE   : CHART_OF_CHARACTERISTIC_TYPES_TYPE -> type(CHART_OF_CHARACTERISTIC_TYPES_TYPE), popMode;
+ID_DOCUMENT_TYPE            : DOCUMENT_TYPE -> type(DOCUMENT_TYPE), popMode;
+ID_ENUM_TYPE                : ENUM_TYPE -> type(ENUM_TYPE), popMode;
+ID_EXCHANGE_PLAN_TYPE       : EXCHANGE_PLAN_TYPE -> type(EXCHANGE_PLAN_TYPE), popMode;
+ID_TASK_TYPE                : TASK_TYPE -> type(TASK_TYPE), popMode;
+ID_DOT              : DOT -> type(DOT), pushMode(DOT_MODE), popMode;
+ID_IDENTIFIER       : IDENTIFIER -> type(IDENTIFIER), popMode;
+ID_UNKNOWN          : . -> channel(HIDDEN), type(UNKNOWN);

@@ -57,42 +57,67 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
   void testHyperlink() {
     assertMatch("СМ", BSLMethodDescriptionLexer.WORD);
     assertMatch("СМСМ", BSLMethodDescriptionLexer.WORD);
-    assertMatch("SEE", BSLMethodDescriptionLexer.WORD);
-    assertMatch("СМ.", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.ANYSYMBOL);
-    assertMatch("СМ. ОбщийМодуль", BSLMethodDescriptionLexer.HYPERLINK);
-    assertMatch("SEE ОбщийМодуль", BSLMethodDescriptionLexer.HYPERLINK);
+    assertMatch("SEE", BSLMethodDescriptionLexer.SEE_KEYWORD);
+    assertMatch("СМ.", BSLMethodDescriptionLexer.SEE_KEYWORD);
+    assertMatch("СМ. ОбщийМодуль", BSLMethodDescriptionLexer.SEE_KEYWORD, BSLMethodDescriptionLexer.SPACE,
+      BSLMethodDescriptionLexer.WORD);
+    assertMatch("SEE ОбщийМодуль", BSLMethodDescriptionLexer.SEE_KEYWORD, BSLMethodDescriptionLexer.SPACE,
+      BSLMethodDescriptionLexer.WORD);
     assertMatch("SEE  ОбщийМодуль",
-      BSLMethodDescriptionLexer.WORD,
+      BSLMethodDescriptionLexer.SEE_KEYWORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD);
     assertMatch("SSEE ОбщийМодуль",
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD);
-    assertMatch("СМ. ОбщийМодуль.Метод", BSLMethodDescriptionLexer.HYPERLINK);
-    assertMatch("SEE ОбщийМодуль.Метод", BSLMethodDescriptionLexer.HYPERLINK);
-    assertMatch("SEE ОбщийМодуль.Метод()", BSLMethodDescriptionLexer.HYPERLINK);
-    assertMatch("СМ. ОбщийМодуль.Метод(Параметра, Значение, \"\t+-'sdsds\")", BSLMethodDescriptionLexer.HYPERLINK);
+    assertMatch("СМ. ОбщийМодуль.Метод",
+      BSLMethodDescriptionLexer.SEE_KEYWORD,
+      BSLMethodDescriptionLexer.SPACE,
+      BSLMethodDescriptionLexer.DOTSWORD);
+    assertMatch("SEE ОбщийМодуль.Метод",
+      BSLMethodDescriptionLexer.SEE_KEYWORD,
+      BSLMethodDescriptionLexer.SPACE,
+      BSLMethodDescriptionLexer.DOTSWORD);
+    assertMatch("SEE ОбщийМодуль.Метод()",
+      BSLMethodDescriptionLexer.SEE_KEYWORD,
+      BSLMethodDescriptionLexer.SPACE,
+      BSLMethodDescriptionLexer.DOTSWORD,
+      BSLMethodDescriptionLexer.LPAREN,
+      BSLMethodDescriptionLexer.RPAREN);
+    assertMatch("СМ. ОбщийМодуль.Метод(Параметра, Значение)",
+      BSLMethodDescriptionLexer.SEE_KEYWORD,
+      BSLMethodDescriptionLexer.SPACE,
+      BSLMethodDescriptionLexer.DOTSWORD,
+      BSLMethodDescriptionLexer.LPAREN,
+      BSLMethodDescriptionLexer.WORD,
+      BSLMethodDescriptionLexer.COMMA,
+      BSLMethodDescriptionLexer.SPACE,
+      BSLMethodDescriptionLexer.WORD,
+      BSLMethodDescriptionLexer.RPAREN);
     assertMatch("SEE ОбщийМодуль.Метод() WORD",
-      BSLMethodDescriptionLexer.HYPERLINK,
+      BSLMethodDescriptionLexer.SEE_KEYWORD,
+      BSLMethodDescriptionLexer.SPACE,
+      BSLMethodDescriptionLexer.DOTSWORD,
+      BSLMethodDescriptionLexer.LPAREN,
+      BSLMethodDescriptionLexer.RPAREN,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD);
     assertMatch("SEE. ОбщийМодуль.Метод() WORD",
-      BSLMethodDescriptionLexer.WORD,
+      BSLMethodDescriptionLexer.SEE_KEYWORD,
       BSLMethodDescriptionLexer.ANYSYMBOL,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.DOTSWORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL,
-      BSLMethodDescriptionLexer.ANYSYMBOL,
+      BSLMethodDescriptionLexer.LPAREN,
+      BSLMethodDescriptionLexer.RPAREN,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD);
     assertMatch("СМ.   ОбщийМодуль.Метод() WORD",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL,
+      BSLMethodDescriptionLexer.SEE_KEYWORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.DOTSWORD,
-      BSLMethodDescriptionLexer.ANYSYMBOL,
-      BSLMethodDescriptionLexer.ANYSYMBOL,
+      BSLMethodDescriptionLexer.LPAREN,
+      BSLMethodDescriptionLexer.RPAREN,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD);
   }
@@ -142,8 +167,8 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
     assertMatch("ПримерЫ", BSLMethodDescriptionLexer.WORD);
     assertMatch("Example", BSLMethodDescriptionLexer.WORD);
     assertMatch("Examples", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Примеры:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
-    assertMatch("Examples:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
+    assertMatch("Примеры:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
+    assertMatch("Examples:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
     assertMatch("Пример:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
     assertMatch("Example:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
     assertMatch("Пример :",
