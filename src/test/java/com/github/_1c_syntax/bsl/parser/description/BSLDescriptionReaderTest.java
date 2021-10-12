@@ -567,6 +567,30 @@ class BSLDescriptionReaderTest {
       0, "", false);
   }
 
+  @Test
+  void parseComplexType() {
+    var exampleString = "// Параметры:\n" +
+      "// Параметр - Список из Массив из Список из См. Мой.Метод(СПараметром)";
+    var tokens = getTokensFromString(exampleString);
+    var methodDescription = BSLDescriptionReader.parseMethodDescription(tokens);
+
+    assertThat(methodDescription).isNotNull();
+    assertThat(methodDescription.getDescription()).isEqualTo(exampleString);
+    assertThat(methodDescription.getPurposeDescription()).isEmpty();
+    assertThat(methodDescription.getCallOptions()).isEmpty();
+    assertThat(methodDescription.getDeprecationInfo()).isEmpty();
+    assertThat(methodDescription.getExamples()).isEmpty();
+    assertThat(methodDescription.getLink()).isEmpty();
+    assertThat(methodDescription.getParameters()).hasSize(1);
+    assertThat(methodDescription.getReturnedValue()).isEmpty();
+
+    checkParameter(methodDescription.getParameters().get(0),
+      "Параметр", 1, "", false);
+    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
+      "Список из Массив из Список из См. Мой.Метод(СПараметром)", "", 0, "", false);
+
+  }
+
   private List<Token> getTokensFromString(String exampleString) {
     var tokenizer = new BSLTokenizer(exampleString);
     return tokenizer.getTokens().stream()
