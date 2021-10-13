@@ -235,8 +235,8 @@ builtInFunctions:
 
 // агрегатные ф-ии
 aggregateFunctions:
-      (doCall=(SUM | AVG | MIN | MAX) LPAREN expression RPAREN)
-    | (doCall=COUNT LPAREN (DISTINCT? expression | MUL) RPAREN)
+      (doCall=(SUM | AVG | MIN | MAX) LPAREN searchConditions RPAREN)
+    | (doCall=COUNT LPAREN (DISTINCT? searchConditions | MUL) RPAREN)
 ;
 
 // функция Значение
@@ -298,7 +298,7 @@ isNullPredicate: expression IS NOT? NULL;                                       
 // сравнение выражений
 comparePredicate: expression compareOperation=(LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL) expression;
 betweenPredicate: expression BETWEEN expression AND expression;                                 // выражение МЕЖДУ выражение1 И выражение2
-inPredicate: expression NOT* IN HIERARCHY_FOR_IN? LPAREN (subquery | expressionList) RPAREN;     // выражение В (подзапрос/список)
+inPredicate: (expression | (LPAREN expressionList RPAREN)) NOT* IN HIERARCHY_FOR_IN? LPAREN (subquery | expressionList) RPAREN;     // выражение В (подзапрос/список)
 refsPredicate: expression REFS mdo;                                             // выражение ССЫЛКА МДО
 
 // список выражений

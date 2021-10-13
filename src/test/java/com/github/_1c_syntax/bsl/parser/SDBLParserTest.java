@@ -109,6 +109,67 @@ class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
     );
   }
 
+  @Test
+  void testSelect02() {
+    checkSource("src/test/resources/sdbl/select02.sdbl",
+      pair(SDBLParser.RULE_queries, 1),
+      pair(SDBLParser.RULE_dropTableQuery, 0),
+      pair(SDBLParser.RULE_selectQuery, 1),
+      pair(SDBLParser.RULE_identifier, 15),
+      pair(SDBLParser.RULE_subquery, 2),
+      pair(SDBLParser.RULE_union, 0),
+      pair(SDBLParser.RULE_query, 2),
+      pair(SDBLParser.RULE_limitations, 0),
+      pair(SDBLParser.RULE_top, 0),
+      pair(SDBLParser.RULE_selectedFields, 2),
+      pair(SDBLParser.RULE_selectedField, 3),
+      pair(SDBLParser.RULE_columnField, 0),
+      pair(SDBLParser.RULE_emptyTableField, 0),
+      pair(SDBLParser.RULE_emptyTableColumns, 0),
+      pair(SDBLParser.RULE_inlineTableField, 0),
+      pair(SDBLParser.RULE_recordAutoNumberFunction, 0),
+      pair(SDBLParser.RULE_groupByItem, 0),
+      pair(SDBLParser.RULE_indexingItem, 0),
+      pair(SDBLParser.RULE_orderBy, 0),
+      pair(SDBLParser.RULE_ordersByExpession, 0),
+      pair(SDBLParser.RULE_totalBy, 0),
+      pair(SDBLParser.RULE_totalsGroup, 0),
+      pair(SDBLParser.RULE_periodic, 0),
+      pair(SDBLParser.RULE_column, 9),
+      pair(SDBLParser.RULE_expression, 13),
+      pair(SDBLParser.RULE_primitiveExpression, 3),
+      pair(SDBLParser.RULE_caseExpression, 0),
+      pair(SDBLParser.RULE_caseBranch, 0),
+      pair(SDBLParser.RULE_bracketExpression, 0),
+      pair(SDBLParser.RULE_unaryExpression, 0),
+      pair(SDBLParser.RULE_functionCall, 1),
+      pair(SDBLParser.RULE_builtInFunctions, 0),
+      pair(SDBLParser.RULE_aggregateFunctions, 1),
+      pair(SDBLParser.RULE_valueFunction, 0),
+      pair(SDBLParser.RULE_castFunction, 0),
+      pair(SDBLParser.RULE_searchConditions, 8),
+      pair(SDBLParser.RULE_searchCondition, 8),
+      pair(SDBLParser.RULE_expressionList, 3),
+      pair(SDBLParser.RULE_dataSources, 2),
+      pair(SDBLParser.RULE_dataSource, 2),
+      pair(SDBLParser.RULE_table, 1),
+      pair(SDBLParser.RULE_virtualTable, 1),
+      pair(SDBLParser.RULE_parameterTable, 0),
+      pair(SDBLParser.RULE_joinPart, 0),
+      pair(SDBLParser.RULE_alias, 1),
+      pair(SDBLParser.RULE_datePart, 0),
+      pair(SDBLParser.RULE_multiString, 0),
+      pair(SDBLParser.RULE_sign, 0),
+      pair(SDBLParser.RULE_parameter, 3),
+      pair(SDBLParser.RULE_mdo, 2),
+      pair(SDBLParser.RULE_likePredicate, 0),
+      pair(SDBLParser.RULE_comparePredicate, 1),
+      pair(SDBLParser.RULE_betweenPredicate, 0),
+      pair(SDBLParser.RULE_inPredicate, 2),
+      pair(SDBLParser.RULE_refsPredicate, 0)
+    );
+  }
+
   private void checkSource(String filePath, Pair... rules) {
     var exampleString = TestUtils.getSourceFromFile(filePath);
     setInput(exampleString);
