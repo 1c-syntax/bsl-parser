@@ -230,7 +230,7 @@ statement
     )
     | SEMICOLON
     ;
-assignment       : lValue preprocessor* ASSIGN (preprocessor* expression)?;
+assignment       : lValue preprocessor* ASSIGN (preprocessor* expression);
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
 expression       : member (preprocessor* operation preprocessor* member preprocessor*)*;
@@ -242,7 +242,7 @@ member
     : unaryModifier?
     (
         constValue
-        | complexIdentifier
+        | WAIT_KEYWORD? complexIdentifier
         | (( LPAREN expression RPAREN ) modifier*)
         | (WAIT_KEYWORD (IDENTIFIER | globalMethodCall))
     );
