@@ -1176,6 +1176,25 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   }
 
   @Test
+  void TestAnotherWait() {
+
+    setInput("Асинх Функция Test()\n" +
+      "Ждать 1;  \n" +
+      "Ждать (Ждать 1); \n" +
+      "Существует = Ждать ФайлНаДиске.СуществуетАсинх();\n" +
+      "Возврат Ждать (Ждать 1) + Ждать (Ждать 2); \n" +
+      "КонецФункции");
+    var file = parser.file();
+    assertMatches(file);
+    var codeBlockContext = file.subs().sub(0).function().subCodeBlock().codeBlock();
+    assertMatches(codeBlockContext.statement(0).waitStatement());
+    assertMatches(codeBlockContext.statement(1).waitStatement());
+    assertMatches(codeBlockContext.statement(2).assignment());
+    assertMatches(codeBlockContext.statement(3).compoundStatement().returnStatement().expression().member(0).waitStatement());
+
+  }
+
+  @Test
   void TestNoWait() {
 
     setInput("Процедура Test(Парам1, Ждать, wAit)\n" +
