@@ -179,7 +179,7 @@ tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDT
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
 callStatement     : WAIT_KEYWORD? (((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall);
-waitStatement     : WAIT_KEYWORD IDENTIFIER;
+waitStatement     : WAIT_KEYWORD expression;
 
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
@@ -242,9 +242,10 @@ member
     : unaryModifier?
     (
         constValue
-        | WAIT_KEYWORD? complexIdentifier
+        | complexIdentifier
         | (( LPAREN expression RPAREN ) modifier*)
         | (WAIT_KEYWORD (IDENTIFIER | globalMethodCall))
+        | waitStatement
     );
 newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
 typeName         : IDENTIFIER;
