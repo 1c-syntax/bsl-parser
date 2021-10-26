@@ -664,8 +664,6 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
     setInput("Выполнить");
     assertNotMatches(parser.expression());
-    setInput("А = Выполнить");
-    assertNotMatches(parser.expression());
 
   }
 
