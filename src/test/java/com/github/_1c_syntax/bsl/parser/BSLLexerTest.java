@@ -573,7 +573,7 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
     var asyncContent = PROCEDURE_PATTERN.matcher(content).replaceAll("Асинх Процедура ");
     asyncContent = FUNCTION_PATTERN.matcher(asyncContent).replaceAll("Асинх Функция ");
 
-    var tokensCount = 76441;
+    var tokensCount = 76456;
     var asyncCount = 438;
     var asyncSpaceCount = 438;
     var tokens = getTokens(BSLLexer.DEFAULT_MODE, content);

@@ -180,6 +180,9 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     setInput("МобильныйКлиент", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
+    setInput("МобильныйАвтономныйСервер", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
     setInput("ТолстыйКлиентОбычноеПриложение", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
