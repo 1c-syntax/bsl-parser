@@ -1143,6 +1143,7 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
     setInput("Асинх Процедура Test()\n" +
       "Ждать КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1     \n" +
+      "КопироватьФайлы(ИсходныйКаталог, ЦелевойКаталог); //1     \n" +
       "Файлы = Ждать НайтиФайлыАсинх(ИсхКаталог, \"*\", Ложь); //2\n" +
       "Сч = Ждать КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1\n" +
       "Об = КопироватьФайлАсинх(ИсхФайл, ЦелФайл); \n" +
@@ -1170,6 +1171,8 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     statements.forEach(this::assertMatches);
     assertThat(statements.stream().filter(statementContext -> statementContext.callStatement() != null))
       .hasSize(1);
+    assertThat(statements.stream().filter(statementContext -> statementContext.waitStatement() != null))
+      .hasSize(2);
 
   }
 
@@ -1188,7 +1191,7 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     assertMatches(codeBlockContext.statement(0).waitStatement());
     assertMatches(codeBlockContext.statement(1).waitStatement());
     assertMatches(codeBlockContext.statement(2).assignment());
-    assertMatches(codeBlockContext.statement(3).compoundStatement().returnStatement().expression().member(0).waitStatement());
+    assertMatches(codeBlockContext.statement(3).compoundStatement().returnStatement().expression().member(0).waitExpression());
 
   }
 
