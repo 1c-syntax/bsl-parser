@@ -603,13 +603,18 @@ extends <a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antl
 <div class="block">Visit a parse tree produced by <a href="BSLParser.html#var_name()"><code>BSLParser.var_name()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3"><code><a href="BSLParserVisitor.html" title="type parameter in BSLParserVisitor">Result</a></code></div>
-<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3"><code><span class="member-name-link"><a href="#visitWaitStatement(com.github._1c_syntax.bsl.parser.BSLParser.WaitStatementContext)">visitWaitStatement</a></span>&#8203;(<a href="BSLParser.WaitStatementContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WaitStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3"><code><span class="member-name-link"><a href="#visitWaitExpression(com.github._1c_syntax.bsl.parser.BSLParser.WaitExpressionContext)">visitWaitExpression</a></span>&#8203;(<a href="BSLParser.WaitExpressionContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WaitExpressionContext</a>&nbsp;ctx)</code></div>
 <div class="col-last odd-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3">
-<div class="block">Visit a parse tree produced by <a href="BSLParser.html#waitStatement()"><code>BSLParser.waitStatement()</code></a>.</div>
+<div class="block">Visit a parse tree produced by <a href="BSLParser.html#waitExpression()"><code>BSLParser.waitExpression()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3"><code><a href="BSLParserVisitor.html" title="type parameter in BSLParserVisitor">Result</a></code></div>
-<div class="col-second even-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3"><code><span class="member-name-link"><a href="#visitWhileStatement(com.github._1c_syntax.bsl.parser.BSLParser.WhileStatementContext)">visitWhileStatement</a></span>&#8203;(<a href="BSLParser.WhileStatementContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WhileStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-second even-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3"><code><span class="member-name-link"><a href="#visitWaitStatement(com.github._1c_syntax.bsl.parser.BSLParser.WaitStatementContext)">visitWaitStatement</a></span>&#8203;(<a href="BSLParser.WaitStatementContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WaitStatementContext</a>&nbsp;ctx)</code></div>
 <div class="col-last even-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3">
+<div class="block">Visit a parse tree produced by <a href="BSLParser.html#waitStatement()"><code>BSLParser.waitStatement()</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3"><code><a href="BSLParserVisitor.html" title="type parameter in BSLParserVisitor">Result</a></code></div>
+<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3"><code><span class="member-name-link"><a href="#visitWhileStatement(com.github._1c_syntax.bsl.parser.BSLParser.WhileStatementContext)">visitWhileStatement</a></span>&#8203;(<a href="BSLParser.WhileStatementContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WhileStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table-tab2 method-summary-table method-summary-table-tab3">
 <div class="block">Visit a parse tree produced by <a href="BSLParser.html#whileStatement()"><code>BSLParser.whileStatement()</code></a>.</div>
 </div>
 </div>
@@ -1559,6 +1564,20 @@ extends <a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antl
 <div class="member-signature"><span class="return-type"><a href="BSLParserVisitor.html" title="type parameter in BSLParserVisitor">Result</a></span>&nbsp;<span class="element-name">visitTernaryOperator</span>&#8203;<span class="parameters">(<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/misc/NotNull.html" title="class or interface in org.antlr.v4.runtime.misc" class="external-link">@NotNull</a>
  <a href="BSLParser.TernaryOperatorContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.TernaryOperatorContext</a>&nbsp;ctx)</span></div>
 <div class="block">Visit a parse tree produced by <a href="BSLParser.html#ternaryOperator()"><code>BSLParser.ternaryOperator()</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitWaitExpression(com.github._1c_syntax.bsl.parser.BSLParser.WaitExpressionContext)">
+<h3>visitWaitExpression</h3>
+<div class="member-signature"><span class="return-type"><a href="BSLParserVisitor.html" title="type parameter in BSLParserVisitor">Result</a></span>&nbsp;<span class="element-name">visitWaitExpression</span>&#8203;<span class="parameters">(<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/misc/NotNull.html" title="class or interface in org.antlr.v4.runtime.misc" class="external-link">@NotNull</a>
+ <a href="BSLParser.WaitExpressionContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WaitExpressionContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by <a href="BSLParser.html#waitExpression()"><code>BSLParser.waitExpression()</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>ctx</code> - the parse tree</dd>

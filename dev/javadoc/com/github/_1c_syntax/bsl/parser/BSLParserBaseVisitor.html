@@ -619,13 +619,18 @@ implements <a href="BSLParserVisitor.html" title="interface in com.github._1c_sy
 <div class="block">Visit a parse tree produced by <a href="BSLParser.html#var_name()"><code>BSLParser.var_name()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><a href="BSLParserBaseVisitor.html" title="type parameter in BSLParserBaseVisitor">Result</a></code></div>
-<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#visitWaitStatement(com.github._1c_syntax.bsl.parser.BSLParser.WaitStatementContext)">visitWaitStatement</a></span>&#8203;(<a href="BSLParser.WaitStatementContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WaitStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#visitWaitExpression(com.github._1c_syntax.bsl.parser.BSLParser.WaitExpressionContext)">visitWaitExpression</a></span>&#8203;(<a href="BSLParser.WaitExpressionContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WaitExpressionContext</a>&nbsp;ctx)</code></div>
 <div class="col-last odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">
-<div class="block">Visit a parse tree produced by <a href="BSLParser.html#waitStatement()"><code>BSLParser.waitStatement()</code></a>.</div>
+<div class="block">Visit a parse tree produced by <a href="BSLParser.html#waitExpression()"><code>BSLParser.waitExpression()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><a href="BSLParserBaseVisitor.html" title="type parameter in BSLParserBaseVisitor">Result</a></code></div>
-<div class="col-second even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#visitWhileStatement(com.github._1c_syntax.bsl.parser.BSLParser.WhileStatementContext)">visitWhileStatement</a></span>&#8203;(<a href="BSLParser.WhileStatementContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WhileStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-second even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#visitWaitStatement(com.github._1c_syntax.bsl.parser.BSLParser.WaitStatementContext)">visitWaitStatement</a></span>&#8203;(<a href="BSLParser.WaitStatementContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WaitStatementContext</a>&nbsp;ctx)</code></div>
 <div class="col-last even-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">
+<div class="block">Visit a parse tree produced by <a href="BSLParser.html#waitStatement()"><code>BSLParser.waitStatement()</code></a>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><a href="BSLParserBaseVisitor.html" title="type parameter in BSLParserBaseVisitor">Result</a></code></div>
+<div class="col-second odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table"><code><span class="member-name-link"><a href="#visitWhileStatement(com.github._1c_syntax.bsl.parser.BSLParser.WhileStatementContext)">visitWhileStatement</a></span>&#8203;(<a href="BSLParser.WhileStatementContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WhileStatementContext</a>&nbsp;ctx)</code></div>
+<div class="col-last odd-row-color method-summary-table-tab2 method-summary-table-tab4 method-summary-table">
 <div class="block">Visit a parse tree produced by <a href="BSLParser.html#whileStatement()"><code>BSLParser.whileStatement()</code></a>.</div>
 </div>
 </div>
@@ -1931,6 +1936,25 @@ implements <a href="BSLParserVisitor.html" title="interface in com.github._1c_sy
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="BSLParserVisitor.html#visitTernaryOperator(com.github._1c_syntax.bsl.parser.BSLParser.TernaryOperatorContext)">visitTernaryOperator</a></code>&nbsp;in interface&nbsp;<code><a href="BSLParserVisitor.html" title="interface in com.github._1c_syntax.bsl.parser">BSLParserVisitor</a>&lt;<a href="BSLParserBaseVisitor.html" title="type parameter in BSLParserBaseVisitor">Result</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>ctx</code> - the parse tree</dd>
+<dt>Returns:</dt>
+<dd>the visitor result</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="visitWaitExpression(com.github._1c_syntax.bsl.parser.BSLParser.WaitExpressionContext)">
+<h3>visitWaitExpression</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="BSLParserBaseVisitor.html" title="type parameter in BSLParserBaseVisitor">Result</a></span>&nbsp;<span class="element-name">visitWaitExpression</span>&#8203;<span class="parameters">(<a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/misc/NotNull.html" title="class or interface in org.antlr.v4.runtime.misc" class="external-link">@NotNull</a>
+ <a href="BSLParser.WaitExpressionContext.html" title="class in com.github._1c_syntax.bsl.parser">BSLParser.WaitExpressionContext</a>&nbsp;ctx)</span></div>
+<div class="block">Visit a parse tree produced by <a href="BSLParser.html#waitExpression()"><code>BSLParser.waitExpression()</code></a>.
+
+ <p>The default implementation returns the result of calling
+ <a href="https://javadoc.io/doc/org.antlr/antlr4-runtime/latest/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html#visitChildren(org.antlr.v4.runtime.tree.RuleNode)" title="class or interface in org.antlr.v4.runtime.tree" class="external-link"><code>AbstractParseTreeVisitor.visitChildren(org.antlr.v4.runtime.tree.RuleNode)</code></a> on <code>ctx</code>.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="BSLParserVisitor.html#visitWaitExpression(com.github._1c_syntax.bsl.parser.BSLParser.WaitExpressionContext)">visitWaitExpression</a></code>&nbsp;in interface&nbsp;<code><a href="BSLParserVisitor.html" title="interface in com.github._1c_syntax.bsl.parser">BSLParserVisitor</a>&lt;<a href="BSLParserBaseVisitor.html" title="type parameter in BSLParserBaseVisitor">Result</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>ctx</code> - the parse tree</dd>
 <dt>Returns:</dt>
