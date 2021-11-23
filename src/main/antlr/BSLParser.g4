@@ -179,8 +179,8 @@ forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO
 tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
-callStatement     : WAIT_KEYWORD? (((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall);
-waitStatement     : WAIT_KEYWORD IDENTIFIER;
+callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
+waitStatement     : waitExpression;
 
 labelName         : IDENTIFIER;
 label             : TILDA labelName COLON;
@@ -204,6 +204,7 @@ removeHandlerStatement
     ;
 
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
+waitExpression    : WAIT_KEYWORD expression;
 
 // main
 fileCodeBlockBeforeSub
@@ -231,7 +232,7 @@ statement
     )
     | SEMICOLON
     ;
-assignment       : lValue preprocessor* ASSIGN (preprocessor* expression)?;
+assignment       : lValue preprocessor* ASSIGN (preprocessor* expression);
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
 expression       : member (preprocessor* operation preprocessor* member preprocessor*)*;
@@ -245,7 +246,8 @@ member
         constValue
         | complexIdentifier
         | (( LPAREN expression RPAREN ) modifier*)
-        | (WAIT_KEYWORD (IDENTIFIER | globalMethodCall))
+        | (IDENTIFIER | globalMethodCall)
+        | waitExpression
     );
 newExpression    : NEW_KEYWORD typeName doCall? | NEW_KEYWORD doCall;
 typeName         : IDENTIFIER;
