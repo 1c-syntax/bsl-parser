@@ -180,6 +180,9 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     setInput("МобильныйКлиент", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
+    setInput("МобильныйАвтономныйСервер", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_symbol());
+
     setInput("ТолстыйКлиентОбычноеПриложение", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_symbol());
 
@@ -664,8 +667,6 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
     setInput("Выполнить");
     assertNotMatches(parser.expression());
-    setInput("А = Выполнить");
-    assertNotMatches(parser.expression());
 
   }
 
@@ -1145,6 +1146,7 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
     setInput("Асинх Процедура Test()\n" +
       "Ждать КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1     \n" +
+      "КопироватьФайлы(ИсходныйКаталог, ЦелевойКаталог); //1     \n" +
       "Файлы = Ждать НайтиФайлыАсинх(ИсхКаталог, \"*\", Ложь); //2\n" +
       "Сч = Ждать КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1\n" +
       "Об = КопироватьФайлАсинх(ИсхФайл, ЦелФайл); \n" +
@@ -1172,6 +1174,27 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     statements.forEach(this::assertMatches);
     assertThat(statements.stream().filter(statementContext -> statementContext.callStatement() != null))
       .hasSize(1);
+    assertThat(statements.stream().filter(statementContext -> statementContext.waitStatement() != null))
+      .hasSize(2);
+
+  }
+
+  @Test
+  void TestAnotherWait() {
+
+    setInput("Асинх Функция Test()\n" +
+      "Ждать 1;  \n" +
+      "Ждать (Ждать 1); \n" +
+      "Существует = Ждать ФайлНаДиске.СуществуетАсинх();\n" +
+      "Возврат Ждать (Ждать 1) + Ждать (Ждать 2); \n" +
+      "КонецФункции");
+    var file = parser.file();
+    assertMatches(file);
+    var codeBlockContext = file.subs().sub(0).function().subCodeBlock().codeBlock();
+    assertMatches(codeBlockContext.statement(0).waitStatement());
+    assertMatches(codeBlockContext.statement(1).waitStatement());
+    assertMatches(codeBlockContext.statement(2).assignment());
+    assertMatches(codeBlockContext.statement(3).compoundStatement().returnStatement().expression().member(0).waitExpression());
 
   }
 
