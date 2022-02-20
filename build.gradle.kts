@@ -33,7 +33,7 @@ dependencies {
     implementation(antlrGroupId, antlrArtifactId, antlrVersion)
     antlr(antlrGroupId, antlrArtifactId, antlrVersion)
 
-    implementation("com.github.1c-syntax", "utils", "0.2.1")
+    implementation("com.github.1c-syntax", "utils", "0.3.4")
 
     // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
     implementation("commons-beanutils", "commons-beanutils", "1.9.4")
