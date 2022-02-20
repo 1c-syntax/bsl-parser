@@ -1,4 +1,3 @@
-import java.net.URI
 import java.util.*
 
 plugins {
@@ -7,22 +6,48 @@ plugins {
     jacoco
     `java-library`
     antlr
-    id("com.github.hierynomus.license") version "0.16.1"
     id("org.sonarqube") version "3.3"
+    id("org.cadixdev.licenser") version "0.6.1"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
-    id("com.github.ben-manes.versions") version "0.40.0"
+    id("io.freefair.lombok") version "6.4.1"
+    id("io.freefair.javadoc-links") version "6.4.1"
+    id("io.freefair.javadoc-utf-8") version "6.4.1"
+    id("com.github.ben-manes.versions") version "0.42.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
-    id("io.freefair.javadoc-links") version "6.3.0"
-    id("io.freefair.javadoc-utf-8") version "6.3.0"
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
-    maven { url = URI("https://jitpack.io") }
+    maven(url = "https://jitpack.io")
 }
 
-group = "com.github.1c-syntax"
+group = "io.github.1c-syntax"
 version = gitVersionCalculator.calculateVersion("v")
+
+val antlrVersion = "4.9.0"
+val antlrGroupId = "com.tunnelvisionlabs"
+val antlrArtifactId = "antlr4"
+
+dependencies {
+    implementation(antlrGroupId, antlrArtifactId, antlrVersion)
+    antlr(antlrGroupId, antlrArtifactId, antlrVersion)
+
+    implementation("com.github.1c-syntax", "utils", "0.3.4")
+
+    // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
+    implementation("commons-beanutils", "commons-beanutils", "1.9.4")
+
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.1")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.1")
+    testImplementation("org.assertj", "assertj-core", "3.14.0")
+
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation("commons-io", "commons-io", "2.6")
+
+    // stat analysis
+    compileOnly("com.google.code.findbugs", "jsr305", "3.0.2")
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -33,32 +58,6 @@ java {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-}
-
-val antlrVersion = "4.9.0"
-val antlrGroupId = "com.tunnelvisionlabs"
-val antlrArtifactId = "antlr4"
-val junitVersion = "5.6.0-RC1"
-
-dependencies {
-    implementation(antlrGroupId, antlrArtifactId, antlrVersion)
-    antlr(antlrGroupId, antlrArtifactId, antlrVersion)
-
-    implementation("com.github.1c-syntax", "utils", "0.2.1")
-
-    // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
-    implementation("commons-beanutils", "commons-beanutils", "1.9.4")
-
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
-    testImplementation("org.assertj", "assertj-core", "3.14.0")
-
-    // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation("commons-io", "commons-io", "2.6")
-
-    // stat analysis
-    compileOnly("com.google.code.findbugs", "jsr305", "3.0.2")
-
 }
 
 sourceSets {
@@ -102,18 +101,18 @@ jmh {
 
 tasks.generateGrammarSource {
     arguments = listOf(
-            "-visitor",
-            "-package",
-            "com.github._1c_syntax.bsl.parser",
-            "-encoding",
-            "utf8"
+        "-visitor",
+        "-package",
+        "com.github._1c_syntax.bsl.parser",
+        "-encoding",
+        "utf8"
     )
     outputDirectory = file("src/main/gen/com/github/_1c_syntax/bsl/parser")
 }
 
 tasks.generateGrammarSource {
     doLast {
-        tasks.licenseFormatMain.get().actions[0].execute(tasks.licenseFormatMain.get())
+        tasks.updateLicenseMain.get().actions[0].execute(tasks.updateLicenseMain.get())
     }
 }
 
@@ -121,11 +120,11 @@ tasks.test {
     useJUnitPlatform()
 
     testLogging {
-        events("passed", "skipped", "failed")
+        events("passed", "skipped", "failed", "standard_error")
     }
 
     reports {
-        html.isEnabled = true
+        html.required.set(true)
     }
 }
 
@@ -135,24 +134,24 @@ tasks.check {
 
 tasks.jacocoTestReport {
     reports {
-        xml.isEnabled = true
-        xml.destination = File("$buildDir/reports/jacoco/test/jacoco.xml")
+        xml.required.set(true)
+        xml.outputLocation.set(File("$buildDir/reports/jacoco/test/jacoco.xml"))
     }
 }
 
 tasks.javadoc {
     options {
         this as StandardJavadocDocletOptions
-        links(
-            "https://javadoc.io/doc/org.antlr/antlr4-runtime/latest"
-        )
+        links("https://javadoc.io/doc/org.antlr/antlr4-runtime/latest")
     }
 }
 
 license {
-    header = rootProject.file("license/HEADER.txt")
+    header(rootProject.file("license/HEADER.txt"))
+    newLine(false)
     ext["year"] = "2018-" + Calendar.getInstance().get(Calendar.YEAR)
-    ext["name"] = "Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>"
+    ext["name"] =
+        "Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>"
     ext["project"] = "BSL Parser"
     exclude("**/*.tokens")
     exclude("**/*.interp")
@@ -160,8 +159,6 @@ license {
     exclude("**/*.bsl")
     exclude("**/*.orig")
     exclude("**/*.gitkeep")
-    strictCheck = true
-    mapping("java", "SLASHSTAR_STYLE")
 }
 
 tasks.clean {
