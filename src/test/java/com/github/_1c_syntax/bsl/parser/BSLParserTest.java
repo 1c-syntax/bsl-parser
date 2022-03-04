@@ -156,7 +156,33 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
   @Test
   void testPreproc_Expression() {
-    setInput("((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент))))", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Если (Клиент Или (НЕ Клиент)) И НЕ Клиент Тогда\n" +
+      "#ИначеЕсли ((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент)))) Тогда\n" +
+      "#КонецЕсли");
+    var file = parser.file();
+    assertMatches(file);
+
+    var preprocessors = file.preprocessor();
+    assertThat(preprocessors).isNotNull().hasSize(3);
+    var preproc_if = preprocessors.get(0);
+    var preproc_elif = preprocessors.get(1);
+    var preproc_endif = preprocessors.get(2);
+    assertMatches(preproc_if.preproc_if());
+    assertMatches(preproc_if.preproc_if().preproc_expression());
+    assertMatches(preproc_elif.preproc_elsif());
+    assertMatches(preproc_elif.preproc_elsif().preproc_expression());
+    assertMatches(preproc_endif.preproc_endif());
+
+    // в выражении условия все есть логическое условие
+    var preproc_exp = preproc_if.preproc_if().preproc_expression().preproc_logicalExpression();
+    assertMatches(preproc_exp);
+    // логическое условие содержит два операнда
+    assertThat(preproc_exp.preproc_logicalOperand()).isNotNull().hasSize(2);
+
+    var preproc_exp_inside = preproc_exp.preproc_logicalOperand(0);
+    assertThat(preproc_exp_inside).isNotNull();
+    // первый операнд это тоже логическое условие
+    assertMatches(preproc_exp_inside.preproc_logicalExpression());
   }
 
   @Test
