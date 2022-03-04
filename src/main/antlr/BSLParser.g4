@@ -204,7 +204,7 @@ removeHandlerStatement
     ;
 
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
-waitExpression    : WAIT_KEYWORD expression;
+waitExpression    : AWAIT_KEYWORD expression;
 
 // main
 fileCodeBlockBeforeSub
