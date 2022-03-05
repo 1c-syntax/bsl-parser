@@ -1227,4 +1227,43 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     var statements = codeBlock.statement();
     statements.forEach(this::assertMatches);
   }
+
+  @Test
+  void TestAnnotateParams() {
+    setInput("Процедура САннотированнымиПараметрами(\n" +
+      "\t\n" +
+      "\t&АннотацияДляПараметра\n" +
+      "\tЗнач Парам1,\n" +
+      "\n" +
+      "\t&АннотацияДляПараметра\n" +
+      "\t&АннотацияДляПараметра1\n" +
+      "\t&АннотацияДляПараметра2(СПараметрами = 3, 4, 5)\n" +
+      "\tЗнач Парам2,\n" +
+      "\n" +
+      "\tПарам3,\n" +
+      "\tПарам4 = Неопределено\n" +
+      ") Экспорт\n" +
+      "\n" +
+      "КонецПроцедуры");
+
+    var file = parser.file();
+    assertMatches(file);
+    assertThat(file.subs()).isNotNull();
+    assertThat(file.subs().sub()).isNotNull().hasSize(1);
+    var sub = file.subs().sub(0);
+    assertMatches(sub.procedure());
+    assertMatches(sub.procedure().procDeclaration());
+    assertThat(sub.procedure().procDeclaration().paramList()).isNotNull();
+    assertThat(sub.procedure().procDeclaration().paramList().param()).isNotNull().hasSize(4);
+
+    var param1 = sub.procedure().procDeclaration().paramList().param(0);
+    assertThat(param1.annotation()).isNotNull().hasSize(1);
+
+    var param2 = sub.procedure().procDeclaration().paramList().param(1);
+    assertThat(param2.annotation()).isNotNull().hasSize(3);
+
+    var annotation2 = param2.annotation().get(2);
+    assertThat(annotation2.annotationParams()).isNotNull();
+    assertThat(annotation2.annotationParams().annotationParam()).isNotNull().hasSize(3);
+  }
 }
