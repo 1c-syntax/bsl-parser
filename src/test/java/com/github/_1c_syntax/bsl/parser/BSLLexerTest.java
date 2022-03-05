@@ -508,9 +508,9 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
     assertMatch("Field.ASYNC", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
 
     assertMatch("ЖдатЬ", BSLLexer.IDENTIFIER);
-    assertMatch("WAIt", BSLLexer.IDENTIFIER);
+    assertMatch("aWAIt", BSLLexer.IDENTIFIER);
     assertMatch("Поле.ждАть", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
-    assertMatch("Field.WaIT", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    assertMatch("Field.aWaIT", BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
 
     assertMatch("асинх функция а() ЖдатЬ Б(); КонецФункции",
       BSLLexer.ASYNC_KEYWORD,
@@ -518,20 +518,20 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
       BSLLexer.IDENTIFIER,
       BSLLexer.LPAREN,
       BSLLexer.RPAREN,
-      BSLLexer.WAIT_KEYWORD,
+      BSLLexer.AWAIT_KEYWORD,
       BSLLexer.IDENTIFIER,
       BSLLexer.LPAREN,
       BSLLexer.RPAREN,
       BSLLexer.SEMICOLON,
       BSLLexer.ENDFUNCTION_KEYWORD
     );
-    assertMatch("async function a() wait b(); endfunction",
+    assertMatch("async function a() await b(); endfunction",
       BSLLexer.ASYNC_KEYWORD,
       BSLLexer.FUNCTION_KEYWORD,
       BSLLexer.IDENTIFIER,
       BSLLexer.LPAREN,
       BSLLexer.RPAREN,
-      BSLLexer.WAIT_KEYWORD,
+      BSLLexer.AWAIT_KEYWORD,
       BSLLexer.IDENTIFIER,
       BSLLexer.LPAREN,
       BSLLexer.RPAREN,
@@ -582,7 +582,7 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
     // проверка наличия всех токенов в фикстуре
     var tokenTypes = tokens.stream().map(Token::getType).collect(Collectors.toSet());
     for (int i = 1; i <= BSLLexer.VOCABULARY.getMaxTokenType(); i++) {
-      if (BSLLexer.WAIT_KEYWORD == i // этих токенов быть не должно
+      if (BSLLexer.AWAIT_KEYWORD == i // этих токенов быть не должно
         || BSLLexer.ASYNC_KEYWORD == i
         || BSLLexer.PREPROC_EXCLAMATION_MARK == i
         || BSLLexer.PREPROC_STRING == i
