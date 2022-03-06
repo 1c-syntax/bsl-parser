@@ -1266,4 +1266,28 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     assertThat(annotation2.annotationParams()).isNotNull();
     assertThat(annotation2.annotationParams().annotationParam()).isNotNull().hasSize(3);
   }
+
+  @Test
+  void TestRaise() {
+    setInput("ВызватьИсключение (\"Документ не может быть проведен\", " +
+      "КатегорияОшибки.ОшибкаКонфигурации, " +
+      "\"ERR.DOCS.0001\", " +
+      "\"Клиенту запрещена отгрузка\");");
+
+    var file = parser.file();
+    assertMatches(file);
+    assertThat(file.fileCodeBlock()).isNotNull();
+    assertThat(file.fileCodeBlock().codeBlock()).isNotNull();
+    assertThat(file.fileCodeBlock().codeBlock().statement()).isNotNull().hasSize(1);
+    var statement = file.fileCodeBlock().codeBlock().statement().get(0);
+    assertThat(statement).isNotNull();
+    assertThat(statement.compoundStatement()).isNotNull();
+    assertThat(statement.compoundStatement().raiseStatement()).isNotNull();
+    var raise = statement.compoundStatement().raiseStatement();
+    assertThat(raise.expression()).isNull();
+    assertThat(raise.doCall()).isNotNull();
+    assertThat(raise.doCall().callParamList()).isNotNull();
+    assertThat(raise.doCall().callParamList().callParam()).isNotNull().hasSize(4);
+  }
+
 }

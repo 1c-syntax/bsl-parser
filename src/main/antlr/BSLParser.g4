@@ -160,7 +160,7 @@ subCodeBlock     : subVars? codeBlock;
 // statements
 continueStatement : CONTINUE_KEYWORD;
 breakStatement    : BREAK_KEYWORD;
-raiseStatement    : RAISE_KEYWORD expression?;
+raiseStatement    : RAISE_KEYWORD (expression? | doCall);
 ifStatement
     : ifBranch elsifBranch* elseBranch? ENDIF_KEYWORD
     ;
