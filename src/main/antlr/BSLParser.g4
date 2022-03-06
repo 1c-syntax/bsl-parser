@@ -160,17 +160,7 @@ subCodeBlock     : subVars? codeBlock;
 // statements
 continueStatement : CONTINUE_KEYWORD;
 breakStatement    : BREAK_KEYWORD;
-raiseStatement    : RAISE_KEYWORD
-    (
-        expression?
-        | (LPAREN description=expression
-            (COMMA category=expression
-            (COMMA code=expression
-            (COMMA additionalCause=expression
-            (COMMA cause=expression)?)?)?)?
-          RPAREN)
-    )
-    ;
+raiseStatement    : RAISE_KEYWORD (expression? | doCall);
 ifStatement
     : ifBranch elsifBranch* elseBranch? ENDIF_KEYWORD
     ;

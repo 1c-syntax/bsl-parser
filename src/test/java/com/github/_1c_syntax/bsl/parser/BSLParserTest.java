@@ -1284,11 +1284,10 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     assertThat(statement.compoundStatement()).isNotNull();
     assertThat(statement.compoundStatement().raiseStatement()).isNotNull();
     var raise = statement.compoundStatement().raiseStatement();
-    assertThat(raise.description).isNotNull();
-    assertThat(raise.category).isNotNull();
-    assertThat(raise.code).isNotNull();
-    assertThat(raise.additionalCause).isNotNull();
-    assertThat(raise.cause).isNull();
+    assertThat(raise.expression()).isNull();
+    assertThat(raise.doCall()).isNotNull();
+    assertThat(raise.doCall().callParamList()).isNotNull();
+    assertThat(raise.doCall().callParamList().callParam()).isNotNull().hasSize(4);
   }
 
 }
