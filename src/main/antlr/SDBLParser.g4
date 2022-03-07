@@ -428,6 +428,7 @@ identifier:
     | DAY
     | DAYOFYEAR
     | EMPTYTABLE
+    | EMPTYREF
     | ENDOFPERIOD
     | HALFYEAR
     | HOUR
