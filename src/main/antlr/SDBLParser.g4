@@ -417,6 +417,7 @@ identifier:
     | SELECT
     | TOTALS
     | UNION
+    | UPDATE
     | AVG
     | BEGINOFPERIOD
     | BOOLEAN
