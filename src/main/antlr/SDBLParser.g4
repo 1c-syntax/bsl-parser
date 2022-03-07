@@ -417,6 +417,7 @@ identifier:
     | SELECT
     | TOTALS
     | UNION
+    | UPDATE
     | AVG
     | BEGINOFPERIOD
     | BOOLEAN
@@ -428,6 +429,7 @@ identifier:
     | DAY
     | DAYOFYEAR
     | EMPTYTABLE
+    | EMPTYREF
     | ENDOFPERIOD
     | HALFYEAR
     | HOUR
