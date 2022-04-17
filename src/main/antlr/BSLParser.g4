@@ -50,10 +50,12 @@ preproc_expression
     ;
 preproc_logicalOperand
     : (PREPROC_LPAREN PREPROC_NOT_KEYWORD? preproc_logicalOperand PREPROC_RPAREN)
-    | ( PREPROC_NOT_KEYWORD? preproc_symbol )
+    | (PREPROC_NOT_KEYWORD? preproc_symbol)
+    | (PREPROC_LPAREN preproc_logicalExpression PREPROC_RPAREN)
     ;
 preproc_logicalExpression
-    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*;
+    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*
+    ;
 preproc_symbol
     : PREPROC_CLIENT_SYMBOL
     | PREPROC_ATCLIENT_SYMBOL
