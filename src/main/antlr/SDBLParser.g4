@@ -65,6 +65,7 @@ selectQuery:
 subquery:
       main=query
     | main=query orderBy? unions+=union+
+    | main=query orderBy
     ;
 
 // объединение запросов
