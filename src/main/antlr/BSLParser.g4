@@ -50,10 +50,12 @@ preproc_expression
     ;
 preproc_logicalOperand
     : (PREPROC_LPAREN PREPROC_NOT_KEYWORD? preproc_logicalOperand PREPROC_RPAREN)
-    | ( PREPROC_NOT_KEYWORD? preproc_symbol )
+    | (PREPROC_NOT_KEYWORD? preproc_symbol)
+    | (PREPROC_LPAREN preproc_logicalExpression PREPROC_RPAREN)
     ;
 preproc_logicalExpression
-    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*;
+    : preproc_logicalOperand (preproc_boolOperation preproc_logicalOperand)*
+    ;
 preproc_symbol
     : PREPROC_CLIENT_SYMBOL
     | PREPROC_ATCLIENT_SYMBOL
@@ -160,7 +162,7 @@ subCodeBlock     : subVars? codeBlock;
 // statements
 continueStatement : CONTINUE_KEYWORD;
 breakStatement    : BREAK_KEYWORD;
-raiseStatement    : RAISE_KEYWORD expression?;
+raiseStatement    : RAISE_KEYWORD (expression? | doCall);
 ifStatement
     : ifBranch elsifBranch* elseBranch? ENDIF_KEYWORD
     ;
@@ -204,7 +206,7 @@ removeHandlerStatement
     ;
 
 ternaryOperator   : QUESTION LPAREN expression COMMA expression COMMA expression RPAREN;
-waitExpression    : WAIT_KEYWORD expression;
+waitExpression    : AWAIT_KEYWORD expression;
 
 // main
 fileCodeBlockBeforeSub
@@ -216,7 +218,7 @@ fileCodeBlock
 codeBlock        : (statement | preprocessor)*;
 numeric          : FLOAT | DECIMAL;
 paramList        : param (COMMA param)*;
-param            : VAL_KEYWORD? IDENTIFIER (ASSIGN defaultValue)?;
+param            : (annotation)* VAL_KEYWORD? IDENTIFIER (ASSIGN defaultValue)?;
 defaultValue     : constValue;
 constValue       : (MINUS | PLUS)? numeric | string | TRUE | FALSE | UNDEFINED | NULL | DATETIME;
 multilineString  : STRINGSTART (STRINGPART | BAR | preprocessor)* STRINGTAIL;

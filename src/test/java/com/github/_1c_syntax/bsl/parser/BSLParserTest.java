@@ -156,7 +156,33 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
   @Test
   void testPreproc_Expression() {
-    setInput("((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент))))", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Если (Клиент Или (НЕ Клиент)) И НЕ Клиент Тогда\n" +
+      "#ИначеЕсли ((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент)))) Тогда\n" +
+      "#КонецЕсли");
+    var file = parser.file();
+    assertMatches(file);
+
+    var preprocessors = file.preprocessor();
+    assertThat(preprocessors).isNotNull().hasSize(3);
+    var preproc_if = preprocessors.get(0);
+    var preproc_elif = preprocessors.get(1);
+    var preproc_endif = preprocessors.get(2);
+    assertMatches(preproc_if.preproc_if());
+    assertMatches(preproc_if.preproc_if().preproc_expression());
+    assertMatches(preproc_elif.preproc_elsif());
+    assertMatches(preproc_elif.preproc_elsif().preproc_expression());
+    assertMatches(preproc_endif.preproc_endif());
+
+    // в выражении условия все есть логическое условие
+    var preproc_exp = preproc_if.preproc_if().preproc_expression().preproc_logicalExpression();
+    assertMatches(preproc_exp);
+    // логическое условие содержит два операнда
+    assertThat(preproc_exp.preproc_logicalOperand()).isNotNull().hasSize(2);
+
+    var preproc_exp_inside = preproc_exp.preproc_logicalOperand(0);
+    assertThat(preproc_exp_inside).isNotNull();
+    // первый операнд это тоже логическое условие
+    assertMatches(preproc_exp_inside.preproc_logicalExpression());
   }
 
   @Test
@@ -1227,4 +1253,67 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     var statements = codeBlock.statement();
     statements.forEach(this::assertMatches);
   }
+
+  @Test
+  void TestAnnotateParams() {
+    setInput("Процедура САннотированнымиПараметрами(\n" +
+      "\t\n" +
+      "\t&АннотацияДляПараметра\n" +
+      "\tЗнач Парам1,\n" +
+      "\n" +
+      "\t&АннотацияДляПараметра\n" +
+      "\t&АннотацияДляПараметра1\n" +
+      "\t&АннотацияДляПараметра2(СПараметрами = 3, 4, 5)\n" +
+      "\tЗнач Парам2,\n" +
+      "\n" +
+      "\tПарам3,\n" +
+      "\tПарам4 = Неопределено\n" +
+      ") Экспорт\n" +
+      "\n" +
+      "КонецПроцедуры");
+
+    var file = parser.file();
+    assertMatches(file);
+    assertThat(file.subs()).isNotNull();
+    assertThat(file.subs().sub()).isNotNull().hasSize(1);
+    var sub = file.subs().sub(0);
+    assertMatches(sub.procedure());
+    assertMatches(sub.procedure().procDeclaration());
+    assertThat(sub.procedure().procDeclaration().paramList()).isNotNull();
+    assertThat(sub.procedure().procDeclaration().paramList().param()).isNotNull().hasSize(4);
+
+    var param1 = sub.procedure().procDeclaration().paramList().param(0);
+    assertThat(param1.annotation()).isNotNull().hasSize(1);
+
+    var param2 = sub.procedure().procDeclaration().paramList().param(1);
+    assertThat(param2.annotation()).isNotNull().hasSize(3);
+
+    var annotation2 = param2.annotation().get(2);
+    assertThat(annotation2.annotationParams()).isNotNull();
+    assertThat(annotation2.annotationParams().annotationParam()).isNotNull().hasSize(3);
+  }
+
+  @Test
+  void TestRaise() {
+    setInput("ВызватьИсключение (\"Документ не может быть проведен\", " +
+      "КатегорияОшибки.ОшибкаКонфигурации, " +
+      "\"ERR.DOCS.0001\", " +
+      "\"Клиенту запрещена отгрузка\");");
+
+    var file = parser.file();
+    assertMatches(file);
+    assertThat(file.fileCodeBlock()).isNotNull();
+    assertThat(file.fileCodeBlock().codeBlock()).isNotNull();
+    assertThat(file.fileCodeBlock().codeBlock().statement()).isNotNull().hasSize(1);
+    var statement = file.fileCodeBlock().codeBlock().statement().get(0);
+    assertThat(statement).isNotNull();
+    assertThat(statement.compoundStatement()).isNotNull();
+    assertThat(statement.compoundStatement().raiseStatement()).isNotNull();
+    var raise = statement.compoundStatement().raiseStatement();
+    assertThat(raise.expression()).isNull();
+    assertThat(raise.doCall()).isNotNull();
+    assertThat(raise.doCall().callParamList()).isNotNull();
+    assertThat(raise.doCall().callParamList().callParam()).isNotNull().hasSize(4);
+  }
+
 }
