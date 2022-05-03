@@ -73,9 +73,9 @@ query:
     columns=selectedFields
     (INTO temporaryTableName=identifier)?
     (FROM from=dataSources)?
-    (WHERE where=searchConditions)?
+    (WHERE where=logicalExpression)?
     (GROUP (BY_EN | PO_RU) groupBy=groupByItem)?
-    (HAVING having=searchConditions)?
+    (HAVING having=logicalExpression)?
     (FOR UPDATE forUpdate=mdo?)?
     (INDEX (BY_EN | PO_RU) indexes+=indexingItem (COMMA indexes+=indexingItem)*)?
     ;
@@ -117,7 +117,7 @@ selectedField:
 asteriskField: (tableName=identifier DOT)* MUL;
 
 // поле выборки-выражение, алиас может быть
-expressionField: searchConditions;
+expressionField: logicalExpression;
 
 // поле выборки-поле табицы или NULL
 columnField: NULL | recordAutoNumberFunction;
@@ -196,13 +196,13 @@ primitiveExpression:
 
 // условные выражения (если...то...иначе)
 caseExpression:
-      (CASE caseExp=expression caseBranch+ (ELSE elseExp=searchConditions)? END)
-    | (CASE caseBranch+ (ELSE elseExp=searchConditions)? END)
-    | (caseBranch (ELSE elseExp=searchConditions)? END)
+      (CASE caseExp=expression caseBranch+ (ELSE elseExp=logicalExpression)? END)
+    | (CASE caseBranch+ (ELSE elseExp=logicalExpression)? END)
+    | (caseBranch (ELSE elseExp=logicalExpression)? END)
     ;
 
 // ветка со своим условием и результатом
-caseBranch: WHEN searchConditions THEN searchConditions;
+caseBranch: WHEN logicalExpression THEN logicalExpression;
 
 // выражение в скобках
 // в скобках может быть либо подзапрос либо другое выражение
@@ -232,8 +232,8 @@ builtInFunctions:
 
 // агрегатные ф-ии
 aggregateFunctions:
-      (doCall=(SUM | AVG | MIN | MAX) LPAREN searchConditions RPAREN)
-    | (doCall=COUNT LPAREN (DISTINCT? searchConditions | MUL) RPAREN)
+      (doCall=(SUM | AVG | MIN | MAX) LPAREN logicalExpression RPAREN)
+    | (doCall=COUNT LPAREN (DISTINCT? logicalExpression | MUL) RPAREN)
 ;
 
 // функция Значение
@@ -275,11 +275,11 @@ castFunction:
    ;
 
 // выражения-условия отбора
-searchConditions:
-      condidions+=searchCondition
-      ((AND | OR) condidions+=searchCondition)*
+logicalExpression:
+      condidions+=predicate
+      ((AND | OR) condidions+=predicate)*
     ;
-searchCondition: NOT* (
+predicate: NOT* (
       booleanPredicate=expression // булево
     | likePredicate
     | isNullPredicate
@@ -287,7 +287,7 @@ searchCondition: NOT* (
     | betweenPredicate
     | inPredicate
     | refsPredicate
-    | (LPAREN searchConditions RPAREN)
+    | (LPAREN logicalExpression RPAREN)
     );
 
 likePredicate: expression NOT* LIKE expression (ESCAPE escape=multiString)?;    // выражение подобно выражение [ESC-последовательность]
@@ -340,7 +340,7 @@ virtualTable:
     ;
 
 // параметр виртуальной таблицы может быть опущен
-virtualTableParameter: searchConditions?;
+virtualTableParameter: logicalExpression?;
 
 // таблица как параметр, соединяться ни с чем не может
 parameterTable: parameter;
@@ -354,7 +354,7 @@ joinPart:
         | (joinType=INNER JOIN)
         | (joinType=JOIN)
     )
-    source=dataSource (ON_EN | PO_RU) condition=searchConditions          // имя таблицы и соединение
+    source=dataSource (ON_EN | PO_RU) condition=logicalExpression          // имя таблицы и соединение
     ;
 
 // алиас для поля, таблицы ...
