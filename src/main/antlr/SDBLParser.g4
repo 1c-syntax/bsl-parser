@@ -299,7 +299,7 @@ inPredicate: (expression | (LPAREN expressionList RPAREN)) NOT* IN HIERARCHY_FOR
 refsPredicate: expression REFS mdo;                                             // выражение ССЫЛКА МДО
 
 // список выражений
-expressionList: exp+=expression (COMMA exp+=expression)*;
+expressionList: exp+=logicalExpression (COMMA exp+=logicalExpression)*;
 
 // перечень таблиц-источников данных для выборки
 dataSources: tables+=dataSource (COMMA tables+=dataSource)*;
