@@ -62,11 +62,7 @@ selectQuery:
 // Основная часть запроса
 // Состоит из основного запроса и объединения.
 // Основной запрос может быть простым запросом для выборки данных И НЕ МОЖЕТ быть выбокой во временную таблицу
-subquery:
-      main=query
-    | main=query orderBy? unions+=union+
-    | main=query orderBy
-    ;
+subquery: main=query orderBy? (unions+=union+)?;
 
 // объединение запросов
 union: UNION ALL? query orderBy?;
