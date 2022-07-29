@@ -6,7 +6,7 @@ plugins {
     jacoco
     `java-library`
     antlr
-    id("org.sonarqube") version "3.3"
+    id("org.sonarqube") version "3.4.0.2513"
     id("org.cadixdev.licenser") version "0.6.1"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
     id("io.freefair.javadoc-links") version "6.4.3"
