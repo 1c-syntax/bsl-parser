@@ -296,7 +296,7 @@ class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
     checkSource("src/test/resources/sdbl/select05.sdbl",
       pair(SDBLParser.RULE_queries, 1),
       pair(SDBLParser.RULE_selectedField, 4),
-      pair(SDBLParser.RULE_isnull, 4)
+      pair(SDBLParser.RULE_builtInFunctions, 4)
     );
   }
 
