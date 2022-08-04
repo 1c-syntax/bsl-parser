@@ -291,6 +291,14 @@ class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
       pair(SDBLParser.RULE_refsPredicate, 0)
     );
   }
+  @Test
+  void testSelect05() {
+    checkSource("src/test/resources/sdbl/select05.sdbl",
+      pair(SDBLParser.RULE_queries, 1),
+      pair(SDBLParser.RULE_selectedField, 4),
+      pair(SDBLParser.RULE_builtInFunctions, 4)
+    );
+  }
 
   private void checkSource(String filePath, Pair... rules) {
     var exampleString = TestUtils.getSourceFromFile(filePath);
