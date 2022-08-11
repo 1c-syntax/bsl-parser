@@ -153,10 +153,10 @@ subName          : IDENTIFIER;
 
 subs             : sub+;
 sub              : procedure | function;
-procedure        : procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
-function         : funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
-procDeclaration  : (preprocessor | compilerDirective | annotation)* ASYNC_KEYWORD? PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
-funcDeclaration  : (preprocessor | compilerDirective | annotation)* ASYNC_KEYWORD? FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+procedure        : preprocessor* procDeclaration subCodeBlock ENDPROCEDURE_KEYWORD;
+function         : preprocessor* funcDeclaration subCodeBlock ENDFUNCTION_KEYWORD;
+procDeclaration  : (compilerDirective | annotation)* ASYNC_KEYWORD? PROCEDURE_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
+funcDeclaration  : (compilerDirective | annotation)* ASYNC_KEYWORD? FUNCTION_KEYWORD subName LPAREN paramList? RPAREN EXPORT_KEYWORD?;
 subCodeBlock     : subVars? codeBlock;
 
 // statements
