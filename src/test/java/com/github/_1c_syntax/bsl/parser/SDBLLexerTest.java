@@ -133,6 +133,31 @@ class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
     assertMatch("РазностьДат", "DateDiff", SDBLLexer.DATEDIFF);
     assertMatch("автономерзаписи", "RECORDAUTONUMBER", SDBLLexer.RECORDAUTONUMBER);
 
+    assertMatch("ДлинаСтроки", "StringLength", SDBLLexer.STRINGLENGTH);
+    assertMatch("СокрЛ", "TrimL", SDBLLexer.TRIML);
+    assertMatch("СокрП", "TrimR", SDBLLexer.TRIMR);
+    assertMatch("СокрЛП", "TrimALL", SDBLLexer.TRIMALL);
+//    assertMatch("Лев", "Left", SDBLLexer.LEFT_F);
+//    assertMatch("Прав", "Right", SDBLLexer.RIGHT_F);
+    assertMatch("СтрНайти", "StrFind", SDBLLexer.STRFIND);
+    assertMatch("СтрЗаменить", "StrReplace", SDBLLexer.STRREPLACE);
+    assertMatch("ВРег", "Upper", SDBLLexer.UPPER);
+    assertMatch("НРег", "Lower", SDBLLexer.LOWER);
+    assertMatch("Sin", SDBLLexer.SIN);
+    assertMatch("Cos", SDBLLexer.COS);
+    assertMatch("Tan", SDBLLexer.TAN);
+    assertMatch("ASin", SDBLLexer.ASIN);
+    assertMatch("ACos", SDBLLexer.ACOS);
+    assertMatch("ATan", SDBLLexer.ATAN);
+    assertMatch("Exp", SDBLLexer.EXP);
+    assertMatch("Log", SDBLLexer.LOG);
+//    assertMatch("Log10", SDBLLexer.LOG10);
+    assertMatch("Pow", SDBLLexer.POW);
+    assertMatch("Sqrt", SDBLLexer.SQRT);
+    assertMatch("Окр", "Round", SDBLLexer.ROUND);
+    assertMatch("Цел", "Int", SDBLLexer.INT);
+    assertMatch("РазмерХранимыхДанных", "StoredDataSize", SDBLLexer.STOREDDATASIZE);
+
   }
 
   @Test

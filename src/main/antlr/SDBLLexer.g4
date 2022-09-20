@@ -97,9 +97,13 @@ WHEN:           RU_K RU_O RU_G RU_D RU_A                                        
 WHERE:          RU_G RU_D RU_E                                                              | W H E R E;
 
 // KEYWORDS         RU                                                                          EN
+ACOS:                                                                                         A C O S;
+ASIN:                                                                                         A S I N;
+ATAN:                                                                                         A T A N;
 AVG:            RU_S RU_R RU_E RU_D RU_N RU_E RU_E                                          | A V G;
 BEGINOFPERIOD:  RU_N RU_A RU_CH RU_A RU_L RU_O RU_P RU_E RU_R RU_I RU_O RU_D RU_A           | B E G I N O F P E R I O D;
 BOOLEAN:        RU_B RU_U RU_L RU_E RU_V RU_O                                               | B O O L E A N;
+COS:                                                                                          C O S;
 COUNT:          RU_K RU_O RU_L RU_I RU_CH RU_E RU_S RU_T RU_V RU_O                          | C O U N T;
 DATE:           RU_D RU_A RU_T RU_A                                                         | D A T E;
 DATEADD:        RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_K RU_D RU_A RU_T RU_E    | D A T E A D D;
@@ -110,8 +114,14 @@ DAYOFYEAR:      RU_D RU_E RU_N RU_SOFT_SIGN RU_G RU_O RU_D RU_A                 
 EMPTYTABLE:     RU_P RU_U RU_S RU_T RU_A RU_YA RU_T RU_A RU_B RU_L RU_I RU_C RU_A           | E M P T Y T A B L E;
 EMPTYREF:       RU_P RU_U RU_S RU_T RU_A RU_YA RU_S RU_S RU_Y RU_L RU_K RU_A                | E M P T Y R E F;
 ENDOFPERIOD:    RU_K RU_O RU_N RU_E RU_C RU_P RU_E RU_R RU_I RU_O RU_D RU_A                 | E N D O F P E R I O D;
+EXP:                                                                                          E X P;
 HALFYEAR:       RU_P RU_O RU_L RU_U RU_G RU_O RU_D RU_I RU_E                                | H A L F Y E A R;
 HOUR:           RU_CH RU_A RU_S                                                             | H O U R;
+INT:            RU_C RU_E RU_L                                                              | I N T;
+//LEFT_F:         RU_L RU_E RU_V                                                              | L E F T;
+LOG:                                                                                          L O G;
+//LOG10:                                                                                        L O G 1 0;
+LOWER:          RU_N RU_R RU_E RU_G                                                         | L O W E R;
 MAX:            RU_M RU_A RU_K RU_S RU_I RU_M RU_U RU_M                                     | M A X;
 MIN:            RU_M RU_I RU_N RU_I RU_M RU_U RU_M                                          | M I N;
 MINUTE:         RU_M RU_I RU_N RU_U RU_T RU_A                                               | M I N U T E;
@@ -120,19 +130,34 @@ NUMBER:         RU_CH RU_I RU_S RU_L RU_O                                       
 QUARTER:        RU_K RU_V RU_A RU_R RU_T RU_A RU_L                                          | Q U A R T E R;
 ONLY:           RU_T RU_O RU_L RU_SOFT_SIGN RU_K RU_O                                       | O N L Y;
 PERIODS:        RU_P RU_E RU_R RU_I RU_O RU_D RU_A RU_M RU_I                                | P E R I O D S;
-REFS:           RU_S RU_S RU_Y RU_L RU_K RU_A                                               | R E F S;
+POW:                                                                                          P O W;
 PRESENTATION:   RU_P RU_R RU_E RU_D RU_S RU_T RU_A RU_V RU_L RU_E RU_N RU_I RU_E            | P R E S E N T A T I O N;
 RECORDAUTONUMBER:
                 RU_A RU_V RU_T RU_O RU_N RU_O RU_M RU_E RU_R RU_Z RU_A RU_P RU_I RU_S RU_I  | R E C O R D A U T O N U M B E R;
 REFPRESENTATION:
                 RU_P RU_R RU_E RU_D RU_S RU_T RU_A RU_V RU_L RU_E RU_N RU_I RU_E RU_S RU_S RU_Y RU_L RU_K RU_I
                                                                                             | R E F P R E S E N T A T I O N;
+REFS:           RU_S RU_S RU_Y RU_L RU_K RU_A                                               | R E F S;
+ROUND:          RU_O RU_K RU_R                                                              | R O U N D;
+//RIGHT_F:        RU_P RU_R RU_A RU_V                                                         | R I G H T;
 SECOND:         RU_S RU_E RU_K RU_U RU_N RU_D RU_A                                          | S E C O N D;
+SIN:                                                                                          S I N;
+STOREDDATASIZE: RU_R RU_A RU_Z RU_M RU_E RU_R RU_H RU_R RU_A RU_N RU_I RU_M RU_Y RU_H RU_D RU_A RU_N RU_N RU_Y RU_H
+                                                                                            | S T O R E D D A T A S I Z E;
+STRFIND:        RU_S RU_T RU_R RU_N RU_A RU_J RU_T RU_I                                     | S T R F I N D;
 STRING:         RU_S RU_T RU_R RU_O RU_K RU_A                                               | S T R I N G;
+STRINGLENGTH:   RU_D RU_L RU_I RU_N RU_A RU_S RU_T RU_R RU_O RU_K RU_I                      | S T R I N G L E N G T H;
+STRREPLACE:     RU_S RU_T RU_R RU_Z RU_A RU_M RU_E RU_N RU_I RU_T RU_SOFT_SIGN              | S T R R E P L A C E;
 SUBSTRING:      RU_P RU_O RU_D RU_S RU_T RU_R RU_O RU_K RU_A                                | S U B S T R I N G;
 SUM:            RU_S RU_U RU_M RU_M RU_A                                                    | S U M;
+SQRT:                                                                                         S Q R T;
+TAN:                                                                                          T A N;
 TENDAYS:        RU_D RU_E RU_K RU_A RU_D RU_A                                               | T E N D A Y S;
+TRIMALL:        RU_S RU_O RU_K RU_R RU_L RU_P                                               | T R I M A L L;
+TRIML:          RU_S RU_O RU_K RU_R RU_L                                                    | T R I M L;
+TRIMR:          RU_S RU_O RU_K RU_R RU_P                                                    | T R I M R;
 TYPE:           RU_T RU_I RU_P                                                              | T Y P E;
+UPPER:          RU_V RU_R RU_E RU_G                                                         | U P P E R;
 VALUE:          RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_E                                    | V A L U E;
 VALUETYPE:      RU_T RU_I RU_P RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_YA                    | V A L U E T Y P E;
 WEEK:           RU_N RU_E RU_D RU_E RU_L RU_YA                                              | W E E K;
@@ -277,6 +302,7 @@ fragment H: 'H' | 'h';
 fragment W: 'W' | 'w';
 fragment X: 'X' | 'x';
 fragment Y: 'Y' | 'y';
+fragment Z: 'Z' | 'z';
 
 // LITERALS
 fragment DIGIT: [0-9];
