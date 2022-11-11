@@ -110,6 +110,9 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     setInput("Если ТонкийКлиент И ВебКлиент Тогда", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_if());
 
+    setInput("IF NOT Server OR NOT(ExternalConnection OR ExternalConnection) THEN", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.preproc_if());
+
     setInput("Если MacOS ИЛИ Linux Тогда", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.preproc_if());
 
