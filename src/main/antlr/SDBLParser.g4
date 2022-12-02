@@ -317,6 +317,7 @@ dataSource:
 table:
       mdo
     | mdo DOT objectTableName=identifier
+    | mdo DOT EXTERNAL_TABLE_TYPE DOT externalTableName=identifier
     | tableName=identifier
     ;
 

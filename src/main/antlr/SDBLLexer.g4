@@ -331,6 +331,9 @@ TASK_BY_PERFORMER_VT:
                                                                                              | T A S K B Y P E R F O R M E R) -> popMode;
 TURNOVERS_VT:   (TURNOVERS_RU                                                                | TURNOVERS_EN) -> popMode;
 
+// external data sourse type
+EXTERNAL_TABLE_TYPE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A | T A B L E) -> popMode;
+
 DOT_IDENTIFIER      : IDENTIFIER -> type(IDENTIFIER), popMode;
 
 mode BRACE_MODE;

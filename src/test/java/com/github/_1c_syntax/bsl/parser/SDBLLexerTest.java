@@ -177,4 +177,9 @@ class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
     assertMatch(".ДанныеГрафика", ".SCHEDULEDATA", SDBLLexer.DOT, SDBLLexer.SCHEDULE_DATA_VT);
     assertMatch(".ЗадачиПоИсполнителю", ".TASKBYPERFORMER", SDBLLexer.DOT, SDBLLexer.TASK_BY_PERFORMER_VT);
   }
+
+  @Test
+  void testExternalTypes() {
+    assertMatch(".Таблица", ".table", SDBLLexer.DOT, SDBLLexer.EXTERNAL_TABLE_TYPE);
+  }
 }
