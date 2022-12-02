@@ -118,9 +118,9 @@ EXP:                                                                            
 HALFYEAR:       RU_P RU_O RU_L RU_U RU_G RU_O RU_D RU_I RU_E                                | H A L F Y E A R;
 HOUR:           RU_CH RU_A RU_S                                                             | H O U R;
 INT:            RU_C RU_E RU_L                                                              | I N T;
-//LEFT_F:         RU_L RU_E RU_V                                                              | L E F T;
+LEFT_F:         RU_L RU_E RU_V                                                             ;
+LOG10:                                                                                        L O G '10';
 LOG:                                                                                          L O G;
-//LOG10:                                                                                        L O G 1 0;
 LOWER:          RU_N RU_R RU_E RU_G                                                         | L O W E R;
 MAX:            RU_M RU_A RU_K RU_S RU_I RU_M RU_U RU_M                                     | M A X;
 MIN:            RU_M RU_I RU_N RU_I RU_M RU_U RU_M                                          | M I N;
@@ -139,7 +139,7 @@ REFPRESENTATION:
                                                                                             | R E F P R E S E N T A T I O N;
 REFS:           RU_S RU_S RU_Y RU_L RU_K RU_A                                               | R E F S;
 ROUND:          RU_O RU_K RU_R                                                              | R O U N D;
-//RIGHT_F:        RU_P RU_R RU_A RU_V                                                         | R I G H T;
+RIGHT_F:        RU_P RU_R RU_A RU_V                                                         ;
 SECOND:         RU_S RU_E RU_K RU_U RU_N RU_D RU_A                                          | S E C O N D;
 SIN:                                                                                          S I N;
 STOREDDATASIZE: RU_R RU_A RU_Z RU_M RU_E RU_R RU_H RU_R RU_A RU_N RU_I RU_M RU_Y RU_H RU_D RU_A RU_N RU_N RU_Y RU_H
@@ -213,8 +213,10 @@ GROUPEDBY: (RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_N RU_O RU_
 GROUPING : (RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_U RU_YU RU_SCH RU_I RU_M             | G R O U P I N G);
 SET      : (RU_N RU_A RU_B RU_O RU_R RU_A RU_M | S E T);
 
-RIGHT  : (RU_P RU_R RU_A RU_V RU_O RU_E                        | R I G H T);
-LEFT   : (RU_L RU_E RU_V RU_O RU_E                             | L E F T);
+EN_RIGHT :  R I G H T;
+RIGHT  : (RU_P RU_R RU_A RU_V RU_O RU_E                       );
+EN_LEFT: L E F T;
+LEFT   : (RU_L RU_E RU_V RU_O RU_E                             );
 INNER  : (RU_V RU_N RU_U RU_T RU_R RU_E RU_N RU_N RU_E RU_E    | I N N E R);
 FULL   : (RU_P RU_O RU_L RU_N RU_O RU_E                        | F U L L);
 JOIN   : (RU_S RU_O RU_E RU_D RU_I RU_N RU_E RU_N RU_I RU_E    | J O I N);

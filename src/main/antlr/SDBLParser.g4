@@ -234,6 +234,8 @@ builtInFunctions:
     | (doCall=TRIMR LPAREN string=expression RPAREN)
     | (doCall=UPPER LPAREN string=expression RPAREN)
     | (doCall=LOWER LPAREN string=expression RPAREN)
+    | (doCall=(LEFT_F| EN_LEFT) LPAREN string=expression COMMA count=expression RPAREN)
+    | (doCall=(RIGHT_F| EN_RIGHT) LPAREN string=expression COMMA count=expression RPAREN)
     | (doCall=TRIMALL LPAREN string=expression RPAREN)
     | (doCall=STRFIND LPAREN string=expression COMMA substring=expression RPAREN)
     | (doCall=STRREPLACE LPAREN string=expression COMMA substring=expression COMMA replasestring=expression RPAREN)
@@ -245,6 +247,7 @@ builtInFunctions:
     | (doCall=TAN LPAREN value=expression RPAREN)
     | (doCall=EXP LPAREN value=expression RPAREN)
     | (doCall=LOG LPAREN value=expression RPAREN)
+    | (doCall=LOG10 LPAREN value=expression RPAREN)
     | (doCall=POW LPAREN value=expression COMMA count=expression RPAREN)
     | (doCall=SQRT LPAREN value=expression RPAREN)
     | (doCall=ROUND LPAREN value=expression COMMA? cont=expression? RPAREN)
@@ -371,8 +374,8 @@ parameterTable: parameter;
 // соединения таблиц
 joinPart:
     (   // тип соединения
-          (joinType=RIGHT outerJoin=OUTER? JOIN)
-        | (joinType=LEFT outerJoin=OUTER? JOIN)
+          (joinType=(RIGHT | EN_RIGHT ) outerJoin=OUTER? JOIN)
+        | (joinType=(LEFT | EN_LEFT) outerJoin=OUTER? JOIN)
         | (joinType=FULL outerJoin=OUTER? JOIN)
         | (joinType=INNER JOIN)
         | (joinType=JOIN)
@@ -459,9 +462,10 @@ identifier:
     | HALFYEAR
     | HOUR
     | INT
-//    | LEFT_F
+    | LEFT_F
+    | EN_RIGHT
     | LOG
-//    | LOG10
+    | LOG10
     | LOWER
     | MAX
     | MIN
@@ -477,7 +481,8 @@ identifier:
     | REFPRESENTATION
     | REFS
     | ROUND
-//    | RIGHT_F
+    | RIGHT_F
+    | EN_RIGHT
     | SECOND
     | SIN
     | STRFIND
