@@ -303,8 +303,8 @@ class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
   @Test
   void testSelect06() {
     checkSource("src/test/resources/sdbl/select06.sdbl",
-      pair(SDBLParser.RULE_queries, 1),
-      pair(SDBLParser.RULE_dataSource, 1)
+      pair(SDBLParser.RULE_queries, 4),
+      pair(SDBLParser.RULE_dataSource, 4)
     );
   }
 

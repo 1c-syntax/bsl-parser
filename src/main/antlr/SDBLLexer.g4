@@ -331,8 +331,15 @@ TASK_BY_PERFORMER_VT:
                                                                                              | T A S K B Y P E R F O R M E R) -> popMode;
 TURNOVERS_VT:   (TURNOVERS_RU                                                                | TURNOVERS_EN) -> popMode;
 
-// external data sourse type
-EXTERNAL_TABLE_TYPE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A | T A B L E) -> popMode;
+// external data source table
+EXTERNAL_DATA_SOURCE_TABLE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A | T A B L E) -> popMode;
+
+// external data source cube
+EXTERNAL_DATA_SOURCE_CUBE: (RU_K RU_U RU_B | C U B E) -> popMode;
+
+// external data source cube dimension table
+EXTERNAL_DATA_SOURCE_CUBE_DIMTABLE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A RU_I RU_Z RU_M RU_E RU_R RU_E RU_N RU_I RU_YA
+                                    | D I M E N S I O N T A B L E) -> popMode;
 
 DOT_IDENTIFIER      : IDENTIFIER -> type(IDENTIFIER), popMode;
 
