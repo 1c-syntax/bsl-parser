@@ -164,8 +164,8 @@ ENUM_TYPE:      RU_P RU_E RU_R RU_E RU_CH RU_I RU_S RU_L RU_E RU_N RU_I RU_E    
 EXCHANGE_PLAN_TYPE:
                 PLAN_RU RU_O RU_B RU_M RU_E RU_N RU_A                                       | E X C H A N G E P L A N;
 EXTERNAL_DATA_SOURCE_TYPE:
-                RU_V RU_N RU_E RU_SH RU_N RU_I RU_J RU_I RU_S RU_T RU_O RU_CH RU_N RU_I RU_K RU_D RU_A RU_N RU_N RU_Y RU_H
-                                                                                            | E X T E R N A L D A T A S O U R C E;
+                (RU_V RU_N RU_E RU_SH RU_N RU_I RU_J RU_I RU_S RU_T RU_O RU_CH RU_N RU_I RU_K RU_D RU_A RU_N RU_N RU_Y RU_H
+                                                                                            | E X T E R N A L D A T A S O U R C E) -> pushMode(EXTERNAL_DATA_SOURCE_MODE);
 FILTER_CRITERION_TYPE:
                 RU_K RU_R RU_I RU_T RU_E RU_R RU_I RU_J RU_O RU_T RU_B RU_O RU_R RU_A       | F I L T E R C R I T E R I O N;
 INFORMATION_REGISTER_TYPE:
@@ -331,16 +331,6 @@ TASK_BY_PERFORMER_VT:
                                                                                              | T A S K B Y P E R F O R M E R) -> popMode;
 TURNOVERS_VT:   (TURNOVERS_RU                                                                | TURNOVERS_EN) -> popMode;
 
-// external data source table
-EXTERNAL_DATA_SOURCE_TABLE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A | T A B L E) -> popMode;
-
-// external data source cube
-EXTERNAL_DATA_SOURCE_CUBE: (RU_K RU_U RU_B | C U B E) -> popMode;
-
-// external data source cube dimension table
-EXTERNAL_DATA_SOURCE_CUBE_DIMTABLE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A RU_I RU_Z RU_M RU_E RU_R RU_E RU_N RU_I RU_YA
-                                    | D I M E N S I O N T A B L E) -> popMode;
-
 DOT_IDENTIFIER      : IDENTIFIER -> type(IDENTIFIER), popMode;
 
 mode BRACE_MODE;
@@ -367,3 +357,13 @@ ID_TASK_TYPE                : TASK_TYPE -> type(TASK_TYPE), popMode;
 ID_DOT              : DOT -> type(DOT), pushMode(DOT_MODE), popMode;
 ID_IDENTIFIER       : IDENTIFIER -> type(IDENTIFIER), popMode;
 ID_UNKNOWN          : . -> channel(HIDDEN), type(UNKNOWN);
+
+mode EXTERNAL_DATA_SOURCE_MODE;
+EDS_TABLE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A | T A B L E) -> popMode;
+EDS_CUBE: (RU_K RU_U RU_B | C U B E);
+EDS_CUBE_DIMTABLE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A RU_I RU_Z RU_M RU_E RU_R RU_E RU_N RU_I RU_YA
+                                    | D I M E N S I O N T A B L E) -> popMode;
+EDS_WHITE_SPACE : WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
+EDS_MUL: MUL -> type(MUL);
+EDS_DOT : DOT -> type(DOT);
+EDS_IDENTIFIER : IDENTIFIER -> type(IDENTIFIER);
