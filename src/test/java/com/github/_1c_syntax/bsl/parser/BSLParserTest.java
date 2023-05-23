@@ -81,6 +81,25 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   }
 
   @Test
+  void testNative() {
+    setInput("native", BSLLexer.PREPROCESSOR_MODE);
+    assertMatches(parser.head_preproc_native());
+
+  }
+
+  @Test
+  void testNativeFile() {
+    setInput("#native\n" +
+            "#Использовать lib\n" +
+            "#Использовать \".\"\n" +
+            "Перем А;"
+            );
+
+    var file = parser.file();
+    assertMatches(file);
+  }
+
+  @Test
   void testUse() {
     setInput("Использовать lib", BSLLexer.PREPROCESSOR_MODE);
     assertMatches(parser.use());
