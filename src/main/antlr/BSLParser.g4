@@ -27,12 +27,12 @@ options {
 }
 
 // ROOT
-file: shebang? native? preprocessor* moduleVars? preprocessor* (fileCodeBlockBeforeSub subs)? fileCodeBlock EOF;
+file: shebang? preproc_native? preprocessor* moduleVars? preprocessor* (fileCodeBlockBeforeSub subs)? fileCodeBlock EOF;
 
 // preprocessor
 shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
 
-native           : HASH PREPROC_NATIVE;
+preproc_native   : HASH PREPROC_NATIVE;
 
 usedLib          : (PREPROC_STRING | PREPROC_IDENTIFIER);
 use              : PREPROC_USE_KEYWORD usedLib;
