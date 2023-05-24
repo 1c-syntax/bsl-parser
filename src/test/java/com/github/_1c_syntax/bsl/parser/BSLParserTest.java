@@ -83,7 +83,7 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   @Test
   void testNative() {
     setInput("native", BSLLexer.PREPROCESSOR_MODE);
-    assertMatches(parser.head_preproc_native());
+    assertMatches(parser.preproc_native());
 
   }
 
@@ -97,6 +97,20 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
     var file = parser.file();
     assertMatches(file);
+  }
+
+  @Test
+  void TestModuleAnnotations() {
+
+    setInput("#Использовать А");
+    assertMatches(parser.moduleAnnotations());
+
+    setInput("#Использовать \".\"");
+    assertMatches(parser.moduleAnnotations());
+
+    setInput("#native");
+    assertMatches(parser.moduleAnnotations());
+
   }
 
   @Test
@@ -323,9 +337,6 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     assertMatches(parser.preprocessor());
 
     setInput("#КонецЕсли");
-    assertMatches(parser.preprocessor());
-
-    setInput("#Использовать А");
     assertMatches(parser.preprocessor());
 
     setInput("#Просто");
