@@ -364,7 +364,7 @@ PREPROC_RPAREN: ')';
 
 PREPROC_STRING: '"' (~["\n\r])* '"';
 
-HEAD_PREPROC_NATIVE
+PREPROC_NATIVE
     : N A T I V E
     ;
 

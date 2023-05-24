@@ -27,16 +27,21 @@ options {
 }
 
 // ROOT
-file: shebang? head_preproc_native? preprocessor* moduleVars? preprocessor* (fileCodeBlockBeforeSub subs)? fileCodeBlock EOF;
+file: shebang? moduleAnnotations? preprocessor* moduleVars? preprocessor* (fileCodeBlockBeforeSub subs)? fileCodeBlock EOF;
 
-// head preprocessor
-head_preproc_native   : HEAD_PREPROC_NATIVE;
+// moduleAnnotations
+preproc_native   : HASH PREPROC_NATIVE;
+usedLib          : (PREPROC_STRING | PREPROC_IDENTIFIER);
+use              : HASH PREPROC_USE_KEYWORD usedLib;
+
+moduleAnnotations
+    :
+     (preproc_native use*)
+     | (use+ preproc_native? use*)
+    ;
 
 // preprocessor
 shebang          : HASH PREPROC_EXCLAMATION_MARK (PREPROC_ANY | PREPROC_IDENTIFIER)*;
-
-usedLib          : (PREPROC_STRING | PREPROC_IDENTIFIER);
-use              : PREPROC_USE_KEYWORD usedLib;
 
 regionStart      : PREPROC_REGION regionName;
 regionEnd        : PREPROC_END_REGION;
@@ -94,8 +99,6 @@ preprocessor
         | preproc_elsif
         | preproc_else
         | preproc_endif
-        | use
-        | head_preproc_native
       )
     ;
 
