@@ -82,7 +82,7 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
   @Test
   void testNative() {
-    setInput("native", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#native");
     assertMatches(parser.preproc_native());
 
   }
@@ -115,16 +115,16 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
 
   @Test
   void testUse() {
-    setInput("Использовать lib", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Использовать lib");
     assertMatches(parser.use());
 
-    setInput("Использовать \"./lib\"", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Использовать \"./lib\"");
     assertMatches(parser.use());
 
-    setInput("Использовать lib-name", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Использовать lib-name");
     assertMatches(parser.use());
 
-    setInput("Использовать 1lib", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Использовать 1lib");
     assertMatches(parser.use());
   }
 
