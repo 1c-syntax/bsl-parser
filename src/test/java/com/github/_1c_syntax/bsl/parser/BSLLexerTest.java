@@ -593,7 +593,8 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
         || BSLLexer.PREPROC_ANY == i
         || BSLLexer.ANNOTATION_UNKNOWN == i
         || BSLLexer.PREPROC_DELETE_ANY == i
-        || BSLLexer.UNKNOWN == i) {
+        || BSLLexer.UNKNOWN == i
+        || BSLLexer.PREPROC_NATIVE == i) {
         assertThat(tokenTypes).doesNotContain(i);
       } else {
         assertThat(tokenTypes).contains(i);
