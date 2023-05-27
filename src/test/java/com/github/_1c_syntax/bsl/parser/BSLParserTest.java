@@ -100,7 +100,7 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   }
 
   @Test
-  void TestModuleAnnotations() {
+  void testModuleAnnotations() {
 
     setInput("#Использовать А");
     assertMatches(parser.moduleAnnotations());
