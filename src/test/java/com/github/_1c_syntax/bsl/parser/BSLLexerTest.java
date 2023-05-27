@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2022
+ * Copyright (c) 2018-2023
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -593,7 +593,8 @@ class BSLLexerTest extends AbstractLexerTest<BSLLexer> {
         || BSLLexer.PREPROC_ANY == i
         || BSLLexer.ANNOTATION_UNKNOWN == i
         || BSLLexer.PREPROC_DELETE_ANY == i
-        || BSLLexer.UNKNOWN == i) {
+        || BSLLexer.UNKNOWN == i
+        || BSLLexer.PREPROC_NATIVE == i) {
         assertThat(tokenTypes).doesNotContain(i);
       } else {
         assertThat(tokenTypes).contains(i);

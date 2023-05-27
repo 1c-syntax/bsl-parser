@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2022
+ * Copyright (c) 2018-2023
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -81,17 +81,50 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
   }
 
   @Test
+  void testNative() {
+    setInput("#native");
+    assertMatches(parser.preproc_native());
+
+  }
+
+  @Test
+  void testNativeFile() {
+    setInput("#native\n" +
+            "#Использовать lib\n" +
+            "#Использовать \".\"\n" +
+            "Перем А;"
+            );
+
+    var file = parser.file();
+    assertMatches(file);
+  }
+
+  @Test
+  void testModuleAnnotations() {
+
+    setInput("#Использовать А");
+    assertMatches(parser.moduleAnnotations());
+
+    setInput("#Использовать \".\"");
+    assertMatches(parser.moduleAnnotations());
+
+    setInput("#native");
+    assertMatches(parser.moduleAnnotations());
+
+  }
+
+  @Test
   void testUse() {
-    setInput("Использовать lib", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Использовать lib");
     assertMatches(parser.use());
 
-    setInput("Использовать \"./lib\"", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Использовать \"./lib\"");
     assertMatches(parser.use());
 
-    setInput("Использовать lib-name", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Использовать lib-name");
     assertMatches(parser.use());
 
-    setInput("Использовать 1lib", BSLLexer.PREPROCESSOR_MODE);
+    setInput("#Использовать 1lib");
     assertMatches(parser.use());
   }
 
@@ -304,9 +337,6 @@ class BSLParserTest extends AbstractParserTest<BSLParser, BSLLexer> {
     assertMatches(parser.preprocessor());
 
     setInput("#КонецЕсли");
-    assertMatches(parser.preprocessor());
-
-    setInput("#Использовать А");
     assertMatches(parser.preprocessor());
 
     setInput("#Просто");
