@@ -228,6 +228,32 @@ builtInFunctions:
     | (doCall=DATEDIFF LPAREN firstdate=expression COMMA seconddate=expression COMMA periodType=(SECOND | MINUTE | HOUR | DAY | MONTH | QUARTER | YEAR) RPAREN)
     | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION | GROUPEDBY) LPAREN value=expression RPAREN)
     | (doCall=ISNULL LPAREN first=logicalExpression COMMA second=logicalExpression RPAREN)
+    | (doCall=STRING LPAREN string=expression RPAREN)
+    | (doCall=STRINGLENGTH LPAREN string=expression RPAREN)
+    | (doCall=TRIML LPAREN string=expression RPAREN)
+    | (doCall=TRIMR LPAREN string=expression RPAREN)
+    | (doCall=UPPER LPAREN string=expression RPAREN)
+    | (doCall=LOWER LPAREN string=expression RPAREN)
+    | (doCall=(LEFT_F| EN_LEFT) LPAREN string=expression COMMA count=expression RPAREN)
+    | (doCall=(RIGHT_F| EN_RIGHT) LPAREN string=expression COMMA count=expression RPAREN)
+    | (doCall=TRIMALL LPAREN string=expression RPAREN)
+    | (doCall=STRFIND LPAREN string=expression COMMA substring=expression RPAREN)
+    | (doCall=STRREPLACE LPAREN string=expression COMMA substring=expression COMMA replasestring=expression RPAREN)
+    | (doCall=ACOS LPAREN value=expression RPAREN)
+    | (doCall=ASIN LPAREN value=expression RPAREN)
+    | (doCall=ATAN LPAREN value=expression RPAREN)
+    | (doCall=SIN LPAREN value=expression RPAREN)
+    | (doCall=COS LPAREN value=expression RPAREN)
+    | (doCall=TAN LPAREN value=expression RPAREN)
+    | (doCall=EXP LPAREN value=expression RPAREN)
+    | (doCall=LOG LPAREN value=expression RPAREN)
+    | (doCall=LOG10 LPAREN value=expression RPAREN)
+    | (doCall=POW LPAREN value=expression COMMA count=expression RPAREN)
+    | (doCall=SQRT LPAREN value=expression RPAREN)
+    | (doCall=ROUND LPAREN value=expression COMMA? cont=expression? RPAREN)
+    | (doCall=INT LPAREN value=expression RPAREN)
+    | (doCall=STOREDDATASIZE LPAREN value=expression RPAREN)
+
 ;
 
 // агрегатные ф-ии
@@ -348,8 +374,8 @@ parameterTable: parameter;
 // соединения таблиц
 joinPart:
     (   // тип соединения
-          (joinType=RIGHT outerJoin=OUTER? JOIN)
-        | (joinType=LEFT outerJoin=OUTER? JOIN)
+          (joinType=(RIGHT | EN_RIGHT ) outerJoin=OUTER? JOIN)
+        | (joinType=(LEFT | EN_LEFT) outerJoin=OUTER? JOIN)
         | (joinType=FULL outerJoin=OUTER? JOIN)
         | (joinType=INNER JOIN)
         | (joinType=JOIN)
@@ -407,8 +433,12 @@ identifier:
     | TASK_TYPE
     | EXTERNAL_DATA_SOURCE_TYPE
     // ключевые слова
+    | ASIN
+    | ACOS
+    | ATAN
     | DROP
     | END
+    | EXP
     | ISNULL
     | JOIN
     | SELECT
@@ -419,6 +449,7 @@ identifier:
     | BEGINOFPERIOD
     | BOOLEAN
     | COUNT
+    | COS
     | DATE
     | DATEADD
     | DATEDIFF
@@ -430,6 +461,12 @@ identifier:
     | ENDOFPERIOD
     | HALFYEAR
     | HOUR
+    | INT
+    | LEFT_F
+    | EN_RIGHT
+    | LOG
+    | LOG10
+    | LOWER
     | MAX
     | MIN
     | MINUTE
@@ -437,17 +474,32 @@ identifier:
     | NUMBER
     | QUARTER
     | ONLY
+    | POW
     | PERIODS
-    | REFS
     | PRESENTATION
     | RECORDAUTONUMBER
     | REFPRESENTATION
+    | REFS
+    | ROUND
+    | RIGHT_F
+    | EN_RIGHT
     | SECOND
+    | SIN
+    | STRFIND
+    | STRREPLACE
     | STRING
+    | STRINGLENGTH
+    | STOREDDATASIZE
+    | SQRT
     | SUBSTRING
     | SUM
+    | TAN
     | TENDAYS
+    | TRIMALL
+    | TRIMR
+    | TRIML
     | TYPE
+    | UPPER
     | VALUE
     | VALUETYPE
     | WEEK
