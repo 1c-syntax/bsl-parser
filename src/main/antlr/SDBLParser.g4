@@ -225,9 +225,9 @@ builtInFunctions:
     | (doCall=(YEAR | QUARTER | MONTH | DAYOFYEAR | DAY | WEEK | WEEKDAY | HOUR | MINUTE | SECOND) LPAREN date=expression RPAREN)
     | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN date=expression COMMA periodType=(MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR | TENDAYS | HALFYEAR) RPAREN)
     | (doCall=DATEADD LPAREN date=expression COMMA periodType=(SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR | TENDAYS | HALFYEAR) COMMA count=expression RPAREN)
-    | (doCall=DATEDIFF LPAREN first=expression COMMA second=expression COMMA periodType=(SECOND | MINUTE | HOUR | DAY | MONTH | QUARTER | YEAR) RPAREN)
+    | (doCall=DATEDIFF LPAREN firstdate=expression COMMA seconddate=expression COMMA periodType=(SECOND | MINUTE | HOUR | DAY | MONTH | QUARTER | YEAR) RPAREN)
     | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION | GROUPEDBY) LPAREN value=expression RPAREN)
-    | (doCall=ISNULL LPAREN first=expression COMMA second=expression RPAREN)
+    | (doCall=ISNULL LPAREN first=logicalExpression COMMA second=logicalExpression RPAREN)
 ;
 
 // агрегатные ф-ии

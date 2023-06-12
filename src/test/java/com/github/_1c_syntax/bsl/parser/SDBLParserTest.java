@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2022
+ * Copyright (c) 2018-2023
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -289,6 +289,14 @@ class SDBLParserTest extends AbstractParserTest<SDBLParser, SDBLLexer> {
       pair(SDBLParser.RULE_betweenPredicate, 0),
       pair(SDBLParser.RULE_inPredicate, 1),
       pair(SDBLParser.RULE_refsPredicate, 0)
+    );
+  }
+  @Test
+  void testSelect05() {
+    checkSource("src/test/resources/sdbl/select05.sdbl",
+      pair(SDBLParser.RULE_queries, 1),
+      pair(SDBLParser.RULE_selectedField, 4),
+      pair(SDBLParser.RULE_builtInFunctions, 4)
     );
   }
 
