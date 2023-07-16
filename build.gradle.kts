@@ -34,9 +34,6 @@ dependencies {
 
     implementation("com.github.1c-syntax", "utils", "0.3.4")
 
-    // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
-    implementation("commons-beanutils", "commons-beanutils", "1.9.4")
-
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.1")
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.1")
     testImplementation("org.assertj", "assertj-core", "3.14.0")
