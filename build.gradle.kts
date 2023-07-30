@@ -6,7 +6,7 @@ plugins {
     jacoco
     `java-library`
     antlr
-    id("org.sonarqube") version "4.2.1.3168"
+    id("org.sonarqube") version "4.3.0.3225"
     id("org.cadixdev.licenser") version "0.6.1"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
     id("io.freefair.javadoc-links") version "6.5.1"
@@ -33,9 +33,6 @@ dependencies {
     antlr(antlrGroupId, antlrArtifactId, antlrVersion)
 
     implementation("com.github.1c-syntax", "utils", "0.3.4")
-
-    // https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils
-    implementation("commons-beanutils", "commons-beanutils", "1.9.4")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.1")
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.1")
