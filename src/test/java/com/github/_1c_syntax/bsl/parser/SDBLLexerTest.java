@@ -136,6 +136,33 @@ class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
   }
 
   @Test
+  void testKeyWordsP2() {
+    assertMatch("ЦЕЛ", "int", SDBLLexer.INT);
+    assertMatch("ACOS", "ACOs", SDBLLexer.ACOS);
+    assertMatch("ASIN", "ASIn", SDBLLexer.ASIN);
+    assertMatch("ATAN", "ATaN", SDBLLexer.ATAN);
+    assertMatch("COS", "cOS", SDBLLexer.COS);
+    assertMatch("SIN", "SiN", SDBLLexer.SIN);
+    assertMatch("TAN", "TAn", SDBLLexer.TAN);
+    assertMatch("LOG", "LOg", SDBLLexer.LOG);
+    assertMatch("LOG10", "loG10", SDBLLexer.LOG10);
+    assertMatch("EXP", "EXp", SDBLLexer.EXP);
+    assertMatch("POW", "POw", SDBLLexer.POW);
+    assertMatch("SQRT", "SqRT", SDBLLexer.SQRT);
+    assertMatch("LOWER", "Нрег", SDBLLexer.LOWER);
+    assertMatch("STRINGLENGTH", "ДлинаСТроки", SDBLLexer.STRINGLENGTH);
+    assertMatch("TRIMALL", "Сокрлп", SDBLLexer.TRIMALL);
+    assertMatch("TRIML", "Сокрл", SDBLLexer.TRIML);
+    assertMatch("TRIMR", "СокрП", SDBLLexer.TRIMR);
+    assertMatch("UPPER", "вреГ", SDBLLexer.UPPER);
+    assertMatch("ROUND", "окр", SDBLLexer.ROUND);
+    assertMatch("STOREDDATASIZE", "РазмерХранимыхДанных", SDBLLexer.STOREDDATASIZE);
+    assertMatch("UUID", "УникальныйиДентификатор", SDBLLexer.UUID);
+    assertMatch("STRFIND", "стрнайТи", SDBLLexer.STRFIND);
+    assertMatch("STRREPLACE", "стрЗАМЕнить", SDBLLexer.STRREPLACE);
+  }
+
+  @Test
   void testStandardFields() {
     assertMatch("ТочкаМаршрута", "RoutePoint", SDBLLexer.ROUTEPOINT_FIELD);
   }
