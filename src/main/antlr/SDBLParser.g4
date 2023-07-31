@@ -308,7 +308,7 @@ dataSources: tables+=dataSource (COMMA tables+=dataSource)*;
 dataSource:
       (LPAREN dataSource RPAREN)
     | ((
-          ((virtualTable | table | parameterTable) alias?)
+          ((virtualTable | table | parameterTable | externalDataSourceTable) alias?)
         | (LPAREN (virtualTable | table | parameterTable | subquery) RPAREN alias?)
       ) joins+=joinPart*)
     ;
@@ -344,6 +344,10 @@ virtualTableParameter: logicalExpression?;
 
 // таблица как параметр, соединяться ни с чем не может
 parameterTable: parameter;
+
+externalDataSourceTable:
+      mdo DOT EDS_TABLE DOT tableName=identifier
+    | mdo DOT EDS_CUBE DOT cubeName=identifier DOT EDS_CUBE_DIMTABLE DOT tableName=identifier;
 
 // соединения таблиц
 joinPart:

@@ -177,4 +177,26 @@ class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
     assertMatch(".ДанныеГрафика", ".SCHEDULEDATA", SDBLLexer.DOT, SDBLLexer.SCHEDULE_DATA_VT);
     assertMatch(".ЗадачиПоИсполнителю", ".TASKBYPERFORMER", SDBLLexer.DOT, SDBLLexer.TASK_BY_PERFORMER_VT);
   }
+
+  @Test
+  void testExternalTypes() {
+    assertMatch("ВнешнийИсточникДанных.ВИД1.Таблица",
+            "ExternalDataSource.EDS1.Table",
+            SDBLLexer.EXTERNAL_DATA_SOURCE_TYPE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_TABLE);
+    assertMatch("ВнешнийИсточникДанных.ВИД1.Куб.Куб1.ТаблицаИзмерения",
+            "ExternalDataSource.EDS1.Cube.Cube1.DimensionTable",
+            SDBLLexer.EXTERNAL_DATA_SOURCE_TYPE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_CUBE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_CUBE_DIMTABLE);
+  }
 }
