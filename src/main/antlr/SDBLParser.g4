@@ -457,6 +457,20 @@ identifier:
     | WEEK
     | WEEKDAY
     | YEAR
+    | ORDER
+    | GROUP
+    | INDEX
+    | SET
+    | RIGHT
+    | LEFT
+    | INNER
+    | FULL
+    | JOIN
+    | OUTER
+    | FOR
+    | UPDATE
+    | ALL
+    | UNION
 ;
 
 // параметр запроса
