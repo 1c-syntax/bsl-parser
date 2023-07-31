@@ -180,6 +180,23 @@ class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
 
   @Test
   void testExternalTypes() {
-    assertMatch(".Таблица", ".table", SDBLLexer.DOT, SDBLLexer.EXTERNAL_TABLE_TYPE);
+    assertMatch("ВнешнийИсточникДанных.ВИД1.Таблица",
+            "ExternalDataSource.EDS1.Table",
+            SDBLLexer.EXTERNAL_DATA_SOURCE_TYPE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_TABLE);
+    assertMatch("ВнешнийИсточникДанных.ВИД1.Куб.Куб1.ТаблицаИзмерения",
+            "ExternalDataSource.EDS1.Cube.Cube1.DimensionTable",
+            SDBLLexer.EXTERNAL_DATA_SOURCE_TYPE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_CUBE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_CUBE_DIMTABLE);
   }
 }

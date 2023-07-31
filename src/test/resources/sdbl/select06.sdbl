@@ -2,3 +2,18 @@
 timestamp
 ИЗ
 ВнешнийИсточникДанных.ClickHouse.Таблица.test01_log
+;
+SELECT
+timestamp
+FROM
+ExternalDataSource.ClickHouse.Table.test01_log
+;
+ВЫБРАТЬ
+Поле1 КАК Поле1
+ИЗ
+ВнешнийИсточникДанных.ВнешнийИсточникДанных1.Куб.Куб1.ТаблицаИзмерения.ТаблицаИзмерения1
+;
+SELECT
+Cube1DimensionTableDimensionTable1.Ref AS Ref
+FROM
+ExternalDataSource.ExternalDataSource1.Cube.Cube1.DimensionTable.DimensionTable1 AS Cube1DimensionTableDimensionTable1
