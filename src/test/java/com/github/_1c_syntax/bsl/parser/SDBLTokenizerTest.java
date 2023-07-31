@@ -24,6 +24,7 @@ package com.github._1c_syntax.bsl.parser;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
+import utils.TestUtils;
 
 import java.util.List;
 
@@ -62,5 +63,4 @@ class SDBLTokenizerTest {
     assertThat(query.getStart().getType()).isEqualTo(SDBLParser.SELECT);
     assertThat(query.getStop().getType()).isEqualTo(SDBLParser.IDENTIFIER);
   }
-
 }
