@@ -9,7 +9,7 @@ plugins {
     id("org.sonarqube") version "4.4.0.3356"
     id("org.cadixdev.licenser") version "0.6.1"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
-    id("io.freefair.javadoc-links") version "6.5.1"
+    id("io.freefair.javadoc-links") version "8.3"
     id("io.freefair.javadoc-utf-8") version "8.3"
     id("com.github.ben-manes.versions") version "0.48.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
