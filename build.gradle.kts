@@ -6,12 +6,12 @@ plugins {
     jacoco
     `java-library`
     antlr
-    id("org.sonarqube") version "4.3.0.3225"
+    id("org.sonarqube") version "4.4.1.3373"
     id("org.cadixdev.licenser") version "0.6.1"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
-    id("io.freefair.javadoc-links") version "6.5.1"
-    id("io.freefair.javadoc-utf-8") version "6.6.1"
-    id("com.github.ben-manes.versions") version "0.47.0"
+    id("io.freefair.javadoc-links") version "8.4"
+    id("io.freefair.javadoc-utf-8") version "8.4"
+    id("com.github.ben-manes.versions") version "0.50.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
 }
 
@@ -32,7 +32,7 @@ dependencies {
     implementation(antlrGroupId, antlrArtifactId, antlrVersion)
     antlr(antlrGroupId, antlrArtifactId, antlrVersion)
 
-    implementation("com.github.1c-syntax", "utils", "0.3.4")
+    implementation("com.github.1c-syntax", "utils", "0.5.1")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.1")
     testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.1")
@@ -46,8 +46,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
     withJavadocJar()
 }
@@ -106,10 +106,12 @@ tasks.generateGrammarSource {
     outputDirectory = file("src/main/gen/com/github/_1c_syntax/bsl/parser")
 }
 
-tasks.generateGrammarSource {
-    doLast {
-        tasks.updateLicenseMain.get().actions[0].execute(tasks.updateLicenseMain.get())
-    }
+tasks.updateLicenseMain {
+    mustRunAfter(tasks.generateGrammarSource)
+}
+
+tasks.checkLicenseMain {
+    dependsOn(tasks.updateLicenseMain)
 }
 
 tasks.test {
@@ -163,7 +165,7 @@ tasks.clean {
     }
 }
 
-sonarqube {
+sonar {
     properties {
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.host.url", "https://sonarcloud.io")

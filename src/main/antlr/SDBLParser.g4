@@ -228,6 +228,12 @@ builtInFunctions:
     | (doCall=DATEDIFF LPAREN firstdate=expression COMMA seconddate=expression COMMA periodType=(SECOND | MINUTE | HOUR | DAY | MONTH | QUARTER | YEAR) RPAREN)
     | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION | GROUPEDBY) LPAREN value=expression RPAREN)
     | (doCall=ISNULL LPAREN first=logicalExpression COMMA second=logicalExpression RPAREN)
+    | (doCall=(ACOS | ASIN | ATAN | COS | SIN | TAN | LOG | LOG10 | EXP | POW | SQRT | INT) LPAREN decimal=expression RPAREN)
+    | (doCall=(LOWER | STRINGLENGTH | TRIMALL | TRIML | TRIMR | UPPER) LPAREN string=expression RPAREN)
+    | (doCall=ROUND LPAREN decimal=expression COMMA precise=expression RPAREN)
+    | (doCall=(STOREDDATASIZE | UUID) LPAREN value=expression RPAREN)
+    | (doCall=STRFIND LPAREN string=expression COMMA substring1=expression RPAREN)
+    | (doCall=STRREPLACE LPAREN string=expression COMMA substring1=expression COMMA substring1=expression RPAREN)
 ;
 
 // агрегатные ф-ии
@@ -279,6 +285,7 @@ logicalExpression:
       condidions+=predicate
       ((AND | OR) condidions+=predicate)*
     ;
+
 predicate: NOT* (
       booleanPredicate=expression // булево
     | likePredicate
@@ -308,7 +315,7 @@ dataSources: tables+=dataSource (COMMA tables+=dataSource)*;
 dataSource:
       (LPAREN dataSource RPAREN)
     | ((
-          ((virtualTable | table | parameterTable) alias?)
+          ((virtualTable | table | parameterTable | externalDataSourceTable) alias?)
         | (LPAREN (virtualTable | table | parameterTable | subquery) RPAREN alias?)
       ) joins+=joinPart*)
     ;
@@ -344,6 +351,10 @@ virtualTableParameter: logicalExpression?;
 
 // таблица как параметр, соединяться ни с чем не может
 parameterTable: parameter;
+
+externalDataSourceTable:
+      mdo DOT EDS_TABLE DOT tableName=identifier
+    | mdo DOT EDS_CUBE DOT cubeName=identifier DOT EDS_CUBE_DIMTABLE DOT tableName=identifier;
 
 // соединения таблиц
 joinPart:
@@ -453,6 +464,43 @@ identifier:
     | WEEK
     | WEEKDAY
     | YEAR
+    | ORDER
+    | GROUP
+    | INDEX
+    | SET
+    | RIGHT
+    | LEFT
+    | INNER
+    | FULL
+    | JOIN
+    | OUTER
+    | FOR
+    | UPDATE
+    | ALL
+    | UNION
+    | ACOS
+    | ASIN
+    | ATAN
+    | COS
+    | SIN
+    | TAN
+    | LOG
+    | LOG10
+    | EXP
+    | POW
+    | SQRT
+    | INT
+    | LOWER
+    | STRINGLENGTH
+    | TRIMALL
+    | TRIML
+    | TRIMR
+    | UPPER
+    | ROUND
+    | STOREDDATASIZE
+    | UUID
+    | STRFIND
+    | STRREPLACE
 ;
 
 // параметр запроса

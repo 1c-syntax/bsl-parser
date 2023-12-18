@@ -97,9 +97,13 @@ WHEN:           RU_K RU_O RU_G RU_D RU_A                                        
 WHERE:          RU_G RU_D RU_E                                                              | W H E R E;
 
 // KEYWORDS         RU                                                                          EN
+ACOS:           A C O S;
+ASIN:           A S I N;
+ATAN:           A T A N;
 AVG:            RU_S RU_R RU_E RU_D RU_N RU_E RU_E                                          | A V G;
 BEGINOFPERIOD:  RU_N RU_A RU_CH RU_A RU_L RU_O RU_P RU_E RU_R RU_I RU_O RU_D RU_A           | B E G I N O F P E R I O D;
 BOOLEAN:        RU_B RU_U RU_L RU_E RU_V RU_O                                               | B O O L E A N;
+COS:            C O S;
 COUNT:          RU_K RU_O RU_L RU_I RU_CH RU_E RU_S RU_T RU_V RU_O                          | C O U N T;
 DATE:           RU_D RU_A RU_T RU_A                                                         | D A T E;
 DATEADD:        RU_D RU_O RU_B RU_A RU_V RU_I RU_T RU_SOFT_SIGN RU_K RU_D RU_A RU_T RU_E    | D A T E A D D;
@@ -110,8 +114,15 @@ DAYOFYEAR:      RU_D RU_E RU_N RU_SOFT_SIGN RU_G RU_O RU_D RU_A                 
 EMPTYTABLE:     RU_P RU_U RU_S RU_T RU_A RU_YA RU_T RU_A RU_B RU_L RU_I RU_C RU_A           | E M P T Y T A B L E;
 EMPTYREF:       RU_P RU_U RU_S RU_T RU_A RU_YA RU_S RU_S RU_Y RU_L RU_K RU_A                | E M P T Y R E F;
 ENDOFPERIOD:    RU_K RU_O RU_N RU_E RU_C RU_P RU_E RU_R RU_I RU_O RU_D RU_A                 | E N D O F P E R I O D;
+EXP:            E X P;
+// TODO найти англ вариант GROUPEDBY:      RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_N RU_O RU_P RU_O  | УТОНИЧТЬ;
 HALFYEAR:       RU_P RU_O RU_L RU_U RU_G RU_O RU_D RU_I RU_E                                | H A L F Y E A R;
 HOUR:           RU_CH RU_A RU_S                                                             | H O U R;
+// TODO добавить метод лев без конфликта с левым соединением LEFT:           RU_L RU_E RU_V                                                              | L E F T;
+INT:            RU_C RU_E RU_L                                                              | I N T;
+LOG:            L O G;
+LOG10:          L O G NUM_1 NUM_0;
+LOWER:          RU_N RU_R RU_E RU_G                                                         | L O W E R;
 MAX:            RU_M RU_A RU_K RU_S RU_I RU_M RU_U RU_M                                     | M A X;
 MIN:            RU_M RU_I RU_N RU_I RU_M RU_U RU_M                                          | M I N;
 MINUTE:         RU_M RU_I RU_N RU_U RU_T RU_A                                               | M I N U T E;
@@ -127,17 +138,34 @@ RECORDAUTONUMBER:
 REFPRESENTATION:
                 RU_P RU_R RU_E RU_D RU_S RU_T RU_A RU_V RU_L RU_E RU_N RU_I RU_E RU_S RU_S RU_Y RU_L RU_K RU_I
                                                                                             | R E F P R E S E N T A T I O N;
+POW:            P O W;
+// TODO см Лев RIGHT:          RU_P RU_R RU_A RU_V                                                         | R I G H T;
+ROUND:          RU_O RU_K RU_R                                                              | R O U N D;
 SECOND:         RU_S RU_E RU_K RU_U RU_N RU_D RU_A                                          | S E C O N D;
+SIN:            S I N;
+SQRT:           S Q R T;
+STOREDDATASIZE: RU_R RU_A RU_Z RU_M RU_E RU_R RU_H RU_R RU_A RU_N RU_I RU_M RU_Y RU_H RU_D RU_A RU_N RU_N RU_Y RU_H
+                                                                                            | S T O R E D D A T A S I Z E;
 STRING:         RU_S RU_T RU_R RU_O RU_K RU_A                                               | S T R I N G;
+STRINGLENGTH:   RU_D RU_L RU_I RU_N RU_A RU_S RU_T RU_R RU_O RU_K RU_I                      | S T R I N G L E N G T H;
+STRFIND:        RU_S RU_T RU_R RU_N RU_A RU_J RU_T RU_I                                     | S T R F I N D;
+STRREPLACE:     RU_S RU_T RU_R RU_Z RU_A RU_M RU_E RU_N RU_I RU_T RU_SOFT_SIGN              | S T R R E P L A C E;
 SUBSTRING:      RU_P RU_O RU_D RU_S RU_T RU_R RU_O RU_K RU_A                                | S U B S T R I N G;
 SUM:            RU_S RU_U RU_M RU_M RU_A                                                    | S U M;
+TAN:            T A N;
 TENDAYS:        RU_D RU_E RU_K RU_A RU_D RU_A                                               | T E N D A Y S;
+TRIMALL:        RU_S RU_O RU_K RU_R RU_L RU_P                                               | T R I M A L L;
+TRIML:          RU_S RU_O RU_K RU_R RU_L                                                    | T R I M L;
+TRIMR:          RU_S RU_O RU_K RU_R RU_P                                                    | T R I M R;
 TYPE:           RU_T RU_I RU_P                                                              | T Y P E;
+UPPER:          RU_V RU_R RU_E RU_G                                                         | U P P E R;
 VALUE:          RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_E                                    | V A L U E;
 VALUETYPE:      RU_T RU_I RU_P RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_YA                    | V A L U E T Y P E;
 WEEK:           RU_N RU_E RU_D RU_E RU_L RU_YA                                              | W E E K;
 WEEKDAY:        RU_D RU_E RU_N RU_SOFT_SIGN RU_N RU_E RU_D RU_E RU_L RU_I                   | W E E K D A Y;
 YEAR:           RU_G RU_O RU_D                                                              | Y E A R;
+UUID:           RU_U RU_N RU_I RU_K RU_A RU_L RU_SOFT_SIGN RU_N RU_Y RU_J RU_I RU_D RU_E RU_N RU_T RU_I RU_F RU_I RU_K RU_A RU_T RU_O RU_R
+                                                                                            | U U I D;
 
 // MDO TYPES                RU                                                                  EN
 ACCOUNTING_REGISTER_TYPE:
@@ -164,8 +192,8 @@ ENUM_TYPE:      RU_P RU_E RU_R RU_E RU_CH RU_I RU_S RU_L RU_E RU_N RU_I RU_E    
 EXCHANGE_PLAN_TYPE:
                 PLAN_RU RU_O RU_B RU_M RU_E RU_N RU_A                                       | E X C H A N G E P L A N;
 EXTERNAL_DATA_SOURCE_TYPE:
-                RU_V RU_N RU_E RU_SH RU_N RU_I RU_J RU_I RU_S RU_T RU_O RU_CH RU_N RU_I RU_K RU_D RU_A RU_N RU_N RU_Y RU_H
-                                                                                            | E X T E R N A L D A T A S O U R C E;
+                (RU_V RU_N RU_E RU_SH RU_N RU_I RU_J RU_I RU_S RU_T RU_O RU_CH RU_N RU_I RU_K RU_D RU_A RU_N RU_N RU_Y RU_H
+                                                                                            | E X T E R N A L D A T A S O U R C E) -> pushMode(EXTERNAL_DATA_SOURCE_MODE);
 FILTER_CRITERION_TYPE:
                 RU_K RU_R RU_I RU_T RU_E RU_R RU_I RU_J RU_O RU_T RU_B RU_O RU_R RU_A       | F I L T E R C R I T E R I O N;
 INFORMATION_REGISTER_TYPE:
@@ -277,6 +305,10 @@ fragment H: 'H' | 'h';
 fragment W: 'W' | 'w';
 fragment X: 'X' | 'x';
 fragment Y: 'Y' | 'y';
+fragment Z: 'Z' | 'z';
+
+fragment NUM_0: '0';
+fragment NUM_1: '1';
 
 // LITERALS
 fragment DIGIT: [0-9];
@@ -357,3 +389,13 @@ ID_TASK_TYPE                : TASK_TYPE -> type(TASK_TYPE), popMode;
 ID_DOT              : DOT -> type(DOT), pushMode(DOT_MODE), popMode;
 ID_IDENTIFIER       : IDENTIFIER -> type(IDENTIFIER), popMode;
 ID_UNKNOWN          : . -> channel(HIDDEN), type(UNKNOWN);
+
+mode EXTERNAL_DATA_SOURCE_MODE;
+EDS_TABLE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A | T A B L E) -> popMode;
+EDS_CUBE: (RU_K RU_U RU_B | C U B E);
+EDS_CUBE_DIMTABLE: (RU_T RU_A RU_B RU_L RU_I RU_C RU_A RU_I RU_Z RU_M RU_E RU_R RU_E RU_N RU_I RU_YA
+                                    | D I M E N S I O N T A B L E) -> popMode;
+EDS_WHITE_SPACE : WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
+EDS_MUL: MUL -> type(MUL);
+EDS_DOT : DOT -> type(DOT);
+EDS_IDENTIFIER : IDENTIFIER -> type(IDENTIFIER);

@@ -136,6 +136,33 @@ class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
   }
 
   @Test
+  void testKeyWordsP2() {
+    assertMatch("ЦЕЛ", "int", SDBLLexer.INT);
+    assertMatch("ACOS", "ACOs", SDBLLexer.ACOS);
+    assertMatch("ASIN", "ASIn", SDBLLexer.ASIN);
+    assertMatch("ATAN", "ATaN", SDBLLexer.ATAN);
+    assertMatch("COS", "cOS", SDBLLexer.COS);
+    assertMatch("SIN", "SiN", SDBLLexer.SIN);
+    assertMatch("TAN", "TAn", SDBLLexer.TAN);
+    assertMatch("LOG", "LOg", SDBLLexer.LOG);
+    assertMatch("LOG10", "loG10", SDBLLexer.LOG10);
+    assertMatch("EXP", "EXp", SDBLLexer.EXP);
+    assertMatch("POW", "POw", SDBLLexer.POW);
+    assertMatch("SQRT", "SqRT", SDBLLexer.SQRT);
+    assertMatch("LOWER", "Нрег", SDBLLexer.LOWER);
+    assertMatch("STRINGLENGTH", "ДлинаСТроки", SDBLLexer.STRINGLENGTH);
+    assertMatch("TRIMALL", "Сокрлп", SDBLLexer.TRIMALL);
+    assertMatch("TRIML", "Сокрл", SDBLLexer.TRIML);
+    assertMatch("TRIMR", "СокрП", SDBLLexer.TRIMR);
+    assertMatch("UPPER", "вреГ", SDBLLexer.UPPER);
+    assertMatch("ROUND", "окр", SDBLLexer.ROUND);
+    assertMatch("STOREDDATASIZE", "РазмерХранимыхДанных", SDBLLexer.STOREDDATASIZE);
+    assertMatch("UUID", "УникальныйиДентификатор", SDBLLexer.UUID);
+    assertMatch("STRFIND", "стрнайТи", SDBLLexer.STRFIND);
+    assertMatch("STRREPLACE", "стрЗАМЕнить", SDBLLexer.STRREPLACE);
+  }
+
+  @Test
   void testStandardFields() {
     assertMatch("ТочкаМаршрута", "RoutePoint", SDBLLexer.ROUTEPOINT_FIELD);
   }
@@ -176,5 +203,27 @@ class SDBLLexerTest extends AbstractLexerTest<SDBLLexer> {
     assertMatch(".ФактическийПериодДействия", ".ACTUALACTIONPERIOD", SDBLLexer.DOT, SDBLLexer.ACTUAL_ACTION_PERIOD_VT);
     assertMatch(".ДанныеГрафика", ".SCHEDULEDATA", SDBLLexer.DOT, SDBLLexer.SCHEDULE_DATA_VT);
     assertMatch(".ЗадачиПоИсполнителю", ".TASKBYPERFORMER", SDBLLexer.DOT, SDBLLexer.TASK_BY_PERFORMER_VT);
+  }
+
+  @Test
+  void testExternalTypes() {
+    assertMatch("ВнешнийИсточникДанных.ВИД1.Таблица",
+            "ExternalDataSource.EDS1.Table",
+            SDBLLexer.EXTERNAL_DATA_SOURCE_TYPE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_TABLE);
+    assertMatch("ВнешнийИсточникДанных.ВИД1.Куб.Куб1.ТаблицаИзмерения",
+            "ExternalDataSource.EDS1.Cube.Cube1.DimensionTable",
+            SDBLLexer.EXTERNAL_DATA_SOURCE_TYPE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_CUBE,
+            SDBLLexer.DOT,
+            SDBLLexer.IDENTIFIER,
+            SDBLLexer.DOT,
+            SDBLLexer.EDS_CUBE_DIMTABLE);
   }
 }
