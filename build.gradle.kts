@@ -1,3 +1,4 @@
+import me.qoomon.gitversioning.commons.GitRefType
 import java.util.*
 
 plugins {
@@ -6,9 +7,10 @@ plugins {
     jacoco
     `java-library`
     antlr
+    signing
     id("org.sonarqube") version "4.4.1.3373"
     id("org.cadixdev.licenser") version "0.6.1"
-    id("com.github.gradle-git-version-calculator") version "1.1.0"
+    id("me.qoomon.git-versioning") version "6.4.3"
     id("io.freefair.javadoc-links") version "8.4"
     id("io.freefair.javadoc-utf-8") version "8.4"
     id("com.github.ben-manes.versions") version "0.50.0"
@@ -22,7 +24,22 @@ repositories {
 }
 
 group = "io.github.1c-syntax"
-version = gitVersionCalculator.calculateVersion("v")
+gitVersioning.apply {
+    refs {
+        considerTagsOnBranches = true
+        tag("v(?<tagVersion>[0-9].*)") {
+            version = "\${ref.tagVersion}\${dirty}"
+        }
+        branch(".+") {
+            version = "\${ref}-\${commit.short}\${dirty}"
+        }
+    }
+
+    rev {
+        version = "\${commit.short}\${dirty}"
+    }
+}
+val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 
 val antlrVersion = "4.9.0"
 val antlrGroupId = "com.tunnelvisionlabs"
@@ -183,7 +200,33 @@ artifacts {
     archives(tasks["javadocJar"])
 }
 
+signing {
+    val signingInMemoryKey: String? by project      // env.ORG_GRADLE_PROJECT_signingInMemoryKey
+    val signingInMemoryPassword: String? by project // env.ORG_GRADLE_PROJECT_signingInMemoryPassword
+    if (signingInMemoryKey != null) {
+        useInMemoryPgpKeys(signingInMemoryKey, signingInMemoryPassword)
+        sign(publishing.publications)
+    }
+}
+
 publishing {
+    repositories {
+        maven {
+            name = "sonatype"
+            url = if (isSnapshot)
+                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            else
+                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+
+            val sonatypeUsername: String? by project
+            val sonatypePassword: String? by project
+
+            credentials {
+                username = sonatypeUsername // ORG_GRADLE_PROJECT_sonatypeUsername
+                password = sonatypePassword // ORG_GRADLE_PROJECT_sonatypePassword
+            }
+        }
+    }
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
