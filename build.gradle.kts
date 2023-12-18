@@ -92,6 +92,8 @@ sourceSets.jmh {
 // [bug] https://youtrack.jetbrains.com/issue/KT-46165
 tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    dependsOn(tasks.generateGrammarSource)
 }
 
 tasks.processTestResources {
