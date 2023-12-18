@@ -15,6 +15,8 @@ plugins {
     id("io.freefair.javadoc-utf-8") version "8.4"
     id("com.github.ben-manes.versions") version "0.50.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
+    id("io.freefair.maven-central.validate-poms") version "8.4"
+    id("ru.vyarus.pom") version "2.2.2"
 }
 
 repositories {
