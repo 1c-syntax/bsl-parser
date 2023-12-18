@@ -106,10 +106,12 @@ tasks.generateGrammarSource {
     outputDirectory = file("src/main/gen/com/github/_1c_syntax/bsl/parser")
 }
 
-tasks.generateGrammarSource {
-    doLast {
-        tasks.updateLicenseMain.get().actions[0].execute(tasks.updateLicenseMain.get())
-    }
+tasks.updateLicenseMain {
+    mustRunAfter(tasks.generateGrammarSource)
+}
+
+tasks.checkLicenseMain {
+    dependsOn(tasks.updateLicenseMain)
 }
 
 tasks.test {
