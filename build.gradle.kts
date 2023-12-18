@@ -17,6 +17,7 @@ plugins {
     id("me.champeau.gradle.jmh") version "0.5.3"
     id("io.freefair.maven-central.validate-poms") version "8.4"
     id("ru.vyarus.pom") version "2.2.2"
+    id("io.codearte.nexus-staging") version "0.30.0"
 }
 
 repositories {
@@ -234,6 +235,10 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+            if (isSnapshot && project.hasProperty("simplifyVersion")) {
+                version = findProperty("git.ref.slug") as String + "-SNAPSHOT"
+            }
+
             pom {
                 description.set("Collection of parsers for Language 1C (BSL) in ANTLR4 format.")
                 url.set("https://github.com/1c-syntax/bsl-parser")
@@ -286,4 +291,9 @@ publishing {
             }
         }
     }
+}
+
+nexusStaging {
+    serverUrl = "https://s01.oss.sonatype.org/service/local/"
+    stagingProfileId = "15bd88b4d17915" // ./gradlew getStagingProfile
 }
