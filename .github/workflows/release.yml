@@ -2,7 +2,7 @@ name: Make image
 
 on:
     release:
-        types: [published, edited]
+        types: [published]
 
 jobs:
     build:
