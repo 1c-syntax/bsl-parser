@@ -23,9 +23,12 @@ package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
 
-public class BSLMethodDescriptionTokenizer extends Tokenizer<BSLMethodDescriptionParser.MethodDescriptionContext, BSLMethodDescriptionParser> {
+public class BSLMethodDescriptionTokenizer
+  extends Tokenizer<BSLMethodDescriptionParser.MethodDescriptionContext, BSLMethodDescriptionParser> {
   public BSLMethodDescriptionTokenizer(String content) {
-    super(content + "\n", new BSLMethodDescriptionLexer(CharStreams.fromString(""), true), BSLMethodDescriptionParser.class);
+    super(content + "\n",
+      new BSLMethodDescriptionLexer(CharStreams.fromString(""), true),
+      BSLMethodDescriptionParser.class);
   }
 
   @Override

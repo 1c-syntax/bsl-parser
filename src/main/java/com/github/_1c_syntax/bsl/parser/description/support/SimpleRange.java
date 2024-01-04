@@ -21,6 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser.description.support;
 
+import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
@@ -28,27 +29,28 @@ import java.util.List;
 /**
  * Класс для хранения области символов
  */
-public final class SimpleRange {
+@Value
+public class SimpleRange {
 
   /**
    * Номер первой строки области
    */
-  private final int startLine;
+  int startLine;
 
   /**
    * Номер первого символа области
    */
-  private final int startCharacter;
+  int startCharacter;
 
   /**
    * Номер последней строки области
    */
-  private final int endLine;
+  int endLine;
 
   /**
    * Номер последнего символа области
    */
-  private final int endCharacter;
+  int endCharacter;
 
   public SimpleRange(int startLine, int startCharacter, int endLine, int endCharacter) {
     this.startLine = startLine;
@@ -114,22 +116,6 @@ public final class SimpleRange {
     var lastElement = tokens.get(tokens.size() - 1);
 
     return create(firstElement, lastElement);
-  }
-
-  public int getStartLine() {
-    return startLine;
-  }
-
-  public int getStartCharacter() {
-    return startCharacter;
-  }
-
-  public int getEndLine() {
-    return endLine;
-  }
-
-  public int getEndCharacter() {
-    return endCharacter;
   }
 
   public String toString() {

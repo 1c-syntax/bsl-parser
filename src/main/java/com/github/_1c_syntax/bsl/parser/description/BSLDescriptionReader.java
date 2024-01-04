@@ -21,6 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import lombok.experimental.UtilityClass;
 import org.antlr.v4.runtime.Token;
 
 import javax.annotation.Nullable;
@@ -29,11 +30,8 @@ import java.util.List;
 /**
  * Читатель объектов описания по набору токенов из текста
  */
+@UtilityClass
 public final class BSLDescriptionReader {
-
-  private BSLDescriptionReader() {
-    // utility class
-  }
 
   /**
    * Возвращает объект описания метода по списку токенов описания
@@ -41,7 +39,7 @@ public final class BSLDescriptionReader {
    * @param tokens Список токенов описания метода
    * @return Объект описания
    */
-  public static MethodDescription parseMethodDescription(List<Token> tokens) {
+  public MethodDescription parseMethodDescription(List<Token> tokens) {
     return new MethodDescription(tokens);
   }
 
@@ -51,7 +49,7 @@ public final class BSLDescriptionReader {
    * @param tokens Список токенов описания переменной
    * @return Объект описания
    */
-  public static VariableDescription parseVariableDescription(List<Token> tokens) {
+  public VariableDescription parseVariableDescription(List<Token> tokens) {
     return new VariableDescription(tokens);
   }
 
@@ -62,7 +60,7 @@ public final class BSLDescriptionReader {
    * @param trailing Токен "висящего" описания
    * @return Объект описания
    */
-  public static VariableDescription parseVariableDescription(List<Token> tokens, @Nullable Token trailing) {
+  public VariableDescription parseVariableDescription(List<Token> tokens, @Nullable Token trailing) {
     return new VariableDescription(tokens, trailing);
   }
 }

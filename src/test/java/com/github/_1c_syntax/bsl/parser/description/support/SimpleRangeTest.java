@@ -32,6 +32,7 @@ class SimpleRangeTest {
     var range1 = new SimpleRange(1, 2, 3, 4);
     var range2 = new SimpleRange(2, 3, 4, 5);
     var range3 = new SimpleRange(0, 0, 6, 6);
+    var range4 = new SimpleRange(1, 3, 4, 7);
 
     assertThat(SimpleRange.containsRange(range1, range2)).isFalse();
     assertThat(SimpleRange.containsRange(range1, range3)).isFalse();
@@ -39,5 +40,36 @@ class SimpleRangeTest {
     assertThat(SimpleRange.containsRange(range2, range3)).isFalse();
     assertThat(SimpleRange.containsRange(range3, range1)).isTrue();
     assertThat(SimpleRange.containsRange(range3, range2)).isTrue();
+
+    assertThat(SimpleRange.containsRange(range4, range1)).isFalse();
+    assertThat(SimpleRange.containsRange(range4, range2)).isTrue();
+    assertThat(SimpleRange.containsRange(range4, range3)).isFalse();
+    assertThat(SimpleRange.containsRange(range4, range4)).isTrue();
+  }
+
+  @Test
+  void equalsRange() {
+    var range1 = new SimpleRange(1, 2, 3, 4);
+    var range2 = new SimpleRange(2, 3, 4, 5);
+    var range21 = new SimpleRange(2, 3, 4, 5);
+
+    assertThat(range1.equals(range2)).isFalse();
+    assertThat(range1.equals(range1)).isTrue();
+    assertThat(range2.equals(range21)).isTrue();
+    assertThat(range2.equals("range21")).isFalse();
+  }
+
+  @Test
+  void toStringRange() {
+    var range1 = new SimpleRange(1, 2, 3, 4);
+    var range2 = new SimpleRange(2, 3, 4, 5);
+    var range21 = new SimpleRange(2, 3, 4, 5);
+
+    assertThat(range1.toString())
+      .contains("startLine=1")
+      .contains("endLine=3")
+      .contains("startCharacter=2")
+      .contains("endCharacter=4");
+    assertThat(range2).hasToString(range21.toString());
   }
 }

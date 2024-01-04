@@ -26,7 +26,7 @@ import org.antlr.v4.runtime.Lexer;
 
 public class BSLTokenizer extends Tokenizer<BSLParser.FileContext, BSLParser> {
   public BSLTokenizer(String content) {
-    super(content, new BSLLexer(CharStreams.fromString(""), true), BSLParser.class);
+    this(content, new BSLLexer(CharStreams.fromString(""), true));
   }
 
   public BSLTokenizer(String content, Lexer lexer) {

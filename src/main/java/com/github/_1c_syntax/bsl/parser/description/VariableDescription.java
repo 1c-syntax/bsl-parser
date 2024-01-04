@@ -24,6 +24,7 @@ package com.github._1c_syntax.bsl.parser.description;
 import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionTokenizer;
 import com.github._1c_syntax.bsl.parser.description.support.DescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
+import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
 import javax.annotation.Nullable;
@@ -36,45 +37,46 @@ import static java.util.Objects.requireNonNull;
 /**
  * Класс-описание переменной.
  */
-public final class VariableDescription implements SourceDefinedSymbolDescription {
+@Value
+public class VariableDescription implements SourceDefinedSymbolDescription {
 
   /**
    * Содержит полное описание переменной (весь текст)
    */
-  private final String description;
+  String description;
 
   /**
    * Содержит часть строки после ключевого слова, в которой должно быть
    * описание причины устаревания переменной либо альтернативы
    */
-  private final String deprecationInfo;
+  String deprecationInfo;
 
   /**
    * Признак устаревания переменной
    */
-  private final boolean deprecated;
+  boolean deprecated;
 
   /**
    * Описание назначения переменной
    */
-  private final String purposeDescription;
+  String purposeDescription;
 
   /**
    * Если описание содержит только ссылку, то здесь будет ее значение
    * <p>
    * TODO Временное решение, надо будет продумать кошерное решение
    */
-  private final String link;
+  String link;
 
   /**
    * Диапазон, в котором располагается описание.
    */
-  private final SimpleRange range;
+  SimpleRange range;
 
   /**
    * Описание "висячего" комментария
    */
-  private final VariableDescription trailingDescription;
+  VariableDescription trailingDescription;
 
   VariableDescription(List<Token> comments) {
     this(comments, null);
@@ -98,31 +100,6 @@ public final class VariableDescription implements SourceDefinedSymbolDescription
     } else {
       trailingDescription = new VariableDescription(List.of(trailingComment));
     }
-  }
-
-  @Override
-  public String getDescription() {
-    return description;
-  }
-
-  @Override
-  public String getDeprecationInfo() {
-    return deprecationInfo;
-  }
-
-  @Override
-  public boolean isDeprecated() {
-    return deprecated;
-  }
-
-  @Override
-  public String getPurposeDescription() {
-    return purposeDescription;
-  }
-
-  @Override
-  public String getLink() {
-    return link;
   }
 
   @Override

@@ -26,7 +26,7 @@ import org.antlr.v4.runtime.Lexer;
 
 public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDBLParser> {
   public SDBLTokenizer(String content) {
-    super(content, new SDBLLexer(CharStreams.fromString(""), true), SDBLParser.class);
+    this(content, new SDBLLexer(CharStreams.fromString(""), true));
   }
 
   public SDBLTokenizer(String content, Lexer lexer) {

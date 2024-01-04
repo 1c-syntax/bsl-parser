@@ -11,6 +11,7 @@ plugins {
     id("org.sonarqube") version "4.4.1.3373"
     id("org.cadixdev.licenser") version "0.6.1"
     id("me.qoomon.git-versioning") version "6.4.3"
+    id("io.freefair.lombok") version "8.4"
     id("io.freefair.javadoc-links") version "8.4"
     id("io.freefair.javadoc-utf-8") version "8.4"
     id("com.github.ben-manes.versions") version "0.50.0"

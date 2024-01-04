@@ -23,6 +23,7 @@ package com.github._1c_syntax.bsl.parser.description.support;
 
 import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionParser;
 import com.github._1c_syntax.bsl.parser.BSLParserRuleContext;
+import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -35,13 +36,10 @@ import java.util.stream.Collectors;
 /**
  * Вспомогательный класс для чтения данных из описания метода
  */
+@UtilityClass
 public final class DescriptionReader {
 
   private static final int HYPERLINK_REF_LEN = 4;
-
-  DescriptionReader() {
-    // utility class
-  }
 
   /**
    * Выполняет разбор прочитанного AST дерева описания метода и формирует список описаний параметров метода
@@ -49,7 +47,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Список описаний параметров метода
    */
-  public static List<ParameterDescription> readParameters(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public List<ParameterDescription> readParameters(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
 
     // параметров нет
     if (ctx.parameters() == null) {
@@ -83,7 +81,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Список описаний возвращаемых значений
    */
-  public static List<TypeDescription> readReturnedValue(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public List<TypeDescription> readReturnedValue(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
 
     // возвращаемого значения нет
     if (ctx.returnsValues() == null) {
@@ -122,7 +120,8 @@ public final class DescriptionReader {
           if (string.returnsValue().type() != null && string.returnsValue().type().getText() != null) {
             text += string.returnsValue().type().getText();
           }
-          if (string.returnsValue().typeDescription() != null && string.returnsValue().typeDescription().getText() != null) {
+          if (string.returnsValue().typeDescription() != null
+            && string.returnsValue().typeDescription().getText() != null) {
             text += " - " + string.returnsValue().typeDescription().getText();
           }
           fakeParam.addTypeDescription(text);
@@ -147,7 +146,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Описание устаревшего метода
    */
-  public static String readDeprecationInfo(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public String readDeprecationInfo(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.deprecate() != null) {
       var deprecationDescription = ctx.deprecate().deprecateDescription();
       if (deprecationDescription != null) {
@@ -163,7 +162,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Список вариантов вызова
    */
-  public static List<String> readCallOptions(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public List<String> readCallOptions(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.callOptions() != null) {
       var strings = ctx.callOptions().callOptionsString();
       if (strings != null) {
@@ -182,7 +181,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Список примеров
    */
-  public static List<String> readExamples(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public List<String> readExamples(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.examples() != null) {
       var strings = ctx.examples().examplesString();
       if (strings != null) {
@@ -201,7 +200,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Описание назначения метода
    */
-  public static String readPurposeDescription(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public String readPurposeDescription(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.descriptionBlock() != null) {
       if (ctx.descriptionBlock().description() != null) {
         var strings = ctx.descriptionBlock().description().descriptionString();
@@ -226,14 +225,14 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Ссылка в методе
    */
-  public static String readLink(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public String readLink(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.descriptionBlock() != null && ctx.descriptionBlock().hyperlinkBlock() != null) {
       return getDescriptionString(ctx.descriptionBlock().hyperlinkBlock()).substring(HYPERLINK_REF_LEN);
     }
     return "";
   }
 
-  private static String getDescriptionString(BSLParserRuleContext ctx) {
+  private String getDescriptionString(BSLParserRuleContext ctx) {
     var strings = new StringJoiner("");
     for (var i = 0; i < ctx.getChildCount(); i++) {
       var child = ctx.getChild(i);
@@ -246,7 +245,9 @@ public final class DescriptionReader {
     return strings.toString().strip();
   }
 
-  private static List<ParameterDescription> getParametersStrings(List<? extends BSLMethodDescriptionParser.ParameterStringContext> strings) {
+  private List<ParameterDescription> getParametersStrings(
+    List<? extends BSLMethodDescriptionParser.ParameterStringContext> strings
+  ) {
     List<ParameterDescription> result = new ArrayList<>();
     var current = new TempParameterData();
 
@@ -403,8 +404,6 @@ public final class DescriptionReader {
     private void addSubParameter(BSLMethodDescriptionParser.SubParameterContext subParameter) {
       lastType().ifPresent(lastType -> lastType.addSubParameter(subParameter));
     }
-
-
   }
 
   /**
@@ -427,8 +426,9 @@ public final class DescriptionReader {
 
     private void addTypeDescription(BSLMethodDescriptionParser.TypeDescriptionContext typeDescription) {
       if (typeDescription.getText() != null) {
-        if (lastSubParameter().isPresent()) {
-          lastSubParameter().get().addTypeDescription(typeDescription);
+        var lastSubParam = lastSubParameter();
+        if (lastSubParam.isPresent()) {
+          lastSubParam.get().addTypeDescription(typeDescription);
         } else {
           this.description.add(typeDescription.getText().strip());
         }
@@ -437,8 +437,9 @@ public final class DescriptionReader {
 
     public void addTypeDescription(String textDescription) {
       if (!textDescription.isEmpty()) {
-        if (lastSubParameter().isPresent()) {
-          lastSubParameter().get().addTypeDescription(textDescription);
+        var lastSubParam = lastSubParameter();
+        if (lastSubParam.isPresent()) {
+          lastSubParam.get().addTypeDescription(textDescription);
         } else {
           this.description.add(textDescription.strip());
         }
@@ -464,7 +465,5 @@ public final class DescriptionReader {
         lastSubParameter().ifPresent(subParam -> subParam.addSubParameter(subParameter));
       }
     }
-
-
   }
 }
