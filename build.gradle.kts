@@ -47,7 +47,8 @@ val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 
 dependencies {
     antlr("com.tunnelvisionlabs", "antlr4", "4.9.0")
-    api("io.github.1c-syntax", "bsl-parser-core", "0.1.0")
+
+    implementation("io.github.1c-syntax", "bsl-parser-core", "0.1.0")
 
     // stat analysis
     compileOnly("com.google.code.findbugs", "jsr305", "3.0.2")
