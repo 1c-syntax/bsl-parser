@@ -72,7 +72,7 @@ class BSLParserWithChildrenTest {
   }
 
   @Test
-  void TestDeletePreproc() {
+  void testDeletePreproc() {
     var content = testParser.assertThat("""
       &ИзменениеИКонтроль("ПроверитьЗавершитьДоговорВАрхиве")
       Функция ХФ164150_ПроверитьЗавершитьДоговорВАрхиве(ДоговорОбъект, ДопНастройки, ИмяРеквизитаДатаОкончания)
@@ -127,7 +127,7 @@ class BSLParserWithChildrenTest {
         КонецПроцедуры"""
     }
   )
-  void TestAsync(String inputString) {
+  void testAsync(String inputString) {
     var content = testParser.assertThat(inputString);
 
     var file = testParser.parser().file();
@@ -151,9 +151,8 @@ class BSLParserWithChildrenTest {
     }
   }
 
-
   @Test
-  void TestWait() {
+  void testWait() {
     var content = testParser.assertThat("""
       Асинх Процедура Test()
       Ждать КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог); //1    \s
@@ -197,7 +196,7 @@ class BSLParserWithChildrenTest {
   }
 
   @Test
-  void TestAnotherWait() {
+  void testAnotherWait() {
     var content = testParser.assertThat("""
       Асинх Функция Test()
       Ждать 1; \s
@@ -219,7 +218,7 @@ class BSLParserWithChildrenTest {
   }
 
   @Test
-  void TestNoWait() {
+  void testNoWait() {
     var content = testParser.assertThat("""
       Процедура Test(Парам1, Ждать, wAit)
       Ждать = КопироватьФайлыАсинх(ИсходныйКаталог, ЦелевойКаталог, Ждать, wait); //1    \s
@@ -257,7 +256,7 @@ class BSLParserWithChildrenTest {
   }
 
   @Test
-  void TestAnnotateParams() {
+  void testAnnotateParams() {
     var content = testParser.assertThat("""
       Процедура САннотированнымиПараметрами(
       \t
@@ -298,7 +297,7 @@ class BSLParserWithChildrenTest {
   }
 
   @Test
-  void TestRaise() {
+  void testRaise() {
     var content = testParser.assertThat("ВызватьИсключение (\"Документ не может быть проведен\", " +
       "КатегорияОшибки.ОшибкаКонфигурации, " +
       "\"ERR.DOCS.0001\", " +
