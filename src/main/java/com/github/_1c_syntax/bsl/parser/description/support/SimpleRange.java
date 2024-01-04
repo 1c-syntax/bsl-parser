@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2023
+ * Copyright (c) 2018-2024
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -142,10 +142,9 @@ public final class SimpleRange {
   public boolean equals(final Object other) {
     if (other == this) {
       return true;
-    } else if (!(other instanceof SimpleRange)) {
+    } else if (!(other instanceof SimpleRange otherRange)) {
       return false;
     } else {
-      SimpleRange otherRange = (SimpleRange) other;
       return (startLine == otherRange.getStartLine()
         && startCharacter == otherRange.getStartCharacter()
         && endLine == otherRange.getEndLine()

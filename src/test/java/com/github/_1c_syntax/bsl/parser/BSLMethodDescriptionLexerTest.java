@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2023
+ * Copyright (c) 2018-2024
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -21,71 +21,64 @@
  */
 package com.github._1c_syntax.bsl.parser;
 
-import org.antlr.v4.runtime.Token;
+import com.github._1c_syntax.bsl.parser.testing.TestLexer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+class BSLMethodDescriptionLexerTest {
 
-import static org.assertj.core.api.Assertions.assertThat;
+  private TestLexer<BSLMethodDescriptionLexer> testLexer;
 
-class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescriptionLexer> {
-
-  BSLMethodDescriptionLexerTest() {
-    super(BSLMethodDescriptionLexer.class);
+  @BeforeEach
+  void before() {
+    testLexer = new TestLexer<>(BSLMethodDescriptionLexer.class);
   }
 
   @Test
   void testWhitespaces() {
-    String inputString = "//   А";
-
-    List<Token> tokens = getTokens(BSLMethodDescriptionLexer.DEFAULT_MODE, inputString);
-
-    assertThat(tokens).extracting(Token::getType).containsExactly(
-      BSLMethodDescriptionLexer.COMMENT,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.EOF
-    );
+    var inputString = "//   А";
+    testLexer.assertThat(BSLMethodDescriptionLexer.DEFAULT_MODE, inputString)
+      .containsExactly(BSLMethodDescriptionLexer.COMMENT,
+        BSLMethodDescriptionLexer.SPACE,
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.EOF);
   }
 
   @Test
   void testBOM() {
-    assertMatch('\uFEFF' + "Процедура", BSLMethodDescriptionLexer.WORD);
+    testLexer.assertThat('\uFEFF' + "Процедура").containsAll(BSLMethodDescriptionLexer.WORD);
   }
 
   @Test
   void testHyperlink() {
-    assertMatch("СМ", BSLMethodDescriptionLexer.WORD);
-    assertMatch("СМСМ", BSLMethodDescriptionLexer.WORD);
-    assertMatch("SEE", BSLMethodDescriptionLexer.SEE_KEYWORD);
-    assertMatch("СМ.", BSLMethodDescriptionLexer.SEE_KEYWORD);
-    assertMatch("СМ. ОбщийМодуль", BSLMethodDescriptionLexer.SEE_KEYWORD, BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD);
-    assertMatch("SEE ОбщийМодуль", BSLMethodDescriptionLexer.SEE_KEYWORD, BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD);
-    assertMatch("SEE  ОбщийМодуль",
-      BSLMethodDescriptionLexer.SEE_KEYWORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD);
-    assertMatch("SSEE ОбщийМодуль",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD);
-    assertMatch("СМ. ОбщийМодуль.Метод",
-      BSLMethodDescriptionLexer.SEE_KEYWORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.DOTSWORD);
-    assertMatch("SEE ОбщийМодуль.Метод",
-      BSLMethodDescriptionLexer.SEE_KEYWORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.DOTSWORD);
-    assertMatch("SEE ОбщийМодуль.Метод()",
+    testLexer.assertThat("СМ").isEqualTo("СМСМ").containsAll(BSLMethodDescriptionLexer.WORD);
+    testLexer.assertThat("SEE").isEqualTo("СМ.").containsAll(BSLMethodDescriptionLexer.SEE_KEYWORD);
+
+    testLexer.assertThat("СМ. ОбщийМодуль")
+      .isEqualTo("SEE ОбщийМодуль")
+      .isEqualTo("SEE  ОбщийМодуль")
+      .containsAll(
+        BSLMethodDescriptionLexer.SEE_KEYWORD,
+        BSLMethodDescriptionLexer.SPACE,
+        BSLMethodDescriptionLexer.WORD);
+
+    testLexer.assertThat("SSEE ОбщийМодуль")
+      .containsAll(BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.SPACE, BSLMethodDescriptionLexer.WORD);
+
+    testLexer.assertThat("СМ. ОбщийМодуль.Метод").isEqualTo("SEE ОбщийМодуль.Метод")
+      .containsAll(
+        BSLMethodDescriptionLexer.SEE_KEYWORD,
+        BSLMethodDescriptionLexer.SPACE,
+        BSLMethodDescriptionLexer.DOTSWORD);
+
+    testLexer.assertThat("SEE ОбщийМодуль.Метод()").containsAll(
       BSLMethodDescriptionLexer.SEE_KEYWORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.DOTSWORD,
       BSLMethodDescriptionLexer.LPAREN,
       BSLMethodDescriptionLexer.RPAREN);
-    assertMatch("СМ. ОбщийМодуль.Метод(Параметра, Значение)",
+
+    testLexer.assertThat("СМ. ОбщийМодуль.Метод(Параметра, Значение)").containsAll(
       BSLMethodDescriptionLexer.SEE_KEYWORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.DOTSWORD,
@@ -95,7 +88,8 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.RPAREN);
-    assertMatch("SEE ОбщийМодуль.Метод() WORD",
+
+    testLexer.assertThat("SEE ОбщийМодуль.Метод() WORD").containsAll(
       BSLMethodDescriptionLexer.SEE_KEYWORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.DOTSWORD,
@@ -103,7 +97,8 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
       BSLMethodDescriptionLexer.RPAREN,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD);
-    assertMatch("SEE. ОбщийМодуль.Метод() WORD",
+
+    testLexer.assertThat("SEE. ОбщийМодуль.Метод() WORD").containsAll(
       BSLMethodDescriptionLexer.SEE_KEYWORD,
       BSLMethodDescriptionLexer.ANYSYMBOL,
       BSLMethodDescriptionLexer.SPACE,
@@ -112,7 +107,8 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
       BSLMethodDescriptionLexer.RPAREN,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD);
-    assertMatch("СМ.   ОбщийМодуль.Метод() WORD",
+
+    testLexer.assertThat("СМ.   ОбщийМодуль.Метод() WORD").containsAll(
       BSLMethodDescriptionLexer.SEE_KEYWORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.DOTSWORD,
@@ -124,109 +120,111 @@ class BSLMethodDescriptionLexerTest extends AbstractLexerTest<BSLMethodDescripti
 
   @Test
   void testParameters() {
-    assertMatch("Параметры", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Parameters", BSLMethodDescriptionLexer.WORD);
-    assertMatch("NoParameters:", BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
-    assertMatch("Параметры:", BSLMethodDescriptionLexer.PARAMETERS_KEYWORD);
-    assertMatch("Parameters:", BSLMethodDescriptionLexer.PARAMETERS_KEYWORD);
-    assertMatch("Параметры :", BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE, BSLMethodDescriptionLexer.COLON);
+    testLexer.assertThat("Параметры").isEqualTo("Parameters").containsAll(BSLMethodDescriptionLexer.WORD);
+    testLexer.assertThat("NoParameters:")
+      .containsAll(BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
+    testLexer.assertThat("Параметры:").isEqualTo("Parameters:")
+      .containsAll(BSLMethodDescriptionLexer.PARAMETERS_KEYWORD);
+    testLexer.assertThat("Параметры :")
+      .containsAll(BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.SPACE, BSLMethodDescriptionLexer.COLON);
   }
 
   @Test
   void testReturns() {
-    assertMatch("Возвращаемое значение",
+    testLexer.assertThat("Возвращаемое значение").containsAll(
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.WORD);
-    assertMatch("RETURNS", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Возвращаемое  значение:",
+    testLexer.assertThat("RETURNS", BSLMethodDescriptionLexer.WORD);
+    testLexer.assertThat("Возвращаемое  значение:")
+      .isEqualTo("НеВозвращаемое значение:")
+      .containsAll(
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.SPACE,
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.COLON);
+    testLexer.assertThat("RETURNS :").containsAll(
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.COLON);
-    assertMatch("RETURNS :",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.COLON);
-    assertMatch("Возвращаемое значение:", BSLMethodDescriptionLexer.RETURNS_KEYWORD);
-    assertMatch("RETURNS:", BSLMethodDescriptionLexer.RETURNS_KEYWORD);
-    assertMatch("НеВозвращаемое значение:",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.COLON);
-    assertMatch("НЕRETURNS:",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.COLON);
+    testLexer.assertThat("Возвращаемое значение:").isEqualTo("RETURNS:")
+      .containsAll(BSLMethodDescriptionLexer.RETURNS_KEYWORD);
+    testLexer.assertThat("НЕRETURNS:")
+      .containsAll(BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.COLON);
   }
 
   @Test
   void testExample() {
-    assertMatch("Пример", BSLMethodDescriptionLexer.WORD);
-    assertMatch("ПримерЫ", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Example", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Examples", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Примеры:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
-    assertMatch("Examples:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
-    assertMatch("Пример:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
-    assertMatch("Example:", BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
-    assertMatch("Пример :",
+    testLexer.assertThat("Пример")
+      .isEqualTo("ПримерЫ")
+      .isEqualTo("Example")
+      .isEqualTo("Examples")
+      .containsAll(BSLMethodDescriptionLexer.WORD);
+
+    testLexer.assertThat("Примеры:")
+      .isEqualTo("Examples:")
+      .isEqualTo("Пример:")
+      .isEqualTo("Example:")
+      .containsAll(BSLMethodDescriptionLexer.EXAMPLE_KEYWORD);
+
+    testLexer.assertThat("Пример :").containsAll(
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.COLON);
-    assertMatch("NoExample:",
+
+    testLexer.assertThat("NoExample:").containsAll(
       BSLMethodDescriptionLexer.WORD,
       BSLMethodDescriptionLexer.COLON);
   }
 
   @Test
   void testCallOptions() {
-    assertMatch("Варианты вызова",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD);
-    assertMatch("Call options",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD);
-    assertMatch("Варианты  вызова:",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.COLON);
-    assertMatch("Call options :",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.COLON);
-    assertMatch("Варианты вызова:", BSLMethodDescriptionLexer.CALL_OPTIONS_KEYWORD);
-    assertMatch("Call options:", BSLMethodDescriptionLexer.CALL_OPTIONS_KEYWORD);
-    assertMatch("Вариант вызова:",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.COLON);
-    assertMatch("Call option:",
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.SPACE,
-      BSLMethodDescriptionLexer.WORD,
-      BSLMethodDescriptionLexer.COLON);
+    testLexer.assertThat("Варианты вызова")
+      .isEqualTo("Call options")
+      .containsAll(BSLMethodDescriptionLexer.WORD, BSLMethodDescriptionLexer.SPACE, BSLMethodDescriptionLexer.WORD);
+
+    testLexer.assertThat("Варианты  вызова:")
+      .containsAll(
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.SPACE,
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.COLON);
+
+    testLexer.assertThat("Call options :")
+      .containsAll(
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.SPACE,
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.SPACE,
+        BSLMethodDescriptionLexer.COLON);
+
+    testLexer.assertThat("Варианты вызова:").isEqualTo("Call options:")
+      .containsAll(BSLMethodDescriptionLexer.CALL_OPTIONS_KEYWORD);
+
+    testLexer.assertThat("Вариант вызова:").isEqualTo("Call option:")
+      .containsAll(
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.SPACE,
+        BSLMethodDescriptionLexer.WORD,
+        BSLMethodDescriptionLexer.COLON);
   }
 
   @Test
   void testDeprecate() {
-    assertMatch("Устарела", BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
-    assertMatch("Deprecate", BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
-    assertMatch("Depricate", BSLMethodDescriptionLexer.WORD);
-    assertMatch("Устарела.", BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
-    assertMatch("Deprecate.", BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
-    assertMatch("Устарела .",
+    testLexer.assertThat("Устарела")
+      .isEqualTo("Deprecate")
+      .isEqualTo("Устарела.")
+      .isEqualTo("Deprecate.")
+      .containsAll(BSLMethodDescriptionLexer.DEPRECATE_KEYWORD);
+
+    testLexer.assertThat("Depricate", BSLMethodDescriptionLexer.WORD);
+
+    testLexer.assertThat("Устарела .").containsAll(
       BSLMethodDescriptionLexer.DEPRECATE_KEYWORD,
       BSLMethodDescriptionLexer.SPACE,
       BSLMethodDescriptionLexer.ANYSYMBOL);
-    assertMatch("Deprecate:",
+
+    testLexer.assertThat("Deprecate:").containsAll(
       BSLMethodDescriptionLexer.DEPRECATE_KEYWORD,
       BSLMethodDescriptionLexer.COLON);
   }
