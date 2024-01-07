@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2023
+ * Copyright (c) 2018-2024
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -24,7 +24,6 @@ package com.github._1c_syntax.bsl.parser;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
-import utils.TestUtils;
 
 import java.util.List;
 
@@ -57,8 +56,9 @@ class SDBLTokenizerTest {
     // then
     List<? extends SDBLParser.QueriesContext> queries = ast.queries();
 
-    assertThat(queries).isNotNull();
-    assertThat(queries).hasSize(1);
+    assertThat(queries)
+      .isNotNull()
+      .hasSize(1);
     SDBLParser.QueriesContext query = queries.get(0);
     assertThat(query.getStart().getType()).isEqualTo(SDBLParser.SELECT);
     assertThat(query.getStop().getType()).isEqualTo(SDBLParser.IDENTIFIER);

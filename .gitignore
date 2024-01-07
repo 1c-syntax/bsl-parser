@@ -69,3 +69,4 @@ gen/
 *.orig
 /.idea/misc.xml
 *.tokens
+/.idea/inspectionProfiles/Project_Default.xml

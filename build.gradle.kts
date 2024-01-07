@@ -44,25 +44,20 @@ gitVersioning.apply {
 }
 val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 
-val antlrVersion = "4.9.0"
-val antlrGroupId = "com.tunnelvisionlabs"
-val antlrArtifactId = "antlr4"
-
 dependencies {
-    implementation(antlrGroupId, antlrArtifactId, antlrVersion)
-    antlr(antlrGroupId, antlrArtifactId, antlrVersion)
+    antlr("com.tunnelvisionlabs", "antlr4", "4.9.0")
 
-    implementation("com.github.1c-syntax", "utils", "0.5.1")
-
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.1")
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.1")
-    testImplementation("org.assertj", "assertj-core", "3.14.0")
-
-    // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation("commons-io", "commons-io", "2.6")
+    implementation("io.github.1c-syntax", "bsl-parser-core", "0.1.0")
 
     // stat analysis
     compileOnly("com.google.code.findbugs", "jsr305", "3.0.2")
+
+    // testing
+    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.1.1")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.10.1")
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.10.1")
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.10.1")
+    testImplementation("org.assertj", "assertj-core", "3.25.0")
 }
 
 java {
@@ -95,7 +90,6 @@ sourceSets.jmh {
 // [bug] https://youtrack.jetbrains.com/issue/KT-46165
 tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
     dependsOn(tasks.generateGrammarSource)
 }
 
