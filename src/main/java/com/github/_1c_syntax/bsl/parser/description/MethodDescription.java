@@ -26,7 +26,6 @@ import com.github._1c_syntax.bsl.parser.description.support.DescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.ParameterDescription;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import com.github._1c_syntax.bsl.parser.description.support.TypeDescription;
-import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
@@ -37,61 +36,50 @@ import static java.util.Objects.requireNonNull;
 /**
  * Класс-описание метода (процедуры или функции).
  */
-@Value
-public class MethodDescription implements SourceDefinedSymbolDescription {
-
+public final class MethodDescription implements SourceDefinedSymbolDescription {
   /**
    * Содержит полное описание метода (весь текст).
    */
-  String description;
-
+  private final String description;
   /**
    * Содержит часть строки после ключевого слова, в которой должно быть
    * описание причины устаревания метода либо альтернативы.
    */
-  String deprecationInfo;
-
+  private final String deprecationInfo;
   /**
    * Признак устаревания метода.
    */
-  boolean deprecated;
-
+  private final boolean deprecated;
   /**
    * Описание назначения метода.
    */
-  String purposeDescription;
-
+  private final String purposeDescription;
   /**
    * Примеры использования метода.
    */
-  List<String> examples;
-
+  private final List<String> examples;
   /**
    * Варианты вызова метода.
    */
-  List<String> callOptions;
-
+  private final List<String> callOptions;
   /**
    * Параметры метода с типами и описанием.
    */
-  List<ParameterDescription> parameters;
-
+  private final List<ParameterDescription> parameters;
   /**
    * Возвращаемые значения (типы).
    */
-  List<TypeDescription> returnedValue;
-
+  private final List<TypeDescription> returnedValue;
   /**
    * Если описание содержит только ссылку, то здесь будет ее значение.
    * <p>
    * TODO Временное решение, надо будет продумать в следующем релизе
    */
-  String link;
-
+  private final String link;
   /**
    * Диапазон, в котором располагается описание.
    */
-  SimpleRange range;
+  private final SimpleRange range;
 
   MethodDescription(List<Token> comments) {
     description = comments.stream()
@@ -113,7 +101,48 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
   }
 
   @Override
+  public String getDescription() {
+    return description;
+  }
+
+  @Override
+  public String getDeprecationInfo() {
+    return deprecationInfo;
+  }
+
+  @Override
+  public boolean isDeprecated() {
+    return deprecated;
+  }
+
+  @Override
+  public String getPurposeDescription() {
+    return purposeDescription;
+  }
+
+  @Override
+  public String getLink() {
+    return link;
+  }
+
+  @Override
   public SimpleRange getSimpleRange() {
     return range;
+  }
+
+  public List<String> getExamples() {
+    return examples;
+  }
+
+  public List<String> getCallOptions() {
+    return callOptions;
+  }
+
+  public List<ParameterDescription> getParameters() {
+    return parameters;
+  }
+
+  public List<TypeDescription> getReturnedValue() {
+    return returnedValue;
   }
 }

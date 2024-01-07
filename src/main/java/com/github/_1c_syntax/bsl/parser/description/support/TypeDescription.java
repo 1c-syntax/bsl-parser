@@ -21,38 +21,30 @@
  */
 package com.github._1c_syntax.bsl.parser.description.support;
 
-import lombok.Getter;
-
 import java.util.List;
 
 /**
  * Описание типа параметра, прочитанного из описания метода
  */
-@Getter
 public class TypeDescription {
-
   /**
    * Имя типа. На данный момент может быть строковый массив перечисления типов а также гиперссылка на метод
    */
   private final String name;
-
   /**
    * Описание типа. Может быть пустым
    */
   private final String description;
-
   /**
    * Параметры (ключи или поля) типа для сложных типов данных. Может быть пустым
    */
   private final List<ParameterDescription> parameters;
-
   /**
    * Если описание параметров содержит только ссылку, то здесь будет ее значение
    * <p>
    * TODO Временное решение, надо будет продумать в следующем релизе
    */
   private final String link;
-
   /**
    * Признак того, что параметр является гиперссылкой
    */
@@ -68,5 +60,25 @@ public class TypeDescription {
     this.parameters = parameters;
     this.link = link;
     this.isHyperlink = isHyperlink;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public List<ParameterDescription> getParameters() {
+    return parameters;
+  }
+
+  public String getLink() {
+    return link;
+  }
+
+  public boolean isHyperlink() {
+    return isHyperlink;
   }
 }
