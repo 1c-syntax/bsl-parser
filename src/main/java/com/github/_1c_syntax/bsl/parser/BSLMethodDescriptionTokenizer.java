@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2023
+ * Copyright (c) 2018-2024
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -23,9 +23,12 @@ package com.github._1c_syntax.bsl.parser;
 
 import org.antlr.v4.runtime.CharStreams;
 
-public class BSLMethodDescriptionTokenizer extends Tokenizer<BSLMethodDescriptionParser.MethodDescriptionContext, BSLMethodDescriptionParser> {
+public class BSLMethodDescriptionTokenizer
+  extends Tokenizer<BSLMethodDescriptionParser.MethodDescriptionContext, BSLMethodDescriptionParser> {
   public BSLMethodDescriptionTokenizer(String content) {
-    super(content + "\n", new BSLMethodDescriptionLexer(CharStreams.fromString(""), true), BSLMethodDescriptionParser.class);
+    super(content + "\n",
+      new BSLMethodDescriptionLexer(CharStreams.fromString(""), true),
+      BSLMethodDescriptionParser.class);
   }
 
   @Override

@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2023
+ * Copyright (c) 2018-2024
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -26,7 +26,7 @@ import org.antlr.v4.runtime.Lexer;
 
 public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDBLParser> {
   public SDBLTokenizer(String content) {
-    super(content, new SDBLLexer(CharStreams.fromString(""), true), SDBLParser.class);
+    this(content, new SDBLLexer(CharStreams.fromString(""), true));
   }
 
   public SDBLTokenizer(String content, Lexer lexer) {

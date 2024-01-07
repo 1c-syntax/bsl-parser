@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2023
+ * Copyright (c) 2018-2024
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -34,7 +34,7 @@ class BSLTokenizerTest {
   @Test
   void computeTokens() {
     // given
-    BSLTokenizer tokenizer = new BSLTokenizer("Если Условие() Тогда КонецЕсли");
+    var tokenizer = new BSLTokenizer("Если Условие() Тогда КонецЕсли");
 
     // when
     final List<Token> tokens = tokenizer.getTokens();
@@ -59,5 +59,4 @@ class BSLTokenizerTest {
     assertThat(fileCodeBlock.getStart().getType()).isEqualTo(BSLParser.IF_KEYWORD);
     assertThat(fileCodeBlock.getStop().getType()).isEqualTo(BSLParser.ENDIF_KEYWORD);
   }
-
 }

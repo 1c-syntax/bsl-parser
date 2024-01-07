@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2023
+ * Copyright (c) 2018-2024
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -427,8 +427,9 @@ public final class DescriptionReader {
 
     private void addTypeDescription(BSLMethodDescriptionParser.TypeDescriptionContext typeDescription) {
       if (typeDescription.getText() != null) {
-        if (lastSubParameter().isPresent()) {
-          lastSubParameter().get().addTypeDescription(typeDescription);
+        var lastSubParam = lastSubParameter();
+        if (lastSubParam.isPresent()) {
+          lastSubParam.get().addTypeDescription(typeDescription);
         } else {
           this.description.add(typeDescription.getText().strip());
         }
@@ -437,8 +438,9 @@ public final class DescriptionReader {
 
     public void addTypeDescription(String textDescription) {
       if (!textDescription.isEmpty()) {
-        if (lastSubParameter().isPresent()) {
-          lastSubParameter().get().addTypeDescription(textDescription);
+        var lastSubParam = lastSubParameter();
+        if (lastSubParam.isPresent()) {
+          lastSubParam.get().addTypeDescription(textDescription);
         } else {
           this.description.add(textDescription.strip());
         }
