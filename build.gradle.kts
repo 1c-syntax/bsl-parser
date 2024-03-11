@@ -16,7 +16,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.51.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
     id("io.freefair.maven-central.validate-poms") version "8.6"
-    id("ru.vyarus.pom") version "2.2.2"
+    id("ru.vyarus.pom") version "3.0.0"
     id("io.codearte.nexus-staging") version "0.30.0"
 }
 
