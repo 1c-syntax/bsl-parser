@@ -432,7 +432,7 @@ class BSLDescriptionReaderTest {
 
   @Test
   void parseVariableDescription3() {
-    var exampleString = "// Описание переменной\n// Устарела. см. НоваяПеременная";
+    var exampleString = "// Устарела. см. НоваяПеременная\n// Описание переменной";
     var tokens = getTokensFromString(exampleString);
     var variableDescription = BSLDescriptionReader.parseVariableDescription(tokens);
 
@@ -445,7 +445,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(variableDescription.getSimpleRange(), create(1, 32)))
+      Objects.equals(variableDescription.getSimpleRange(), create(1, 22)))
       .isTrue();
   }
 

@@ -45,15 +45,15 @@ gitVersioning.apply {
 val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 
 dependencies {
-    antlr("com.tunnelvisionlabs", "antlr4", "4.9.0")
+    antlr("org.antlr", "antlr4", "4.13.1")
 
-    implementation("io.github.1c-syntax", "bsl-parser-core", "0.1.0")
+    implementation("io.github.1c-syntax", "bsl-parser-core", "0.2.0")
 
     // stat analysis
     compileOnly("com.google.code.findbugs", "jsr305", "3.0.2")
 
     // testing
-    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.1.1")
+    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.2.0")
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.10.1")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.10.1")
     testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.10.1")
