@@ -47,7 +47,7 @@ val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 dependencies {
     antlr("org.antlr", "antlr4", "4.13.2")
 
-    implementation("io.github.1c-syntax", "bsl-parser-core", "0.2.0")
+    implementation("io.github.1c-syntax", "bsl-parser-core", "develop-818bf88-DIRTY")
 
     // stat analysis
     compileOnly("com.github.spotbugs", "spotbugs-annotations", "4.8.6")
