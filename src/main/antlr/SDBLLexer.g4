@@ -51,6 +51,7 @@ GREATER_OR_EQUAL: '>=';
 GREATER: '>';
 MUL: '*';
 QUOTIENT: '/';
+NUMBER_SIGH: '#';
 AMPERSAND: '&' -> pushMode(PARAMETER_MODE);
 BRACE: '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 
