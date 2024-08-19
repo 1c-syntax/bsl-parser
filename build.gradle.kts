@@ -10,7 +10,7 @@ plugins {
     signing
     id("org.sonarqube") version "5.1.0.4882"
     id("org.cadixdev.licenser") version "0.6.1"
-    id("me.qoomon.git-versioning") version "6.4.3"
+    id("me.qoomon.git-versioning") version "6.4.4"
     id("io.freefair.javadoc-links") version "8.7.1"
     id("io.freefair.javadoc-utf-8") version "8.7.1"
     id("com.github.ben-manes.versions") version "0.51.0"
