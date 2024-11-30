@@ -8,7 +8,7 @@ plugins {
     `java-library`
     antlr
     signing
-    id("org.sonarqube") version "6.0.0.5145"
+    id("org.sonarqube") version "6.0.1.5171"
     id("org.cadixdev.licenser") version "0.6.1"
     id("me.qoomon.git-versioning") version "6.4.4"
     id("io.freefair.javadoc-links") version "8.10"
