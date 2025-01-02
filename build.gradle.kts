@@ -45,19 +45,19 @@ gitVersioning.apply {
 val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 
 dependencies {
-    antlr("org.antlr", "antlr4", "4.13.1")
+    antlr("org.antlr", "antlr4", "4.13.2")
 
     implementation("io.github.1c-syntax", "bsl-parser-core", "0.2.0")
 
     // stat analysis
-    compileOnly("com.google.code.findbugs", "jsr305", "3.0.2")
+    compileOnly("com.github.spotbugs", "spotbugs-annotations", "4.8.6")
 
     // testing
     testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.2.0")
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.10.1")
-    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.10.1")
-    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.10.1")
-    testImplementation("org.assertj", "assertj-core", "3.25.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
+    testImplementation("org.assertj", "assertj-core", "3.27.0")
 }
 
 java {
@@ -149,7 +149,7 @@ tasks.check {
 tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(File("$buildDir/reports/jacoco/test/jacoco.xml"))
+        xml.outputLocation.set(File("${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml"))
     }
 }
 
@@ -189,7 +189,7 @@ sonar {
         property("sonar.projectKey", "1c-syntax_bsl-parser")
         property("sonar.projectName", "BSL Parser")
         property("sonar.scm.exclusions.disabled", "true")
-        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
     }
 }
 
