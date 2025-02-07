@@ -13,7 +13,7 @@ plugins {
     id("me.qoomon.git-versioning") version "6.4.4"
     id("io.freefair.javadoc-links") version "8.11"
     id("io.freefair.javadoc-utf-8") version "8.11"
-    id("com.github.ben-manes.versions") version "0.51.0"
+    id("com.github.ben-manes.versions") version "0.52.0"
     id("me.champeau.gradle.jmh") version "0.5.3"
     id("io.freefair.maven-central.validate-poms") version "8.11"
     id("ru.vyarus.pom") version "3.0.0"
