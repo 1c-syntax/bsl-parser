@@ -23,7 +23,7 @@ plugins {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven(url = "https://jitpack.io")
+    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
 }
 
 group = "io.github.1c-syntax"
@@ -45,15 +45,15 @@ gitVersioning.apply {
 val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 
 dependencies {
-    antlr("me.sunlan", "antlr4", "4.13.2.6")
+    antlr("io.github.1c-syntax", "antlr4", "0.1.1")
 
-    implementation("io.github.1c-syntax", "bsl-parser-core", "0.1.0")
+    implementation("io.github.1c-syntax", "bsl-parser-core", "0.3.0")
 
     // stat analysis
     compileOnly("com.github.spotbugs", "spotbugs-annotations", "4.8.6")
 
     // testing
-    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.1.1")
+    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.3.0")
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
