@@ -27,7 +27,8 @@ lexer grammar SDBLLexer;
 @members {
 public SDBLLexer(CharStream input, boolean crAwareCostructor) {
   super(input);
-  _interp = new CRAwareLexerATNSimulator(this, _ATN, _decisionToDFA, _sharedContextCache);
+  _interp = new CRAwareLexerATNSimulator(this, _ATN);
+  validateInputStream(_ATN, input);
 }
 }
 
@@ -51,6 +52,7 @@ GREATER_OR_EQUAL: '>=';
 GREATER: '>';
 MUL: '*';
 QUOTIENT: '/';
+NUMBER_SIGH: '#';
 AMPERSAND: '&' -> pushMode(PARAMETER_MODE);
 BRACE: '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 

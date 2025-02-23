@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2024
+ * Copyright (c) 2018-2025
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -163,6 +163,7 @@ class SDBLParserMatchesTest {
   @ValueSource(strings =
     {
       "выбрать 1", "выбрать первые 1 2", "выбрать 1 как поле поместить вт",
+      "выбрать 1 как поле поместить .вт", "выбрать 1 как поле поместить вт#1#", "выбрать 1 как поле поместить ##",
       "выбрать различные поле из таблица", "выбрать различные Таблица.поле как поле из таблица",
       "выбрать различные Сумма(Sin(поле)) из таблица индексировать по поле",
       "выбрать поле, поле1, таблица.поле3 как как из таблица сгруппировать по поле для изменения"

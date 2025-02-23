@@ -71,7 +71,7 @@ union: UNION ALL? query orderBy?;
 query:
     SELECT limitations?
     columns=selectedFields
-    (INTO temporaryTableName=identifier)?
+    (INTO temporaryTableName=temporaryTableIdentifier)?
     (FROM from=dataSources)?
     (WHERE where=logicalExpression)?
     (GROUP (BY_EN | PO_RU) groupBy=groupByItem)?
@@ -501,6 +501,9 @@ identifier:
     | UUID
     | STRFIND
     | STRREPLACE
+;
+
+temporaryTableIdentifier: DOT? (NUMBER_SIGH+ | identifier | ((identifier | NUMBER_SIGH)+ DECIMAL*)+)
 ;
 
 // параметр запроса
