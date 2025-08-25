@@ -1,38 +1,43 @@
-import me.qoomon.gitversioning.commons.GitRefType
-import java.util.*
+import java.util.Calendar
+import org.jreleaser.model.Active.*
 
 plugins {
-    `maven-publish`
-    idea
-    jacoco
     `java-library`
+    `maven-publish`
+    jacoco
+    idea
     antlr
-    signing
-    id("org.sonarqube") version "6.0.1.5171"
     id("org.cadixdev.licenser") version "0.6.1"
     id("me.qoomon.git-versioning") version "6.4.4"
-    id("io.freefair.javadoc-links") version "8.12.1"
-    id("io.freefair.javadoc-utf-8") version "8.12.1"
+    id("io.freefair.javadoc-links") version "8.14.2"
+    id("io.freefair.javadoc-utf-8") version "8.14.2"
+    id("io.freefair.maven-central.validate-poms") version "8.14.2"
     id("com.github.ben-manes.versions") version "0.52.0"
-    id("me.champeau.gradle.jmh") version "0.5.3"
-    id("io.freefair.maven-central.validate-poms") version "8.12.1"
     id("ru.vyarus.pom") version "3.0.0"
-    id("io.codearte.nexus-staging") version "0.30.0"
+    id("org.jreleaser") version "1.19.0"
+    id("org.sonarqube") version "6.2.0.5505"
+    id("me.champeau.gradle.jmh") version "0.5.3"
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
-    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
 }
 
 group = "io.github.1c-syntax"
 gitVersioning.apply {
     refs {
-        considerTagsOnBranches = true
+        describeTagFirstParent = false
         tag("v(?<tagVersion>[0-9].*)") {
             version = "\${ref.tagVersion}\${dirty}"
         }
+
+        branch("develop") {
+            version = "\${describe.tag.version.major}." +
+                    "\${describe.tag.version.minor.next}.0." +
+                    "\${describe.distance}-SNAPSHOT\${dirty}"
+        }
+
         branch(".+") {
             version = "\${ref}-\${commit.short}\${dirty}"
         }
@@ -42,18 +47,17 @@ gitVersioning.apply {
         version = "\${commit.short}\${dirty}"
     }
 }
-val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 
 dependencies {
-    antlr("io.github.1c-syntax", "antlr4", "0.1.1")
+    antlr("io.github.1c-syntax", "antlr4", "0.1.2")
 
-    implementation("io.github.1c-syntax", "bsl-parser-core", "0.3.0")
+    implementation("io.github.1c-syntax", "bsl-parser-core", "0.3.1")
 
     // stat analysis
     compileOnly("com.github.spotbugs", "spotbugs-annotations", "4.8.6")
 
     // testing
-    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.3.0")
+    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.3.1")
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
@@ -199,39 +203,16 @@ artifacts {
     archives(tasks["javadocJar"])
 }
 
-signing {
-    val signingInMemoryKey: String? by project      // env.ORG_GRADLE_PROJECT_signingInMemoryKey
-    val signingInMemoryPassword: String? by project // env.ORG_GRADLE_PROJECT_signingInMemoryPassword
-    if (signingInMemoryKey != null) {
-        useInMemoryPgpKeys(signingInMemoryKey, signingInMemoryPassword)
-        sign(publishing.publications)
-    }
-}
-
 publishing {
     repositories {
         maven {
-            name = "sonatype"
-            url = if (isSnapshot)
-                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            else
-                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-
-            val sonatypeUsername: String? by project
-            val sonatypePassword: String? by project
-
-            credentials {
-                username = sonatypeUsername // ORG_GRADLE_PROJECT_sonatypeUsername
-                password = sonatypePassword // ORG_GRADLE_PROJECT_sonatypePassword
-            }
+            name = "staging"
+            url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
         }
     }
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
-            if (isSnapshot && project.hasProperty("simplifyVersion")) {
-                version = findProperty("git.ref.slug") as String + "-SNAPSHOT"
-            }
 
             pom {
                 description.set("Collection of parsers for Language 1C (BSL) in ANTLR4 format.")
@@ -282,12 +263,44 @@ publishing {
                     developerConnection.set("scm:git:git@github.com:1c-syntax/bsl-parser.git")
                     url.set("https://github.com/1c-syntax/bsl-parser")
                 }
+                issueManagement {
+                    system.set("GitHub Issues")
+                    url.set("https://github.com/1c-syntax/bsl-parser/issues")
+                }
+                ciManagement {
+                    system.set("GitHub Actions")
+                    url.set("https://github.com/1c-syntax/bsl-parser/actions")
+                }
             }
         }
     }
 }
 
-nexusStaging {
-    serverUrl = "https://s01.oss.sonatype.org/service/local/"
-    stagingProfileId = "15bd88b4d17915" // ./gradlew getStagingProfile
+jreleaser {
+    signing {
+        active = ALWAYS
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                create("release-deploy") {
+                    active = RELEASE
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    stagingRepository("build/staging-deploy")
+                }
+            }
+            nexus2 {
+                create("snapshot-deploy") {
+                    active = SNAPSHOT
+                    snapshotUrl = "https://central.sonatype.com/repository/maven-snapshots/"
+                    applyMavenCentralRules = true
+                    snapshotSupported = true
+                    closeRepository = true
+                    releaseRepository = true
+                    stagingRepository("build/staging-deploy")
+                }
+            }
+        }
+    }
 }
