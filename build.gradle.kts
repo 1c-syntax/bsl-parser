@@ -12,7 +12,7 @@ plugins {
     id("io.freefair.javadoc-links") version "8.14.2"
     id("io.freefair.javadoc-utf-8") version "8.14.2"
     id("io.freefair.maven-central.validate-poms") version "8.14.2"
-    id("com.github.ben-manes.versions") version "0.52.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
     id("ru.vyarus.pom") version "3.0.0"
     id("org.jreleaser") version "1.19.0"
     id("org.sonarqube") version "7.0.0.6105"
