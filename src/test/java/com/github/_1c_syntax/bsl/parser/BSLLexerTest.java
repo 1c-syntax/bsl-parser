@@ -562,4 +562,14 @@ class BSLLexerTest {
     testLexer.assertThat("#Insert // Комментарий", BSLLexer.HIDDEN)
       .containsAll(BSLLexer.PREPROC_INSERT, BSLLexer.WHITE_SPACE, BSLLexer.LINE_COMMENT);
   }
+
+  @Test
+  void testNumber() {
+    testLexer.assertThat("0").containsAll(BSLLexer.DECIMAL);
+    testLexer.assertThat("111").containsAll(BSLLexer.DECIMAL);
+    testLexer.assertThat("0.1").containsAll(BSLLexer.FLOAT);
+    testLexer.assertThat("111.111").containsAll(BSLLexer.FLOAT);
+    testLexer.assertThat("0.").containsAll(BSLLexer.FLOAT);
+    testLexer.assertThat("111.").containsAll(BSLLexer.FLOAT);
+  }
 }
