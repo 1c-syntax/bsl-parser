@@ -89,7 +89,7 @@ NULL: 'NULL';
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
-FLOAT : DIGIT+ '.' DIGIT+;
+FLOAT : DIGIT+ '.' DIGIT*;
 STRING: '"' (~[\r\n"] | '""')* '"';
 STRINGSTART: '"' (~["\n\r]| '""')*;
 STRINGTAIL: BAR (~["\n\r] | '""')* '"';
