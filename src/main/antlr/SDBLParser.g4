@@ -141,7 +141,7 @@ groupByItem:
 indexingItem: parameter | column;
 
 // упорядочивание
-orderBy: ORDER (BY_EN | PO_RU) orders+=ordersByExpession (COMMA orders+=ordersByExpession)?;
+orderBy: ORDER (BY_EN | PO_RU) orders+=ordersByExpession (COMMA orders+=ordersByExpession)*;
 ordersByExpession: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY direction=DESC?))?;
 
 // итоги
