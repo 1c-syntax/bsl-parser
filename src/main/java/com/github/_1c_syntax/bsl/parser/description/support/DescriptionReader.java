@@ -22,7 +22,7 @@
 package com.github._1c_syntax.bsl.parser.description.support;
 
 import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionParser;
-import com.github._1c_syntax.bsl.parser.BSLParserRuleContext;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -233,7 +233,7 @@ public final class DescriptionReader {
     return "";
   }
 
-  private static String getDescriptionString(BSLParserRuleContext ctx) {
+  private static String getDescriptionString(ParserRuleContext ctx) {
     var strings = new StringJoiner("");
     for (var i = 0; i < ctx.getChildCount(); i++) {
       var child = ctx.getChild(i);

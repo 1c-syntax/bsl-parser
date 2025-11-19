@@ -26,7 +26,6 @@ parser grammar BSLMethodDescriptionParser;
 
 options {
     tokenVocab = BSLMethodDescriptionLexer;
-    contextSuperClass = 'BSLParserRuleContext';
 }
 
 // структура описания
