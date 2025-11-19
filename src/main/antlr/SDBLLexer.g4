@@ -24,14 +24,6 @@
  */
 lexer grammar SDBLLexer;
 
-@members {
-public SDBLLexer(CharStream input, boolean crAwareCostructor) {
-  super(input);
-  _interp = new CRAwareLexerATNSimulator(this, _ATN);
-  validateInputStream(_ATN, input);
-}
-}
-
 // COMMONS
 WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);

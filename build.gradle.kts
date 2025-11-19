@@ -49,15 +49,14 @@ gitVersioning.apply {
 }
 
 dependencies {
-    antlr("io.github.1c-syntax", "antlr4", "0.1.2")
-
-    implementation("io.github.1c-syntax", "bsl-parser-core", "0.3.1")
+    antlr("io.github.1c-syntax", "antlr4", "0.2.0-rc.1")
 
     // stat analysis
     compileOnly("com.github.spotbugs", "spotbugs-annotations", "4.8.6")
 
     // testing
-    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.3.1")
+    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.4.0-rc.1")
+
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")

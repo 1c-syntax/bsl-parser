@@ -24,14 +24,6 @@
  */
 lexer grammar BSLMethodDescriptionLexer;
 
-@members {
-public BSLMethodDescriptionLexer(CharStream input, boolean crAwareCostructor) {
-  super(input);
-  _interp = new CRAwareLexerATNSimulator(this, _ATN);
-  validateInputStream(_ATN, input);
-}
-}
-
 // KEYWORDS
 PARAMETERS_KEYWORD:     (P A R A M E T E R S        | RU_P RU_A RU_R RU_A RU_M RU_E RU_T RU_R RU_Y) ':';
 RETURNS_KEYWORD:        (R E T U R N S              | (RU_V RU_O RU_Z RU_V RU_R RU_A RU_SCH RU_A RU_E RU_M RU_O RU_E ' ' RU_Z RU_N RU_A RU_CH RU_E RU_N RU_I RU_E)) ':';
