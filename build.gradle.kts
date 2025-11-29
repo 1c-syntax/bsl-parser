@@ -100,6 +100,10 @@ tasks.processTestResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+tasks.named<Copy>("processJmhResources") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 idea {
     module {
         // Marks the already(!) added srcDir as "generated"
