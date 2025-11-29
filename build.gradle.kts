@@ -86,7 +86,7 @@ sourceSets {
 }
 
 sourceSets.jmh {
-    java.srcDirs("src/main/jmh")
+    java.srcDirs("src/jmh/java")
     resources.srcDirs("src/jmh/resources")
 }
 
@@ -97,6 +97,10 @@ tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar") {
 }
 
 tasks.processTestResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.named<ProcessResources>("processJmhResources") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
