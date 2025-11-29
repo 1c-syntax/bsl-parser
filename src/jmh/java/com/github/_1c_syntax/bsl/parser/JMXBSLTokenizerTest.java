@@ -56,10 +56,12 @@ public class JMXBSLTokenizerTest {
   public JMXBSLTokenizerTest() {
     final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     try (InputStream inputStream = classLoader.getResourceAsStream("Module.bsl")) {
-      assert inputStream != null;
+      if (inputStream == null) {
+        throw new IllegalStateException("Module.bsl resource not found");
+      }
       content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new IllegalStateException("Failed to read Module.bsl resource", e);
     }
 
     // Prepare content with procedure inserted at various positions
@@ -76,7 +78,7 @@ public class JMXBSLTokenizerTest {
     contentWithProcedureAtMiddle = content.substring(0, lineBreakPos) + MINIMAL_PROCEDURE + content.substring(lineBreakPos);
   }
 
-  @Setup(Level.Invocation)
+  @Setup(Level.Iteration)
   public void setupRebuildTokenizer() {
     tokenizerForRebuild = new BSLTokenizer(content);
     // Compute initial tokens and AST to prime the tokenizer
