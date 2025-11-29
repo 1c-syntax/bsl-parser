@@ -23,6 +23,7 @@ package com.github._1c_syntax.bsl.parser;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
@@ -40,8 +41,9 @@ import java.nio.charset.StandardCharsets;
  * Tests new tokenizer creation, rebuild, and incremental text modifications.
  */
 @BenchmarkMode(Mode.SampleTime)
-@Warmup(iterations = 2)
-@Measurement(iterations = 2, batchSize = 2)
+@Warmup(iterations = 1, time = 10)
+@Measurement(iterations = 2, time = 10)
+@Fork(1)
 @State(Scope.Thread)
 public class JMXBSLTokenizerTest {
 
