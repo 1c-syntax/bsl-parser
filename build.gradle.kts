@@ -16,7 +16,7 @@ plugins {
     id("ru.vyarus.pom") version "3.0.0"
     id("org.jreleaser") version "1.21.0"
     id("org.sonarqube") version "7.0.1.6134"
-    id("me.champeau.gradle.jmh") version "0.5.3"
+    id("me.champeau.jmh") version "0.7.2"
 }
 
 repositories {
@@ -100,6 +100,10 @@ tasks.processTestResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
+tasks.named<Copy>("processJmhResources") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 idea {
     module {
         // Marks the already(!) added srcDir as "generated"
@@ -108,10 +112,10 @@ idea {
 }
 
 jmh {
-    jvmArgsAppend = listOf("-XX:+UseParallelGC")
-    isIncludeTests = true
-    duplicateClassesStrategy = DuplicatesStrategy.WARN
-    timeUnit = "s"
+    jvmArgsAppend.add("-XX:+UseParallelGC")
+    includeTests.set(true)
+    duplicateClassesStrategy.set(DuplicatesStrategy.WARN)
+    timeUnit.set("s")
 }
 
 tasks.generateGrammarSource {
