@@ -23,6 +23,7 @@ parser grammar BSLParser;
 
 options {
     tokenVocab = BSLLexer;
+    incremental = true;
 }
 
 // ROOT
