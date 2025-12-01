@@ -28,14 +28,6 @@ channels {
 
 options { caseInsensitive=true; }
 
-@members {
-public BSLLexer(CharStream input, boolean crAwareCostructor) {
-  super(input);
-  _interp = new CRAwareLexerATNSimulator(this, _ATN);
-  validateInputStream(_ATN, input);
-}
-}
-
 // commons
 fragment DIGIT: [0-9];
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
@@ -89,7 +81,7 @@ NULL: 'NULL';
 DECIMAL: DIGIT+;
 DATETIME: SQUOTE(~['\n\r])*SQUOTE?; // TODO: Честная регулярка
 
-FLOAT : DIGIT+ '.' DIGIT+;
+FLOAT : DIGIT+ '.' DIGIT*;
 STRING: '"' (~[\r\n"] | '""')* '"';
 STRINGSTART: '"' (~["\n\r]| '""')*;
 STRINGTAIL: BAR (~["\n\r] | '""')* '"';

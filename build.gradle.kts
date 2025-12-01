@@ -9,13 +9,13 @@ plugins {
     antlr
     id("org.cadixdev.licenser") version "0.6.1"
     id("me.qoomon.git-versioning") version "6.4.4"
-    id("io.freefair.javadoc-links") version "8.14.2"
-    id("io.freefair.javadoc-utf-8") version "8.14.2"
-    id("io.freefair.maven-central.validate-poms") version "8.14.2"
-    id("com.github.ben-manes.versions") version "0.52.0"
+    id("io.freefair.javadoc-links") version "9.1.0"
+    id("io.freefair.javadoc-utf-8") version "9.1.0"
+    id("io.freefair.maven-central.validate-poms") version "9.1.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
     id("ru.vyarus.pom") version "3.0.0"
-    id("org.jreleaser") version "1.19.0"
-    id("org.sonarqube") version "6.2.0.5505"
+    id("org.jreleaser") version "1.21.0"
+    id("org.sonarqube") version "7.1.0.6387"
     id("me.champeau.gradle.jmh") version "0.5.3"
 }
 
@@ -49,15 +49,14 @@ gitVersioning.apply {
 }
 
 dependencies {
-    antlr("io.github.1c-syntax", "antlr4", "0.1.2")
-
-    implementation("io.github.1c-syntax", "bsl-parser-core", "0.3.1")
+    antlr("io.github.1c-syntax", "antlr4", "0.2.0")
 
     // stat analysis
     compileOnly("com.github.spotbugs", "spotbugs-annotations", "4.8.6")
 
     // testing
-    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.3.1")
+    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.4.0")
+
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")

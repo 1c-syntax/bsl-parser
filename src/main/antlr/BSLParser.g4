@@ -23,7 +23,7 @@ parser grammar BSLParser;
 
 options {
     tokenVocab = BSLLexer;
-    contextSuperClass = 'BSLParserRuleContext';
+    incremental = true;
 }
 
 // ROOT

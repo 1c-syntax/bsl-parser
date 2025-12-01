@@ -26,7 +26,6 @@ parser grammar SDBLParser;
 
 options {
     tokenVocab = SDBLLexer;
-    contextSuperClass = 'BSLParserRuleContext';
 }
 
 // ROOT
