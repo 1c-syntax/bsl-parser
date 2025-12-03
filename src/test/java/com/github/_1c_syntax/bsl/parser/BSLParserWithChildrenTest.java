@@ -366,7 +366,7 @@ class BSLParserWithChildrenTest {
   void testNestedAnnotationsInMethodParameter() {
     var content = testParser.assertThat("""
       Процедура Метод(
-        &Тип(&Строка)
+        &Тип(&Строка())
         Парам1
       )
       КонецПроцедуры""");
