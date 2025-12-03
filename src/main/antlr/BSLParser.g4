@@ -138,8 +138,12 @@ annotationParams
       RPAREN
     ;
 annotationParam
-    : (annotationParamName (ASSIGN constValue)?)
-    | constValue
+    : (annotationParamName (ASSIGN annotationParamValue)?)
+    | annotationParamValue
+    ;
+annotationParamValue
+    : constValue
+    | annotation
     ;
 
 // vars
