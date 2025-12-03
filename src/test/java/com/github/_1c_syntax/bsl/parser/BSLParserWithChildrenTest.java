@@ -297,6 +297,103 @@ class BSLParserWithChildrenTest {
   }
 
   @Test
+  void testNestedAnnotations() {
+    var content = testParser.assertThat("""
+      &ДляКаждого(
+        Значение = &Тип("Строка"),
+        &Тип("Число", &Длина(10))
+      )
+      Перем Параметр;""");
+
+    var file = testParser.parser().file();
+    content.matches(file);
+    assertThat(file.moduleVars()).isNotNull();
+    assertThat(file.moduleVars().moduleVar()).isNotNull().hasSize(1);
+
+    var moduleVar = file.moduleVars().moduleVar(0);
+    assertThat(moduleVar.annotation()).isNotNull().hasSize(1);
+
+    var mainAnnotation = moduleVar.annotation().get(0);
+    assertThat(mainAnnotation.annotationParams()).isNotNull();
+    assertThat(mainAnnotation.annotationParams().annotationParam()).isNotNull().hasSize(2);
+
+    // First param: Значение = &Тип("Строка")
+    var param1 = mainAnnotation.annotationParams().annotationParam(0);
+    assertThat(param1.annotationParamName()).isNotNull();
+    assertThat(param1.annotationParamValue()).isNotNull();
+    assertThat(param1.annotationParamValue().annotation()).isNotNull();
+
+    // Second param: &Тип("Число", &Длина(10))
+    var param2 = mainAnnotation.annotationParams().annotationParam(1);
+    assertThat(param2.annotationParamValue()).isNotNull();
+    assertThat(param2.annotationParamValue().annotation()).isNotNull();
+    var nestedAnnotation = param2.annotationParamValue().annotation();
+    assertThat(nestedAnnotation.annotationParams()).isNotNull();
+    assertThat(nestedAnnotation.annotationParams().annotationParam()).isNotNull().hasSize(2);
+    
+    // Check that the second param of the nested annotation is also an annotation
+    var nestedParam2 = nestedAnnotation.annotationParams().annotationParam(1);
+    assertThat(nestedParam2.annotationParamValue()).isNotNull();
+    assertThat(nestedParam2.annotationParamValue().annotation()).isNotNull();
+  }
+
+  @Test
+  void testNestedAnnotationsInMethodDeclaration() {
+    var content = testParser.assertThat("""
+      &Аннотация(&Тип("Строка"))
+      Процедура Метод()
+      КонецПроцедуры""");
+
+    var file = testParser.parser().file();
+    content.matches(file);
+    assertThat(file.subs()).isNotNull();
+    assertThat(file.subs().sub()).isNotNull().hasSize(1);
+
+    var sub = file.subs().sub(0);
+    var procDeclaration = sub.procedure().procDeclaration();
+    assertThat(procDeclaration.annotation()).isNotNull().hasSize(1);
+
+    var annotation = procDeclaration.annotation().get(0);
+    assertThat(annotation.annotationParams()).isNotNull();
+    assertThat(annotation.annotationParams().annotationParam()).isNotNull().hasSize(1);
+
+    var param = annotation.annotationParams().annotationParam(0);
+    assertThat(param.annotationParamValue()).isNotNull();
+    assertThat(param.annotationParamValue().annotation()).isNotNull();
+  }
+
+  @Test
+  void testNestedAnnotationsInMethodParameter() {
+    var content = testParser.assertThat("""
+      Процедура Метод(
+        &Тип(&Строка)
+        Парам1
+      )
+      КонецПроцедуры""");
+
+    var file = testParser.parser().file();
+    content.matches(file);
+    assertThat(file.subs()).isNotNull();
+    assertThat(file.subs().sub()).isNotNull().hasSize(1);
+
+    var sub = file.subs().sub(0);
+    var procDeclaration = sub.procedure().procDeclaration();
+    assertThat(procDeclaration.paramList()).isNotNull();
+    assertThat(procDeclaration.paramList().param()).isNotNull().hasSize(1);
+
+    var param = procDeclaration.paramList().param(0);
+    assertThat(param.annotation()).isNotNull().hasSize(1);
+
+    var annotation = param.annotation().get(0);
+    assertThat(annotation.annotationParams()).isNotNull();
+    assertThat(annotation.annotationParams().annotationParam()).isNotNull().hasSize(1);
+
+    var annotationParam = annotation.annotationParams().annotationParam(0);
+    assertThat(annotationParam.annotationParamValue()).isNotNull();
+    assertThat(annotationParam.annotationParamValue().annotation()).isNotNull();
+  }
+
+  @Test
   void testRaise() {
     var content = testParser.assertThat("ВызватьИсключение (\"Документ не может быть проведен\", " +
       "КатегорияОшибки.ОшибкаКонфигурации, " +
