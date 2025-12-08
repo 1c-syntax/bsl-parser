@@ -245,7 +245,7 @@ statement
     )
     | SEMICOLON
     ;
-assignment       : lValue preprocessor* ASSIGN (preprocessor* expression);
+assignment       : lValue preprocessor* ASSIGN expression;
 callParamList    : callParam (COMMA callParam)*;
 callParam        : expression?;
 expression       : preprocessor* member (preprocessor* operation preprocessor* member preprocessor*)*;
