@@ -197,7 +197,8 @@ SEQUENCE_TYPE:
 TASK_TYPE    :  RU_Z RU_A RU_D RU_A RU_CH RU_A                                              | T A S K;
 
 // FIELDS                 RU                                                                  EN
-ROUTEPOINT_FIELD:   RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A      | R O U T E P O I N T;
+ROUTEPOINT_FIELD:    RU_T RU_O RU_CH RU_K RU_A RU_M RU_A RU_R RU_SH RU_R RU_U RU_T RU_A     |
+                     RU_T RU_O RU_CH RU_K RU_I                                              | R O U T E P O I N T;
 
 // compex keywords
 INDEX: (RU_I RU_N RU_D RU_E RU_K RU_S RU_I RU_R RU_O RU_V RU_A RU_T RU_SOFT_SIGN  | I N D E X);
