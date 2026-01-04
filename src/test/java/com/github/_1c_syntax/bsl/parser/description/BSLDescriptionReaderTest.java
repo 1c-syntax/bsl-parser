@@ -23,9 +23,8 @@ package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.BSLParser;
 import com.github._1c_syntax.bsl.parser.BSLTokenizer;
-import com.github._1c_syntax.bsl.parser.description.support.ParameterDescription;
+import com.github._1c_syntax.bsl.parser.description.reader.BSLDescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
-import com.github._1c_syntax.bsl.parser.description.support.TypeDescription;
 import com.github._1c_syntax.bsl.parser.testing.ResourceUtils;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;

@@ -19,8 +19,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-package com.github._1c_syntax.bsl.parser.description;
+package com.github._1c_syntax.bsl.parser.description.reader;
 
+import com.github._1c_syntax.bsl.parser.description.MethodDescription;
+import com.github._1c_syntax.bsl.parser.description.VariableDescription;
 import org.antlr.v4.runtime.Token;
 
 import javax.annotation.Nullable;

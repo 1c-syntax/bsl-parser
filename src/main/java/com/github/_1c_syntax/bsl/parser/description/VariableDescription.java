@@ -21,8 +21,8 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionTokenizer;
-import com.github._1c_syntax.bsl.parser.description.support.DescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.reader.BSLMethodDescriptionTokenizer;
+import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
 
@@ -76,11 +76,11 @@ public final class VariableDescription implements SourceDefinedSymbolDescription
    */
   private final VariableDescription trailingDescription;
 
-  VariableDescription(List<Token> comments) {
+  public VariableDescription(List<Token> comments) {
     this(comments, null);
   }
 
-  VariableDescription(List<Token> comments, @Nullable Token trailingComment) {
+  public VariableDescription(List<Token> comments, @Nullable Token trailingComment) {
     description = comments.stream()
       .map(Token::getText)
       .collect(Collectors.joining("\n"));

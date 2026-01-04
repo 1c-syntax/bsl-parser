@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-package com.github._1c_syntax.bsl.parser.description.support;
+package com.github._1c_syntax.bsl.parser.description;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class ParameterDescription {
    */
   private final boolean isHyperlink;
 
-  protected ParameterDescription(String name,
+  public ParameterDescription(String name,
                                  List<TypeDescription> types,
                                  String link,
                                  boolean isHyperlink) {

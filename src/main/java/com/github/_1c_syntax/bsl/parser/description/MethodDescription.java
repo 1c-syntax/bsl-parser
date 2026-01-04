@@ -21,11 +21,9 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionTokenizer;
-import com.github._1c_syntax.bsl.parser.description.support.DescriptionReader;
-import com.github._1c_syntax.bsl.parser.description.support.ParameterDescription;
+import com.github._1c_syntax.bsl.parser.description.reader.BSLMethodDescriptionTokenizer;
+import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
-import com.github._1c_syntax.bsl.parser.description.support.TypeDescription;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
@@ -81,7 +79,7 @@ public final class MethodDescription implements SourceDefinedSymbolDescription {
    */
   private final SimpleRange range;
 
-  MethodDescription(List<Token> comments) {
+  public MethodDescription(List<Token> comments) {
     description = comments.stream()
       .map(Token::getText)
       .collect(Collectors.joining("\n"));
