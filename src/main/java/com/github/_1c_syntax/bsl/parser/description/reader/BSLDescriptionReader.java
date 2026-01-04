@@ -27,6 +27,7 @@ import org.antlr.v4.runtime.Token;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Читатель объектов описания по набору токенов из текста
@@ -64,7 +65,7 @@ public final class BSLDescriptionReader {
    * @param trailing Токен "висящего" описания
    * @return Объект описания
    */
-  public static VariableDescription parseVariableDescription(List<Token> tokens, @Nullable Token trailing) {
+  public static VariableDescription parseVariableDescription(List<Token> tokens, Optional<Token> trailing) {
     return new VariableDescription(tokens, trailing);
   }
 }

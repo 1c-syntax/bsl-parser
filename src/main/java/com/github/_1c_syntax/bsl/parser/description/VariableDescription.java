@@ -26,7 +26,6 @@ import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,13 +73,13 @@ public final class VariableDescription implements SourceDefinedSymbolDescription
   /**
    * Описание "висячего" комментария
    */
-  private final VariableDescription trailingDescription;
+  private final Optional<VariableDescription> trailingDescription;
 
   public VariableDescription(List<Token> comments) {
-    this(comments, null);
+    this(comments, Optional.empty());
   }
 
-  public VariableDescription(List<Token> comments, @Nullable Token trailingComment) {
+  public VariableDescription(List<Token> comments, Optional<Token> trailingComment) {
     description = comments.stream()
       .map(Token::getText)
       .collect(Collectors.joining("\n"));
@@ -93,11 +92,7 @@ public final class VariableDescription implements SourceDefinedSymbolDescription
     link = DescriptionReader.readLink(ast);
     deprecated = ast.deprecate() != null;
     deprecationInfo = DescriptionReader.readDeprecationInfo(ast);
-    if (trailingComment == null) {
-      trailingDescription = null;
-    } else {
-      trailingDescription = new VariableDescription(List.of(trailingComment));
-    }
+    trailingDescription = trailingComment.map(List::of).map(VariableDescription::new);
   }
 
   @Override
@@ -131,6 +126,6 @@ public final class VariableDescription implements SourceDefinedSymbolDescription
   }
 
   public Optional<VariableDescription> getTrailingDescription() {
-    return Optional.ofNullable(trailingDescription);
+    return trailingDescription;
   }
 }

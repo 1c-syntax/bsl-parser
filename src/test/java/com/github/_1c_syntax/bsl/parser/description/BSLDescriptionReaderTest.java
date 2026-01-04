@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -406,7 +407,7 @@ class BSLDescriptionReaderTest {
     var exampleString2 = "// Висячее Описание переменной";
     var tokens = getTokensFromString(exampleString);
     var token = getTokensFromString(exampleString2).get(0);
-    var variableDescription = BSLDescriptionReader.parseVariableDescription(tokens, token);
+    var variableDescription = BSLDescriptionReader.parseVariableDescription(tokens, Optional.of(token));
 
     assertThat(variableDescription).isNotNull();
     assertThat(variableDescription.getDescription()).isEqualTo(exampleString);

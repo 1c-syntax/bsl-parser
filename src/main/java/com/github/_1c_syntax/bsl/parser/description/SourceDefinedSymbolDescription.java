@@ -25,7 +25,10 @@ import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
 
 /**
- * Базовый интерфейс объектов, имеющих описание
+ * Интерфейс описания символов, определенных в исходном коде.
+ * <p>
+ * Предоставляет доступ к описанию символа из комментариев,
+ * включая информацию об устаревании, назначении и примерах использования.
  */
 public interface SourceDefinedSymbolDescription {
 
@@ -61,9 +64,7 @@ public interface SourceDefinedSymbolDescription {
   /**
    * Если описание содержит только ссылку, то здесь будет ее значение
    * <p>
-   * TODO Временное решение, надо будет продумать кошерное решение
-   *
-   * @return Строка с текстом ссылки (без префикса см./see)
+   * TODO Временное решение, надо будет продумать в следующем релизе
    */
   String getLink();
 
