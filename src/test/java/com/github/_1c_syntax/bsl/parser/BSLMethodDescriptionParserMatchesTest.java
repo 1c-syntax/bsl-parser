@@ -29,11 +29,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class BSLMethodDescriptionParserMatchesTest {
 
-  private TestParser<BSLMethodDescriptionParser, BSLMethodDescriptionLexer> testParser;
+  private TestParser<BSLMethodDescriptionParser, BSLDescriptionLexer> testParser;
 
   @BeforeEach
   void before() {
-    testParser = new TestParser<>(BSLMethodDescriptionParser.class, BSLMethodDescriptionLexer.class);
+    testParser = new TestParser<>(BSLMethodDescriptionParser.class, BSLDescriptionLexer.class);
   }
 
   @ParameterizedTest
@@ -121,25 +121,6 @@ class BSLMethodDescriptionParserMatchesTest {
     testParser.assertThat(inputString)
       .matches(testParser.parser().parameters())
       .containsRule(BSLMethodDescriptionParser.RULE_parameterString, 3);
-  }
-
-  @Test
-  void testNoCallOptions() {
-    testParser.assertThat("//Варианты вызова").noMatches(testParser.parser().callOptions());
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings =
-    {
-      "//Call options:\n//Var 1\n//\n//Var 2 bla ba()",
-      "//Call options:\n//Var 1\n//\n//Var 2 bla ba()\n//Example:",
-      "//Call options:\n//Var 1\n//\n//Var 2 bla ba()\n//Возвращаемое значение:"
-    }
-  )
-  void testCallOptions(String inputString) {
-    testParser.assertThat(inputString)
-      .matches(testParser.parser().callOptions())
-      .containsRule(BSLMethodDescriptionParser.RULE_callOptionsString, 3);
   }
 
   @Test

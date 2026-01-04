@@ -22,9 +22,14 @@
 package com.github._1c_syntax.bsl.parser.description.reader;
 
 import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionParser;
+import com.github._1c_syntax.bsl.parser.description.MethodDescription;
 import com.github._1c_syntax.bsl.parser.description.ParameterDescription;
 import com.github._1c_syntax.bsl.parser.description.TypeDescription;
+import com.github._1c_syntax.bsl.parser.description.VariableDescription;
+import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
+import lombok.experimental.UtilityClass;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -34,15 +39,58 @@ import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Вспомогательный класс для чтения данных из описания метода
  */
-public final class DescriptionReader {
+@UtilityClass
+public class DescriptionReader {
 
   private static final int HYPERLINK_REF_LEN = 4;
 
-  DescriptionReader() {
-    // utility class
+  public static MethodDescription readMethodDescription(List<Token> comments) {
+    var description = comments.stream()
+      .map(Token::getText)
+      .collect(Collectors.joining("\n"));
+
+    var tokenizer = new BSLMethodDescriptionTokenizer(description);
+    var ast = requireNonNull(tokenizer.getAst());
+
+    return MethodDescription.builder()
+      .description(description)
+      .purposeDescription(DescriptionReader.readPurposeDescription(ast))
+      .link(DescriptionReader.readLink(ast))
+      .deprecated(ast.deprecate() != null)
+      .deprecationInfo(DescriptionReader.readDeprecationInfo(ast))
+      .examples(DescriptionReader.readExamples(ast))
+      .parameters(DescriptionReader.readParameters(ast))
+      .returnedValue(DescriptionReader.readReturnedValue(ast))
+      .range(SimpleRange.create(comments))
+      .build();
+  }
+
+  public static VariableDescription readVariableDescription(List<Token> comments) {
+    return readVariableDescription(comments, Optional.empty());
+  }
+
+  public static VariableDescription readVariableDescription(List<Token> comments, Optional<Token> trailingComment) {
+    var description = comments.stream()
+      .map(Token::getText)
+      .collect(Collectors.joining("\n"));
+
+    var tokenizer = new BSLMethodDescriptionTokenizer(description);
+    var ast = requireNonNull(tokenizer.getAst());
+
+    return VariableDescription.builder()
+      .description(description)
+      .purposeDescription(DescriptionReader.readPurposeDescription(ast))
+      .link(DescriptionReader.readLink(ast))
+      .deprecated(ast.deprecate() != null)
+      .deprecationInfo(DescriptionReader.readDeprecationInfo(ast))
+      .range(SimpleRange.create(comments))
+      .trailingDescription(trailingComment.map(List::of).map(VariableDescription::create))
+      .build();
   }
 
   /**
@@ -51,7 +99,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Список описаний параметров метода
    */
-  public static List<ParameterDescription> readParameters(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public List<ParameterDescription> readParameters(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
 
     // параметров нет
     if (ctx.parameters() == null) {
@@ -85,7 +133,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Список описаний возвращаемых значений
    */
-  public static List<TypeDescription> readReturnedValue(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public List<TypeDescription> readReturnedValue(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
 
     // возвращаемого значения нет
     if (ctx.returnsValues() == null) {
@@ -133,8 +181,8 @@ public final class DescriptionReader {
         fakeParam.addType(string.typesBlock().type(), string.typesBlock().typeDescription());
       } else if (string.typeDescription() != null) { // это строка с описанием
         fakeParam.addTypeDescription(string.typeDescription());
-      } else if (string.subParameter() != null) { // это строка с вложенным параметром типа
-        fakeParam.addSubParameter(string.subParameter());
+      } else if (string.field() != null) { // это строка с вложенным параметром типа
+        fakeParam.addField(string.field());
       } else { // прочее - пустая строка
         // noop
       }
@@ -149,7 +197,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Описание устаревшего метода
    */
-  public static String readDeprecationInfo(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public String readDeprecationInfo(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.deprecate() != null) {
       var deprecationDescription = ctx.deprecate().deprecateDescription();
       if (deprecationDescription != null) {
@@ -160,32 +208,12 @@ public final class DescriptionReader {
   }
 
   /**
-   * Выполняет разбор прочитанного AST дерева описания метода и возвращает список вариантов вызова
-   *
-   * @param ctx Дерево описания метода
-   * @return Список вариантов вызова
-   */
-  public static List<String> readCallOptions(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
-    if (ctx.callOptions() != null) {
-      var strings = ctx.callOptions().callOptionsString();
-      if (strings != null) {
-        return strings.stream()
-          .map(DescriptionReader::getDescriptionString)
-          .filter((String s) -> !s.isBlank())
-          .map(String::intern)
-          .collect(Collectors.toList());
-      }
-    }
-    return Collections.emptyList();
-  }
-
-  /**
    * Выполняет разбор прочитанного AST дерева описания метода и возвращает список примеров
    *
    * @param ctx Дерево описания метода
    * @return Список примеров
    */
-  public static List<String> readExamples(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public List<String> readExamples(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.examples() != null) {
       var strings = ctx.examples().examplesString();
       if (strings != null) {
@@ -205,7 +233,7 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Описание назначения метода
    */
-  public static String readPurposeDescription(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public String readPurposeDescription(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.descriptionBlock() != null) {
       if (ctx.descriptionBlock().description() != null) {
         var strings = ctx.descriptionBlock().description().descriptionString();
@@ -230,14 +258,14 @@ public final class DescriptionReader {
    * @param ctx Дерево описания метода
    * @return Ссылка в методе
    */
-  public static String readLink(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
+  public String readLink(BSLMethodDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.descriptionBlock() != null && ctx.descriptionBlock().hyperlinkBlock() != null) {
       return getDescriptionString(ctx.descriptionBlock().hyperlinkBlock()).substring(HYPERLINK_REF_LEN);
     }
     return "";
   }
 
-  private static String getDescriptionString(ParserRuleContext ctx) {
+  private String getDescriptionString(ParserRuleContext ctx) {
     var strings = new StringJoiner("");
     for (var i = 0; i < ctx.getChildCount(); i++) {
       var child = ctx.getChild(i);
@@ -250,7 +278,7 @@ public final class DescriptionReader {
     return strings.toString().strip();
   }
 
-  private static List<ParameterDescription> getParametersStrings(List<? extends BSLMethodDescriptionParser.ParameterStringContext> strings) {
+  private List<ParameterDescription> getParametersStrings(List<? extends BSLMethodDescriptionParser.ParameterStringContext> strings) {
     List<ParameterDescription> result = new ArrayList<>();
     var current = new TempParameterData();
 
@@ -272,8 +300,8 @@ public final class DescriptionReader {
         } else {
           current.addTypeDescription(string.typeDescription());
         }
-      } else if (string.subParameter() != null) { // это строка с вложенным параметром типа
-        current.addSubParameter(string.subParameter());
+      } else if (string.field() != null) { // это строка с вложенным параметром типа
+        current.addField(string.field());
       } else { // прочее - пустая строка
         // noop
       }
@@ -285,6 +313,7 @@ public final class DescriptionReader {
 
     return result;
   }
+
 
   /**
    * Служебный класс для временного хранения прочитанной информации из описания параметра
@@ -313,14 +342,14 @@ public final class DescriptionReader {
       }
     }
 
-    private TempParameterData(BSLMethodDescriptionParser.SubParameterContext subParameter, int level) {
+    private TempParameterData(BSLMethodDescriptionParser.FieldContext fieldContext, int level) {
       this();
       this.level = level;
-      if (subParameter.parameterName() != null) {
-        this.name = subParameter.parameterName().getText().strip().intern();
+      if (fieldContext.parameterName() != null) {
+        this.name = fieldContext.parameterName().getText().strip().intern();
         this.empty = false;
-        if (subParameter.typesBlock() != null) {
-          addType(subParameter.typesBlock().type(), subParameter.typesBlock().typeDescription());
+        if (fieldContext.typesBlock() != null) {
+          addType(fieldContext.typesBlock().type(), fieldContext.typesBlock().typeDescription());
         }
       }
     }
@@ -345,9 +374,9 @@ public final class DescriptionReader {
     private ParameterDescription makeParameterDescription() {
       var parameterTypes = types.stream()
         .map((TempParameterTypeData child) -> {
-          List<ParameterDescription> subParameters = new ArrayList<>();
-          if (!child.subParameters.isEmpty()) {
-            child.subParameters.forEach(subParam -> subParameters.add(subParam.makeParameterDescription()));
+          List<ParameterDescription> fields = new ArrayList<>();
+          if (!child.fields.isEmpty()) {
+            child.fields.forEach(field -> fields.add(field.makeParameterDescription()));
           }
           var link = "";
           if (child.isHyperlink) {
@@ -356,7 +385,7 @@ public final class DescriptionReader {
           return new TypeDescription(
             child.name.intern(),
             child.description.toString(),
-            subParameters,
+            fields,
             link,
             child.isHyperlink
           );
@@ -406,8 +435,8 @@ public final class DescriptionReader {
       lastType().ifPresent(lastType -> lastType.addTypeDescription(textDescription));
     }
 
-    private void addSubParameter(BSLMethodDescriptionParser.SubParameterContext subParameter) {
-      lastType().ifPresent(lastType -> lastType.addSubParameter(subParameter));
+    private void addField(BSLMethodDescriptionParser.FieldContext fieldContext) {
+      lastType().ifPresent(lastType -> lastType.addField(fieldContext));
     }
   }
 
@@ -418,22 +447,22 @@ public final class DescriptionReader {
     private final String name;
     private final StringJoiner description;
     private final int level;
-    private final List<TempParameterData> subParameters;
+    private final List<TempParameterData> fields;
     private final boolean isHyperlink;
 
     private TempParameterTypeData(String name, int level, boolean isHyperlink) {
       this.name = name.intern();
       this.description = new StringJoiner("\n");
       this.level = level;
-      this.subParameters = new ArrayList<>();
+      this.fields = new ArrayList<>();
       this.isHyperlink = isHyperlink;
     }
 
     private void addTypeDescription(BSLMethodDescriptionParser.TypeDescriptionContext typeDescription) {
       if (typeDescription.getText() != null) {
-        var lastSubParam = lastSubParameter();
-        if (lastSubParam.isPresent()) {
-          lastSubParam.get().addTypeDescription(typeDescription);
+        var lastField = lastField();
+        if (lastField.isPresent()) {
+          lastField.get().addTypeDescription(typeDescription);
         } else {
           this.description.add(typeDescription.getText().strip());
         }
@@ -442,32 +471,32 @@ public final class DescriptionReader {
 
     public void addTypeDescription(String textDescription) {
       if (!textDescription.isEmpty()) {
-        var lastSubParam = lastSubParameter();
-        if (lastSubParam.isPresent()) {
-          lastSubParam.get().addTypeDescription(textDescription);
+        var lastField = lastField();
+        if (lastField.isPresent()) {
+          lastField.get().addTypeDescription(textDescription);
         } else {
           this.description.add(textDescription.strip());
         }
       }
     }
 
-    private Optional<TempParameterData> lastSubParameter() {
-      if (!subParameters.isEmpty()) {
-        return Optional.of(subParameters.get(subParameters.size() - 1));
+    private Optional<TempParameterData> lastField() {
+      if (!fields.isEmpty()) {
+        return Optional.of(fields.get(fields.size() - 1));
       }
       return Optional.empty();
     }
 
-    private void addSubParameter(BSLMethodDescriptionParser.SubParameterContext subParameter) {
-      var star = subParameter.getToken(BSLMethodDescriptionParser.STAR, 0);
+    private void addField(BSLMethodDescriptionParser.FieldContext fieldContext) {
+      var star = fieldContext.getToken(BSLMethodDescriptionParser.STAR, 0);
       if (star == null) {
         return;
       }
 
       if (star.getText().length() == level) {
-        subParameters.add(new TempParameterData(subParameter, level + 1));
+        fields.add(new TempParameterData(fieldContext, level + 1));
       } else {
-        lastSubParameter().ifPresent(subParam -> subParam.addSubParameter(subParameter));
+        lastField().ifPresent(field -> field.addField(fieldContext));
       }
     }
   }

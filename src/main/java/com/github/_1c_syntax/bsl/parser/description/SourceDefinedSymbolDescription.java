@@ -73,7 +73,7 @@ public interface SourceDefinedSymbolDescription {
    *
    * @return Область описания
    */
-  SimpleRange getSimpleRange();
+  SimpleRange getRange();
 
   /**
    * Проверяет вхождение области заданной двумя пограничными токенами в область описания
@@ -83,6 +83,6 @@ public interface SourceDefinedSymbolDescription {
    * @return Признак вхождения
    */
   default boolean contains(Token first, Token last) {
-    return SimpleRange.containsRange(getSimpleRange(), SimpleRange.create(first, last));
+    return SimpleRange.containsRange(getRange(), SimpleRange.create(first, last));
   }
 }

@@ -23,7 +23,6 @@ package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.BSLParser;
 import com.github._1c_syntax.bsl.parser.BSLTokenizer;
-import com.github._1c_syntax.bsl.parser.description.reader.BSLDescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import com.github._1c_syntax.bsl.parser.testing.ResourceUtils;
 import org.antlr.v4.runtime.Token;
@@ -44,20 +43,19 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getPurposeDescription()).isEqualTo(
       """
         Запустить выполнение процедуры в фоновом задании, если это возможно.
-
+        
         При выполнении любого из следующих условий запуск выполняется не в фоне, а сразу в основном потоке:
         * если вызов выполняется в файловой базе во внешнем соединении (в этом режиме фоновые задания не поддерживаются);
         * если приложение запущено в режиме отладки (параметр /C РежимОтладки) - для упрощения отладки конфигурации;
         * если в файловой ИБ имеются активные фоновые задания - для снижения времени ожидания пользователя;
         * если выполняется процедура модуля внешней обработки или внешнего отчета.
-
+        
         Не следует использовать эту функцию, если необходимо безусловно запускать фоновое задание.
         Может применяться совместно с функцией ДлительныеОперацииКлиент.ОжидатьЗавершение.
-
+        
         Вызываемая процедура может быть с произвольным числом параметров, но не более 7.
         Значения передаваемых параметров процедуры, а также возвращаемое значение должны быть сериализуемыми.
         Параметры процедуры не должны быть возвращаемыми.""");
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).hasSize(26)
       .anyMatch(("В общем виде процесс запуска и обработки результата длительной операции в модуле формы выглядит " +
@@ -93,7 +91,7 @@ class BSLDescriptionReaderTest {
       "Произвольный", "", 0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getSimpleRange(), create(75, 20)))
+      Objects.equals(methodDescription.getRange(), create(75, 20)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0), "Структура", "параметры выполнения задания:",
@@ -114,7 +112,7 @@ class BSLDescriptionReaderTest {
     var methodDescription = parseMethodDescription("methodDescription/example2.bsl");
     assertThat(methodDescription.getPurposeDescription())
       .isEqualTo("Инициализирует структуру параметров для взаимодействия с файловой системой.");
-    assertThat(methodDescription.getCallOptions()).isEmpty();
+
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEmpty();
@@ -126,7 +124,7 @@ class BSLDescriptionReaderTest {
       0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getSimpleRange(), create(7, 2)))
+      Objects.equals(methodDescription.getRange(), create(7, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
@@ -145,13 +143,12 @@ class BSLDescriptionReaderTest {
         которая превышает 96 символов.
         Кроме того, возвращает указанное значение по умолчанию, если настройки не существуют.
         Если нет права СохранениеДанныхПользователя, возвращается значение по умолчанию без ошибки.
-
+        
         В возвращаемом значении очищаются ссылки на несуществующий объект в базе данных, а именно
         - возвращаемая ссылка заменяется на указанное значение по умолчанию;
         - из данных типа Массив ссылки удаляются;
         - у данных типа Структура и Соответствие ключ не меняется, а значение устанавливается Неопределено;
         - анализ значений в данных типа Массив, Структура, Соответствие выполняется рекурсивно.""");
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEmpty();
@@ -175,7 +172,7 @@ class BSLDescriptionReaderTest {
       "Строка", "см. синтакс-помощник платформы.", 0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getSimpleRange(), create(23, 2)))
+      Objects.equals(methodDescription.getRange(), create(23, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
@@ -187,7 +184,6 @@ class BSLDescriptionReaderTest {
     var methodDescription = parseMethodDescription("methodDescription/example4.bsl");
     assertThat(methodDescription.getPurposeDescription()).isEqualTo("Описание функции.\n" +
       "Многострочное.");
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEmpty();
@@ -206,7 +202,7 @@ class BSLDescriptionReaderTest {
       "Строка", "Описание строки", 0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getSimpleRange(), create(10, 2)))
+      Objects.equals(methodDescription.getRange(), create(10, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
@@ -217,14 +213,13 @@ class BSLDescriptionReaderTest {
   void parseMethodDescription5() {
     var methodDescription = parseMethodDescription("methodDescription/example7.bsl");
     assertThat(methodDescription.getPurposeDescription()).contains("Copyright (c) 2020, ООО 1С-Софт");
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEmpty();
     assertThat(methodDescription.getParameters()).isEmpty();
 
     assertThat(
-      Objects.equals(methodDescription.getSimpleRange(), create(329, 2)))
+      Objects.equals(methodDescription.getRange(), create(329, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
@@ -272,18 +267,17 @@ class BSLDescriptionReaderTest {
     var filePath = "methodDescription/example8.bsl";
     var exampleString = ResourceUtils.byName(filePath);
     var tokens = getTokensFromString(exampleString);
-    var methodDescription = BSLDescriptionReader.parseMethodDescription(tokens);
+    var methodDescription = MethodDescription.create(tokens);
 
     assertThat(methodDescription).isNotNull();
     assertThat(methodDescription.getDescription()).isEqualTo(exampleString);
     assertThat(methodDescription.getPurposeDescription()).contains("Copyright (c) 2020, ООО 1С-Софт");
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(methodDescription.getSimpleRange(), create(329, 2)))
+      Objects.equals(methodDescription.getRange(), create(329, 2)))
       .isTrue();
 
     assertThat(methodDescription.contains(tokens.get(1), tokens.get(7))).isTrue();
@@ -338,7 +332,6 @@ class BSLDescriptionReaderTest {
   void parseMethodDescription7() {
     var methodDescription = parseMethodDescriptionString("// Параметры: \n// See CommonModule.MyModule.MyFunc()");
     assertThat(methodDescription.getPurposeDescription()).isEmpty();
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEmpty();
@@ -352,7 +345,6 @@ class BSLDescriptionReaderTest {
   void parseMethodDescription8() {
     var methodDescription = parseMethodDescriptionString("// See CommonModule.MyModule.MyFunc()");
     assertThat(methodDescription.getPurposeDescription()).isEqualTo("See CommonModule.MyModule.MyFunc()");
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEqualTo("CommonModule.MyModule.MyFunc()");
@@ -365,7 +357,6 @@ class BSLDescriptionReaderTest {
     var methodDescription = parseMethodDescriptionString("// Параметры:\n" +
       "//  Параметр - Массив из см. МойКлассныйМодуль.МойКлассныйКонструктор - Моё классное описание");
     assertThat(methodDescription.getPurposeDescription()).isEmpty();
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEmpty();
@@ -386,7 +377,7 @@ class BSLDescriptionReaderTest {
   void parseVariableDescription() {
     var exampleString = "// Описание переменной";
     var tokens = getTokensFromString(exampleString);
-    var variableDescription = BSLDescriptionReader.parseVariableDescription(tokens);
+    var variableDescription = VariableDescription.create(tokens);
 
     assertThat(variableDescription).isNotNull();
     assertThat(variableDescription.getDescription()).isEqualTo(exampleString);
@@ -397,7 +388,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(variableDescription.getSimpleRange(), create(0, 22)))
+      Objects.equals(variableDescription.getRange(), create(0, 22)))
       .isTrue();
   }
 
@@ -407,7 +398,7 @@ class BSLDescriptionReaderTest {
     var exampleString2 = "// Висячее Описание переменной";
     var tokens = getTokensFromString(exampleString);
     var token = getTokensFromString(exampleString2).get(0);
-    var variableDescription = BSLDescriptionReader.parseVariableDescription(tokens, Optional.of(token));
+    var variableDescription = VariableDescription.create(tokens, Optional.of(token));
 
     assertThat(variableDescription).isNotNull();
     assertThat(variableDescription.getDescription()).isEqualTo(exampleString);
@@ -418,7 +409,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(variableDescription.getSimpleRange(), create(0, 22)))
+      Objects.equals(variableDescription.getRange(), create(0, 22)))
       .isTrue();
 
     assertThat(variableDescription.getTrailingDescription().get().getDescription()).isEqualTo(exampleString2);
@@ -434,7 +425,7 @@ class BSLDescriptionReaderTest {
   void parseVariableDescription3() {
     var exampleString = "// Устарела. см. НоваяПеременная\n// Описание переменной";
     var tokens = getTokensFromString(exampleString);
-    var variableDescription = BSLDescriptionReader.parseVariableDescription(tokens);
+    var variableDescription = VariableDescription.create(tokens);
 
     assertThat(variableDescription).isNotNull();
     assertThat(variableDescription.getDescription()).isEqualTo(exampleString);
@@ -445,7 +436,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEmpty();
 
     assertThat(
-      Objects.equals(variableDescription.getSimpleRange(), create(1, 22)))
+      Objects.equals(variableDescription.getRange(), create(1, 22)))
       .isTrue();
   }
 
@@ -453,7 +444,7 @@ class BSLDescriptionReaderTest {
   void parseVariableDescription4() {
     var exampleString = "// см. НоваяПеременная";
     var tokens = getTokensFromString(exampleString);
-    var variableDescription = BSLDescriptionReader.parseVariableDescription(tokens);
+    var variableDescription = VariableDescription.create(tokens);
 
     assertThat(variableDescription).isNotNull();
     assertThat(variableDescription.getDescription()).isEqualTo(exampleString);
@@ -464,7 +455,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLink()).isEqualTo("НоваяПеременная");
 
     assertThat(
-      Objects.equals(variableDescription.getSimpleRange(), create(0, 22)))
+      Objects.equals(variableDescription.getRange(), create(0, 22)))
       .isTrue();
   }
 
@@ -477,7 +468,6 @@ class BSLDescriptionReaderTest {
         Позволяет расширить имеющуюся коллекцию.
         Например, разворачивание массива массивов сделает новый массив, содержащий все элементы всех массивов.
         Конвейерный метод.""");
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).hasSize(8)
       .anyMatch("1:"::equals)
@@ -523,7 +513,7 @@ class BSLDescriptionReaderTest {
         По умолчанию содержит одно значение - Элемент.""", 0, "", false);
 
     assertThat(
-      Objects.equals(methodDescription.getSimpleRange(), create(75, 20)))
+      Objects.equals(methodDescription.getRange(), create(75, 20)))
       .isFalse();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0), "ПроцессорКоллекций",
@@ -536,7 +526,6 @@ class BSLDescriptionReaderTest {
     var methodDescription = parseMethodDescriptionString("// Параметры:\n" +
       "// Параметр - Список из Массив из Список из См. Мой.Метод(СПараметром)");
     assertThat(methodDescription.getPurposeDescription()).isEmpty();
-    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLink()).isEmpty();
@@ -590,7 +579,7 @@ class BSLDescriptionReaderTest {
   }
 
   private MethodDescription parseMethodDescriptionString(String exampleString) {
-    var methodDescription = BSLDescriptionReader.parseMethodDescription(getTokensFromString(exampleString));
+    var methodDescription = MethodDescription.create(getTokensFromString(exampleString));
 
     assertThat(methodDescription).isNotNull();
     assertThat(methodDescription.getDescription()).isEqualTo(exampleString);

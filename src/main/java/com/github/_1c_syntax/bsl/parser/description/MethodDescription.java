@@ -21,126 +21,70 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import com.github._1c_syntax.bsl.parser.description.reader.BSLMethodDescriptionTokenizer;
 import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
+import lombok.Builder;
+import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Класс-описание метода (процедуры или функции).
  */
-public final class MethodDescription implements SourceDefinedSymbolDescription {
+@Value
+@Builder
+public class MethodDescription implements SourceDefinedSymbolDescription {
+
   /**
    * Содержит полное описание метода (весь текст).
    */
-  private final String description;
+  String description;
+
   /**
    * Содержит часть строки после ключевого слова, в которой должно быть
    * описание причины устаревания метода либо альтернативы.
    */
-  private final String deprecationInfo;
+  String deprecationInfo;
+
   /**
    * Признак устаревания метода.
    */
-  private final boolean deprecated;
+  boolean deprecated;
+
   /**
    * Описание назначения метода.
    */
-  private final String purposeDescription;
+  String purposeDescription;
+
   /**
    * Примеры использования метода.
    */
-  private final List<String> examples;
-  /**
-   * Варианты вызова метода.
-   */
-  private final List<String> callOptions;
+  List<String> examples;
+
   /**
    * Параметры метода с типами и описанием.
    */
-  private final List<ParameterDescription> parameters;
+  List<ParameterDescription> parameters;
+
   /**
    * Возвращаемые значения (типы).
    */
-  private final List<TypeDescription> returnedValue;
+  List<TypeDescription> returnedValue;
+
   /**
    * Если описание содержит только ссылку, то здесь будет ее значение.
    * <p>
    * TODO Временное решение, надо будет продумать в следующем релизе
    */
-  private final String link;
+  String link;
+
   /**
    * Диапазон, в котором располагается описание.
    */
-  private final SimpleRange range;
+  SimpleRange range;
 
-  public MethodDescription(List<Token> comments) {
-    description = comments.stream()
-      .map(Token::getText)
-      .collect(Collectors.joining("\n"));
-
-    var tokenizer = new BSLMethodDescriptionTokenizer(description);
-    var ast = requireNonNull(tokenizer.getAst());
-
-    purposeDescription = DescriptionReader.readPurposeDescription(ast);
-    link = DescriptionReader.readLink(ast);
-    deprecated = ast.deprecate() != null;
-    deprecationInfo = DescriptionReader.readDeprecationInfo(ast);
-    callOptions = DescriptionReader.readCallOptions(ast);
-    examples = DescriptionReader.readExamples(ast);
-    parameters = DescriptionReader.readParameters(ast);
-    returnedValue = DescriptionReader.readReturnedValue(ast);
-    range = SimpleRange.create(comments);
-  }
-
-  @Override
-  public String getDescription() {
-    return description;
-  }
-
-  @Override
-  public String getDeprecationInfo() {
-    return deprecationInfo;
-  }
-
-  @Override
-  public boolean isDeprecated() {
-    return deprecated;
-  }
-
-  @Override
-  public String getPurposeDescription() {
-    return purposeDescription;
-  }
-
-  @Override
-  public String getLink() {
-    return link;
-  }
-
-  @Override
-  public SimpleRange getSimpleRange() {
-    return range;
-  }
-
-  public List<String> getExamples() {
-    return examples;
-  }
-
-  public List<String> getCallOptions() {
-    return callOptions;
-  }
-
-  public List<ParameterDescription> getParameters() {
-    return parameters;
-  }
-
-  public List<TypeDescription> getReturnedValue() {
-    return returnedValue;
+  public static MethodDescription create(List<Token> comments) {
+    return DescriptionReader.readMethodDescription(comments);
   }
 }

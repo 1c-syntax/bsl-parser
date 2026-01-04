@@ -25,20 +25,14 @@
 parser grammar BSLMethodDescriptionParser;
 
 options {
-    tokenVocab = BSLMethodDescriptionLexer;
+    tokenVocab = BSLDescriptionLexer;
 }
 
 // структура описания
 methodDescription:
     (
-          (deprecate? descriptionBlock? parameters? callOptions? returnsValues? examples?)
-        | (deprecate? descriptionBlock? parameters? examples? returnsValues? callOptions?)
-        | (deprecate? descriptionBlock? parameters? callOptions? examples? returnsValues?)
-        | (deprecate? descriptionBlock? parameters? examples? callOptions? returnsValues?)
-        | (descriptionBlock? parameters? callOptions? returnsValues? examples? deprecate?)
-        | (descriptionBlock? parameters? examples? returnsValues? callOptions? deprecate?)
-        | (descriptionBlock? parameters? callOptions? examples? returnsValues? deprecate?)
-        | (descriptionBlock? parameters? examples? callOptions? returnsValues? deprecate?)
+          (deprecate? descriptionBlock? parameters? returnsValues? examples?)
+        | (descriptionBlock? parameters? returnsValues? examples? deprecate?)
     ) EOF;
 
 // deprecate
@@ -49,21 +43,14 @@ deprecateDescription: ~(SPACE | EOL) ~EOL*;
 descriptionBlock: (hyperlinkBlock | description) EOL?;
 description: descriptionString+;
 descriptionString:
-      (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | DEPRECATE_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+      (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | SPACE) ~EOL* EOL?)
     | (startPart EOL)
     ;
 
 // examples
 examples: startPart EXAMPLE_KEYWORD (EOL examplesString*)?;
 examplesString:
-      (startPart ~(CALL_OPTIONS_KEYWORD | RETURNS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
-    | (startPart EOL?)
-    ;
-
-// callOptions
-callOptions: startPart CALL_OPTIONS_KEYWORD (EOL callOptionsString*)?;
-callOptionsString:
-      (startPart ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+      (startPart ~(RETURNS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
     | (startPart EOL?)
     ;
 
@@ -72,12 +59,12 @@ parameters: startPart PARAMETERS_KEYWORD SPACE? (EOL (hyperlinkBlock | parameter
 parameterString:
       parameter
     | (startPart typesBlock)
-    | subParameter
+    | field
     | (startPart typeDescription)
     | (startPart EOL?)
     ;
 parameter: startPart parameterName typesBlock;
-subParameter: startPart STAR SPACE? parameterName typesBlock;
+field: startPart STAR SPACE? parameterName typesBlock;
 parameterName: WORD;
 
 // returnsValues
@@ -85,7 +72,7 @@ returnsValues: startPart RETURNS_KEYWORD SPACE? (EOL (hyperlinkBlock | returnsVa
 returnsValuesString:
     returnsValue
     | (startPart typesBlock)
-    | subParameter
+    | field
     | (startPart typeDescription)
     | (startPart EOL?)
 ;
@@ -95,7 +82,7 @@ returnsValue: startPart type ((spitter typeDescription?) | EOL);
 typesBlock: spitter type ((spitter typeDescription?) | EOL);
 
 typeDescription:
-    SPACE? ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | SPACE | STAR) ~EOL* EOL;
+    SPACE? ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL | SPACE | STAR) ~EOL* EOL;
 
 type:
     hyperlinkType

@@ -24,6 +24,8 @@ package com.github._1c_syntax.bsl.parser.description;
 import com.github._1c_syntax.bsl.parser.description.reader.BSLMethodDescriptionTokenizer;
 import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
+import lombok.Builder;
+import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
@@ -35,97 +37,53 @@ import static java.util.Objects.requireNonNull;
 /**
  * Класс-описание переменной.
  */
-public final class VariableDescription implements SourceDefinedSymbolDescription {
+@Value
+@Builder
+public class VariableDescription implements SourceDefinedSymbolDescription {
 
   /**
    * Содержит полное описание переменной (весь текст)
    */
-  private final String description;
+  String description;
 
   /**
    * Содержит часть строки после ключевого слова, в которой должно быть
    * описание причины устаревания переменной либо альтернативы
    */
-  private final String deprecationInfo;
+  String deprecationInfo;
 
   /**
    * Признак устаревания переменной
    */
-  private final boolean deprecated;
+  boolean deprecated;
 
   /**
    * Описание назначения переменной
    */
-  private final String purposeDescription;
+  String purposeDescription;
 
   /**
    * Если описание содержит только ссылку, то здесь будет ее значение
    * <p>
    * TODO Временное решение, надо будет продумать кошерное решение
    */
-  private final String link;
+  String link;
 
   /**
    * Диапазон, в котором располагается описание.
    */
-  private final SimpleRange range;
+  SimpleRange range;
 
   /**
    * Описание "висячего" комментария
    */
-  private final Optional<VariableDescription> trailingDescription;
+  Optional<VariableDescription> trailingDescription;
 
-  public VariableDescription(List<Token> comments) {
-    this(comments, Optional.empty());
+  public static VariableDescription create(List<Token> comments) {
+    return DescriptionReader.readVariableDescription(comments);
   }
 
-  public VariableDescription(List<Token> comments, Optional<Token> trailingComment) {
-    description = comments.stream()
-      .map(Token::getText)
-      .collect(Collectors.joining("\n"));
-
-    var tokenizer = new BSLMethodDescriptionTokenizer(description);
-    var ast = requireNonNull(tokenizer.getAst());
-
-    range = SimpleRange.create(comments);
-    purposeDescription = DescriptionReader.readPurposeDescription(ast);
-    link = DescriptionReader.readLink(ast);
-    deprecated = ast.deprecate() != null;
-    deprecationInfo = DescriptionReader.readDeprecationInfo(ast);
-    trailingDescription = trailingComment.map(List::of).map(VariableDescription::new);
-  }
-
-  @Override
-  public String getDescription() {
-    return description;
-  }
-
-  @Override
-  public String getDeprecationInfo() {
-    return deprecationInfo;
-  }
-
-  @Override
-  public boolean isDeprecated() {
-    return deprecated;
-  }
-
-  @Override
-  public String getPurposeDescription() {
-    return purposeDescription;
-  }
-
-  @Override
-  public String getLink() {
-    return link;
-  }
-
-  @Override
-  public SimpleRange getSimpleRange() {
-    return range;
-  }
-
-  public Optional<VariableDescription> getTrailingDescription() {
-    return trailingDescription;
+  public static VariableDescription create(List<Token> comments, Optional<Token> trailingComment) {
+    return DescriptionReader.readVariableDescription(comments, trailingComment);
   }
 }

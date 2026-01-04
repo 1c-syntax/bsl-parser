@@ -27,35 +27,13 @@ import java.util.List;
 
 /**
  * Класс для хранения области символов
+ *
+ * @param startLine      Номер первой строки области
+ * @param startCharacter Номер первого символа области
+ * @param endLine        Номер последней строки области
+ * @param endCharacter   Номер последнего символа области
  */
-public final class SimpleRange {
-
-  /**
-   * Номер первой строки области
-   */
-  private final int startLine;
-
-  /**
-   * Номер первого символа области
-   */
-  private final int startCharacter;
-
-  /**
-   * Номер последней строки области
-   */
-  private final int endLine;
-
-  /**
-   * Номер последнего символа области
-   */
-  private final int endCharacter;
-
-  public SimpleRange(int startLine, int startCharacter, int endLine, int endCharacter) {
-    this.startLine = startLine;
-    this.startCharacter = startCharacter;
-    this.endLine = endLine;
-    this.endCharacter = endCharacter;
-  }
+public record SimpleRange(int startLine, int startCharacter, int endLine, int endCharacter) {
 
   /**
    * Проверяет вхождение второй области в первую
@@ -65,18 +43,18 @@ public final class SimpleRange {
    * @return Признак вхождения второй в первую
    */
   public static boolean containsRange(SimpleRange bigger, SimpleRange smaller) {
-    if (bigger.getStartLine() > smaller.getStartLine()
-      || bigger.getEndLine() < smaller.getEndLine()) {
+    if (bigger.startLine() > smaller.startLine()
+      || bigger.endLine() < smaller.endLine()) {
       return false;
     }
 
-    if (bigger.getStartLine() == smaller.getStartLine()
-      && bigger.getStartCharacter() > smaller.getStartCharacter()) {
+    if (bigger.startLine() == smaller.startLine()
+      && bigger.startCharacter() > smaller.startCharacter()) {
       return false;
     }
 
-    return bigger.getEndLine() != smaller.getEndLine()
-      || bigger.getEndCharacter() >= smaller.getEndCharacter();
+    return bigger.endLine() != smaller.endLine()
+      || bigger.endCharacter() >= smaller.endCharacter();
   }
 
   /**
@@ -101,6 +79,16 @@ public final class SimpleRange {
   }
 
   /**
+   * Создает область по одному токену
+   *
+   * @param token Токен, для которого нужно создать область
+   * @return Область
+   */
+  public static SimpleRange create(Token token) {
+    return create(token, token);
+  }
+
+  /**
    * Создает область по списку токенов
    *
    * @param tokens Список токенов области
@@ -116,39 +104,38 @@ public final class SimpleRange {
     return create(firstElement, lastElement);
   }
 
-  public int getStartLine() {
-    return startLine;
+  /**
+   * Создает новую область {@link SimpleRange} с заданными координатами.
+   *
+   * @param startLine      номер начальной строки (начиная с 0)
+   * @param startCharacter номер начального символа в строке (начиная с 0)
+   * @param endLine        номер конечной строки (начиная с 0)
+   * @param endCharacter   номер конечного символа в строке (начиная с 0)
+   * @return новый экземпляр {@link SimpleRange}, представляющий заданный диапазон
+   */
+  public static SimpleRange create(int startLine, int startCharacter, int endLine, int endCharacter) {
+    return new SimpleRange(startLine, startCharacter, endLine, endCharacter);
   }
 
-  public int getStartCharacter() {
-    return startCharacter;
+  /**
+   * Создает новую область для строки {@link SimpleRange} с заданными координатами.
+   *
+   * @param lineNo         номер строки (начиная с 0)
+   * @param startCharacter номер начального символа в строке (начиная с 0)
+   * @param endCharacter   номер конечного символа в строке (начиная с 0)
+   * @return новый экземпляр {@link SimpleRange}, представляющий заданный диапазон
+   */
+  public static SimpleRange create(int lineNo, int startCharacter, int endCharacter) {
+    return new SimpleRange(lineNo, startCharacter, lineNo, endCharacter);
   }
 
-  public int getEndLine() {
-    return endLine;
-  }
-
-  public int getEndCharacter() {
-    return endCharacter;
-  }
-
-  public String toString() {
-    return ("SimpleRange(startLine=" + startLine
-      + ", startCharacter=" + startCharacter
-      + ", endLine=" + endLine
-      + ", endCharacter=" + endCharacter + ")").intern();
-  }
-
-  public boolean equals(final Object other) {
-    if (other == this) {
-      return true;
-    } else if (!(other instanceof SimpleRange otherRange)) {
-      return false;
-    } else {
-      return (startLine == otherRange.getStartLine()
-        && startCharacter == otherRange.getStartCharacter()
-        && endLine == otherRange.getEndLine()
-        && endCharacter == otherRange.getEndCharacter());
-    }
+  /**
+   * Возвращает признак пустой области, т.е. все координаты равны 0
+   *
+   * @return признак пустой области
+   */
+  public boolean isEmpty() {
+    return startLine == 0 && startCharacter == 0
+      && endLine == 0 && endCharacter == 0;
   }
 }

@@ -11,6 +11,7 @@ plugins {
     id("me.qoomon.git-versioning") version "6.4.4"
     id("io.freefair.javadoc-links") version "9.1.0"
     id("io.freefair.javadoc-utf-8") version "9.1.0"
+    id("io.freefair.lombok") version "9.1.0"
     id("io.freefair.maven-central.validate-poms") version "9.1.0"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("ru.vyarus.pom") version "3.0.0"
@@ -94,6 +95,14 @@ sourceSets.jmh {
 tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     dependsOn(tasks.generateGrammarSource)
+}
+
+tasks.named("delombok") {
+    enabled = false
+}
+
+tasks.maybeCreate("delombokTest").apply {
+    enabled = false
 }
 
 tasks.processTestResources {
