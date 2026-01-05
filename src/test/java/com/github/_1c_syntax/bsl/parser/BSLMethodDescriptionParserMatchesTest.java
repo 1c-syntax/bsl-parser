@@ -45,8 +45,8 @@ class BSLDescriptionParserMatchesTest {
         "//Параметры//\n",
       "//Устарела.\n",
       "//Параметры:",
-      "//Варианты вызова:",
-      "//Пример:",
+      "//Варианты вызова:\n",
+      "//Пример:\n",
       "//Возвращаемое значение:"
     }
   )
@@ -112,8 +112,8 @@ class BSLDescriptionParserMatchesTest {
   @ValueSource(strings =
     {
       "//Параметры:\n//Параметр1\n//\n//Параметр2\n",
-      "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Пример:",
-      "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Варианты вызова:",
+      "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Пример:\n",
+      "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Варианты вызова:\n",
       "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Возвращаемое значение:",
       "//Параметры:\n//Параметр1 - Тип  Описание\n//\n//Параметр2\n//Возвращаемое значение:"
     }
@@ -130,19 +130,19 @@ class BSLDescriptionParserMatchesTest {
     testParser.assertThat("//returns:\n//boolean - description\n")
       .matches(testParser.parser().returnsValues())
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 1);
-    testParser.assertThat("//returns:\n// - ref - description\n// - boolean - description\n//Example:")
+    testParser.assertThat("//returns:\n// - ref - description\n// - boolean - description\n//Example:\n")
       .matches(testParser.parser().returnsValues())
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 2);
   }
 
   @Test
   void testExample() {
-    testParser.assertThat("//Пример").noMatches(testParser.parser().examples());
-    testParser.assertThat("//Пример:\n//Пример - описаниепримера")
-      .matches(testParser.parser().examples())
+    testParser.assertThat("//Пример").noMatches(testParser.parser().examplesBlock());
+    testParser.assertThat("//Пример:\n//Пример - описаниепримера\n")
+      .matches(testParser.parser().examplesBlock())
       .containsRule(BSLDescriptionParser.RULE_examplesString, 1);
-    testParser.assertThat("//Пример:\n//Пример:\n//Пример: - описаниепримера")
-      .matches(testParser.parser().examples())
+    testParser.assertThat("//Пример:\n//Пример:\n//Пример: - описаниепримера\n")
+      .matches(testParser.parser().examplesBlock())
       .containsRule(BSLDescriptionParser.RULE_examplesString, 2);
   }
 }

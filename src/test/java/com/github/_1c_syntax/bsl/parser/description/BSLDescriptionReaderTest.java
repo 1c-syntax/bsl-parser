@@ -597,7 +597,7 @@ class BSLDescriptionReaderTest {
     var methodDescription = MethodDescription.create(getTokensFromString(exampleString));
 
     assertThat(methodDescription).isNotNull();
-    assertThat(methodDescription.getDescription()).isEqualTo(exampleString);
+    assertThat(methodDescription.getDescription()).isEqualTo(exampleString.trim());
     return methodDescription;
   }
 }

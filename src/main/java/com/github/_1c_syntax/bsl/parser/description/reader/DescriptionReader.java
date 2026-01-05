@@ -217,14 +217,13 @@ public class DescriptionReader {
    * @return Список примеров
    */
   private List<String> readExamples(BSLDescriptionParser.MethodDescriptionContext ctx) {
-    if (ctx.examples() != null) {
-      var strings = ctx.examples().examplesString();
+    if (ctx.examplesBlock() != null) {
+      var strings = ctx.examplesBlock().examplesString();
       if (strings != null) {
         return strings.stream()
           .map(DescriptionReader::getDescriptionString)
           .filter((String s) -> !s.isBlank())
-          .map(String::intern)
-          .collect(Collectors.toList());
+          .toList();
       }
     }
     return Collections.emptyList();

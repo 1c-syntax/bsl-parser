@@ -31,8 +31,8 @@ options {
 // структура описания
 methodDescription:
     (
-          (deprecateBlock? descriptionBlock? parameters? returnsValues? examples?)
-        | (descriptionBlock? parameters? returnsValues? examples? deprecateBlock?)
+          (deprecateBlock? descriptionBlock? parameters? returnsValues? examplesBlock?)
+        | (descriptionBlock? parameters? returnsValues? examplesBlock? deprecateBlock?)
     ) EOF;
 
 // deprecate
@@ -51,10 +51,15 @@ descriptionString:
     ;
 
 // examples
-examples: startPart EXAMPLE_KEYWORD (EOL examplesString*)?;
+examplesBlock: examplesHead examplesStrings=examplesString*;
+examplesHead: startPart EXAMPLE_KEYWORD SPACE? EOL;
 examplesString:
-      (startPart ~(RETURNS_KEYWORD | EOL | SPACE) ~EOL* EOL?)
-    | (startPart EOL?)
+      (startPart
+            // гиперссылка или не ключевое (ну и не конец строки)
+            (hyperlink | ~(DEPRECATE_KEYWORD | EOL | EOF | SPACE))
+            (hyperlink | ~(EOL | EOF))* // любой
+        EOL)
+    | (startPart EOL)
     ;
 
 // parameters
