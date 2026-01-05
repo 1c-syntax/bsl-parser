@@ -44,7 +44,7 @@ class BSLDescriptionParserMatchesTest {
         "//||Описание метода\n// \n//" +
         "//Параметры//\n",
       "//Устарела.\n",
-      "//Параметры:",
+      "//Параметры:\n",
       "//Варианты вызова:\n",
       "//Пример:\n",
       "//Возвращаемое значение:"
@@ -105,7 +105,7 @@ class BSLDescriptionParserMatchesTest {
 
   @Test
   void testNoParameters() {
-    testParser.assertThat("//Параметры").noMatches(testParser.parser().parameters());
+    testParser.assertThat("//Параметры").noMatches(testParser.parser().parametersBlock());
   }
 
   @ParameterizedTest
@@ -120,7 +120,7 @@ class BSLDescriptionParserMatchesTest {
   )
   void testParameters(String inputString) {
     testParser.assertThat(inputString)
-      .matches(testParser.parser().parameters())
+      .matches(testParser.parser().parametersBlock())
       .containsRule(BSLDescriptionParser.RULE_parameterString, 3);
   }
 

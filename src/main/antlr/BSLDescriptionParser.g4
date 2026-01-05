@@ -31,8 +31,8 @@ options {
 // структура описания
 methodDescription:
     (
-          (deprecateBlock? descriptionBlock? parameters? returnsValues? examplesBlock?)
-        | (descriptionBlock? parameters? returnsValues? examplesBlock? deprecateBlock?)
+          (deprecateBlock? descriptionBlock? parametersBlock? returnsValues? examplesBlock?)
+        | (descriptionBlock? parametersBlock? returnsValues? examplesBlock? deprecateBlock?)
     ) EOF;
 
 // deprecate
@@ -63,24 +63,27 @@ examplesString:
     ;
 
 // parameters
-parameters: startPart PARAMETERS_KEYWORD SPACE? (EOL (hyperlinkBlock | parameterString+)?)? EOL?;
+parametersBlock: parametersHead parameterStrings=parameterString*;
+parametersHead: startPart PARAMETERS_KEYWORD SPACE? EOL;
 parameterString:
-      parameter
+      (startPart parameter)
+    | (startPart field)
     | (startPart typesBlock)
-    | field
     | (startPart typeDescription)
-    | (startPart EOL?)
     ;
-parameter: startPart parameterName typesBlock;
-field: startPart STAR SPACE? parameterName typesBlock;
+
+parameter: parameterName typesBlock;
+field: level=STAR SPACE? parameterName typesBlock;
 parameterName: WORD;
+
+
 
 // returnsValues
 returnsValues: startPart RETURNS_KEYWORD SPACE? (EOL (hyperlinkBlock | returnsValuesString+)?)? EOL?;
 returnsValuesString:
     returnsValue
     | (startPart typesBlock)
-    | field
+    | (startPart field)
     | (startPart typeDescription)
     | (startPart EOL?)
 ;
@@ -90,7 +93,13 @@ returnsValue: startPart type ((spitter typeDescription?) | EOL);
 typesBlock: spitter type ((spitter typeDescription?) | EOL);
 
 typeDescription:
-    SPACE? ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | EOL | SPACE | STAR) ~EOL* EOL;
+    (
+        (hyperlink | ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
+        (hyperlink | ~(EOL | EOF))*
+        EOL
+    )
+    | (SPACE* EOL)
+    ;
 
 type:
     hyperlinkType

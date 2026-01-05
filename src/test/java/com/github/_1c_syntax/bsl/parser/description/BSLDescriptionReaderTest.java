@@ -154,7 +154,7 @@ class BSLDescriptionReaderTest {
         - анализ значений в данных типа Массив, Структура, Соответствие выполняется рекурсивно.""");
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
-    assertThat(methodDescription.getLinks()).isEmpty();
+    assertThat(methodDescription.getLinks()).hasSize(5);
     assertThat(methodDescription.getParameters()).hasSize(5);
     checkParameter(methodDescription.getParameters().get(0),
       "КлючОбъекта", 1, "", false);
@@ -218,7 +218,7 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getPurposeDescription()).contains("Copyright (c) 2020, ООО 1С-Софт");
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
-    assertThat(methodDescription.getLinks()).isEmpty();
+    assertThat(methodDescription.getLinks()).hasSize(8);
     assertThat(methodDescription.getParameters()).isEmpty();
 
     assertThat(
@@ -277,7 +277,7 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getPurposeDescription()).contains("Copyright (c) 2020, ООО 1С-Софт");
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
-    assertThat(methodDescription.getLinks()).isEmpty();
+    assertThat(methodDescription.getLinks()).hasSize(8);
 
     assertThat(
       Objects.equals(methodDescription.getRange(), create(329, 2)))
@@ -333,7 +333,7 @@ class BSLDescriptionReaderTest {
 
   @Test
   void parseMethodDescription7() {
-    var methodDescription = parseMethodDescriptionString("// Параметры: \n// See CommonModule.MyModule.MyFunc()");
+    var methodDescription = parseMethodDescriptionString("// Параметры: \n// See CommonModule.MyModule.MyFunc()\n");
     assertThat(methodDescription.getPurposeDescription()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();

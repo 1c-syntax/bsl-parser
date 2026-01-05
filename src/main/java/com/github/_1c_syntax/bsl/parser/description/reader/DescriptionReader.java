@@ -105,28 +105,16 @@ public class DescriptionReader {
   private List<ParameterDescription> readParameters(BSLDescriptionParser.MethodDescriptionContext ctx) {
 
     // параметров нет
-    if (ctx.parameters() == null) {
+    if (ctx.parametersBlock() == null) {
       return Collections.emptyList();
-    }
-
-    // есть только гиперссылка вместо параметров
-    if (ctx.parameters().hyperlinkBlock() != null) {
-      List<ParameterDescription> result = new ArrayList<>();
-      if (ctx.parameters().hyperlinkBlock().hyperlinkType() != null) {
-        result.add(new ParameterDescription("",
-          Collections.emptyList(),
-          getDescriptionString(ctx.parameters().hyperlinkBlock()).substring(HYPERLINK_REF_LEN),
-          true));
-      }
-      return result;
     }
 
     // блок параметры есть, но самих нет
-    if (ctx.parameters().parameterString() == null) {
+    if (ctx.parametersBlock().parameterString() == null) {
       return Collections.emptyList();
     }
 
-    return getParametersStrings(ctx.parameters().parameterString());
+    return getParametersStrings(ctx.parametersBlock().parameterString());
 
   }
 
@@ -290,9 +278,16 @@ public class DescriptionReader {
         current.addType(string.typesBlock().type(), string.typesBlock().typeDescription());
       } else if (string.typeDescription() != null) { // это строка с описанием
         if (current.isEmpty()) {
-          var text = string.typeDescription().getText().strip();
-          if (text.split("\\s").length == 1) {
-            current = new TempParameterData(text);
+          var text = string.typeDescription().getText().trim();
+          if (!text.isEmpty()) {
+            if (text.split("\\s").length == 1) {
+              current = new TempParameterData(text);
+            } else if (string.typeDescription().hyperlink() != null) { // считаем первой ссылкой
+              result.add(new ParameterDescription("",
+                Collections.emptyList(),
+                getDescriptionString(string.typeDescription().hyperlink().get(0)).substring(HYPERLINK_REF_LEN),
+                true));
+            }
           }
         } else {
           current.addTypeDescription(string.typeDescription());
@@ -381,7 +376,7 @@ public class DescriptionReader {
           }
           return new TypeDescription(
             child.name.intern(),
-            child.description.toString(),
+            child.description.toString().strip(),
             fields,
             link,
             child.isHyperlink
