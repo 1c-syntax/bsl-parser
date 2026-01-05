@@ -21,10 +21,11 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.reader.MethodDescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import lombok.Builder;
+import lombok.Singular;
 import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
@@ -46,26 +47,31 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
    * Содержит часть строки после ключевого слова, в которой должно быть
    * описание причины устаревания метода либо альтернативы.
    */
-  String deprecationInfo;
+  @Builder.Default
+  String deprecationInfo = "";
 
   /**
    * Признак устаревания метода.
    */
-  boolean deprecated;
+  @Builder.Default
+  boolean deprecated = false;
 
   /**
    * Описание назначения метода.
    */
-  String purposeDescription;
+  @Builder.Default
+  String purposeDescription = "";
 
   /**
    * Примеры использования метода.
    */
-  List<String> examples;
+  @Builder.Default
+  String examples = "";
 
   /**
    * Параметры метода с типами и описанием.
    */
+  @Singular
   List<ParameterDescription> parameters;
 
   /**
@@ -84,6 +90,6 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
   SimpleRange range;
 
   public static MethodDescription create(List<Token> comments) {
-    return DescriptionReader.readMethodDescription(comments);
+    return MethodDescriptionReader.read(comments);
   }
 }

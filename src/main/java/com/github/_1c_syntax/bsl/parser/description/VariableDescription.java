@@ -21,7 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.reader.VariableDescriptionReader;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import lombok.Builder;
@@ -47,17 +47,20 @@ public class VariableDescription implements SourceDefinedSymbolDescription {
    * Содержит часть строки после ключевого слова, в которой должно быть
    * описание причины устаревания переменной либо альтернативы
    */
-  String deprecationInfo;
+  @Builder.Default
+  String deprecationInfo = "";
 
   /**
    * Признак устаревания переменной
    */
-  boolean deprecated;
+  @Builder.Default
+  boolean deprecated = false;
 
   /**
    * Описание назначения переменной
    */
-  String purposeDescription;
+  @Builder.Default
+  String purposeDescription = "";
 
   /**
    * Список всех ссылок, которые могут быть в описании.
@@ -75,10 +78,10 @@ public class VariableDescription implements SourceDefinedSymbolDescription {
   Optional<VariableDescription> trailingDescription;
 
   public static VariableDescription create(List<Token> comments) {
-    return DescriptionReader.readVariableDescription(comments);
+    return VariableDescriptionReader.read(comments);
   }
 
   public static VariableDescription create(List<Token> comments, Optional<Token> trailingComment) {
-    return DescriptionReader.readVariableDescription(comments, trailingComment);
+    return VariableDescriptionReader.read(comments, trailingComment);
   }
 }

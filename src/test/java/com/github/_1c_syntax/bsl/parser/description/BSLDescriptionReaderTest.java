@@ -58,7 +58,7 @@ class BSLDescriptionReaderTest {
         Значения передаваемых параметров процедуры, а также возвращаемое значение должны быть сериализуемыми.
         Параметры процедуры не должны быть возвращаемыми.""");
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
-    assertThat(methodDescription.getExamples()).hasSize(26)
+    assertThat(methodDescription.getExamples().lines()).hasSize(30)
       .anyMatch(("В общем виде процесс запуска и обработки результата длительной операции в модуле формы выглядит " +
         "следующим образом:")::equals)
       .anyMatch("2) Запуск операции на сервере и подключение обработчика ожидания (при необходимости):"::equals)
@@ -482,7 +482,7 @@ class BSLDescriptionReaderTest {
         Например, разворачивание массива массивов сделает новый массив, содержащий все элементы всех массивов.
         Конвейерный метод.""");
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
-    assertThat(methodDescription.getExamples()).hasSize(8)
+    assertThat(methodDescription.getExamples().lines()).hasSize(10)
       .anyMatch("1:"::equals)
       .anyMatch("ПроцессорКоллекций.Развернуть(\"Результат = ПроцессорыКоллекций.ИзСтроки(Элемент);\");"::equals)
       .anyMatch("2:"::equals)
@@ -537,7 +537,7 @@ class BSLDescriptionReaderTest {
   @Test
   void parseComplexType() {
     var methodDescription = parseMethodDescriptionString("// Параметры:\n" +
-      "// Параметр - Список из Массив из Список из См. Мой.Метод(СПараметром)");
+      "// Параметр - Список из Массив из Список из См. Мой.Метод(СПараметром)\n");
     assertThat(methodDescription.getPurposeDescription()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
