@@ -52,7 +52,7 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_parameter, 9)
       .containsRule(BSLDescriptionParser.RULE_field, 5)
       .containsRule(BSLDescriptionParser.RULE_parameterName, 14)
-      .containsRule(BSLDescriptionParser.RULE_returnsValues, 1)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesBlock, 1)
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 12)
       .containsRule(BSLDescriptionParser.RULE_returnsValue, 1)
       .containsRule(BSLDescriptionParser.RULE_typesBlock, 14)
@@ -60,10 +60,10 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_type, 15)
       .containsRule(BSLDescriptionParser.RULE_simpleType, 14)
       .containsRule(BSLDescriptionParser.RULE_listTypes, 0)
-      .containsRule(BSLDescriptionParser.RULE_complexType, 0)
+      .containsRule(BSLDescriptionParser.RULE_collectionType, 0)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 1)
       .containsRule(BSLDescriptionParser.RULE_spitter, 22)
-      .containsRule(BSLDescriptionParser.RULE_hyperlinkBlock, 0)
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 1)
       .containsRule(BSLDescriptionParser.RULE_startPart, 76);
   }
 
@@ -84,18 +84,18 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_parameter, 1)
       .containsRule(BSLDescriptionParser.RULE_field, 0)
       .containsRule(BSLDescriptionParser.RULE_parameterName, 1)
-      .containsRule(BSLDescriptionParser.RULE_returnsValues, 1)
-      .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 0)
-      .containsRule(BSLDescriptionParser.RULE_returnsValue, 0)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesBlock, 1)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 2)
+      .containsRule(BSLDescriptionParser.RULE_returnsValue, 1)
       .containsRule(BSLDescriptionParser.RULE_typesBlock, 1)
-      .containsRule(BSLDescriptionParser.RULE_typeDescription, 2)
-      .containsRule(BSLDescriptionParser.RULE_type, 1)
+      .containsRule(BSLDescriptionParser.RULE_typeDescription, 3)
+      .containsRule(BSLDescriptionParser.RULE_type, 2)
       .containsRule(BSLDescriptionParser.RULE_simpleType, 1)
       .containsRule(BSLDescriptionParser.RULE_listTypes, 0)
-      .containsRule(BSLDescriptionParser.RULE_complexType, 0)
+      .containsRule(BSLDescriptionParser.RULE_collectionType, 0)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 1)
       .containsRule(BSLDescriptionParser.RULE_spitter, 2)
-      .containsRule(BSLDescriptionParser.RULE_hyperlinkBlock, 1)
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 1)
       .containsRule(BSLDescriptionParser.RULE_startPart, 8);
   }
 
@@ -116,18 +116,18 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_parameter, 5)
       .containsRule(BSLDescriptionParser.RULE_field, 0)
       .containsRule(BSLDescriptionParser.RULE_parameterName, 5)
-      .containsRule(BSLDescriptionParser.RULE_returnsValues, 1)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesBlock, 1)
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 2)
       .containsRule(BSLDescriptionParser.RULE_returnsValue, 1)
       .containsRule(BSLDescriptionParser.RULE_typesBlock, 5)
-      .containsRule(BSLDescriptionParser.RULE_typeDescription, 8)
+      .containsRule(BSLDescriptionParser.RULE_typeDescription, 9)
       .containsRule(BSLDescriptionParser.RULE_type, 6)
       .containsRule(BSLDescriptionParser.RULE_simpleType, 6)
       .containsRule(BSLDescriptionParser.RULE_listTypes, 0)
-      .containsRule(BSLDescriptionParser.RULE_complexType, 0)
+      .containsRule(BSLDescriptionParser.RULE_collectionType, 0)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 0)
       .containsRule(BSLDescriptionParser.RULE_spitter, 11)
-      .containsRule(BSLDescriptionParser.RULE_hyperlinkBlock, 0)
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 5)
       .containsRule(BSLDescriptionParser.RULE_startPart, 24);
   }
 
@@ -148,18 +148,18 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_parameter, 3)
       .containsRule(BSLDescriptionParser.RULE_field, 0)
       .containsRule(BSLDescriptionParser.RULE_parameterName, 3)
-      .containsRule(BSLDescriptionParser.RULE_returnsValues, 1)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesBlock, 1)
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 2)
       .containsRule(BSLDescriptionParser.RULE_returnsValue, 1)
       .containsRule(BSLDescriptionParser.RULE_typesBlock, 3)
-      .containsRule(BSLDescriptionParser.RULE_typeDescription, 5)
+      .containsRule(BSLDescriptionParser.RULE_typeDescription, 6)
       .containsRule(BSLDescriptionParser.RULE_type, 4)
       .containsRule(BSLDescriptionParser.RULE_simpleType, 5)
       .containsRule(BSLDescriptionParser.RULE_listTypes, 1)
-      .containsRule(BSLDescriptionParser.RULE_complexType, 0)
+      .containsRule(BSLDescriptionParser.RULE_collectionType, 0)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 0)
       .containsRule(BSLDescriptionParser.RULE_spitter, 7)
-      .containsRule(BSLDescriptionParser.RULE_hyperlinkBlock, 0)
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 0)
       .containsRule(BSLDescriptionParser.RULE_startPart, 11);
   }
 
@@ -180,18 +180,18 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_parameter, 0)
       .containsRule(BSLDescriptionParser.RULE_field, 33)
       .containsRule(BSLDescriptionParser.RULE_parameterName, 33)
-      .containsRule(BSLDescriptionParser.RULE_returnsValues, 1)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesBlock, 1)
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 316)
       .containsRule(BSLDescriptionParser.RULE_returnsValue, 12)
       .containsRule(BSLDescriptionParser.RULE_typesBlock, 36)
-      .containsRule(BSLDescriptionParser.RULE_typeDescription, 304)
+      .containsRule(BSLDescriptionParser.RULE_typeDescription, 305)
       .containsRule(BSLDescriptionParser.RULE_type, 48)
       .containsRule(BSLDescriptionParser.RULE_simpleType, 48)
       .containsRule(BSLDescriptionParser.RULE_listTypes, 0)
-      .containsRule(BSLDescriptionParser.RULE_complexType, 0)
+      .containsRule(BSLDescriptionParser.RULE_collectionType, 0)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 0)
       .containsRule(BSLDescriptionParser.RULE_spitter, 73)
-      .containsRule(BSLDescriptionParser.RULE_hyperlinkBlock, 0)
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 8)
       .containsRule(BSLDescriptionParser.RULE_startPart, 331);
   }
 
@@ -212,7 +212,7 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_parameter, 4)
       .containsRule(BSLDescriptionParser.RULE_field, 0)
       .containsRule(BSLDescriptionParser.RULE_parameterName, 4)
-      .containsRule(BSLDescriptionParser.RULE_returnsValues, 1)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesBlock, 1)
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 2)
       .containsRule(BSLDescriptionParser.RULE_returnsValue, 1)
       .containsRule(BSLDescriptionParser.RULE_typesBlock, 28)
@@ -220,10 +220,10 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_type, 29)
       .containsRule(BSLDescriptionParser.RULE_simpleType, 29)
       .containsRule(BSLDescriptionParser.RULE_listTypes, 0)
-      .containsRule(BSLDescriptionParser.RULE_complexType, 0)
+      .containsRule(BSLDescriptionParser.RULE_collectionType, 0)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 0)
       .containsRule(BSLDescriptionParser.RULE_spitter, 37)
-      .containsRule(BSLDescriptionParser.RULE_hyperlinkBlock, 0)
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 1)
       .containsRule(BSLDescriptionParser.RULE_startPart, 61);
   }
 
@@ -244,18 +244,18 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_parameter, 0)
       .containsRule(BSLDescriptionParser.RULE_field, 23)
       .containsRule(BSLDescriptionParser.RULE_parameterName, 23)
-      .containsRule(BSLDescriptionParser.RULE_returnsValues, 1)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesBlock, 1)
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 43)
       .containsRule(BSLDescriptionParser.RULE_returnsValue, 2)
       .containsRule(BSLDescriptionParser.RULE_typesBlock, 25)
-      .containsRule(BSLDescriptionParser.RULE_typeDescription, 42)
+      .containsRule(BSLDescriptionParser.RULE_typeDescription, 43)
       .containsRule(BSLDescriptionParser.RULE_type, 29) // на самом деле меньше todo исправить
       .containsRule(BSLDescriptionParser.RULE_simpleType, 32)
       .containsRule(BSLDescriptionParser.RULE_listTypes, 7)
-      .containsRule(BSLDescriptionParser.RULE_complexType, 2)
+      .containsRule(BSLDescriptionParser.RULE_collectionType, 2)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 2)
       .containsRule(BSLDescriptionParser.RULE_spitter, 52)
-      .containsRule(BSLDescriptionParser.RULE_hyperlinkBlock, 0)
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 8)
       .containsRule(BSLDescriptionParser.RULE_startPart, 50);
   }
 
@@ -276,7 +276,7 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_parameter, 2)
       .containsRule(BSLDescriptionParser.RULE_field, 2)
       .containsRule(BSLDescriptionParser.RULE_parameterName, 4)
-      .containsRule(BSLDescriptionParser.RULE_returnsValues, 1)
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesBlock, 1)
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 2)
       .containsRule(BSLDescriptionParser.RULE_returnsValue, 1)
       .containsRule(BSLDescriptionParser.RULE_typesBlock, 4)
@@ -284,10 +284,10 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_type, 5)
       .containsRule(BSLDescriptionParser.RULE_simpleType, 6)
       .containsRule(BSLDescriptionParser.RULE_listTypes, 1)
-      .containsRule(BSLDescriptionParser.RULE_complexType, 0)
+      .containsRule(BSLDescriptionParser.RULE_collectionType, 0)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 0)
       .containsRule(BSLDescriptionParser.RULE_spitter, 9)
-      .containsRule(BSLDescriptionParser.RULE_hyperlinkBlock, 0)
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 0)
       .containsRule(BSLDescriptionParser.RULE_startPart, 34);
   }
 }

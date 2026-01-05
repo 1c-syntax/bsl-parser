@@ -392,18 +392,18 @@ public class DescriptionReader {
       }
 
       if (paramType.listTypes() != null) {
-        var stringTypes = paramType.listTypes().getText().split(",");
-        for (String stringType : stringTypes) {
-          if (!stringType.isBlank()) {
-            addType(paramDescription, stringType.strip(), false);
+        var stringTypes = paramType.listTypes().listType();
+        for (var stringType : stringTypes) {
+          if (!stringType.getText().isBlank()) {
+            addType(paramDescription, stringType.getText().strip(), false);
           }
         }
       } else if (paramType.hyperlinkType() != null) {
         addType(paramDescription, paramType.hyperlinkType().getText(), true);
       } else if (paramType.simpleType() != null) {
-        addType(paramDescription, paramType.simpleType().getText(), false);
-      } else if (paramType.complexType() != null) {
-        addType(paramDescription, paramType.complexType().getText(), false);
+        addType(paramDescription, paramType.simpleType().typeName.getText(), false);
+      } else if (paramType.collectionType() != null) {
+        addType(paramDescription, paramType.collectionType().getText(), false);
       } else {
         // noop
       }

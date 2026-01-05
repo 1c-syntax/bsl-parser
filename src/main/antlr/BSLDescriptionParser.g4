@@ -103,24 +103,20 @@ typeDescription:
     | (SPACE* EOL)
     ;
 
-typesBlock: spitter type ((spitter typeDescription?) | EOL);
-
-type:
-    hyperlinkType
-    | listTypes
-    | (simpleType COLON?)
-    | complexType
+typesBlock: spitter type
+    (
+        (spitter typeDescription)
+        | (spitter EOL)
+        | EOL
+    )
     ;
-simpleType: (WORD | DOTSWORD);
-listTypes: (simpleType | complexType | hyperlinkType) (COMMA SPACE? (simpleType | complexType | hyperlinkType))+;
 
-complexType:
-    collection=(WORD | DOTSWORD) SPACE OF_KEYWORD SPACE type;
-
+type: listTypes | collectionType | hyperlinkType | simpleType;
+simpleType: typeName=(WORD | DOTSWORD) colon=COLON?;
+collectionType: collection=(WORD | DOTSWORD) SPACE OF_KEYWORD SPACE value=type;
 hyperlinkType: hyperlink;
-
-
-hyperlinkBlock: (startPart EOL)* startPart hyperlinkType SPACE? (EOL startPart)*;
+listTypes: listType (COMMA SPACE? listType)+;
+listType: simpleType | collectionType | hyperlinkType;
 
 hyperlink: SEE_KEYWORD SPACE link=(WORD | DOTSWORD) (LPAREN linkParams=~EOL* RPAREN)?;
 spitter: SPACE? DASH SPACE?;

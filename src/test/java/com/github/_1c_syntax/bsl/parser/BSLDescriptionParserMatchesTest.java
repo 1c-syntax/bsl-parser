@@ -47,7 +47,7 @@ class BSLDescriptionParserMatchesTest {
       "//Параметры:\n",
       "//Варианты вызова:\n",
       "//Пример:\n",
-      "//Возвращаемое значение:"
+      "//Возвращаемое значение:\n"
     }
   )
   void testMethodDescription(String inputString) {
@@ -114,8 +114,8 @@ class BSLDescriptionParserMatchesTest {
       "//Параметры:\n//Параметр1\n//\n//Параметр2\n",
       "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Пример:\n",
       "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Варианты вызова:\n",
-      "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Возвращаемое значение:",
-      "//Параметры:\n//Параметр1 - Тип  Описание\n//\n//Параметр2\n//Возвращаемое значение:"
+      "//Параметры:\n//Параметр1\n//\n//Параметр2\n//Возвращаемое значение:\n",
+      "//Параметры:\n//Параметр1 - Тип  Описание\n//\n//Параметр2\n//Возвращаемое значение:\n"
     }
   )
   void testParameters(String inputString) {
@@ -126,12 +126,12 @@ class BSLDescriptionParserMatchesTest {
 
   @Test
   void testReturns() {
-    testParser.assertThat("//returns").noMatches(testParser.parser().returnsValues());
+    testParser.assertThat("//returns").noMatches(testParser.parser().returnsValuesBlock());
     testParser.assertThat("//returns:\n//boolean - description\n")
-      .matches(testParser.parser().returnsValues())
+      .matches(testParser.parser().returnsValuesBlock())
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 1);
     testParser.assertThat("//returns:\n// - ref - description\n// - boolean - description\n//Example:\n")
-      .matches(testParser.parser().returnsValues())
+      .matches(testParser.parser().returnsValuesBlock())
       .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 2);
   }
 
