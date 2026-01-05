@@ -21,8 +21,8 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import com.github._1c_syntax.bsl.parser.description.reader.BSLMethodDescriptionTokenizer;
 import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import lombok.Builder;
 import lombok.Value;
@@ -30,9 +30,6 @@ import org.antlr.v4.runtime.Token;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Класс-описание переменной.
@@ -63,11 +60,9 @@ public class VariableDescription implements SourceDefinedSymbolDescription {
   String purposeDescription;
 
   /**
-   * Если описание содержит только ссылку, то здесь будет ее значение
-   * <p>
-   * TODO Временное решение, надо будет продумать кошерное решение
+   * Список всех ссылок, которые могут быть в описании.
    */
-  String link;
+  List<Hyperlink> links;
 
   /**
    * Диапазон, в котором располагается описание.

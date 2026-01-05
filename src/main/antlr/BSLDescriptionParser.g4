@@ -22,7 +22,7 @@
 /**
  * @author Maximov Valery <maximovvalery@gmail.com>
  */
-parser grammar BSLMethodDescriptionParser;
+parser grammar BSLDescriptionParser;
 
 options {
     tokenVocab = BSLDescriptionLexer;
@@ -31,19 +31,22 @@ options {
 // структура описания
 methodDescription:
     (
-          (deprecate? descriptionBlock? parameters? returnsValues? examples?)
-        | (descriptionBlock? parameters? returnsValues? examples? deprecate?)
+          (deprecateBlock? descriptionBlock? parameters? returnsValues? examples?)
+        | (descriptionBlock? parameters? returnsValues? examples? deprecateBlock?)
     ) EOF;
 
 // deprecate
-deprecate: startPart DEPRECATE_KEYWORD (SPACE deprecateDescription)? EOL?;
-deprecateDescription: ~(SPACE | EOL) ~EOL*;
+deprecateBlock: startPart DEPRECATE_KEYWORD (deprecateDescription | EOL);
+deprecateDescription: (hyperlink | ~(EOL | EOF))+ EOL;
 
 // description
-descriptionBlock: (hyperlinkBlock | description) EOL?;
-description: descriptionString+;
+descriptionBlock: descriptionString+;
 descriptionString:
-      (startPart ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | SPACE) ~EOL* EOL?)
+      (startPart
+            // гиперссылка или не ключевое (ну и не конец строки)
+            (hyperlink | ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
+            (hyperlink | ~(EOL | EOF))* // любой
+        EOL)
     | (startPart EOL)
     ;
 
@@ -95,10 +98,12 @@ listTypes: (simpleType | complexType | hyperlinkType) (COMMA SPACE? (simpleType 
 
 complexType:
     collection=(WORD | DOTSWORD) SPACE OF_KEYWORD SPACE type;
-hyperlinkType:
-    SEE_KEYWORD SPACE link=(WORD | DOTSWORD) (LPAREN linkParams=~(EOL)* RPAREN)?;
 
-spitter: SPACE? DASH SPACE?;
+hyperlinkType: hyperlink;
+
 
 hyperlinkBlock: (startPart EOL)* startPart hyperlinkType SPACE? (EOL startPart)*;
+
+hyperlink: SEE_KEYWORD SPACE link=(WORD | DOTSWORD) (LPAREN linkParams=~EOL* RPAREN)?;
+spitter: SPACE? DASH SPACE?;
 startPart: SPACE? COMMENT SPACE?;

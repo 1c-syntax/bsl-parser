@@ -22,20 +22,20 @@
 package com.github._1c_syntax.bsl.parser.description.reader;
 
 import com.github._1c_syntax.bsl.parser.BSLDescriptionLexer;
-import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionParser;
+import com.github._1c_syntax.bsl.parser.BSLDescriptionParser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Tokenizer;
 
 public class BSLMethodDescriptionTokenizer
-  extends Tokenizer<BSLMethodDescriptionParser.MethodDescriptionContext, BSLMethodDescriptionParser> {
+  extends Tokenizer<BSLDescriptionParser.MethodDescriptionContext, BSLDescriptionParser> {
   public BSLMethodDescriptionTokenizer(String content) {
     super(content + "\n",
       new BSLDescriptionLexer(CharStreams.fromString("")),
-      BSLMethodDescriptionParser.class);
+      BSLDescriptionParser.class);
   }
 
   @Override
-  protected BSLMethodDescriptionParser.MethodDescriptionContext rootAST() {
+  protected BSLDescriptionParser.MethodDescriptionContext rootAST() {
     return parser.methodDescription();
   }
 }

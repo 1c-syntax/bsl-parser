@@ -27,13 +27,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class BSLMethodDescriptionParserMatchesTest {
+class BSLDescriptionParserMatchesTest {
 
-  private TestParser<BSLMethodDescriptionParser, BSLDescriptionLexer> testParser;
+  private TestParser<BSLDescriptionParser, BSLDescriptionLexer> testParser;
 
   @BeforeEach
   void before() {
-    testParser = new TestParser<>(BSLMethodDescriptionParser.class, BSLDescriptionLexer.class);
+    testParser = new TestParser<>(BSLDescriptionParser.class, BSLDescriptionLexer.class);
   }
 
   @ParameterizedTest
@@ -42,8 +42,12 @@ class BSLMethodDescriptionParserMatchesTest {
       "",
       "//Устарела но не\n//\n//\t//34567890-dfghjkl_)(*&^%$#@ Совсем \n//" +
         "//||Описание метода\n// \n//" +
-        "//Параметры//",
-      "//Устарела.", "//Параметры:", "//Варианты вызова:", "//Пример:", "//Возвращаемое значение:"
+        "//Параметры//\n",
+      "//Устарела.\n",
+      "//Параметры:",
+      "//Варианты вызова:",
+      "//Пример:",
+      "//Возвращаемое значение:"
     }
   )
   void testMethodDescription(String inputString) {
@@ -52,36 +56,33 @@ class BSLMethodDescriptionParserMatchesTest {
 
   @Test
   void testDeprecate() {
-    testParser.assertThat("").noMatches(testParser.parser().deprecate());
-    testParser.assertThat("//Устарела").matches(testParser.parser().deprecate());
+    testParser.assertThat("").noMatches(testParser.parser().deprecateBlock());
+    testParser.assertThat("//Устарела\n").matches(testParser.parser().deprecateBlock());
 
-    testParser.assertThat("//Описание\nУстарела").noMatches(testParser.parser().deprecate());
-    testParser.assertThat("//Описание\nУстарела.").noMatches(testParser.parser().deprecate());
+    testParser.assertThat("//Описание\nУстарела").noMatches(testParser.parser().deprecateBlock());
+    testParser.assertThat("//Описание\nУстарела.").noMatches(testParser.parser().deprecateBlock());
 
-    testParser.assertThat("// Устарела.")
-      .matches(testParser.parser().deprecate())
-      .noMatches(testParser.parser().deprecateDescription());
-    testParser.assertThat("//Устарела.")
-      .matches(testParser.parser().deprecate())
+    testParser.assertThat("// Устарела.\n")
+      .matches(testParser.parser().deprecateBlock())
       .noMatches(testParser.parser().deprecateDescription());
     testParser.assertThat("//Устарела.\n")
-      .matches(testParser.parser().deprecate())
+      .matches(testParser.parser().deprecateBlock())
+      .noMatches(testParser.parser().deprecateDescription());
+    testParser.assertThat("//Устарела.\n")
+      .matches(testParser.parser().deprecateBlock())
       .noMatches(testParser.parser().deprecateDescription());
 
-    testParser.assertThat("//Устарела. \nИспользовать другой метод")
-      .matches(testParser.parser().deprecate())
-      .containsRule(BSLMethodDescriptionParser.RULE_deprecateDescription, 0);
-    testParser.assertThat("//Устарела. \n//Использовать другой метод")
-      .matches(testParser.parser().deprecate())
-      .containsRule(BSLMethodDescriptionParser.RULE_deprecateDescription, 0);
+    testParser.assertThat("//Устарела. \n//Использовать другой метод\n")
+      .matches(testParser.parser().deprecateBlock())
+      .containsRule(BSLDescriptionParser.RULE_deprecateDescription, 1);
 
-    testParser.assertThat("//Устарела. Использовать другой метод")
-      .matches(testParser.parser().deprecate())
-      .containsRule(BSLMethodDescriptionParser.RULE_deprecateDescription, 1);
+    testParser.assertThat("//Устарела. Использовать другой метод\n")
+      .matches(testParser.parser().deprecateBlock())
+      .containsRule(BSLDescriptionParser.RULE_deprecateDescription, 1);
 
-    testParser.assertThat("//Устарела.Использовать другой метод")
+    testParser.assertThat("//Устарела.Использовать другой метод\n")
       .matches(testParser.parser().methodDescription())
-      .containsRule(BSLMethodDescriptionParser.RULE_deprecate, 0);
+      .containsRule(BSLDescriptionParser.RULE_deprecateBlock, 0);
   }
 
   @ParameterizedTest
@@ -91,15 +92,15 @@ class BSLMethodDescriptionParserMatchesTest {
     }
   )
   void testNoDescription(String inputString) {
-    testParser.assertThat(inputString).containsRule(BSLMethodDescriptionParser.RULE_description, 0);
+    testParser.assertThat(inputString).containsRule(BSLDescriptionParser.RULE_descriptionString, 0);
   }
 
   @Test
   void testDescription() {
     testParser.assertThat("//Устарела.\n//Описание\n//\n//ногостчрочное")
-      .containsRule(BSLMethodDescriptionParser.RULE_description, 1);
-    testParser.assertThat("//Описание \n// многострочное:")
-      .containsRule(BSLMethodDescriptionParser.RULE_description, 1);
+      .containsRule(BSLDescriptionParser.RULE_descriptionString, 3);
+    testParser.assertThat("//Описание \n// многострочное:\n")
+      .containsRule(BSLDescriptionParser.RULE_descriptionString, 2);
   }
 
   @Test
@@ -120,7 +121,7 @@ class BSLMethodDescriptionParserMatchesTest {
   void testParameters(String inputString) {
     testParser.assertThat(inputString)
       .matches(testParser.parser().parameters())
-      .containsRule(BSLMethodDescriptionParser.RULE_parameterString, 3);
+      .containsRule(BSLDescriptionParser.RULE_parameterString, 3);
   }
 
   @Test
@@ -128,10 +129,10 @@ class BSLMethodDescriptionParserMatchesTest {
     testParser.assertThat("//returns").noMatches(testParser.parser().returnsValues());
     testParser.assertThat("//returns:\n//boolean - description\n")
       .matches(testParser.parser().returnsValues())
-      .containsRule(BSLMethodDescriptionParser.RULE_returnsValuesString, 1);
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 1);
     testParser.assertThat("//returns:\n// - ref - description\n// - boolean - description\n//Example:")
       .matches(testParser.parser().returnsValues())
-      .containsRule(BSLMethodDescriptionParser.RULE_returnsValuesString, 2);
+      .containsRule(BSLDescriptionParser.RULE_returnsValuesString, 2);
   }
 
   @Test
@@ -139,9 +140,9 @@ class BSLMethodDescriptionParserMatchesTest {
     testParser.assertThat("//Пример").noMatches(testParser.parser().examples());
     testParser.assertThat("//Пример:\n//Пример - описаниепримера")
       .matches(testParser.parser().examples())
-      .containsRule(BSLMethodDescriptionParser.RULE_examplesString, 1);
+      .containsRule(BSLDescriptionParser.RULE_examplesString, 1);
     testParser.assertThat("//Пример:\n//Пример:\n//Пример: - описаниепримера")
       .matches(testParser.parser().examples())
-      .containsRule(BSLMethodDescriptionParser.RULE_examplesString, 2);
+      .containsRule(BSLDescriptionParser.RULE_examplesString, 2);
   }
 }

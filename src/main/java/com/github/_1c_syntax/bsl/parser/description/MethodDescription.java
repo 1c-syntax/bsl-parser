@@ -22,6 +22,7 @@
 package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.description.reader.DescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import lombok.Builder;
 import lombok.Value;
@@ -73,11 +74,9 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
   List<TypeDescription> returnedValue;
 
   /**
-   * Если описание содержит только ссылку, то здесь будет ее значение.
-   * <p>
-   * TODO Временное решение, надо будет продумать в следующем релизе
+   * Список всех ссылок, которые могут быть в описании.
    */
-  String link;
+  List<Hyperlink> links;
 
   /**
    * Диапазон, в котором располагается описание.

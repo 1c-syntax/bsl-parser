@@ -21,8 +21,11 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
+
+import java.util.List;
 
 /**
  * Интерфейс описания символов, определенных в исходном коде.
@@ -62,11 +65,11 @@ public interface SourceDefinedSymbolDescription {
   String getPurposeDescription();
 
   /**
-   * Если описание содержит только ссылку, то здесь будет ее значение
-   * <p>
-   * TODO Временное решение, надо будет продумать в следующем релизе
+   * Список всех ссылок, которые могут быть в описании.
+   *
+   * @return Список ссылок
    */
-  String getLink();
+  List<Hyperlink> getLinks();
 
   /**
    * Диапазон, в котором располагается описание.
