@@ -127,37 +127,37 @@ public class DescriptionReader {
   private List<TypeDescription> readReturnedValue(BSLDescriptionParser.MethodDescriptionContext ctx) {
 
     // возвращаемого значения нет
-    if (ctx.returnsValues() == null) {
+    if (ctx.returnsValuesBlock() == null) {
       return Collections.emptyList();
     }
 
-    // есть только гиперссылка вместо значения
-    if (ctx.returnsValues().hyperlinkBlock() != null) {
-      List<TypeDescription> result = new ArrayList<>();
-      if (ctx.returnsValues().hyperlinkBlock().hyperlinkType() != null) {
-        var hyperlink = getDescriptionString(ctx.returnsValues().hyperlinkBlock());
-        result.add(new TypeDescription(hyperlink,
-          "",
-          Collections.emptyList(),
-          hyperlink.substring(HYPERLINK_REF_LEN),
-          true));
-      }
-      return result;
-    }
+//    // есть только гиперссылка вместо значения
+//    if (ctx.returnsValues().hyperlinkBlock() != null) {
+//      List<TypeDescription> result = new ArrayList<>();
+//      if (ctx.returnsValues().hyperlinkBlock().hyperlinkType() != null) {
+//        var hyperlink = getDescriptionString(ctx.returnsValues().hyperlinkBlock());
+//        result.add(new TypeDescription(hyperlink,
+//          "",
+//          Collections.emptyList(),
+//          hyperlink.substring(HYPERLINK_REF_LEN),
+//          true));
+//      }
+//      return result;
+//    }
 
     // блок возвращаемого значения есть, но самих нет
-    if (ctx.returnsValues().returnsValuesString() == null) {
+    if (ctx.returnsValuesBlock().returnsValuesString() == null) {
       return Collections.emptyList();
     }
 
     var fakeParam = new TempParameterData("");
     var typeStartStringLen = -1;
-    for (BSLDescriptionParser.ReturnsValuesStringContext string : ctx.returnsValues().returnsValuesString()) {
+    for (BSLDescriptionParser.ReturnsValuesStringContext string : ctx.returnsValuesBlock().returnsValuesString()) {
       // это строка с возвращаемым значением
       if (string.returnsValue() != null) {
-        if (typeStartStringLen == -1 || string.returnsValue().startPart().getText().length() == typeStartStringLen) {
+        if (typeStartStringLen == -1 || string.startPart().getText().length() == typeStartStringLen) {
           fakeParam.addType(string.returnsValue().type(), string.returnsValue().typeDescription());
-          typeStartStringLen = string.returnsValue().startPart().getText().length();
+          typeStartStringLen = string.startPart().getText().length();
         } else {
           var text = "";
           if (string.returnsValue().type() != null && string.returnsValue().type().getText() != null) {

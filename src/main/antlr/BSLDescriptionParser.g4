@@ -31,8 +31,8 @@ options {
 // структура описания
 methodDescription:
     (
-          (deprecateBlock? descriptionBlock? parametersBlock? returnsValues? examplesBlock?)
-        | (descriptionBlock? parametersBlock? returnsValues? examplesBlock? deprecateBlock?)
+          (deprecateBlock? descriptionBlock? parametersBlock? returnsValuesBlock? examplesBlock?)
+        | (descriptionBlock? parametersBlock? returnsValuesBlock? examplesBlock? deprecateBlock?)
     ) EOF;
 
 // deprecate
@@ -76,21 +76,23 @@ parameter: parameterName typesBlock;
 field: level=STAR SPACE? parameterName typesBlock;
 parameterName: WORD;
 
-
-
 // returnsValues
-returnsValues: startPart RETURNS_KEYWORD SPACE? (EOL (hyperlinkBlock | returnsValuesString+)?)? EOL?;
+returnsValuesBlock: returnsValuesHead returnsValuesStrings=returnsValuesString*;
+returnsValuesHead: startPart RETURNS_KEYWORD SPACE? EOL;
 returnsValuesString:
-    returnsValue
+    (startPart returnsValue)
     | (startPart typesBlock)
     | (startPart field)
     | (startPart typeDescription)
-    | (startPart EOL?)
-;
+    ;
 
-returnsValue: startPart type ((spitter typeDescription?) | EOL);
-
-typesBlock: spitter type ((spitter typeDescription?) | EOL);
+returnsValue: type
+    (
+        (spitter typeDescription)
+        | (spitter EOL)
+        | EOL
+    )
+    ;
 
 typeDescription:
     (
@@ -100,6 +102,8 @@ typeDescription:
     )
     | (SPACE* EOL)
     ;
+
+typesBlock: spitter type ((spitter typeDescription?) | EOL);
 
 type:
     hyperlinkType
