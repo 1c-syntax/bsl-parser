@@ -54,6 +54,10 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
   private TempParameterData lastReadParam = null;
   private int typeLevel = -1;
 
+  private MethodDescriptionReader() {
+
+  }
+
   /**
    * Читает описание метода из списока токенов комментария.
    *

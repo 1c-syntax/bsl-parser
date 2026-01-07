@@ -41,6 +41,10 @@ public class VariableDescriptionReader extends BSLDescriptionParserBaseVisitor<P
 
   private final VariableDescription.VariableDescriptionBuilder builder = VariableDescription.builder();
 
+  private VariableDescriptionReader() {
+
+  }
+
   /**
    * Читает описание переменной из списка токенов комментария.
    *
