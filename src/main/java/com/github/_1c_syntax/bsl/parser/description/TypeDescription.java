@@ -21,52 +21,48 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import lombok.Value;
-
 import java.util.List;
 
 /**
  * Описание типа параметра, прочитанного из описания метода
+ *
  */
-@Value
-public class TypeDescription {
+public interface TypeDescription {
+  /**
+   * Возвращает имя типа
+   *
+   * @return имя типа
+   */
+  String name();
 
   /**
-   * Имя типа. На данный момент может быть строковый массив перечисления типов а также гиперссылка на метод
+   * Возвращает текстовое описание типа
+   *
+   * @return Описание типа
    */
-  String name;
+  String description();
 
   /**
-   * Описание типа. Может быть пустым
+   * Возвращает вариант типа
+   *
+   * @return Вариант типа
    */
-  String description;
+  Variant variant();
 
   /**
-   * Параметры (ключи или поля) типа для сложных типов данных. Может быть пустым
+   * Поля типа. Используется для описания сложных типов, хотя, иногда, из-за некорректности описания могут быть и у
+   * простых.
+   *
+   * @return Список полей типа
    */
-  List<ParameterDescription> parameters;
+  List<ParameterDescription> fields();
 
   /**
-   * Если описание параметров содержит только ссылку, то здесь будет ее значение
-   * <p>
-   * TODO Временное решение, надо будет продумать в следующем релизе
+   * Возможные виды типов
    */
-  String link;
-
-  /**
-   * Признак того, что параметр является гиперссылкой
-   */
-  boolean isHyperlink;
-
-  public TypeDescription(String name,
-                         String description,
-                         List<ParameterDescription> parameters,
-                         String link,
-                         boolean isHyperlink) {
-    this.name = name;
-    this.description = description;
-    this.parameters = parameters;
-    this.link = link;
-    this.isHyperlink = isHyperlink;
+  enum Variant {
+    SIMPLE,     // простой тип
+    COLLECTION, // коллекция
+    HYPERLINK   // гиперссылка
   }
 }

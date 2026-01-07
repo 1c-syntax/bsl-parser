@@ -1,11 +1,37 @@
+/*
+ * This file is a part of BSL Parser.
+ *
+ * Copyright (c) 2018-2026
+ * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
+ *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ *
+ * BSL Parser is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ *
+ * BSL Parser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with BSL Parser.
+ */
 package com.github._1c_syntax.bsl.parser.description.reader;
 
 import com.github._1c_syntax.bsl.parser.BSLDescriptionParser;
 import com.github._1c_syntax.bsl.parser.BSLDescriptionParserBaseVisitor;
+import com.github._1c_syntax.bsl.parser.description.CollectionTypeDescription;
+import com.github._1c_syntax.bsl.parser.description.HyperlinkTypeDescription;
 import com.github._1c_syntax.bsl.parser.description.MethodDescription;
 import com.github._1c_syntax.bsl.parser.description.ParameterDescription;
+import com.github._1c_syntax.bsl.parser.description.SimpleTypeDescription;
 import com.github._1c_syntax.bsl.parser.description.TypeDescription;
+import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
+import lombok.Getter;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -91,8 +117,6 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
         .map(ReaderUtils::extractText)
         .collect(Collectors.joining("\n"))
         .strip());
-    } else {
-      builder.examples("");
     }
     return ctx;
   }
@@ -104,47 +128,59 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       builder.parameters(Collections.emptyList());
     } else {
       // идем к строкам
-      lastReadParam = new TempParameterData();
+      lastReadParam = TempParameterData.create();
       super.visitParametersBlock(ctx);
       if (!lastReadParam.isEmpty()) {
-        builder.parameter(lastReadParam.makeParameterDescription());
+        builder.parameter(lastReadParam.build());
       }
     }
     return ctx;
   }
 
   @Override
-  public ParseTree visitParameterString(BSLDescriptionParser.ParameterStringContext string) {
-    // это строка с параметром
-    if (string.parameter() != null) {
-      if (!lastReadParam.isEmpty()) {
-        builder.parameter(lastReadParam.makeParameterDescription());
-      }
-      lastReadParam = new TempParameterData(string.parameter());
-    } else if (string.typesBlock() != null) { // это строка с описанием параметра
-      lastReadParam.addType(string.typesBlock().type(), string.typesBlock().typeDescription());
-    } else if (string.typeDescription() != null) { // это строка с описанием
-      if (lastReadParam.isEmpty()) {
-        var text = string.typeDescription().getText().trim();
-        if (!text.isEmpty()) {
-          if (text.split("\\s").length == 1) {
-            lastReadParam = new TempParameterData(text);
-          } else if (string.typeDescription().hyperlink() != null) { // считаем первой ссылкой
-            builder.parameter(new ParameterDescription("",
-              Collections.emptyList(),
-              ReaderUtils.extractText(string.typeDescription().hyperlink().get(0)).substring(4),
-              true));
-          }
-        }
-      } else {
-        lastReadParam.addTypeDescription(string.typeDescription());
-      }
-    } else if (string.field() != null) { // это строка с вложенным параметром типа
-      lastReadParam.addField(string.field());
-    } else { // прочее - пустая строка
-      // noop
+  public ParseTree visitParameter(BSLDescriptionParser.ParameterContext ctx) {
+    if (!lastReadParam.isEmpty()) {
+      builder.parameter(lastReadParam.build());
     }
-    return super.visitParameterString(string);
+    lastReadParam = TempParameterData.create(ctx);
+    return super.visitParameter(ctx);
+  }
+
+  @Override
+  public ParseTree visitTypesBlock(BSLDescriptionParser.TypesBlockContext ctx) {
+    if (lastReadParam.isEmpty()) {
+      return ctx;
+    }
+    lastReadParam.addType(ctx.type(), ctx.typeDescription());
+    return ctx;
+  }
+
+  @Override
+  public ParseTree visitField(BSLDescriptionParser.FieldContext ctx) {
+    lastReadParam.addField(ctx);
+    return ctx;
+  }
+
+  @Override
+  public ParseTree visitTypeDescription(BSLDescriptionParser.TypeDescriptionContext ctx) {
+    if (!lastReadParam.isEmpty()) {
+      lastReadParam.addTypeDescription(ctx);
+      return ctx;
+    }
+
+    if (ctx.hyperlink() != null && !ctx.hyperlink().isEmpty()) { // считаем первой ссылкой
+      lastReadParam = TempParameterData.create("");
+      lastReadParam.addType(ctx.hyperlink().get(0), ctx);
+      return ctx;
+    }
+
+    var text = ctx.getText().trim();
+    if (!text.isEmpty()) {
+      if (text.split("\\s").length == 1) {
+        lastReadParam = TempParameterData.create(text);
+      }
+    }
+    return ctx;
   }
 
   @Override
@@ -154,93 +190,84 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       builder.returnedValue(Collections.emptyList());
     } else {
       // идем к строкам
-      lastReadParam = new TempParameterData("");
+      lastReadParam = TempParameterData.create("");
       typeLevel = -1;
       super.visitReturnsValuesBlock(ctx);
-      builder.returnedValue(lastReadParam.makeParameterDescription().getTypes());
+      builder.returnedValue(lastReadParam.build().types());
     }
     return ctx;
   }
 
   @Override
-  public ParseTree visitReturnsValuesString(BSLDescriptionParser.ReturnsValuesStringContext string) {
+  public ParseTree visitReturnsValue(BSLDescriptionParser.ReturnsValueContext ctx) {
+    var currentLevel = ((BSLDescriptionParser.ReturnsValuesStringContext) ctx.getParent())
+      .startPart().getText().length();
 
-    // это строка с возвращаемым значением
-    if (string.returnsValue() != null) {
-      if (typeLevel == -1 || string.startPart().getText().length() == typeLevel) {
-        lastReadParam.addType(string.returnsValue().type(), string.returnsValue().typeDescription());
-        typeLevel = string.startPart().getText().length();
-      } else {
-        var text = "";
-        if (string.returnsValue().type() != null && string.returnsValue().type().getText() != null) {
-          text += string.returnsValue().type().getText();
-        }
-        if (string.returnsValue().typeDescription() != null && string.returnsValue().typeDescription().getText() != null) {
-          text += " - " + string.returnsValue().typeDescription().getText();
-        }
-        lastReadParam.addTypeDescription(text);
+    if (typeLevel == -1 || currentLevel == typeLevel) {
+      lastReadParam.addType(ctx.type(), ctx.typeDescription());
+      typeLevel = ctx.getText().length();
+    } else {
+      var text = "";
+      if (ctx.type() != null && ctx.type().getText() != null) {
+        text += ctx.type().getText();
       }
-    } else if (string.typesBlock() != null) { // это строка с описанием параметра
-      lastReadParam.addType(string.typesBlock().type(), string.typesBlock().typeDescription());
-    } else if (string.typeDescription() != null) { // это строка с описанием
-      lastReadParam.addTypeDescription(string.typeDescription());
-    } else if (string.field() != null) { // это строка с вложенным параметром типа
-      lastReadParam.addField(string.field());
-    } else { // прочее - пустая строка
-      // noop
+      if (ctx.typeDescription() != null && ctx.typeDescription().getText() != null) {
+        text += " - " + ctx.typeDescription().getText();
+      }
+      lastReadParam.addTypeDescription(text);
     }
-
-    return string;
+    return ctx;
   }
-
 
   /**
    * Служебный класс для временного хранения прочитанной информации из описания параметра
    */
   private static final class TempParameterData {
-    private String name;
-    private boolean empty;
+    private final String name;
+    @Getter
+    private final boolean empty;
     private final List<TempParameterTypeData> types;
     private int level;
 
-    private TempParameterData() {
-      this.name = "";
-      this.empty = true;
+    private TempParameterData(String name, boolean empty) {
       this.types = new ArrayList<>();
       this.level = 1;
-    }
-
-    private TempParameterData(BSLDescriptionParser.ParameterContext parameter) {
-      this();
-      if (parameter.parameterName() != null) {
-        this.name = parameter.parameterName().getText().strip().intern();
-        this.empty = false;
-        if (parameter.typesBlock() != null) {
-          addType(parameter.typesBlock().type(), parameter.typesBlock().typeDescription());
-        }
-      }
-    }
-
-    private TempParameterData(BSLDescriptionParser.FieldContext fieldContext, int level) {
-      this();
-      this.level = level;
-      if (fieldContext.parameterName() != null) {
-        this.name = fieldContext.parameterName().getText().strip().intern();
-        this.empty = false;
-        if (fieldContext.typesBlock() != null) {
-          addType(fieldContext.typesBlock().type(), fieldContext.typesBlock().typeDescription());
-        }
-      }
-    }
-
-    private TempParameterData(String name) {
-      this();
       this.name = name.strip().intern();
-      this.empty = false;
+      this.empty = empty;
     }
 
-    private boolean isEmpty() {
-      return empty;
+    private static TempParameterData create() {
+      return new TempParameterData("", true);
+    }
+
+    private static TempParameterData create(@Nullable String text) {
+      if (text == null) {
+        return create();
+      } else {
+        return new TempParameterData(text, false);
+      }
+    }
+
+    private static TempParameterData create(BSLDescriptionParser.ParameterContext parameter) {
+      if (parameter.parameterName() == null) {
+        return create();
+      } else {
+        return create(parameter.parameterName().getText());
+      }
+    }
+
+    private static TempParameterData create(BSLDescriptionParser.FieldContext fieldContext, int level) {
+      if (fieldContext.parameterName() == null) {
+        return create();
+      } else {
+        var fld = create(fieldContext.parameterName().getText());
+        fld.level = level;
+        if (fieldContext.typesBlock() != null) {
+          fld.addType(fieldContext.typesBlock().type(), fieldContext.typesBlock().typeDescription());
+        }
+
+        return fld;
+      }
     }
 
     private Optional<TempParameterTypeData> lastType() {
@@ -250,26 +277,13 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       return Optional.empty();
     }
 
-    private ParameterDescription makeParameterDescription() {
-      var parameterTypes = types.stream()
-        .map((TempParameterTypeData child) -> {
-          List<ParameterDescription> fields = new ArrayList<>();
-          if (!child.fields.isEmpty()) {
-            child.fields.forEach(field -> fields.add(field.makeParameterDescription()));
-          }
-          var link = "";
-          if (child.isHyperlink) {
-            link = child.name.substring(4);
-          }
-          return new TypeDescription(
-            child.name.intern(),
-            child.description.toString().strip(),
-            fields,
-            link,
-            child.isHyperlink
-          );
-        }).collect(Collectors.toList());
-      return new ParameterDescription(name.intern(), parameterTypes, "", false);
+    private ParameterDescription build() {
+      return new ParameterDescription(
+        name,
+        types.stream()
+          .map(TempParameterTypeData::build)
+          .toList()
+      );
     }
 
     private void addType(@Nullable BSLDescriptionParser.TypeContext paramType,
@@ -279,29 +293,68 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       }
 
       if (paramType.listTypes() != null) {
+        var firstDescription = paramDescription;
         var stringTypes = paramType.listTypes().listType();
         for (var stringType : stringTypes) {
-          if (!stringType.getText().isBlank()) {
-            addType(paramDescription, stringType.getText().strip(), false);
+          if (stringType.hyperlinkType() != null) {
+            addType(stringType.hyperlinkType(), firstDescription);
+          } else if (stringType.simpleType() != null) {
+            addType(stringType.simpleType(), firstDescription);
+          } else if (stringType.collectionType() != null) {
+            addType(stringType.collectionType(), firstDescription);
+          } else {
+            // noop
           }
+          firstDescription = null;
         }
       } else if (paramType.hyperlinkType() != null) {
-        addType(paramDescription, paramType.hyperlinkType().getText(), true);
+        addType(paramType.hyperlinkType(), paramDescription);
       } else if (paramType.simpleType() != null) {
-        addType(paramDescription, paramType.simpleType().typeName.getText(), false);
+        addType(paramType.simpleType(), paramDescription);
       } else if (paramType.collectionType() != null) {
-        addType(paramDescription, paramType.collectionType().getText(), false);
+        addType(paramType.collectionType(), paramDescription);
       } else {
         // noop
       }
     }
 
-    private void addType(@Nullable BSLDescriptionParser.TypeDescriptionContext descriptionContext,
-                         String text,
-                         boolean isHyperlink) {
-      var newType = new TempParameterTypeData(text, level, isHyperlink);
-      if (descriptionContext != null) {
-        newType.addTypeDescription(descriptionContext);
+    private void addType(BSLDescriptionParser.HyperlinkTypeContext ctx,
+                         @Nullable BSLDescriptionParser.TypeDescriptionContext description) {
+      if (ctx.hyperlink() != null) {
+        addType(ctx.hyperlink(), description);
+      }
+    }
+
+    private void addType(BSLDescriptionParser.SimpleTypeContext typeContext,
+                         @Nullable BSLDescriptionParser.TypeDescriptionContext description) {
+      var lastType = new TempParameterTypeData(typeContext.typeName, TypeDescription.Variant.SIMPLE, level);
+      if (description != null) {
+        lastType.addTypeDescription(description);
+      }
+      types.add(lastType);
+    }
+
+    private void addType(BSLDescriptionParser.HyperlinkContext ctx,
+                         @Nullable BSLDescriptionParser.TypeDescriptionContext description) {
+      var newType = new TempParameterTypeData(
+        ctx.link,
+        ctx.linkParams,
+        TypeDescription.Variant.HYPERLINK,
+        level);
+      if (description != null) {
+        newType.addTypeDescription(description);
+      }
+      types.add(newType);
+    }
+
+    private void addType(BSLDescriptionParser.CollectionTypeContext typeContext,
+                         @Nullable BSLDescriptionParser.TypeDescriptionContext description) {
+      var newType = new TempParameterTypeData(typeContext.collection, TypeDescription.Variant.COLLECTION, level);
+      if (typeContext.type() != null) {
+        newType.addType(typeContext.type());
+      }
+      if (description != null) {
+        newType.addTypeDescription(description);
       }
       types.add(newType);
     }
@@ -323,18 +376,36 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
    * Служебный класс для временного хранения прочитанной информации из описания типа
    */
   private static final class TempParameterTypeData {
-    private final String name;
+    private String name;
     private final StringJoiner description;
     private final int level;
     private final List<TempParameterData> fields;
-    private final boolean isHyperlink;
+    private final TypeDescription.Variant variant;
+    private TempParameterTypeData valueType;
+    private Hyperlink hyperlink;
 
-    private TempParameterTypeData(String name, int level, boolean isHyperlink) {
-      this.name = name.intern();
-      this.description = new StringJoiner("\n");
+    private TempParameterTypeData(TypeDescription.Variant variant, int level) {
+      this.name = "";
+      this.variant = variant;
       this.level = level;
+      this.description = new StringJoiner("\n");
+      this.hyperlink = Hyperlink.EMPTY;
       this.fields = new ArrayList<>();
-      this.isHyperlink = isHyperlink;
+      this.valueType = null;
+    }
+
+    private TempParameterTypeData(@Nullable Token link,
+                                  @Nullable Token linkParams,
+                                  TypeDescription.Variant variant,
+                                  int level) {
+      this(variant, level);
+      this.name = link == null ? "" : link.getText();
+      this.hyperlink = Hyperlink.create(this.name, linkParams == null ? "" : linkParams.getText());
+    }
+
+    private TempParameterTypeData(@Nullable Token typeName, TypeDescription.Variant variant, int level) {
+      this(variant, level);
+      this.name = typeName == null ? "" : typeName.getText();
     }
 
     private void addTypeDescription(BSLDescriptionParser.TypeDescriptionContext typeDescription) {
@@ -373,11 +444,37 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       }
 
       if (star.getText().length() == level) {
-        fields.add(new TempParameterData(fieldContext, level + 1));
+        fields.add(TempParameterData.create(fieldContext, level + 1));
       } else {
         lastField().ifPresent(field -> field.addField(fieldContext));
       }
     }
-  }
 
+    private void addType(BSLDescriptionParser.TypeContext type) {
+      var fakeParam = TempParameterData.create("");
+      fakeParam.addType(type, null);
+      fakeParam.lastType().ifPresent(lastType -> valueType = lastType);
+    }
+
+    private TypeDescription build() {
+      var fieldList = fields.stream()
+        .map(TempParameterData::build)
+        .toList();
+
+      return switch (variant) {
+        case SIMPLE -> SimpleTypeDescription.create(name, description.toString(), fieldList);
+        case COLLECTION -> CollectionTypeDescription.create(
+          name,
+          description.toString(),
+          valueType == null ? SimpleTypeDescription.EMPTY : valueType.build(),
+          fieldList
+        );
+        case HYPERLINK -> HyperlinkTypeDescription.create(
+          hyperlink == null ? Hyperlink.EMPTY : hyperlink,
+          description.toString(),
+          fieldList
+        );
+      };
+    }
+  }
 }

@@ -21,45 +21,43 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import lombok.Value;
+import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Описание параметра из комментария - описания метода
+ *
+ * @param name  Имя параметра
+ * @param types Список типов параметра
  */
-@Value
-public class ParameterDescription {
+public record ParameterDescription(String name, List<TypeDescription> types) {
+  /**
+   * @param name  Имя параметра
+   * @param types Возможные типы параметра. Может быть пустым
+   */
+  public ParameterDescription(String name, List<TypeDescription> types) {
+    this.name = name.strip().intern();
+    this.types = Collections.unmodifiableList(types);
+  }
 
   /**
-   * Имя параметра
+   * Если параметр имеет только один тип, равные ссылке - вернет истину
+   *
+   * @return Тип параметра является ссылкой
    */
-  String name;
+  public boolean isHyperlink() {
+    return types.size() == 1
+      && types.get(0).variant() == TypeDescription.Variant.HYPERLINK;
+  }
 
   /**
-   * Возможные типы параметра. Может быть пустым
+   * Если параметр является гиперссылкой, то вернет эту ссылку, иначе - пустую
+   *
+   * @return Содержимое гиперссылки
    */
-  List<TypeDescription> types;
-
-  /**
-   * Если описание параметров содержит только ссылку, то здесь будет ее значение
-   * <p>
-   * TODO Временное решение, надо будет продумать в следующем релизе
-   */
-  String link;
-
-  /**
-   * Признак того, что параметр является гиперссылкой
-   */
-  boolean isHyperlink;
-
-  public ParameterDescription(String name,
-                              List<TypeDescription> types,
-                              String link,
-                              boolean isHyperlink) {
-    this.name = name;
-    this.types = types;
-    this.link = link;
-    this.isHyperlink = isHyperlink;
+  public Hyperlink link() {
+    return (isHyperlink()) ? ((HyperlinkTypeDescription) types.get(0)).hyperlink() : Hyperlink.EMPTY;
   }
 }

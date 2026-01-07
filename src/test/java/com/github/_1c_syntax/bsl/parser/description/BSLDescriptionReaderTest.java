@@ -69,26 +69,26 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getLinks()).hasSize(1);
     assertThat(methodDescription.getParameters()).hasSize(9);
     checkParameter(methodDescription.getParameters().get(0),
-      "ПараметрыВыполнения", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
-      "см. ДлительныеОперации.ПараметрыВыполненияПроцедуры",
+      "ПараметрыВыполнения", 1, "ДлительныеОперации.ПараметрыВыполненияПроцедуры", true);
+    checkType(methodDescription.getParameters().get(0).types().get(0),
+      "ДлительныеОперации.ПараметрыВыполненияПроцедуры",
       "", 0, "ДлительныеОперации.ПараметрыВыполненияПроцедуры", true);
     checkParameter(methodDescription.getParameters().get(1), "ИмяПроцедуры", 1, "", false);
-    checkType(methodDescription.getParameters().get(1).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(1).types().get(0),
       "Строка", """
         имя экспортной процедуры общего модуля, модуля менеджера объекта
         или модуля обработки, которую необходимо выполнить в фоне.
         Например, "МойОбщийМодуль.МояПроцедура", "Отчеты.ЗагруженныеДанные.Сформировать"
         или "Обработки.ЗагрузкаДанных.МодульОбъекта.Загрузить".""", 0, "", false);
     checkParameter(methodDescription.getParameters().get(2), "Параметр1", 1, "", false);
-    checkType(methodDescription.getParameters().get(2).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(2).types().get(0),
       "Произвольный", "произвольные параметры вызова процедуры. Количество параметров может быть от 0 до 7.",
       0, "", false);
     checkParameter(methodDescription.getParameters().get(3), "Параметр2", 1, "", false);
     checkParameter(methodDescription.getParameters().get(4), "Параметр3", 1, "", false);
     checkParameter(methodDescription.getParameters().get(7), "Параметр6", 1, "", false);
     checkParameter(methodDescription.getParameters().get(8), "Параметр7", 1, "", false);
-    checkType(methodDescription.getParameters().get(8).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(8).types().get(0),
       "Произвольный", "", 0, "", false);
 
     assertThat(
@@ -97,9 +97,9 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0), "Структура", "параметры выполнения задания:",
       5, "", false);
-    checkParameter(methodDescription.getReturnedValue().get(0).getParameters().get(0),
+    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(0),
       "Статус", 1, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).getParameters().get(0).getTypes().get(0),
+    checkType(methodDescription.getReturnedValue().get(0).fields().get(0).types().get(0),
       "Строка", """
         "Выполняется", если задание еще не завершилось;
         "Выполнено", если задание было успешно выполнено;
@@ -122,7 +122,7 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getParameters()).hasSize(1);
     checkParameter(methodDescription.getParameters().get(0),
       "РежимДиалога", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(0).types().get(0),
       "РежимДиалогаВыбораФайла", "режим работы конструируемого диалога выбора файлов.",
       0, "", false);
 
@@ -131,7 +131,7 @@ class BSLDescriptionReaderTest {
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
-      "см. ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла", "",
+      "ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла", "",
       0, "ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла", true);
   }
 
@@ -158,20 +158,20 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getParameters()).hasSize(5);
     checkParameter(methodDescription.getParameters().get(0),
       "КлючОбъекта", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(0).types().get(0),
       "Строка",
       "см. синтакс-помощник платформы.", 0, "", false);
     checkParameter(methodDescription.getParameters().get(1), "КлючНастроек", 1, "", false);
-    checkType(methodDescription.getParameters().get(1).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(1).types().get(0),
       "Строка", "см. синтакс-помощник платформы.", 0, "", false);
     checkParameter(methodDescription.getParameters().get(2), "ЗначениеПоУмолчанию", 1, "", false);
-    checkType(methodDescription.getParameters().get(2).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(2).types().get(0),
       "Произвольный", "значение, которое возвращается, если настройки не существуют.\n" +
         "Если не указано, возвращается значение Неопределено.",
       0, "", false);
     checkParameter(methodDescription.getParameters().get(3), "ОписаниеНастроек", 1, "", false);
     checkParameter(methodDescription.getParameters().get(4), "ИмяПользователя", 1, "", false);
-    checkType(methodDescription.getParameters().get(4).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(4).types().get(0),
       "Строка", "см. синтакс-помощник платформы.", 0, "", false);
 
     assertThat(
@@ -193,15 +193,15 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getParameters()).hasSize(3);
     checkParameter(methodDescription.getParameters().get(0),
       "П1", 2, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(0).types().get(0),
       "Дата", "Описание даты/числа", 0, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(1),
-      "Число", "Описание даты/числа", 0, "", false);
+    checkType(methodDescription.getParameters().get(0).types().get(1),
+      "Число", "", 0, "", false);
     checkParameter(methodDescription.getParameters().get(1), "П2", 1, "", false);
-    checkType(methodDescription.getParameters().get(1).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(1).types().get(0),
       "Число", "Описание числа", 0, "", false);
     checkParameter(methodDescription.getParameters().get(2), "П3", 1, "", false);
-    checkType(methodDescription.getParameters().get(2).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(2).types().get(0),
       "Строка", "Описание строки", 0, "", false);
 
     assertThat(
@@ -229,24 +229,24 @@ class BSLDescriptionReaderTest {
       "Структура", "настройки (дополнительные свойства) отчета, хранящиеся в данных формы:",
       10, "", false);
 
-    checkParameter(methodDescription.getReturnedValue().get(0).getParameters().get(0),
+    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(0),
       "ФормироватьСразу", 1, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).getParameters().get(0).getTypes().get(0),
+    checkType(methodDescription.getReturnedValue().get(0).fields().get(0).types().get(0),
       "Булево", """
         значение по умолчанию для флажка "Формировать сразу".
         Когда флажок включен, то отчет будет формироваться после открытия,
         после выбора пользовательских настроек, после выбора другого варианта отчета.""",
       0, "", false);
 
-    checkParameter(methodDescription.getReturnedValue().get(0).getParameters().get(1),
+    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(1),
       "ВыводитьСуммуВыделенныхЯчеек", 1, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).getParameters().get(1).getTypes().get(0),
+    checkType(methodDescription.getReturnedValue().get(0).fields().get(1).types().get(0),
       "Булево", "если Истина, то в отчете будет выводиться поле автосуммы.",
       0, "", false);
 
-    checkParameter(methodDescription.getReturnedValue().get(0).getParameters().get(4),
+    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(4),
       "РазрешеноВыбиратьИНастраиватьВариантыБезСохранения", 1, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).getParameters().get(4).getTypes().get(0),
+    checkType(methodDescription.getReturnedValue().get(0).fields().get(4).types().get(0),
       "Булево", """
         если Истина,
         то есть возможность выбора и настройки предопределенных вариантов отчета, но без возможности сохранения
@@ -254,11 +254,13 @@ class BSLDescriptionReaderTest {
         у которых есть несколько вариантов.""",
       0, "", false);
 
-    checkParameter(methodDescription.getReturnedValue().get(0).getParameters().get(5),
+    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(5),
       "ПараметрыРасположенияЭлементовУправления", 2, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).getParameters().get(5).getTypes().get(1),
+    checkType(methodDescription.getReturnedValue().get(0).fields().get(5).types().get(0),
+      "Структура", "варианты:",
+      0, "", false);
+    checkType(methodDescription.getReturnedValue().get(0).fields().get(5).types().get(1),
       "Неопределено", """
-        варианты:
         Неопределено - параметры элементов управления общей формы отчетов "по умолчанию".
         Структура - с именами настройки в коллекции НастройкиКомпоновкиДанных свойства Настройки
         типа КомпоновщикНастроекКомпоновкиДанных:""",
@@ -291,28 +293,28 @@ class BSLDescriptionReaderTest {
     checkParameter(firstParameter,
       "Входной", 1, "", false);
 
-    checkType(firstParameter.getTypes().get(0),
+    checkType(firstParameter.types().get(0),
       "Структура", "настройки (дополнительные свойства) отчета, хранящиеся в данных формы:",
       10, "", false);
 
-    checkParameter(firstParameter.getTypes().get(0).getParameters().get(0),
+    checkParameter(firstParameter.types().get(0).fields().get(0),
       "ФормироватьСразу", 1, "", false);
-    checkType(firstParameter.getTypes().get(0).getParameters().get(0).getTypes().get(0),
+    checkType(firstParameter.types().get(0).fields().get(0).types().get(0),
       "Булево", """
         значение по умолчанию для флажка "Формировать сразу".
         Когда флажок включен, то отчет будет формироваться после открытия,
         после выбора пользовательских настроек, после выбора другого варианта отчета.""",
       0, "", false);
 
-    checkParameter(firstParameter.getTypes().get(0).getParameters().get(1),
+    checkParameter(firstParameter.types().get(0).fields().get(1),
       "ВыводитьСуммуВыделенныхЯчеек", 1, "", false);
-    checkType(firstParameter.getTypes().get(0).getParameters().get(1).getTypes().get(0),
+    checkType(firstParameter.types().get(0).fields().get(1).types().get(0),
       "Булево", "если Истина, то в отчете будет выводиться поле автосуммы.",
       0, "", false);
 
-    checkParameter(firstParameter.getTypes().get(0).getParameters().get(4),
+    checkParameter(firstParameter.types().get(0).fields().get(4),
       "РазрешеноВыбиратьИНастраиватьВариантыБезСохранения", 1, "", false);
-    checkType(firstParameter.getTypes().get(0).getParameters().get(4).getTypes().get(0),
+    checkType(firstParameter.types().get(0).fields().get(4).types().get(0),
       "Булево", """
         если Истина,
         то есть возможность выбора и настройки предопределенных вариантов отчета, но без возможности сохранения
@@ -320,11 +322,10 @@ class BSLDescriptionReaderTest {
         у которых есть несколько вариантов.""",
       0, "", false);
 
-    checkParameter(firstParameter.getTypes().get(0).getParameters().get(5),
+    checkParameter(firstParameter.types().get(0).fields().get(5),
       "ПараметрыРасположенияЭлементовУправления", 2, "", false);
-    checkType(firstParameter.getTypes().get(0).getParameters().get(5).getTypes().get(1),
+    checkType(firstParameter.types().get(0).fields().get(5).types().get(1),
       "Неопределено", """
-        варианты:
         Неопределено - параметры элементов управления общей формы отчетов "по умолчанию".
         Структура - с именами настройки в коллекции НастройкиКомпоновкиДанных свойства Настройки
         типа КомпоновщикНастроекКомпоновкиДанных:""",
@@ -342,7 +343,7 @@ class BSLDescriptionReaderTest {
       .containsExactly(Hyperlink.create("CommonModule.MyModule.MyFunc()"));
     assertThat(methodDescription.getParameters()).hasSize(1);
     checkParameter(methodDescription.getParameters().get(0),
-      "", 0, "CommonModule.MyModule.MyFunc()", true);
+      "", 1, "CommonModule.MyModule.MyFunc()", true);
     assertThat(methodDescription.getReturnedValue()).isEmpty();
   }
 
@@ -375,8 +376,8 @@ class BSLDescriptionReaderTest {
 
     checkParameter(firstParameter,
       "Параметр", 1, "", false);
-    checkType(firstParameter.getTypes().get(0),
-      "Массив из см. МойКлассныйМодуль.МойКлассныйКонструктор", "Моё классное описание",
+    checkType(firstParameter.types().get(0),
+      "Массив<МойКлассныйМодуль.МойКлассныйКонструктор>", "Моё классное описание",
       0, "", false);
 
     assertThat(methodDescription.getReturnedValue()).isEmpty();
@@ -497,29 +498,28 @@ class BSLDescriptionReaderTest {
 
     checkParameter(methodDescription.getParameters().get(0),
       "ФункцияРазворачивания", 2, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(0).types().get(0),
       "Строка", "функция разворачивания.", 0, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(1),
+    checkType(methodDescription.getParameters().get(0).types().get(1),
       "ОписаниеОповещения", """
-        функция разворачивания.
         В случае передачи Строки формируется служебное описание оповещения, в контексте которого заданы переменные
         "Результат", "ДополнительныеПараметры", "Элемент".
         В случае передачи ОписанияОповещения обработчик данного описания должен содержать два параметра
         (имена произвольные):""", 2, "", false);
 
-    checkParameter(methodDescription.getParameters().get(0).getTypes().get(1).getParameters().get(0),
+    checkParameter(methodDescription.getParameters().get(0).types().get(1).fields().get(0),
       "Результат", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(1).getParameters().get(0).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(0).types().get(1).fields().get(0).types().get(0),
       "ПроцессорКоллекций", "Переменная, в которую должен быть\n" +
         "помещен результат работы функции в виде ПроцессораКоллекций.", 0, "", false);
 
-    checkParameter(methodDescription.getParameters().get(0).getTypes().get(1).getParameters().get(1),
+    checkParameter(methodDescription.getParameters().get(0).types().get(1).fields().get(1),
       "ДополнительныеПараметры", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(1).getParameters().get(1).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(0).types().get(1).fields().get(1).types().get(0),
       "Структура", "Структура параметров, передаваемая функции разворачивания.", 0, "", false);
 
     checkParameter(methodDescription.getParameters().get(1), "ДополнительныеПараметры", 1, "", false);
-    checkType(methodDescription.getParameters().get(1).getTypes().get(0),
+    checkType(methodDescription.getParameters().get(1).types().get(0),
       "Структура", """
         Структура дополнительных параметров, передаваемая функции разворачивания.
         Служит для передачи дополнительных данных из прикладного кода в функцию разворачивания.
@@ -549,8 +549,8 @@ class BSLDescriptionReaderTest {
 
     checkParameter(methodDescription.getParameters().get(0),
       "Параметр", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).getTypes().get(0),
-      "Список из Массив из Список из См. Мой.Метод(СПараметром)", "", 0, "", false);
+    checkType(methodDescription.getParameters().get(0).types().get(0),
+      "Список<Массив<Список<Мой.Метод>>>", "", 0, "", false);
 
   }
 
@@ -566,9 +566,9 @@ class BSLDescriptionReaderTest {
                               int countTypes,
                               String link,
                               boolean isHyperlink) {
-    assertThat(parameter.getName()).isEqualTo(name);
-    assertThat(parameter.getLink()).isEqualTo(link);
-    assertThat(parameter.getTypes()).hasSize(countTypes);
+    assertThat(parameter.name()).isEqualTo(name);
+    assertThat(parameter.link()).isEqualTo(Hyperlink.create(link));
+    assertThat(parameter.types()).hasSize(countTypes);
     assertThat(parameter.isHyperlink()).isEqualTo(isHyperlink);
   }
 
@@ -578,11 +578,14 @@ class BSLDescriptionReaderTest {
                          int countParameters,
                          String link,
                          boolean isHyperlink) {
-    assertThat(type.getName()).isEqualTo(name);
-    assertThat(type.getDescription()).isEqualTo(description);
-    assertThat(type.getLink()).isEqualTo(link);
-    assertThat(type.getParameters()).hasSize(countParameters);
-    assertThat(type.isHyperlink()).isEqualTo(isHyperlink);
+    assertThat(type.name()).isEqualTo(name);
+    assertThat(type.description()).isEqualTo(description);
+    assertThat(type.variant() == TypeDescription.Variant.HYPERLINK).isEqualTo(isHyperlink);
+    if(isHyperlink) {
+      assertThat(type).isInstanceOf(HyperlinkTypeDescription.class);
+      assertThat(((HyperlinkTypeDescription) type).hyperlink()).isEqualTo(Hyperlink.create(link));
+    }
+    assertThat(type.fields()).hasSize(countParameters);
   }
 
   private SimpleRange create(int endLine, int endChar) {
