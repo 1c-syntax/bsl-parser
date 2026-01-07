@@ -23,7 +23,6 @@ package com.github._1c_syntax.bsl.parser.description;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
@@ -49,7 +48,7 @@ public class SimpleTypeDescription implements TypeDescription {
   public static final SimpleTypeDescription EMPTY = new SimpleTypeDescription("", "", Collections.emptyList());
 
   public static TypeDescription create(String name, String description, List<ParameterDescription> fieldList) {
-    if(name.isEmpty() && description.isEmpty()) {
+    if (name.isBlank() && description.isBlank()) {
       return EMPTY;
     }
     return new SimpleTypeDescription(

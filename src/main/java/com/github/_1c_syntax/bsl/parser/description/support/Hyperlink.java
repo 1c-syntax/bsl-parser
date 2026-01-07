@@ -23,6 +23,8 @@ package com.github._1c_syntax.bsl.parser.description.support;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * Описывает гиперссылку в комментария-описаниях (см. ссылка(параметры_ссылки))
  *
@@ -88,5 +90,10 @@ public record Hyperlink(String link, String params) {
   @Override
   public String toString() {
     return link + (params.isEmpty() ? "" : "(" + params + ")");
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(link, params);
   }
 }
