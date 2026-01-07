@@ -30,6 +30,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @param params Параметры ссылки (в скобках)
  */
 public record Hyperlink(String link, String params) {
+  /**
+   * Пустая ссылка
+   */
   public static final Hyperlink EMPTY = new Hyperlink("", "");
 
   /**
@@ -62,8 +65,8 @@ public record Hyperlink(String link, String params) {
     var pos = presentation.indexOf("(");
     if (pos > 0 && pos + 1 < presentation.length()) {
       var posEnd = presentation.lastIndexOf(")");
-      if (posEnd == 0) {
-        posEnd = presentation.length() - 1;
+      if (posEnd < 0) {
+        posEnd = presentation.length();
       }
       return create(presentation.substring(0, pos), presentation.substring(pos + 1, posEnd));
     } else {
@@ -73,18 +76,17 @@ public record Hyperlink(String link, String params) {
 
   @Override
   public boolean equals(@Nullable Object other) {
-    if (other == null) {
+    if (this == other) {
+      return true;
+    } else if (!(other instanceof Hyperlink otherLink)) {
       return false;
-    } else if (other instanceof String string) {
-      return this.equals(create(string));
-    } else if (!(other instanceof Hyperlink)) {
-      return false;
+    } else {
+      return link.equals(otherLink.link) && params.equals(otherLink.params);
     }
-    var hyperlink = (Hyperlink) other;
+  }
 
-    if (link.equals(hyperlink.link)) {
-      return params.equals(hyperlink.params);
-    }
-    return false;
+  @Override
+  public String toString() {
+    return link + (params.isEmpty() ? "" : "(" + params + ")");
   }
 }

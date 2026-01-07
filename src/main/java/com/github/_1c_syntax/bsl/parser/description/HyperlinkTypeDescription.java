@@ -29,6 +29,9 @@ import lombok.experimental.Accessors;
 
 import java.util.List;
 
+/**
+ * Класс для хранения описания типа гиперссылка
+ */
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class HyperlinkTypeDescription implements TypeDescription {
@@ -41,6 +44,9 @@ public class HyperlinkTypeDescription implements TypeDescription {
   @Accessors(fluent = true)
   List<ParameterDescription> fields;
 
+  /**
+   * Гиперссылка
+   */
   @Accessors(fluent = true)
   Hyperlink hyperlink;
 

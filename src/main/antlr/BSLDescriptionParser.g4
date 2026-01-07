@@ -1,7 +1,7 @@
 /**
  * This file is a part of BSL Parser.
  *
- * Copyright © 2018-2022
+ * Copyright © 2018-2026
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -88,8 +88,8 @@ returnsValuesString:
 
 returnsValue: type
     (
-        (spitter typeDescription)
-        | (spitter EOL)
+        (splitter typeDescription)
+        | (splitter EOL)
         | EOL
     )
     ;
@@ -103,10 +103,10 @@ typeDescription:
     | (SPACE* EOL)
     ;
 
-typesBlock: spitter type
+typesBlock: splitter type
     (
-        (spitter typeDescription)
-        | (spitter EOL)
+        (splitter typeDescription)
+        | (splitter EOL)
         | EOL
     )
     ;
@@ -119,5 +119,5 @@ listTypes: listType (COMMA SPACE? listType)+;
 listType: simpleType | collectionType | hyperlinkType;
 
 hyperlink: SEE_KEYWORD SPACE link=(WORD | DOTSWORD) (LPAREN linkParams=~EOL* RPAREN)?;
-spitter: SPACE? DASH SPACE?;
+splitter: SPACE? DASH SPACE?;
 startPart: SPACE? COMMENT SPACE?;

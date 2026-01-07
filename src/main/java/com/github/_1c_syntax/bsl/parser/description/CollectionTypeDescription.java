@@ -23,31 +23,43 @@ package com.github._1c_syntax.bsl.parser.description;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
 import java.util.List;
 
+/**
+ * Класс для хранения описания типа коллекции.
+ */
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CollectionTypeDescription implements TypeDescription {
-  @Getter
+
   @Accessors(fluent = true)
   String name;
 
-  @Getter
   @Accessors(fluent = true)
   String description;
 
-  @Getter
   @Accessors(fluent = true)
   List<ParameterDescription> fields;
 
+  /**
+   * Имя коллекции типа
+   */
+  @Accessors(fluent = true)
   String collectionName;
+
+  /**
+   * Значение элемента коллекции
+   */
+  @Accessors(fluent = true)
   TypeDescription valueType;
 
-  public static TypeDescription create(String collectionName, String description, TypeDescription valueType, List<ParameterDescription> fieldList) {
+  public static TypeDescription create(String collectionName,
+                                       String description,
+                                       TypeDescription valueType,
+                                       List<ParameterDescription> fieldList) {
     var valueTypeString = valueType.name();
     var name = collectionName;
     if (!valueTypeString.isEmpty()) {

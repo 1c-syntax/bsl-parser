@@ -36,15 +36,13 @@ import java.util.List;
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SimpleTypeDescription implements TypeDescription {
-  @Getter
+
   @Accessors(fluent = true)
   String name;
 
-  @Getter
   @Accessors(fluent = true)
   String description;
 
-  @Getter
   @Accessors(fluent = true)
   List<ParameterDescription> fields;
 

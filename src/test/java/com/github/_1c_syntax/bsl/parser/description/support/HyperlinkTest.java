@@ -121,19 +121,6 @@ class HyperlinkTest {
   }
 
   @Test
-  void testCreateFromPresentationWithUnmatchedBrackets() {
-    // given
-    var presentation = "example(param1,param2)";
-
-    // when
-    var hyperlink = Hyperlink.create(presentation);
-
-    // then
-    assertThat(hyperlink.link()).isEqualTo("example");
-    assertThat(hyperlink.params()).isEqualTo("param1,param2");
-  }
-
-  @Test
   void testEqualsWithEqualObject() {
     // given
     var hyperlink1 = Hyperlink.create("example", "param1,param2");
@@ -170,18 +157,5 @@ class HyperlinkTest {
 
     // then
     assertThat(result).isFalse();
-  }
-
-  @Test
-  void testEqualsWithString() {
-    // given
-    var hyperlink = Hyperlink.create("example", "param1,param2");
-    var string = "example(param1,param2)";
-
-    // when
-    var result = hyperlink.equals(string);
-
-    // then
-    assertThat(result).isTrue();
   }
 }

@@ -34,14 +34,30 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Вспомогательный класс для чтения описания переменной.
+ */
 public class VariableDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
 
   private final VariableDescription.VariableDescriptionBuilder builder = VariableDescription.builder();
 
+  /**
+   * Читает описание переменной из списка токенов комментария.
+   *
+   * @param comments Список токенов комментария.
+   * @return Описание переменной.
+   */
   public static VariableDescription read(List<Token> comments) {
     return read(comments, Optional.empty());
   }
 
+  /**
+   * Читает описание переменной из списка токенов комментария и токена висячего комментария.
+   *
+   * @param comments        Список токенов комментария.
+   * @param trailingComment Висячий комментарий.
+   * @return Описание переменной.
+   */
   public static VariableDescription read(List<Token> comments, Optional<Token> trailingComment) {
     var description = comments.stream()
       .map(Token::getText)

@@ -45,12 +45,21 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Вспомагательный класс для чтения описания метода.
+ */
 public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
 
   private final MethodDescription.MethodDescriptionBuilder builder = MethodDescription.builder();
   private TempParameterData lastReadParam = null;
   private int typeLevel = -1;
 
+  /**
+   * Читает описание метода из списока токенов комментария.
+   *
+   * @param comments Список токенов комментария.
+   * @return Описание метода.
+   */
   public static MethodDescription read(List<Token> comments) {
     var description = comments.stream()
       .map(Token::getText)
@@ -59,6 +68,13 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
     return read(description, SimpleRange.create(comments));
   }
 
+  /**
+   * Читает описание метода из текста.
+   *
+   * @param descriptionText Текст описания метода.
+   * @param range           Область расположения исходного текста
+   * @return Описание метода.
+   */
   private static MethodDescription read(String descriptionText, SimpleRange range) {
     var tokenizer = new BSLMethodDescriptionTokenizer(descriptionText);
     var ast = requireNonNull(tokenizer.getAst());
@@ -205,7 +221,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
 
     if (typeLevel == -1 || currentLevel == typeLevel) {
       lastReadParam.addType(ctx.type(), ctx.typeDescription());
-      typeLevel = ctx.getText().length();
+      typeLevel = currentLevel;
     } else {
       var text = "";
       if (ctx.type() != null && ctx.type().getText() != null) {
@@ -339,7 +355,6 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       var newType = new TempParameterTypeData(
         ctx.link,
         ctx.linkParams,
-        TypeDescription.Variant.HYPERLINK,
         level);
       if (description != null) {
         newType.addTypeDescription(description);
@@ -396,9 +411,8 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
 
     private TempParameterTypeData(@Nullable Token link,
                                   @Nullable Token linkParams,
-                                  TypeDescription.Variant variant,
                                   int level) {
-      this(variant, level);
+      this(TypeDescription.Variant.HYPERLINK, level);
       this.name = link == null ? "" : link.getText();
       this.hyperlink = Hyperlink.create(this.name, linkParams == null ? "" : linkParams.getText());
     }
@@ -470,7 +484,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
           fieldList
         );
         case HYPERLINK -> HyperlinkTypeDescription.create(
-          hyperlink == null ? Hyperlink.EMPTY : hyperlink,
+          hyperlink,
           description.toString(),
           fieldList
         );
