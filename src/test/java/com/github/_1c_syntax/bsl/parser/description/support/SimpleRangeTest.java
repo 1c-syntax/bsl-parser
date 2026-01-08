@@ -188,4 +188,66 @@ class SimpleRangeTest {
     assertThat(range2.equals(range21)).isTrue();
     assertThat(range2.equals("range21")).isFalse();
   }
+
+  @Test
+  void testCreateWithTokenAndShifts() {
+    // given
+    var token = new CommonToken(0);
+    token.setLine(1);
+    token.setCharPositionInLine(5);
+    token.setText("test");
+
+    int lineShift = 2;
+    int firstLineCharShift = 3;
+
+    // when
+    var result = SimpleRange.create(token, lineShift, firstLineCharShift);
+
+    // then
+    assertThat(result.startLine()).isEqualTo(2); // 1 - 1 + 2
+    assertThat(result.startCharacter()).isEqualTo(8); // 5 + 3
+    assertThat(result.endLine()).isEqualTo(2); // same as startLine
+    assertThat(result.endCharacter()).isEqualTo(12); // 5 + 3 + 4 (length of "test")
+  }
+
+  @Test
+  void testCreateWithTokenAndShiftsOnSecondLine() {
+    // given
+    var token = new CommonToken(0);
+    token.setLine(2);
+    token.setCharPositionInLine(5);
+    token.setText("test");
+
+    int lineShift = 2;
+    int firstLineCharShift = 3;
+
+    // when
+    var result = SimpleRange.create(token, lineShift, firstLineCharShift);
+
+    // then
+    assertThat(result.startLine()).isEqualTo(3); // 2 - 1 + 2
+    assertThat(result.startCharacter()).isEqualTo(5); // no shift for non-first line
+    assertThat(result.endLine()).isEqualTo(3); // same as startLine
+    assertThat(result.endCharacter()).isEqualTo(9); // 5 + 4 (length of "test")
+  }
+
+  @Test
+  void testCreateWithEOF() {
+    // given
+    var token = new CommonToken(Token.EOF);
+    token.setLine(1);
+    token.setCharPositionInLine(5);
+
+    int lineShift = 2;
+    int firstLineCharShift = 3;
+
+    // when
+    var result = SimpleRange.create(token, lineShift, firstLineCharShift);
+
+    // then
+    assertThat(result.startLine()).isEqualTo(2); // 1 - 1 + 2
+    assertThat(result.startCharacter()).isEqualTo(8); // 5 + 3
+    assertThat(result.endLine()).isEqualTo(2); // same as startLine
+    assertThat(result.endCharacter()).isEqualTo(8); // 5 + 3 for EOF
+  }
 }

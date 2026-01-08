@@ -19,23 +19,22 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-package com.github._1c_syntax.bsl.parser.description.reader;
+package com.github._1c_syntax.bsl.parser.description.support;
 
-import com.github._1c_syntax.bsl.parser.BSLDescriptionLexer;
-import com.github._1c_syntax.bsl.parser.BSLDescriptionParser;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Tokenizer;
-
-public class BSLMethodDescriptionTokenizer
-  extends Tokenizer<BSLDescriptionParser.MethodDescriptionContext, BSLDescriptionParser> {
-  public BSLMethodDescriptionTokenizer(String content) {
-    super(content + "\n",
-      new BSLDescriptionLexer(CharStreams.fromString("")),
-      BSLDescriptionParser.class);
-  }
-
-  @Override
-  protected BSLDescriptionParser.MethodDescriptionContext rootAST() {
-    return parser.methodDescription();
+/**
+ * Части описания (ключевые слова, конструкции)
+ *
+ * @param range Область расположения части описания
+ * @param type  Тип части описания
+ */
+public record DescriptionElement(SimpleRange range, Type type) {
+  public enum Type {
+    UNKNOWN,
+    RETURNS_KEYWORD,
+    EXAMPLE_KEYWORD,
+    PARAMETERS_KEYWORD,
+    DEPRECATE_KEYWORD,
+    PARAMETER_NAME,
+    TYPE_NAME
   }
 }

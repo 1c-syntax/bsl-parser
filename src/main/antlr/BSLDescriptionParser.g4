@@ -96,8 +96,8 @@ returnsValue: type
 
 typeDescription:
     (
-        (hyperlink | ~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
-        (hyperlink | ~(EOL | EOF))*
+        (hyperlink | first=~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
+        (hyperlink | second=~(EOL | EOF))*
         EOL
     )
     | (SPACE* EOL)

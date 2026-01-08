@@ -22,9 +22,11 @@
 package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.description.reader.VariableDescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import lombok.Builder;
+import lombok.Singular;
 import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
@@ -76,6 +78,9 @@ public class VariableDescription implements SourceDefinedSymbolDescription {
    * Описание "висячего" комментария
    */
   Optional<VariableDescription> trailingDescription;
+
+  @Singular
+  List<DescriptionElement> elements;
 
   public static VariableDescription create(List<Token> comments) {
     return VariableDescriptionReader.read(comments);

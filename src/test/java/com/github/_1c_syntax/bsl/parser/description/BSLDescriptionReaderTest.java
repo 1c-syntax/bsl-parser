@@ -23,6 +23,7 @@ package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.BSLParser;
 import com.github._1c_syntax.bsl.parser.BSLTokenizer;
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import com.github._1c_syntax.bsl.parser.testing.ResourceUtils;
@@ -57,7 +58,7 @@ class BSLDescriptionReaderTest {
         Вызываемая процедура может быть с произвольным числом параметров, но не более 7.
         Значения передаваемых параметров процедуры, а также возвращаемое значение должны быть сериализуемыми.
         Параметры процедуры не должны быть возвращаемыми.""");
-    assertThat(methodDescription.getDeprecationInfo()).isEmpty();
+    assertThat(methodDescription.getDeprecationInfo()).isEqualTo("См. НовыйМодуль.Неустарела");
     assertThat(methodDescription.getExamples().lines()).hasSize(30)
       .anyMatch(("В общем виде процесс запуска и обработки результата длительной операции в модуле формы выглядит " +
         "следующим образом:")::equals)
@@ -66,7 +67,7 @@ class BSLDescriptionReaderTest {
       .anyMatch("Функция НачатьВыполнениеНаСервере()"::equals)
       .anyMatch("ПриЗавершенииРасчета();"::equals)
     ;
-    assertThat(methodDescription.getLinks()).hasSize(1);
+    assertThat(methodDescription.getLinks()).hasSize(2);
     assertThat(methodDescription.getParameters()).hasSize(9);
     checkParameter(methodDescription.getParameters().get(0),
       "ПараметрыВыполнения", 1, "ДлительныеОперации.ПараметрыВыполненияПроцедуры", true);
@@ -91,9 +92,7 @@ class BSLDescriptionReaderTest {
     checkType(methodDescription.getParameters().get(8).types().get(0),
       "Произвольный", "", 0, "", false);
 
-    assertThat(
-      Objects.equals(methodDescription.getRange(), create(75, 20)))
-      .isTrue();
+    assertThat(methodDescription.getRange()).isEqualTo(create(76, 39));
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0), "Структура", "параметры выполнения задания:",
       5, "", false);
@@ -106,6 +105,28 @@ class BSLDescriptionReaderTest {
         "Ошибка", если задание завершено с ошибкой;
         "Отменено", если задание отменено пользователем или администратором.""",
       0, "", false);
+
+    assertThat(methodDescription.getElements()).hasSize(33);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(15, 3, 13));
+    assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
+    assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(32, 3, 25));
+    assertThat(methodDescription.getElements().get(2).type()).isEqualTo(DescriptionElement.Type.EXAMPLE_KEYWORD);
+    assertThat(methodDescription.getElements().get(2).range()).isEqualTo(SimpleRange.create(45, 3, 10));
+    assertThat(methodDescription.getElements().get(3).type()).isEqualTo(DescriptionElement.Type.DEPRECATE_KEYWORD);
+    assertThat(methodDescription.getElements().get(3).range()).isEqualTo(SimpleRange.create(76, 3, 12));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getReturnedValue())
+      .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
+      .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getParameters().get(0).allElements())
+      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
   }
 
   @Test
@@ -133,6 +154,24 @@ class BSLDescriptionReaderTest {
     checkType(methodDescription.getReturnedValue().get(0),
       "ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла", "",
       0, "ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла", true);
+
+    assertThat(methodDescription.getElements()).hasSize(5);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(2, 3, 13));
+    assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
+    assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(5, 3, 25));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getReturnedValue())
+      .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
+      .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
+
+    assertThat(methodDescription.getElements()).hasSize(5)
+      .containsAll(methodDescription.getParameters().get(0).allElements())
+      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
   }
 
   @Test
@@ -180,6 +219,24 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
       "Произвольный", "см. синтакс-помощник платформы.", 0, "", false);
+
+    assertThat(methodDescription.getElements()).hasSize(13);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(13, 3, 13));
+    assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
+    assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(21, 3, 25));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getReturnedValue())
+      .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
+      .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getParameters().get(0).allElements())
+      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
   }
 
   @Test
@@ -210,6 +267,24 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
     checkType(methodDescription.getReturnedValue().get(0),
       "Строка", "вернувшаяся строка", 0, "", false);
+
+    assertThat(methodDescription.getElements()).hasSize(10);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(3, 3, 13));
+    assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
+    assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(8, 3, 25));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getReturnedValue())
+      .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
+      .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getParameters().get(0).allElements())
+      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
   }
 
   @Test
@@ -265,6 +340,17 @@ class BSLDescriptionReaderTest {
         Структура - с именами настройки в коллекции НастройкиКомпоновкиДанных свойства Настройки
         типа КомпоновщикНастроекКомпоновкиДанных:""",
       2, "", false);
+
+    assertThat(methodDescription.getElements()).hasSize(69);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(14, 3, 25));
+
+    assertThat(methodDescription.getReturnedValue())
+      .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
+      .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
   }
 
   @Test
@@ -330,6 +416,17 @@ class BSLDescriptionReaderTest {
         Структура - с именами настройки в коллекции НастройкиКомпоновкиДанных свойства Настройки
         типа КомпоновщикНастроекКомпоновкиДанных:""",
       2, "", false);
+
+    assertThat(methodDescription.getElements()).hasSize(70);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(14, 3, 13));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getParameters().get(0).allElements());
   }
 
   @Test
@@ -343,8 +440,19 @@ class BSLDescriptionReaderTest {
       .containsExactly(Hyperlink.create("CommonModule.MyModule.MyFunc()"));
     assertThat(methodDescription.getParameters()).hasSize(1);
     checkParameter(methodDescription.getParameters().get(0),
-      "", 1, "CommonModule.MyModule.MyFunc()", true);
+      "CommonModule.MyModule.MyFunc", 1, "CommonModule.MyModule.MyFunc()", true);
     assertThat(methodDescription.getReturnedValue()).isEmpty();
+
+    assertThat(methodDescription.getElements()).hasSize(3);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(0, 3, 13));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getParameters().get(0).allElements());
   }
 
   @Test
@@ -358,11 +466,13 @@ class BSLDescriptionReaderTest {
       .containsExactly(Hyperlink.create("CommonModule.MyModule.MyFunc()"));
     assertThat(methodDescription.getParameters()).isEmpty();
     assertThat(methodDescription.getReturnedValue()).isEmpty();
+
+    assertThat(methodDescription.getElements()).isEmpty();
   }
 
   @Test
   void parseMethodDescription9() {
-    var methodDescription = parseMethodDescriptionString("// Параметры:\n" +
+    var methodDescription = parseMethodDescriptionString("//       Параметры:\n" +
       "//  Параметр - Массив из см. МойКлассныйМодуль.МойКлассныйКонструктор - Моё классное описание");
     assertThat(methodDescription.getPurposeDescription()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
@@ -381,6 +491,17 @@ class BSLDescriptionReaderTest {
       0, "", false);
 
     assertThat(methodDescription.getReturnedValue()).isEmpty();
+
+    assertThat(methodDescription.getElements()).hasSize(3);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(0, 9, 19));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getParameters().get(0).allElements());
   }
 
   @Test
@@ -396,6 +517,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getDeprecationInfo()).isEmpty();
     assertThat(variableDescription.isDeprecated()).isFalse();
     assertThat(variableDescription.getLinks()).isEmpty();
+    assertThat(variableDescription.getElements()).isEmpty();
 
     assertThat(
       Objects.equals(variableDescription.getRange(), create(0, 22)))
@@ -417,6 +539,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getDeprecationInfo()).isEmpty();
     assertThat(variableDescription.isDeprecated()).isFalse();
     assertThat(variableDescription.getLinks()).isEmpty();
+    assertThat(variableDescription.getElements()).isEmpty();
 
     assertThat(
       Objects.equals(variableDescription.getRange(), create(0, 22)))
@@ -450,6 +573,11 @@ class BSLDescriptionReaderTest {
     assertThat(
       Objects.equals(variableDescription.getRange(), create(1, 22)))
       .isTrue();
+
+    assertThat(variableDescription.getElements()).hasSize(1);
+    var elem = variableDescription.getElements().get(0);
+    assertThat(elem.range()).isEqualTo(SimpleRange.create(0, 3, 12));
+    assertThat(elem.type()).isEqualTo(DescriptionElement.Type.DEPRECATE_KEYWORD);
   }
 
   @Test
@@ -471,6 +599,8 @@ class BSLDescriptionReaderTest {
     assertThat(
       Objects.equals(variableDescription.getRange(), create(0, 22)))
       .isTrue();
+
+    assertThat(variableDescription.getElements()).isEmpty();
   }
 
   @Test
@@ -532,12 +662,34 @@ class BSLDescriptionReaderTest {
     checkType(methodDescription.getReturnedValue().get(0), "ПроцессорКоллекций",
       "Инстанс класса \"ПроцессорКоллекций\".",
       0, "", false);
+
+    assertThat(methodDescription.getElements()).hasSize(13);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(5, 3, 13));
+    assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
+    assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(19, 3, 25));
+    assertThat(methodDescription.getElements().get(2).type()).isEqualTo(DescriptionElement.Type.EXAMPLE_KEYWORD);
+    assertThat(methodDescription.getElements().get(2).range()).isEqualTo(SimpleRange.create(22, 3, 11));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getReturnedValue())
+      .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
+      .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getParameters().get(0).allElements())
+      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
   }
 
   @Test
-  void parseComplexType() {
-    var methodDescription = parseMethodDescriptionString("// Параметры:\n" +
-      "// Параметр - Список из Массив из Список из См. Мой.Метод(СПараметром)\n");
+  void parseCollectionType() {
+    var methodDescription = parseMethodDescriptionString("""
+      // Параметры:
+      // Параметр - Список из Массив из Список из См. Мой.Метод(СПараметром)
+      """);
     assertThat(methodDescription.getPurposeDescription()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
@@ -552,6 +704,16 @@ class BSLDescriptionReaderTest {
     checkType(methodDescription.getParameters().get(0).types().get(0),
       "Список<Массив<Список<Мой.Метод>>>", "", 0, "", false);
 
+    assertThat(methodDescription.getElements()).hasSize(3);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(0, 3, 13));
+
+    assertThat(methodDescription.getParameters())
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
+    assertThat(methodDescription.getElements())
+      .containsAll(methodDescription.getParameters().get(0).allElements());
   }
 
   private List<Token> getTokensFromString(String exampleString) {
@@ -570,6 +732,7 @@ class BSLDescriptionReaderTest {
     assertThat(parameter.link()).isEqualTo(Hyperlink.create(link));
     assertThat(parameter.types()).hasSize(countTypes);
     assertThat(parameter.isHyperlink()).isEqualTo(isHyperlink);
+    assertThat(parameter.element().range().length()).isEqualTo(parameter.name().length());
   }
 
   private void checkType(TypeDescription type,
@@ -581,11 +744,16 @@ class BSLDescriptionReaderTest {
     assertThat(type.name()).isEqualTo(name);
     assertThat(type.description()).isEqualTo(description);
     assertThat(type.variant() == TypeDescription.Variant.HYPERLINK).isEqualTo(isHyperlink);
-    if(isHyperlink) {
+    if (isHyperlink) {
       assertThat(type).isInstanceOf(HyperlinkTypeDescription.class);
       assertThat(((HyperlinkTypeDescription) type).hyperlink()).isEqualTo(Hyperlink.create(link));
     }
     assertThat(type.fields()).hasSize(countParameters);
+    if (type instanceof CollectionTypeDescription colType) {
+      assertThat(colType.element().range().length()).isEqualTo((colType).collectionName().length());
+    } else {
+      assertThat(type.element().range().length()).isEqualTo(type.name().length());
+    }
   }
 
   private SimpleRange create(int endLine, int endChar) {

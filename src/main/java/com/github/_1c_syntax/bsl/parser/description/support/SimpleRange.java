@@ -43,18 +43,7 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
    * @return Признак вхождения второй в первую
    */
   public static boolean containsRange(SimpleRange bigger, SimpleRange smaller) {
-    if (bigger.startLine() > smaller.startLine()
-      || bigger.endLine() < smaller.endLine()) {
-      return false;
-    }
-
-    if (bigger.startLine() == smaller.startLine()
-      && bigger.startCharacter() > smaller.startCharacter()) {
-      return false;
-    }
-
-    return bigger.endLine() != smaller.endLine()
-      || bigger.endCharacter() >= smaller.endCharacter();
+    return bigger.contains(smaller);
   }
 
   /**
@@ -86,6 +75,35 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
    */
   public static SimpleRange create(Token token) {
     return create(token, token);
+  }
+
+  /**
+   * Создает область по одному токену с учетом заданного сдвига.
+   * <br/>
+   * Используется для создания области, соответствующей положению в исходном тексте на основании токена текста описания.
+   *
+   * @param token              Токен, для которого нужно создать область
+   * @param lineShift          Сдвиг номера строки. По сути - номер первой строки относительно исходного текста.
+   * @param firstLineCharShift Сдвиг первого символа. Применяется только для токенов в первой строке,
+   *                           т.к. начальная позиция анализируемого текста могла быть отличной от начала строки
+   * @return Область
+   */
+  public static SimpleRange create(Token token, int lineShift, int firstLineCharShift) {
+    int startLine = token.getLine() - 1;
+    int startChar = token.getCharPositionInLine();
+    int endChar;
+    if (token.getType() == Token.EOF) {
+      endChar = token.getCharPositionInLine();
+    } else {
+      endChar = token.getCharPositionInLine() + token.getText().length();
+    }
+    if (startLine == 0) {
+      startChar += firstLineCharShift;
+      endChar += firstLineCharShift;
+    }
+
+    startLine += lineShift;
+    return new SimpleRange(startLine, startChar, startLine, endChar);
   }
 
   /**
@@ -137,5 +155,35 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
   public boolean isEmpty() {
     return startLine == 0 && startCharacter == 0
       && endLine == 0 && endCharacter == 0;
+  }
+
+  /**
+   * Проверяет вхождение переданной области в текущую
+   *
+   * @param smaller Вторая область
+   * @return Признак вхождения области
+   */
+  public boolean contains(SimpleRange smaller) {
+    if (startLine > smaller.startLine()
+      || endLine < smaller.endLine()) {
+      return false;
+    }
+
+    if (startLine == smaller.startLine()
+      && startCharacter > smaller.startCharacter()) {
+      return false;
+    }
+
+    return endLine != smaller.endLine()
+      || endCharacter >= smaller.endCharacter();
+  }
+
+  /**
+   * Длина области с учетом начальной и конечной позиций. Применимо только для однострочных областей
+   *
+   * @return Длина линейной области
+   */
+  public int length() {
+    return Math.max(0, endCharacter - startCharacter);
   }
 }

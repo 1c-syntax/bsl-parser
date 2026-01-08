@@ -21,6 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -50,12 +51,19 @@ public class HyperlinkTypeDescription implements TypeDescription {
   @Accessors(fluent = true)
   Hyperlink hyperlink;
 
-  public static TypeDescription create(Hyperlink hyperlink, String description, List<ParameterDescription> fieldList) {
+  /**
+   * Элемент описания ссылки
+   */
+  @Accessors(fluent = true)
+  DescriptionElement element;
+
+  public static TypeDescription create(Hyperlink hyperlink, DescriptionElement element, String description, List<ParameterDescription> fieldList) {
     return new HyperlinkTypeDescription(
       hyperlink.link(),
       description.strip(),
       fieldList,
-      hyperlink
+      hyperlink,
+      element
     );
   }
 

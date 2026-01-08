@@ -21,6 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
@@ -77,6 +78,13 @@ public interface SourceDefinedSymbolDescription {
    * @return Область описания
    */
   SimpleRange getRange();
+
+  /**
+   * Список значимых элементов описания.
+   *
+   * @return Список элементов
+   */
+  List<DescriptionElement> getElements();
 
   /**
    * Проверяет вхождение области заданной двумя пограничными токенами в область описания

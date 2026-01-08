@@ -21,6 +21,9 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,6 +59,23 @@ public interface TypeDescription {
    * @return Список полей типа
    */
   List<ParameterDescription> fields();
+
+  /**
+   * Элемент описания имени параметра
+   */
+  DescriptionElement element();
+
+  /**
+   * Список элементов описания включая все дочерние описания (поля, типы...)
+   *
+   * @return Список элементов описания
+   */
+  default List<DescriptionElement> allElements() {
+    List<DescriptionElement> elements = new ArrayList<>();
+    elements.add(element());
+    fields().forEach(field -> elements.addAll(field.allElements()));
+    return elements;
+  }
 
   /**
    * Возможные виды типов

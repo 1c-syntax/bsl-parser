@@ -22,13 +22,17 @@
 package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.description.reader.MethodDescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Singular;
 import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,7 +93,28 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
    */
   SimpleRange range;
 
+  /**
+   * Список собственных элементов описания.
+   */
+  @Singular
+  @Getter(AccessLevel.NONE)
+  List<DescriptionElement> keywords;
+
+  /**
+   * Список всех элементов описания включая все дочерние описания (типы, параметры, возвращаемые значения)
+   */
+  @Getter(lazy = true)
+  List<DescriptionElement> elements = computeAllElements();
+
   public static MethodDescription create(List<Token> comments) {
     return MethodDescriptionReader.read(comments);
+  }
+
+  private List<DescriptionElement> computeAllElements() {
+    List<DescriptionElement> allElements = new ArrayList<>(keywords);
+    parameters.forEach(parameter -> allElements.addAll(parameter.allElements()));
+    returnedValue.forEach(type -> allElements.addAll(type.allElements()));
+
+    return allElements;
   }
 }

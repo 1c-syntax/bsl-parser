@@ -21,6 +21,7 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -56,7 +57,14 @@ public class CollectionTypeDescription implements TypeDescription {
   @Accessors(fluent = true)
   TypeDescription valueType;
 
+  /**
+   * Элемент описания имени коллекции
+   */
+  @Accessors(fluent = true)
+  DescriptionElement element;
+
   public static TypeDescription create(String collectionName,
+                                       DescriptionElement element,
                                        String description,
                                        TypeDescription valueType,
                                        List<ParameterDescription> fieldList) {
@@ -71,7 +79,8 @@ public class CollectionTypeDescription implements TypeDescription {
       description.strip(),
       fieldList,
       collectionName.strip().intern(),
-      valueType
+      valueType,
+      element
     );
   }
 

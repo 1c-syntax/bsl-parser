@@ -21,25 +21,30 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Описание параметра из комментария - описания метода
  *
- * @param name  Имя параметра
- * @param types Список типов параметра
+ * @param name    Имя параметра
+ * @param element Положение параметра в тексте
+ * @param types   Список типов параметра
  */
-public record ParameterDescription(String name, List<TypeDescription> types) {
+public record ParameterDescription(String name, DescriptionElement element, List<TypeDescription> types) {
   /**
-   * @param name  Имя параметра
-   * @param types Возможные типы параметра. Может быть пустым
+   * @param name    Имя параметра
+   * @param element Положение параметра в тексте
+   * @param types   Возможные типы параметра. Может быть пустым
    */
-  public ParameterDescription(String name, List<TypeDescription> types) {
+  public ParameterDescription(String name, DescriptionElement element, List<TypeDescription> types) {
     this.name = name.strip().intern();
     this.types = Collections.unmodifiableList(types);
+    this.element = element;
   }
 
   /**
@@ -59,5 +64,17 @@ public record ParameterDescription(String name, List<TypeDescription> types) {
    */
   public Hyperlink link() {
     return (isHyperlink()) ? ((HyperlinkTypeDescription) types.get(0)).hyperlink() : Hyperlink.EMPTY;
+  }
+
+  /**
+   * Список элементов описания включая все дочерние описания (поля, типы...)
+   *
+   * @return Список элементов описания
+   */
+  public List<DescriptionElement> allElements() {
+    List<DescriptionElement> elements = new ArrayList<>();
+    elements.add(element);
+    types.forEach(type -> elements.addAll(type.allElements()));
+    return elements;
   }
 }

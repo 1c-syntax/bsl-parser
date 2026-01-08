@@ -29,11 +29,14 @@ import com.github._1c_syntax.bsl.parser.description.MethodDescription;
 import com.github._1c_syntax.bsl.parser.description.ParameterDescription;
 import com.github._1c_syntax.bsl.parser.description.SimpleTypeDescription;
 import com.github._1c_syntax.bsl.parser.description.TypeDescription;
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import lombok.Getter;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -50,12 +53,25 @@ import static java.util.Objects.requireNonNull;
  */
 public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
 
-  private final MethodDescription.MethodDescriptionBuilder builder = MethodDescription.builder();
+  private final MethodDescription.MethodDescriptionBuilder builder;
+
+  /**
+   * сдвиг номера строки относительно исходного текста
+   */
+  private final int lineShift;
+
+  /**
+   * сдвиг номера символа относительно исходного текста (только для первой строки)
+   */
+  private final int firstLineCharShift;
+
   private TempParameterData lastReadParam = null;
   private int typeLevel = -1;
 
-  private MethodDescriptionReader() {
-
+  private MethodDescriptionReader(SimpleRange range) {
+    builder = MethodDescription.builder();
+    lineShift = Math.max(0, range.startLine() - 1);
+    firstLineCharShift = Math.max(0, range.startCharacter() - 1);
   }
 
   /**
@@ -80,10 +96,10 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
    * @return Описание метода.
    */
   private static MethodDescription read(String descriptionText, SimpleRange range) {
-    var tokenizer = new BSLMethodDescriptionTokenizer(descriptionText);
+    var tokenizer = new MethodDescriptionTokenizer(descriptionText);
     var ast = requireNonNull(tokenizer.getAst());
 
-    var reader = new MethodDescriptionReader();
+    var reader = new MethodDescriptionReader(range);
     reader.builder
       .description(descriptionText.strip())
       .links(ReaderUtils.readLinks(ast))
@@ -108,6 +124,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
   @Override
   public ParseTree visitDeprecateBlock(BSLDescriptionParser.DeprecateBlockContext ctx) {
     builder.deprecated(true);
+    builder.keyword(newElement(ctx.DEPRECATE_KEYWORD(), DescriptionElement.Type.DEPRECATE_KEYWORD));
     var deprecationDescription = ctx.deprecateDescription();
     if (deprecationDescription != null) {
       builder.deprecationInfo(deprecationDescription.getText().strip());
@@ -131,6 +148,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
 
   @Override
   public ParseTree visitExamplesBlock(BSLDescriptionParser.ExamplesBlockContext ctx) {
+    builder.keyword(newElement(ctx.examplesHead().EXAMPLE_KEYWORD(), DescriptionElement.Type.EXAMPLE_KEYWORD));
     var strings = ctx.examplesString();
     if (strings != null) {
       builder.examples(strings.stream()
@@ -143,15 +161,16 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
 
   @Override
   public ParseTree visitParametersBlock(BSLDescriptionParser.ParametersBlockContext ctx) {
+    builder.keyword(newElement(ctx.parametersHead().PARAMETERS_KEYWORD(), DescriptionElement.Type.PARAMETERS_KEYWORD));
     // блок параметры есть, но самих нет
     if (ctx.parameterString() == null || ctx.parameterString().isEmpty()) {
       builder.parameters(Collections.emptyList());
     } else {
       // идем к строкам
-      lastReadParam = TempParameterData.create();
+      lastReadParam = TempParameterData.empty();
       super.visitParametersBlock(ctx);
       if (!lastReadParam.isEmpty()) {
-        builder.parameter(lastReadParam.build());
+        builder.parameter(lastReadParam.build(lineShift, firstLineCharShift));
       }
     }
     return ctx;
@@ -160,7 +179,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
   @Override
   public ParseTree visitParameter(BSLDescriptionParser.ParameterContext ctx) {
     if (!lastReadParam.isEmpty()) {
-      builder.parameter(lastReadParam.build());
+      builder.parameter(lastReadParam.build(lineShift, firstLineCharShift));
     }
     lastReadParam = TempParameterData.create(ctx);
     return super.visitParameter(ctx);
@@ -189,31 +208,30 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
     }
 
     if (ctx.hyperlink() != null && !ctx.hyperlink().isEmpty()) { // считаем первой ссылкой
-      lastReadParam = TempParameterData.create("");
-      lastReadParam.addType(ctx.hyperlink().get(0), ctx);
+      var link = ctx.hyperlink().get(0);
+      lastReadParam = TempParameterData.create(link.link);
+      lastReadParam.addType(link, ctx);
       return ctx;
     }
 
-    var text = ctx.getText().trim();
-    if (!text.isEmpty()) {
-      if (text.split("\\s").length == 1) {
-        lastReadParam = TempParameterData.create(text);
-      }
+    if (ctx.first != null && ctx.second == null) { // если есть только первый токен, считаем его подходящим
+      lastReadParam = TempParameterData.create(ctx.first);
     }
     return ctx;
   }
 
   @Override
   public ParseTree visitReturnsValuesBlock(BSLDescriptionParser.ReturnsValuesBlockContext ctx) {
+    builder.keyword(newElement(ctx.returnsValuesHead().RETURNS_KEYWORD(), DescriptionElement.Type.RETURNS_KEYWORD));
     // блок возвращаемого значения есть, но самих нет
     if (ctx.returnsValuesString() == null) {
       builder.returnedValue(Collections.emptyList());
     } else {
       // идем к строкам
-      lastReadParam = TempParameterData.create("");
+      lastReadParam = TempParameterData.fake(false);
       typeLevel = -1;
       super.visitReturnsValuesBlock(ctx);
-      builder.returnedValue(lastReadParam.build().types());
+      builder.returnedValue(lastReadParam.build(lineShift, firstLineCharShift).types());
     }
     return ctx;
   }
@@ -239,6 +257,16 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
     return ctx;
   }
 
+  private DescriptionElement newElement(TerminalNode node, DescriptionElement.Type type) {
+    return newElement(node.getSymbol(), type);
+  }
+
+  private DescriptionElement newElement(Token token, DescriptionElement.Type type) {
+    return new DescriptionElement(
+      SimpleRange.create(token, lineShift, firstLineCharShift),
+      type);
+  }
+
   /**
    * Служебный класс для временного хранения прочитанной информации из описания параметра
    */
@@ -248,39 +276,49 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
     private final boolean empty;
     private final List<TempParameterTypeData> types;
     private int level;
+    private final SimpleRange range;
 
-    private TempParameterData(String name, boolean empty) {
+    private TempParameterData(String name, SimpleRange range, boolean empty) {
       this.types = new ArrayList<>();
       this.level = 1;
       this.name = name.strip().intern();
       this.empty = empty;
+      this.range = range;
     }
 
-    private static TempParameterData create() {
-      return new TempParameterData("", true);
+    private static TempParameterData fake(boolean empty) {
+      return new TempParameterData("", SimpleRange.create(0, 0, 0, 0), empty);
     }
 
-    private static TempParameterData create(@Nullable String text) {
-      if (text == null) {
-        return create();
+    private static TempParameterData empty() {
+      return new TempParameterData("", SimpleRange.create(0, 0, 0, 0), true);
+    }
+
+    private static TempParameterData create(@Nullable ParserRuleContext ctx) {
+      if (ctx == null) {
+        return empty();
       } else {
-        return new TempParameterData(text, false);
+        return new TempParameterData(ctx.getText(), SimpleRange.create(ctx.getTokens()), false);
+      }
+    }
+
+    private static TempParameterData create(@Nullable Token token) {
+      if (token == null) {
+        return empty();
+      } else {
+        return new TempParameterData(token.getText(), SimpleRange.create(token), false);
       }
     }
 
     private static TempParameterData create(BSLDescriptionParser.ParameterContext parameter) {
-      if (parameter.parameterName() == null) {
-        return create();
-      } else {
-        return create(parameter.parameterName().getText());
-      }
+      return create(parameter.parameterName());
     }
 
     private static TempParameterData create(BSLDescriptionParser.FieldContext fieldContext, int level) {
       if (fieldContext.parameterName() == null) {
-        return create();
+        return empty();
       } else {
-        var fld = create(fieldContext.parameterName().getText());
+        var fld = create(fieldContext.parameterName());
         fld.level = level;
         if (fieldContext.typesBlock() != null) {
           fld.addType(fieldContext.typesBlock().type(), fieldContext.typesBlock().typeDescription());
@@ -297,11 +335,17 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       return Optional.empty();
     }
 
-    private ParameterDescription build() {
+    private ParameterDescription build(int lineShift, int firstLineCharShift) {
+      var newRange = SimpleRange.create(
+        range.startLine() + lineShift,
+        range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
+        range.endLine() + lineShift,
+        range.endCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0));
       return new ParameterDescription(
         name,
+        new DescriptionElement(newRange, DescriptionElement.Type.PARAMETER_NAME),
         types.stream()
-          .map(TempParameterTypeData::build)
+          .map(type -> type.build(lineShift, firstLineCharShift))
           .toList()
       );
     }
@@ -403,7 +447,9 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
     private TempParameterTypeData valueType;
     private Hyperlink hyperlink;
 
-    private TempParameterTypeData(TypeDescription.Variant variant, int level) {
+    private final SimpleRange range;
+
+    private TempParameterTypeData(TypeDescription.Variant variant, int level, SimpleRange range) {
       this.name = "";
       this.variant = variant;
       this.level = level;
@@ -411,19 +457,20 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       this.hyperlink = Hyperlink.EMPTY;
       this.fields = new ArrayList<>();
       this.valueType = null;
+      this.range = range;
     }
 
-    private TempParameterTypeData(@Nullable Token link,
+    private TempParameterTypeData(Token link,
                                   @Nullable Token linkParams,
                                   int level) {
-      this(TypeDescription.Variant.HYPERLINK, level);
-      this.name = link == null ? "" : link.getText();
+      this(TypeDescription.Variant.HYPERLINK, level, SimpleRange.create(link));
+      this.name = link.getText();
       this.hyperlink = Hyperlink.create(this.name, linkParams == null ? "" : linkParams.getText());
     }
 
-    private TempParameterTypeData(@Nullable Token typeName, TypeDescription.Variant variant, int level) {
-      this(variant, level);
-      this.name = typeName == null ? "" : typeName.getText();
+    private TempParameterTypeData(Token typeName, TypeDescription.Variant variant, int level) {
+      this(variant, level, SimpleRange.create(typeName));
+      this.name = typeName.getText();
     }
 
     private void addTypeDescription(BSLDescriptionParser.TypeDescriptionContext typeDescription) {
@@ -469,26 +516,36 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
     }
 
     private void addType(BSLDescriptionParser.TypeContext type) {
-      var fakeParam = TempParameterData.create("");
+      var fakeParam = TempParameterData.fake(false);
       fakeParam.addType(type, null);
       fakeParam.lastType().ifPresent(lastType -> valueType = lastType);
     }
 
-    private TypeDescription build() {
+    private TypeDescription build(int lineShift, int firstLineCharShift) {
       var fieldList = fields.stream()
-        .map(TempParameterData::build)
+        .map(fld -> fld.build(lineShift, firstLineCharShift))
         .toList();
 
+      var newRange = SimpleRange.create(
+        range.startLine() + lineShift,
+        range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
+        range.endLine() + lineShift,
+        range.endCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0));
+
+      var element = new DescriptionElement(newRange, DescriptionElement.Type.TYPE_NAME);
+
       return switch (variant) {
-        case SIMPLE -> SimpleTypeDescription.create(name, description.toString(), fieldList);
+        case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList);
         case COLLECTION -> CollectionTypeDescription.create(
           name,
+          element,
           description.toString(),
-          valueType == null ? SimpleTypeDescription.EMPTY : valueType.build(),
+          valueType == null ? SimpleTypeDescription.EMPTY : valueType.build(lineShift, firstLineCharShift),
           fieldList
         );
         case HYPERLINK -> HyperlinkTypeDescription.create(
           hyperlink,
+          element,
           description.toString(),
           fieldList
         );

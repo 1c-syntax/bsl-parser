@@ -39,8 +39,8 @@ class BSLDescriptionParserCheckSourceTest {
   @DisplayName("Parse 'src/test/resources/methodDescription/example1.bsl'")
   void testExample1() {
     testParser.assertThatFile("methodDescription/example1.bsl")
-      .containsRule(BSLDescriptionParser.RULE_deprecateBlock, 0)
-      .containsRule(BSLDescriptionParser.RULE_deprecateDescription, 0)
+      .containsRule(BSLDescriptionParser.RULE_deprecateBlock, 1)
+      .containsRule(BSLDescriptionParser.RULE_deprecateDescription, 1)
       .containsRule(BSLDescriptionParser.RULE_descriptionBlock, 1)
       .containsRule(BSLDescriptionParser.RULE_descriptionString, 15)
       .containsRule(BSLDescriptionParser.RULE_examplesBlock, 1)
@@ -63,8 +63,8 @@ class BSLDescriptionParserCheckSourceTest {
       .containsRule(BSLDescriptionParser.RULE_collectionType, 0)
       .containsRule(BSLDescriptionParser.RULE_hyperlinkType, 1)
       .containsRule(BSLDescriptionParser.RULE_splitter, 22)
-      .containsRule(BSLDescriptionParser.RULE_hyperlink, 1)
-      .containsRule(BSLDescriptionParser.RULE_startPart, 76);
+      .containsRule(BSLDescriptionParser.RULE_hyperlink, 2)
+      .containsRule(BSLDescriptionParser.RULE_startPart, 77);
   }
 
   @Test

@@ -24,6 +24,7 @@ package com.github._1c_syntax.bsl.parser.description.reader;
 import com.github._1c_syntax.bsl.parser.BSLDescriptionParser;
 import com.github._1c_syntax.bsl.parser.BSLDescriptionParserBaseVisitor;
 import com.github._1c_syntax.bsl.parser.description.VariableDescription;
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -39,10 +40,22 @@ import static java.util.Objects.requireNonNull;
  */
 public class VariableDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
 
-  private final VariableDescription.VariableDescriptionBuilder builder = VariableDescription.builder();
+  private final VariableDescription.VariableDescriptionBuilder builder;
 
-  private VariableDescriptionReader() {
+  /**
+   * сдвиг номера строки относительно исходного текста
+   */
+  private final int lineShift;
 
+  /**
+   * сдвиг номера символа относительно исходного текста (только для первой строки)
+   */
+  private final int firstLineCharShift;
+
+  private VariableDescriptionReader(SimpleRange range) {
+    builder = VariableDescription.builder();
+    lineShift = Math.max(0, range.startLine() - 1);
+    firstLineCharShift = Math.max(0, range.startCharacter() - 1);
   }
 
   /**
@@ -75,10 +88,10 @@ public class VariableDescriptionReader extends BSLDescriptionParserBaseVisitor<P
   private static VariableDescription read(String descriptionText,
                                           SimpleRange range,
                                           Optional<VariableDescription> trailingDescription) {
-    var tokenizer = new BSLMethodDescriptionTokenizer(descriptionText);
+    var tokenizer = new MethodDescriptionTokenizer(descriptionText);
     var ast = requireNonNull(tokenizer.getAst());
 
-    var reader = new VariableDescriptionReader();
+    var reader = new VariableDescriptionReader(range);
     reader.builder
       .description(descriptionText.strip())
       .links(ReaderUtils.readLinks(ast))
@@ -91,6 +104,10 @@ public class VariableDescriptionReader extends BSLDescriptionParserBaseVisitor<P
   @Override
   public ParseTree visitDeprecateBlock(BSLDescriptionParser.DeprecateBlockContext ctx) {
     builder.deprecated(true);
+    builder.element(new DescriptionElement(
+      SimpleRange.create(ctx.DEPRECATE_KEYWORD().getSymbol(), lineShift, firstLineCharShift),
+      DescriptionElement.Type.DEPRECATE_KEYWORD)
+    );
     var deprecationDescription = ctx.deprecateDescription();
     if (deprecationDescription != null) {
       builder.deprecationInfo(deprecationDescription.getText().strip());

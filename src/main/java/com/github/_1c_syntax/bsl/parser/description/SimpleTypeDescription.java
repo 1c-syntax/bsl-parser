@@ -21,6 +21,8 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
+import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -45,16 +47,25 @@ public class SimpleTypeDescription implements TypeDescription {
   @Accessors(fluent = true)
   List<ParameterDescription> fields;
 
-  public static final SimpleTypeDescription EMPTY = new SimpleTypeDescription("", "", Collections.emptyList());
+  @Accessors(fluent = true)
+  DescriptionElement element;
 
-  public static TypeDescription create(String name, String description, List<ParameterDescription> fieldList) {
+  public static final SimpleTypeDescription EMPTY = new SimpleTypeDescription(
+    "",
+    "",
+    Collections.emptyList(),
+    new DescriptionElement(SimpleRange.create(0, 0, 0, 0), DescriptionElement.Type.UNKNOWN)
+  );
+
+  public static TypeDescription create(String name, DescriptionElement element, String description, List<ParameterDescription> fieldList) {
     if (name.isBlank() && description.isBlank()) {
       return EMPTY;
     }
     return new SimpleTypeDescription(
       name.strip().intern(),
       description.strip(),
-      fieldList
+      fieldList,
+      element
     );
   }
 
