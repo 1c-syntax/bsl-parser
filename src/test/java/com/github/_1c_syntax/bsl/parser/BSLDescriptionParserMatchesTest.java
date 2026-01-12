@@ -102,7 +102,7 @@ class BSLDescriptionParserMatchesTest {
 
   @Test
   void testDescription() {
-    testParser.assertThat("//Устарела.\n//Описание\n//\n//ногостчрочное")
+    testParser.assertThat("//Устарела.\n//Описание\n//\n//ногостчрочное\n")
       .containsRule(BSLDescriptionParser.RULE_descriptionString, 3);
     testParser.assertThat("//Описание \n// многострочное:\n")
       .containsRule(BSLDescriptionParser.RULE_descriptionString, 2);

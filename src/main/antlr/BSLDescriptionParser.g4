@@ -31,8 +31,10 @@ options {
 // структура описания
 methodDescription:
     (
-          (deprecateBlock? descriptionBlock? parametersBlock? returnsValuesBlock? examplesBlock?)
-        | (descriptionBlock? parametersBlock? returnsValuesBlock? examplesBlock? deprecateBlock?)
+          (deprecateBlock? descriptionBlock? parametersBlock? returnsValuesBlock? callOptionsBlock? examplesBlock?)
+        | (deprecateBlock? descriptionBlock? parametersBlock? returnsValuesBlock? examplesBlock? callOptionsBlock?)
+        | (descriptionBlock? parametersBlock? returnsValuesBlock? callOptionsBlock? examplesBlock? deprecateBlock?)
+        | (descriptionBlock? parametersBlock? returnsValuesBlock? examplesBlock? callOptionsBlock? deprecateBlock?)
     ) EOF;
 
 // deprecate
@@ -44,7 +46,7 @@ descriptionBlock: descriptionString+;
 descriptionString:
       (startPart
             // гиперссылка или не ключевое (ну и не конец строки)
-            (hyperlink | ~(PARAMETERS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
+            (hyperlink | ~(PARAMETERS_KEYWORD | CALL_OPTIONS_KEYWORD | RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
             (hyperlink | ~(EOL | EOF))* // любой
         EOL)
     | (startPart EOL)
@@ -56,7 +58,19 @@ examplesHead: startPart EXAMPLE_KEYWORD SPACE? EOL;
 examplesString:
       (startPart
             // гиперссылка или не ключевое (ну и не конец строки)
-            (hyperlink | ~(DEPRECATE_KEYWORD | EOL | EOF | SPACE))
+            (hyperlink | ~(DEPRECATE_KEYWORD | CALL_OPTIONS_KEYWORD | EOL | EOF | SPACE))
+            (hyperlink | ~(EOL | EOF))* // любой
+        EOL)
+    | (startPart EOL)
+    ;
+
+// callOptions
+callOptionsBlock: callOptionsHead callOptionsStrings=callOptionsString*;
+callOptionsHead: startPart CALL_OPTIONS_KEYWORD SPACE? EOL;
+callOptionsString:
+      (startPart
+            // гиперссылка или не ключевое (ну и не конец строки)
+            (hyperlink | ~(DEPRECATE_KEYWORD | EXAMPLE_KEYWORD | EOL | EOF | SPACE))
             (hyperlink | ~(EOL | EOF))* // любой
         EOL)
     | (startPart EOL)
@@ -96,7 +110,7 @@ returnsValue: type
 
 typeDescription:
     (
-        (hyperlink | first=~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
+        (hyperlink | first=~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
         (hyperlink | second=~(EOL | EOF))*
         EOL
     )

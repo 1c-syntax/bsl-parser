@@ -33,6 +33,7 @@ public record DescriptionElement(SimpleRange range, Type type) {
     RETURNS_KEYWORD,
     EXAMPLE_KEYWORD,
     PARAMETERS_KEYWORD,
+    CALL_OPTIONS_KEYWORD,
     DEPRECATE_KEYWORD,
     PARAMETER_NAME,
     TYPE_NAME

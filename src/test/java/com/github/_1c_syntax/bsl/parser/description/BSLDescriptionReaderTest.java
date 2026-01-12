@@ -194,7 +194,11 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks()).hasSize(5);
-    assertThat(methodDescription.getParameters()).hasSize(5);
+    assertThat(methodDescription.getParameters())
+      .hasSize(5)
+      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
+      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
+
     checkParameter(methodDescription.getParameters().get(0),
       "КлючОбъекта", 1, "", false);
     checkType(methodDescription.getParameters().get(0).types().get(0),
@@ -216,27 +220,21 @@ class BSLDescriptionReaderTest {
     assertThat(
       Objects.equals(methodDescription.getRange(), create(23, 2)))
       .isTrue();
-    assertThat(methodDescription.getReturnedValue()).hasSize(1);
+    assertThat(methodDescription.getReturnedValue())
+      .hasSize(1)
+      .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
+      .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
     checkType(methodDescription.getReturnedValue().get(0),
       "Произвольный", "см. синтакс-помощник платформы.", 0, "", false);
 
-    assertThat(methodDescription.getElements()).hasSize(13);
+    assertThat(methodDescription.getElements())
+      .hasSize(13)
+      .containsAll(methodDescription.getParameters().get(0).allElements())
+      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
     assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
     assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(13, 3, 13));
     assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
     assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(21, 3, 25));
-
-    assertThat(methodDescription.getParameters())
-      .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
-      .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
-
-    assertThat(methodDescription.getReturnedValue())
-      .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
-      .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
-
-    assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getParameters().get(0).allElements())
-      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
   }
 
   @Test
@@ -246,6 +244,7 @@ class BSLDescriptionReaderTest {
       "Многострочное.");
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
+    assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getLinks()).isEmpty();
     assertThat(methodDescription.getParameters()).hasSize(3);
     checkParameter(methodDescription.getParameters().get(0),
@@ -288,7 +287,31 @@ class BSLDescriptionReaderTest {
   }
 
   @Test
-  void parseMethodDescription5() {
+  void parseMethodDescription6() {
+    var methodDescription = parseMethodDescription("methodDescription/example6.bsl");
+    assertThat(methodDescription.getPurposeDescription()).startsWith(
+      """
+         /////////////////////////////////////////////////////////////////////////////////////////////////////
+         Copyright (c) 2020, ООО 1С-Софт""");
+    assertThat(methodDescription.getDeprecationInfo()).isEmpty();
+    assertThat(methodDescription.getCallOptions().lines()).hasSize(6)
+      .anyMatch("ИзменениеЗапрещено(СправочникОбъект...)         - проверить данные в переданном объекте (наборе записей)."::equals)
+    ;
+    assertThat(methodDescription.getLinks()).hasSize(1);
+    assertThat(methodDescription.getParameters()).hasSize(4);
+    assertThat(methodDescription.getReturnedValue()).hasSize(1);
+
+    assertThat(methodDescription.getElements()).hasSize(36);
+    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(10, 3, 13));
+    assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
+    assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(50, 3, 25));
+    assertThat(methodDescription.getElements().get(2).type()).isEqualTo(DescriptionElement.Type.CALL_OPTIONS_KEYWORD);
+    assertThat(methodDescription.getElements().get(2).range()).isEqualTo(SimpleRange.create(53, 3, 19));
+  }
+
+  @Test
+  void parseMethodDescription7() {
     var methodDescription = parseMethodDescription("methodDescription/example7.bsl");
     assertThat(methodDescription.getPurposeDescription()).contains("Copyright (c) 2020, ООО 1С-Софт");
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
@@ -354,7 +377,7 @@ class BSLDescriptionReaderTest {
   }
 
   @Test
-  void parseMethodDescription6() {
+  void parseMethodDescription8() {
     var filePath = "methodDescription/example8.bsl";
     var exampleString = ResourceUtils.byName(filePath);
     var tokens = getTokensFromString(exampleString);
@@ -430,7 +453,7 @@ class BSLDescriptionReaderTest {
   }
 
   @Test
-  void parseMethodDescription7() {
+  void parseMethodDescription11() {
     var methodDescription = parseMethodDescriptionString("// Параметры: \n// See CommonModule.MyModule.MyFunc()\n");
     assertThat(methodDescription.getPurposeDescription()).isEmpty();
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
@@ -456,7 +479,7 @@ class BSLDescriptionReaderTest {
   }
 
   @Test
-  void parseMethodDescription8() {
+  void parseMethodDescription12() {
     var methodDescription = parseMethodDescriptionString("// See CommonModule.MyModule.MyFunc()");
     assertThat(methodDescription.getPurposeDescription()).isEqualTo("See CommonModule.MyModule.MyFunc()");
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
@@ -471,7 +494,7 @@ class BSLDescriptionReaderTest {
   }
 
   @Test
-  void parseMethodDescription9() {
+  void parseMethodDescription13() {
     var methodDescription = parseMethodDescriptionString("//       Параметры:\n" +
       "//  Параметр - Массив из см. МойКлассныйМодуль.МойКлассныйКонструктор - Моё классное описание");
     assertThat(methodDescription.getPurposeDescription()).isEmpty();

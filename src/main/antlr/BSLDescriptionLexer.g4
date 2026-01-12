@@ -27,12 +27,13 @@ lexer grammar BSLDescriptionLexer;
 options { caseInsensitive=true; }
 
 // KEYWORDS
-PARAMETERS_KEYWORD:     'PARAMETERS:'                                   | 'ПАРАМЕТРЫ:';
-RETURNS_KEYWORD:        'RETURNS:'                                      | 'ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:';
-EXAMPLE_KEYWORD:        'EXAMPLE:'  | 'EXAMPLES:'   | 'CALL OPTIONS:'   | 'ПРИМЕР:'     | 'ПРИМЕРЫ:'    | 'ВАРИАНТЫ ВЫЗОВА:';
-DEPRECATE_KEYWORD:      'DEPRECATE' | 'DEPRECATE.'                      | 'УСТАРЕЛА'    | 'УСТАРЕЛА.';
-SEE_KEYWORD:            'SEE'                                           | 'СМ.';
-OF_KEYWORD:             'OF'                                            | 'CONTAINS'    | 'ИЗ';
+PARAMETERS_KEYWORD:     'PARAMETERS:'                   | 'ПАРАМЕТРЫ:';
+RETURNS_KEYWORD:        'RETURNS:'                      | 'ВОЗВРАЩАЕМОЕ ЗНАЧЕНИЕ:';
+EXAMPLE_KEYWORD:        'EXAMPLE:'  | 'EXAMPLES:'       | 'ПРИМЕР:'     | 'ПРИМЕРЫ:';
+CALL_OPTIONS_KEYWORD:   'CALL OPTIONS:'                 | 'ВАРИАНТЫ ВЫЗОВА:';
+DEPRECATE_KEYWORD:      'DEPRECATE' | 'DEPRECATE.'      | 'УСТАРЕЛА'    | 'УСТАРЕЛА.';
+SEE_KEYWORD:            'SEE'                           | 'СМ.';
+OF_KEYWORD:             'OF'                            | 'CONTAINS'    | 'ИЗ';
 
 // COMMON
 EOL     : '\r'? '\n';

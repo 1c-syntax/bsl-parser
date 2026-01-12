@@ -73,6 +73,12 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
   String examples = "";
 
   /**
+   * Варианты вызова метода.
+   */
+  @Builder.Default
+  String callOptions = "";
+
+  /**
    * Параметры метода с типами и описанием.
    */
   @Singular

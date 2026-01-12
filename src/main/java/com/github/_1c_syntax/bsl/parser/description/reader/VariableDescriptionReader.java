@@ -38,7 +38,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Вспомогательный класс для чтения описания переменной.
  */
-public class VariableDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
+public final class VariableDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
 
   private final VariableDescription.VariableDescriptionBuilder builder;
 

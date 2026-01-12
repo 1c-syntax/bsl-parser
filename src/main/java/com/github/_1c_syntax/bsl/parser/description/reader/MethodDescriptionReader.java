@@ -51,7 +51,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Вспомагательный класс для чтения описания метода.
  */
-public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
+public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
 
   private final MethodDescription.MethodDescriptionBuilder builder;
 
@@ -160,6 +160,19 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
   }
 
   @Override
+  public ParseTree visitCallOptionsBlock(BSLDescriptionParser.CallOptionsBlockContext ctx) {
+    builder.keyword(newElement(ctx.callOptionsHead().CALL_OPTIONS_KEYWORD(), DescriptionElement.Type.CALL_OPTIONS_KEYWORD));
+    var strings = ctx.callOptionsString();
+    if (strings != null) {
+      builder.callOptions(strings.stream()
+        .map(ReaderUtils::extractText)
+        .collect(Collectors.joining("\n"))
+        .strip());
+    }
+    return ctx;
+  }
+
+  @Override
   public ParseTree visitParametersBlock(BSLDescriptionParser.ParametersBlockContext ctx) {
     builder.keyword(newElement(ctx.parametersHead().PARAMETERS_KEYWORD(), DescriptionElement.Type.PARAMETERS_KEYWORD));
     // блок параметры есть, но самих нет
@@ -228,7 +241,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       builder.returnedValue(Collections.emptyList());
     } else {
       // идем к строкам
-      lastReadParam = TempParameterData.fake(false);
+      lastReadParam = TempParameterData.fake();
       typeLevel = -1;
       super.visitReturnsValuesBlock(ctx);
       builder.returnedValue(lastReadParam.build(lineShift, firstLineCharShift).types());
@@ -286,8 +299,8 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       this.range = range;
     }
 
-    private static TempParameterData fake(boolean empty) {
-      return new TempParameterData("", SimpleRange.create(0, 0, 0, 0), empty);
+    private static TempParameterData fake() {
+      return new TempParameterData("", SimpleRange.create(0, 0, 0, 0), false);
     }
 
     private static TempParameterData empty() {
@@ -521,7 +534,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
     }
 
     private void addType(BSLDescriptionParser.TypeContext type) {
-      var fakeParam = TempParameterData.fake(false);
+      var fakeParam = TempParameterData.fake();
       fakeParam.addType(type, null);
       fakeParam.lastType().ifPresent(lastType -> valueType = lastType);
     }
@@ -542,15 +555,12 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
       return switch (variant) {
         case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList);
         case COLLECTION -> CollectionTypeDescription.create(
-          name,
-          element,
-          description.toString(),
+          name, element, description.toString(),
           valueType == null ? SimpleTypeDescription.EMPTY : valueType.build(lineShift, firstLineCharShift),
           fieldList
         );
         case HYPERLINK -> HyperlinkTypeDescription.create(
-          hyperlink,
-          element,
+          hyperlink, element,
           description.toString(),
           fieldList
         );
