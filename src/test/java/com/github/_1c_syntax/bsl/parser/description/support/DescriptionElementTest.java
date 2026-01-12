@@ -19,13 +19,25 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-/**
- * Служебные классы для чтения и хранения информации из комментариев-описаний
- */
-@ReturnValuesAreNonnullByDefault
-@ParametersAreNonnullByDefault
 package com.github._1c_syntax.bsl.parser.description.support;
 
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
+import org.junit.jupiter.api.Test;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import static org.assertj.core.api.Assertions.assertThat;
+
+class DescriptionElementTest {
+
+  @Test
+  void testDescriptionElementCreation() {
+    // Given
+    var range = new SimpleRange(0, 10, 0, 19);
+    var type = DescriptionElement.Type.PARAMETERS_KEYWORD;
+
+    // When
+    var element = new DescriptionElement(range, type);
+
+    // Then
+    assertThat(element.range()).isEqualTo(range);
+    assertThat(element.type()).isEqualTo(type);
+  }
+}

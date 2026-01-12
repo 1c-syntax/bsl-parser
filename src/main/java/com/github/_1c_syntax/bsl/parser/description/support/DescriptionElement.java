@@ -19,13 +19,23 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-/**
- * Служебные классы для чтения и хранения информации из комментариев-описаний
- */
-@ReturnValuesAreNonnullByDefault
-@ParametersAreNonnullByDefault
 package com.github._1c_syntax.bsl.parser.description.support;
 
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+/**
+ * Части описания (ключевые слова, конструкции)
+ *
+ * @param range Область расположения части описания
+ * @param type  Тип части описания
+ */
+public record DescriptionElement(SimpleRange range, Type type) {
+  public enum Type {
+    UNKNOWN,
+    RETURNS_KEYWORD,
+    EXAMPLE_KEYWORD,
+    PARAMETERS_KEYWORD,
+    CALL_OPTIONS_KEYWORD,
+    DEPRECATE_KEYWORD,
+    PARAMETER_NAME,
+    TYPE_NAME
+  }
+}

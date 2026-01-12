@@ -19,21 +19,13 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-package com.github._1c_syntax.bsl.parser;
+/**
+ * Вспомогательные классы для чтения описания
+ */
+@ReturnValuesAreNonnullByDefault
+@ParametersAreNonnullByDefault
+package com.github._1c_syntax.bsl.parser.description.reader;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Tokenizer;
+import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 
-public class BSLMethodDescriptionTokenizer
-  extends Tokenizer<BSLMethodDescriptionParser.MethodDescriptionContext, BSLMethodDescriptionParser> {
-  public BSLMethodDescriptionTokenizer(String content) {
-    super(content + "\n",
-      new BSLMethodDescriptionLexer(CharStreams.fromString("")),
-      BSLMethodDescriptionParser.class);
-  }
-
-  @Override
-  protected BSLMethodDescriptionParser.MethodDescriptionContext rootAST() {
-    return parser.methodDescription();
-  }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

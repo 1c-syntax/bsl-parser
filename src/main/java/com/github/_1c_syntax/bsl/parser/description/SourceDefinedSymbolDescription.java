@@ -21,11 +21,18 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
+import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
 
+import java.util.List;
+
 /**
- * Базовый интерфейс объектов, имеющих описание
+ * Интерфейс описания символов, определенных в исходном коде.
+ * <p>
+ * Предоставляет доступ к описанию символа из комментариев,
+ * включая информацию об устаревании, назначении и примерах использования.
  */
 public interface SourceDefinedSymbolDescription {
 
@@ -59,20 +66,25 @@ public interface SourceDefinedSymbolDescription {
   String getPurposeDescription();
 
   /**
-   * Если описание содержит только ссылку, то здесь будет ее значение
-   * <p>
-   * TODO Временное решение, надо будет продумать кошерное решение
+   * Список всех ссылок, которые могут быть в описании.
    *
-   * @return Строка с текстом ссылки (без префикса см./see)
+   * @return Список ссылок
    */
-  String getLink();
+  List<Hyperlink> getLinks();
 
   /**
    * Диапазон, в котором располагается описание.
    *
    * @return Область описания
    */
-  SimpleRange getSimpleRange();
+  SimpleRange getRange();
+
+  /**
+   * Список значимых элементов описания.
+   *
+   * @return Список элементов
+   */
+  List<DescriptionElement> getElements();
 
   /**
    * Проверяет вхождение области заданной двумя пограничными токенами в область описания
@@ -82,6 +94,6 @@ public interface SourceDefinedSymbolDescription {
    * @return Признак вхождения
    */
   default boolean contains(Token first, Token last) {
-    return SimpleRange.containsRange(getSimpleRange(), SimpleRange.create(first, last));
+    return SimpleRange.containsRange(getRange(), SimpleRange.create(first, last));
   }
 }

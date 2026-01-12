@@ -21,116 +21,71 @@
  */
 package com.github._1c_syntax.bsl.parser.description;
 
-import com.github._1c_syntax.bsl.parser.BSLMethodDescriptionTokenizer;
-import com.github._1c_syntax.bsl.parser.description.support.DescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.reader.VariableDescriptionReader;
+import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
+import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
+import lombok.Builder;
+import lombok.Singular;
+import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Класс-описание переменной.
  */
-public final class VariableDescription implements SourceDefinedSymbolDescription {
+@Value
+@Builder
+public class VariableDescription implements SourceDefinedSymbolDescription {
 
   /**
    * Содержит полное описание переменной (весь текст)
    */
-  private final String description;
+  String description;
 
   /**
    * Содержит часть строки после ключевого слова, в которой должно быть
    * описание причины устаревания переменной либо альтернативы
    */
-  private final String deprecationInfo;
+  @Builder.Default
+  String deprecationInfo = "";
 
   /**
    * Признак устаревания переменной
    */
-  private final boolean deprecated;
+  boolean deprecated;
 
   /**
    * Описание назначения переменной
    */
-  private final String purposeDescription;
+  @Builder.Default
+  String purposeDescription = "";
 
   /**
-   * Если описание содержит только ссылку, то здесь будет ее значение
-   * <p>
-   * TODO Временное решение, надо будет продумать кошерное решение
+   * Список всех ссылок, которые могут быть в описании.
    */
-  private final String link;
+  List<Hyperlink> links;
 
   /**
    * Диапазон, в котором располагается описание.
    */
-  private final SimpleRange range;
+  SimpleRange range;
 
   /**
    * Описание "висячего" комментария
    */
-  private final VariableDescription trailingDescription;
+  Optional<VariableDescription> trailingDescription;
 
-  VariableDescription(List<Token> comments) {
-    this(comments, null);
+  @Singular
+  List<DescriptionElement> elements;
+
+  public static VariableDescription create(List<Token> comments) {
+    return VariableDescriptionReader.read(comments);
   }
 
-  VariableDescription(List<Token> comments, @Nullable Token trailingComment) {
-    description = comments.stream()
-      .map(Token::getText)
-      .collect(Collectors.joining("\n"));
-
-    var tokenizer = new BSLMethodDescriptionTokenizer(description);
-    var ast = requireNonNull(tokenizer.getAst());
-
-    range = SimpleRange.create(comments);
-    purposeDescription = DescriptionReader.readPurposeDescription(ast);
-    link = DescriptionReader.readLink(ast);
-    deprecated = ast.deprecate() != null;
-    deprecationInfo = DescriptionReader.readDeprecationInfo(ast);
-    if (trailingComment == null) {
-      trailingDescription = null;
-    } else {
-      trailingDescription = new VariableDescription(List.of(trailingComment));
-    }
-  }
-
-  @Override
-  public String getDescription() {
-    return description;
-  }
-
-  @Override
-  public String getDeprecationInfo() {
-    return deprecationInfo;
-  }
-
-  @Override
-  public boolean isDeprecated() {
-    return deprecated;
-  }
-
-  @Override
-  public String getPurposeDescription() {
-    return purposeDescription;
-  }
-
-  @Override
-  public String getLink() {
-    return link;
-  }
-
-  @Override
-  public SimpleRange getSimpleRange() {
-    return range;
-  }
-
-  public Optional<VariableDescription> getTrailingDescription() {
-    return Optional.ofNullable(trailingDescription);
+  public static VariableDescription create(List<Token> comments, Optional<Token> trailingComment) {
+    return VariableDescriptionReader.read(comments, trailingComment);
   }
 }
