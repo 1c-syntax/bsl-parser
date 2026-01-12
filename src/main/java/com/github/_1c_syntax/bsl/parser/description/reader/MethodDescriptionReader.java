@@ -49,19 +49,19 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Вспомагательный класс для чтения описания метода.
+ * Вспомогательный класс для чтения описания метода.
  */
 public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
 
   private final MethodDescription.MethodDescriptionBuilder builder;
 
   /**
-   * сдвиг номера строки относительно исходного текста
+   * Сдвиг номера строки относительно исходного текста
    */
   private final int lineShift;
 
   /**
-   * сдвиг номера символа относительно исходного текста (только для первой строки)
+   * Сдвиг номера символа относительно исходного текста (только для первой строки)
    */
   private final int firstLineCharShift;
 
@@ -75,7 +75,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
   }
 
   /**
-   * Читает описание метода из списока токенов комментария.
+   * Читает описание метода из списка токенов комментария.
    *
    * @param comments Список токенов комментария.
    * @return Описание метода.
@@ -161,7 +161,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
 
   @Override
   public ParseTree visitCallOptionsBlock(BSLDescriptionParser.CallOptionsBlockContext ctx) {
-    builder.keyword(newElement(ctx.callOptionsHead().CALL_OPTIONS_KEYWORD(), DescriptionElement.Type.CALL_OPTIONS_KEYWORD));
+    builder.keyword(newElement(ctx.callOptionsHead().CALL_OPTIONS_KEYWORD(),
+      DescriptionElement.Type.CALL_OPTIONS_KEYWORD));
     var strings = ctx.callOptionsString();
     if (strings != null) {
       builder.callOptions(strings.stream()

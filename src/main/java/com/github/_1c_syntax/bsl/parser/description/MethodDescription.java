@@ -118,6 +118,11 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
     return MethodDescriptionReader.read(comments);
   }
 
+  @Override
+  public String format(String lang, int maxLineLen) {
+    return "";
+  }
+
   private List<DescriptionElement> computeAllElements() {
     List<DescriptionElement> allElements = new ArrayList<>(keywords);
     parameters.forEach(parameter -> allElements.addAll(parameter.allElements()));

@@ -43,12 +43,12 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
   private final VariableDescription.VariableDescriptionBuilder builder;
 
   /**
-   * сдвиг номера строки относительно исходного текста
+   * Сдвиг номера строки относительно исходного текста
    */
   private final int lineShift;
 
   /**
-   * сдвиг номера символа относительно исходного текста (только для первой строки)
+   * Сдвиг номера символа относительно исходного текста (только для первой строки)
    */
   private final int firstLineCharShift;
 
