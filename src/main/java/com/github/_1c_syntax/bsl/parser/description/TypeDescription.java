@@ -24,6 +24,7 @@ package com.github._1c_syntax.bsl.parser.description;
 import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -74,7 +75,7 @@ public interface TypeDescription {
     List<DescriptionElement> elements = new ArrayList<>();
     elements.add(element());
     fields().forEach(field -> elements.addAll(field.allElements()));
-    return elements;
+    return Collections.unmodifiableList(elements);
   }
 
   /**

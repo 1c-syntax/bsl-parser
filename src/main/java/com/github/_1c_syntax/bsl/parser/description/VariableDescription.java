@@ -55,8 +55,7 @@ public class VariableDescription implements SourceDefinedSymbolDescription {
   /**
    * Признак устаревания переменной
    */
-  @Builder.Default
-  boolean deprecated = false;
+  boolean deprecated;
 
   /**
    * Описание назначения переменной

@@ -65,7 +65,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
    */
   private final int firstLineCharShift;
 
-  private TempParameterData lastReadParam = null;
+  private TempParameterData lastReadParam;
   private int typeLevel = -1;
 
   private MethodDescriptionReader(SimpleRange range) {
@@ -340,7 +340,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
         range.startLine() + lineShift,
         range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
         range.endLine() + lineShift,
-        range.endCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0));
+        range.endCharacter() + (range.endLine() == 0 ? firstLineCharShift : 0));
       return new ParameterDescription(
         name,
         new DescriptionElement(newRange, DescriptionElement.Type.PARAMETER_NAME),
@@ -360,18 +360,23 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
         var firstDescription = paramDescription;
         var stringTypes = paramType.listTypes().listType();
         for (var stringType : stringTypes) {
-          if (stringType.hyperlinkType() != null) {
-            addType(stringType.hyperlinkType(), firstDescription);
-          } else if (stringType.simpleType() != null) {
-            addType(stringType.simpleType(), firstDescription);
-          } else if (stringType.collectionType() != null) {
-            addType(stringType.collectionType(), firstDescription);
-          } else {
-            // noop
-          }
+          addType(stringType, firstDescription);
           firstDescription = null;
         }
       } else if (paramType.hyperlinkType() != null) {
+        addType(paramType.hyperlinkType(), paramDescription);
+      } else if (paramType.simpleType() != null) {
+        addType(paramType.simpleType(), paramDescription);
+      } else if (paramType.collectionType() != null) {
+        addType(paramType.collectionType(), paramDescription);
+      } else {
+        // noop
+      }
+    }
+
+    private void addType(BSLDescriptionParser.ListTypeContext paramType,
+                         @Nullable BSLDescriptionParser.TypeDescriptionContext paramDescription) {
+      if (paramType.hyperlinkType() != null) {
         addType(paramType.hyperlinkType(), paramDescription);
       } else if (paramType.simpleType() != null) {
         addType(paramType.simpleType(), paramDescription);
@@ -530,7 +535,7 @@ public class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<Par
         range.startLine() + lineShift,
         range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
         range.endLine() + lineShift,
-        range.endCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0));
+        range.endCharacter() + (range.endLine() == 0 ? firstLineCharShift : 0));
 
       var element = new DescriptionElement(newRange, DescriptionElement.Type.TYPE_NAME);
 

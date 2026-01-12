@@ -75,6 +75,6 @@ public record ParameterDescription(String name, DescriptionElement element, List
     List<DescriptionElement> elements = new ArrayList<>();
     elements.add(element);
     types.forEach(type -> elements.addAll(type.allElements()));
-    return elements;
+    return Collections.unmodifiableList(elements);
   }
 }

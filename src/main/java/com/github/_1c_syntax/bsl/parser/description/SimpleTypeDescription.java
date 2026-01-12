@@ -37,6 +37,12 @@ import java.util.List;
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SimpleTypeDescription implements TypeDescription {
+  public static final SimpleTypeDescription EMPTY = new SimpleTypeDescription(
+    "",
+    "",
+    Collections.emptyList(),
+    new DescriptionElement(SimpleRange.create(0, 0, 0, 0), DescriptionElement.Type.UNKNOWN)
+  );
 
   @Accessors(fluent = true)
   String name;
@@ -49,13 +55,6 @@ public class SimpleTypeDescription implements TypeDescription {
 
   @Accessors(fluent = true)
   DescriptionElement element;
-
-  public static final SimpleTypeDescription EMPTY = new SimpleTypeDescription(
-    "",
-    "",
-    Collections.emptyList(),
-    new DescriptionElement(SimpleRange.create(0, 0, 0, 0), DescriptionElement.Type.UNKNOWN)
-  );
 
   public static TypeDescription create(String name, DescriptionElement element, String description, List<ParameterDescription> fieldList) {
     if (name.isBlank() && description.isBlank()) {

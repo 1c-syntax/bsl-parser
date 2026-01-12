@@ -78,7 +78,7 @@ class HyperlinkTest {
 
     // then
     assertThat(hyperlink.link()).isEqualTo(link);
-    assertThat(hyperlink.params()).isEqualTo("");
+    assertThat(hyperlink.params()).isEmpty();
   }
 
   @Test
@@ -104,7 +104,7 @@ class HyperlinkTest {
 
     // then
     assertThat(hyperlink.link()).isEqualTo("example");
-    assertThat(hyperlink.params()).isEqualTo("");
+    assertThat(hyperlink.params()).isEmpty();
   }
 
   @Test
@@ -117,7 +117,7 @@ class HyperlinkTest {
 
     // then
     assertThat(hyperlink.link()).isEqualTo("example");
-    assertThat(hyperlink.params()).isEqualTo("");
+    assertThat(hyperlink.params()).isEmpty();
   }
 
   @Test

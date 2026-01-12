@@ -33,6 +33,7 @@ import lombok.Value;
 import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,8 +58,7 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
   /**
    * Признак устаревания метода.
    */
-  @Builder.Default
-  boolean deprecated = false;
+  boolean deprecated;
 
   /**
    * Описание назначения метода.
@@ -115,6 +115,6 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
     parameters.forEach(parameter -> allElements.addAll(parameter.allElements()));
     returnedValue.forEach(type -> allElements.addAll(type.allElements()));
 
-    return allElements;
+    return Collections.unmodifiableList(allElements);
   }
 }

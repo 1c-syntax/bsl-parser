@@ -47,11 +47,11 @@ public record Hyperlink(String link, String params) {
    */
   public static Hyperlink create(@Nullable String link, @Nullable String params) {
     var linkText = link == null ? "" : link;
-    var paramsText = params == null ? "" : params;
-
     if (linkText.isEmpty()) { // если ссылка пустая, то возвращаем пустой объект
       return EMPTY;
     }
+
+    var paramsText = params == null ? "" : params;
     return new Hyperlink(linkText.intern(), paramsText);
   }
 
@@ -89,7 +89,7 @@ public record Hyperlink(String link, String params) {
 
   @Override
   public String toString() {
-    return link + (params.isEmpty() ? "" : "(" + params + ")");
+    return link + (params.isEmpty() ? "" : ("(" + params + ")"));
   }
 
   @Override

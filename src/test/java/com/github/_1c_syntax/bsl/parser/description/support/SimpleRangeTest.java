@@ -166,9 +166,10 @@ class SimpleRangeTest {
     var range2 = new SimpleRange(1, 2, 3, 4);
     var range3 = new SimpleRange(1, 2, 3, 5);
 
-    assertThat(range1).isEqualTo(range2);
-    assertThat(range1).hasSameHashCodeAs(range2);
-    assertThat(range1).isNotEqualTo(range3);
+    assertThat(range1)
+      .isEqualTo(range2)
+      .hasSameHashCodeAs(range2)
+      .isNotEqualTo(range3);
   }
 
   @Test

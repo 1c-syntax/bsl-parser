@@ -57,7 +57,10 @@ public class HyperlinkTypeDescription implements TypeDescription {
   @Accessors(fluent = true)
   DescriptionElement element;
 
-  public static TypeDescription create(Hyperlink hyperlink, DescriptionElement element, String description, List<ParameterDescription> fieldList) {
+  public static TypeDescription create(Hyperlink hyperlink,
+                                       DescriptionElement element,
+                                       String description,
+                                       List<ParameterDescription> fieldList) {
     return new HyperlinkTypeDescription(
       hyperlink.link(),
       description.strip(),
