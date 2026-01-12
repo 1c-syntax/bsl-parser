@@ -87,12 +87,14 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
   /**
    * Возвращаемые значения (типы).
    */
-  List<TypeDescription> returnedValue;
+  @Builder.Default
+  List<TypeDescription> returnedValue = Collections.emptyList();
 
   /**
    * Список всех ссылок, которые могут быть в описании.
    */
-  List<Hyperlink> links;
+  @Builder.Default
+  List<Hyperlink> links = Collections.emptyList();
 
   /**
    * Диапазон, в котором располагается описание.
