@@ -88,4 +88,9 @@ public class VariableDescription implements SourceDefinedSymbolDescription {
   public static VariableDescription create(List<Token> comments, Optional<Token> trailingComment) {
     return VariableDescriptionReader.read(comments, trailingComment);
   }
+
+  @Override
+  public String format(String lang, int maxLineLen) {
+    return "";
+  }
 }
