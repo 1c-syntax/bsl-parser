@@ -32,6 +32,7 @@ import org.antlr.v4.runtime.Token;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 /**
  * Класс-описание переменной.
@@ -91,6 +92,22 @@ public class VariableDescription implements SourceDefinedSymbolDescription {
 
   @Override
   public String format(String lang, int maxLineLen) {
-    return "";
+    var sj = new StringJoiner("\n//\t", "//\t", "");
+    if (deprecated) {
+      if (deprecationInfo.isEmpty()) {
+        sj.add("Устарела.");
+      } else {
+        sj.add("Устарела. " + deprecationInfo.trim());
+      }
+    }
+
+    if (!purposeDescription.isEmpty()) {
+      if (sj.length() > 0) {
+        sj.add("");
+      }
+      purposeDescription.lines().forEach(string -> sj.add(string.trim()));
+    }
+
+    return sj.toString();
   }
 }
