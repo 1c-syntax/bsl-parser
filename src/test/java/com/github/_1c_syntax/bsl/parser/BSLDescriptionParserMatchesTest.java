@@ -70,7 +70,7 @@ class BSLDescriptionParserMatchesTest {
     testParser.assertThat("// Устарела.\n")
       .matches(testParser.parser().deprecateBlock())
       .noMatches(testParser.parser().deprecateDescription());
-    testParser.assertThat("//Устарела.\n")
+    testParser.assertThat("//Устарела.    \n")
       .matches(testParser.parser().deprecateBlock())
       .noMatches(testParser.parser().deprecateDescription());
     testParser.assertThat("//Устарела.\n")
