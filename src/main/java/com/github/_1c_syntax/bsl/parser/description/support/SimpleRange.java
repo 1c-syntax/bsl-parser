@@ -36,6 +36,11 @@ import java.util.List;
 public record SimpleRange(int startLine, int startCharacter, int endLine, int endCharacter) {
 
   /**
+   * Пустая область
+   */
+  public static final SimpleRange EMPTY = create(0, 0, 0, 0);
+
+  /**
    * Проверяет вхождение второй области в первую
    *
    * @param bigger  Первая область
@@ -114,7 +119,7 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
    */
   public static SimpleRange create(List<Token> tokens) {
     if (tokens.isEmpty()) {
-      return new SimpleRange(0, 0, 0, 0);
+      return EMPTY;
     }
     var firstElement = tokens.get(0);
     var lastElement = tokens.get(tokens.size() - 1);
@@ -185,5 +190,26 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
    */
   public int length() {
     return Math.max(0, endCharacter - startCharacter);
+  }
+
+  /**
+   * Создает новый диапазон с учетом сдвигов строк и символов
+   *
+   * @param range            Диапазон, который нужно сдвинуть
+   * @param lineShift        Сдвиг номера строки
+   * @param firstLineCharShift Сдвиг первого символа для токенов в первой строке
+   * @return Новый сдвинутый диапазон
+   */
+  public static SimpleRange shift(SimpleRange range, int lineShift, int firstLineCharShift) {
+    if (lineShift == 0 && firstLineCharShift == 0) {
+      return range;
+    }
+
+    return SimpleRange.create(
+      range.startLine() + lineShift,
+      range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
+      range.endLine() + lineShift,
+      range.endCharacter() + (range.endLine() == 0 ? firstLineCharShift : 0)
+    );
   }
 }

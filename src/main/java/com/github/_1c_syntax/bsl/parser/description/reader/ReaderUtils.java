@@ -23,6 +23,7 @@ package com.github._1c_syntax.bsl.parser.description.reader;
 
 import com.github._1c_syntax.bsl.parser.BSLDescriptionParser;
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
+import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lombok.experimental.UtilityClass;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -66,9 +67,11 @@ public class ReaderUtils {
    * Извлекает все ссылки из всех подчиненных узлов указанного
    *
    * @param ast Корневой узел дерева для извлечения ссылок
+   * @param lineShift Сдвиг строк для корректировки позиций
+   * @param firstLineCharShift Сдвиг символов в первой строке для корректировки позиций
    * @return Список ссылок
    */
-  public List<Hyperlink> readLinks(ParserRuleContext ast) {
+  public List<Hyperlink> readLinks(ParserRuleContext ast, int lineShift, int firstLineCharShift) {
     Collection<BSLDescriptionParser.HyperlinkContext> links = Trees.findAllRuleNodes(ast, BSLDescriptionParser.RULE_hyperlink);
     if (!links.isEmpty()) {
       return links.stream()
@@ -76,7 +79,9 @@ public class ReaderUtils {
           (BSLDescriptionParser.HyperlinkContext hyperlinkContext) -> {
             var link = hyperlinkContext.link == null ? "" : hyperlinkContext.link.getText();
             var params = hyperlinkContext.linkParams == null ? "" : hyperlinkContext.linkParams.getText();
-            return Hyperlink.create(link, params);
+            var range = SimpleRange.create(hyperlinkContext.getStart(), hyperlinkContext.getStop());
+            var shiftedRange = SimpleRange.shift(range, lineShift, firstLineCharShift);
+            return Hyperlink.create(link, params, shiftedRange);
           })
         .toList();
     }

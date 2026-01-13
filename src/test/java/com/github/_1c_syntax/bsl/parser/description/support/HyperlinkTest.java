@@ -158,4 +158,60 @@ class HyperlinkTest {
     // then
     assertThat(result).isFalse();
   }
+
+  @Test
+  void testCreateWithRange() {
+    // given
+    var link = "example";
+    var params = "param1,param2";
+    var range = SimpleRange.create(1, 2, 3, 4);
+
+    // when
+    var hyperlink = Hyperlink.create(link, params, range);
+
+    // then
+    assertThat(hyperlink.link()).isEqualTo(link);
+    assertThat(hyperlink.params()).isEqualTo(params);
+    assertThat(hyperlink.range()).isEqualTo(range);
+  }
+
+  @Test
+  void testEqualsWithDifferentRange() {
+    // given
+    var range1 = SimpleRange.create(1, 2, 3, 4);
+    var range2 = SimpleRange.create(5, 6, 7, 8);
+    var hyperlink1 = Hyperlink.create("example", "param1,param2", range1);
+    var hyperlink2 = Hyperlink.create("example", "param1,param2", range2);
+
+    // when
+    var result = hyperlink1.equals(hyperlink2);
+
+    // then
+    assertThat(result).isFalse();
+  }
+
+  @Test
+  void testEqualsWithSameRange() {
+    // given
+    var range = SimpleRange.create(1, 2, 3, 4);
+    var hyperlink1 = Hyperlink.create("example", "param1,param2", range);
+    var hyperlink2 = Hyperlink.create("example", "param1,param2", range);
+
+    // when
+    var result = hyperlink1.equals(hyperlink2);
+
+    // then
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  void testEmptyHasZeroRange() {
+    // given when
+    var hyperlink = Hyperlink.EMPTY;
+
+    // then
+    assertThat(hyperlink.link()).isEmpty();
+    assertThat(hyperlink.params()).isEmpty();
+    assertThat(hyperlink.range()).isEqualTo(SimpleRange.EMPTY);
+  }
 }

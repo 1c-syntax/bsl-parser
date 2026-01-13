@@ -30,12 +30,13 @@ import java.util.Objects;
  *
  * @param link   Сама ссылка (до скобок)
  * @param params Параметры ссылки (в скобках)
+ * @param range  Область расположения гиперссылки
  */
-public record Hyperlink(String link, String params) {
+public record Hyperlink(String link, String params, SimpleRange range) {
   /**
    * Пустая ссылка
    */
-  public static final Hyperlink EMPTY = new Hyperlink("", "");
+  public static final Hyperlink EMPTY = new Hyperlink("", "", SimpleRange.EMPTY);
 
   /**
    * Создает новый экземпляр {@link Hyperlink} с указанными ссылкой и параметрами.
@@ -46,13 +47,7 @@ public record Hyperlink(String link, String params) {
    * @return новый экземпляр {@link Hyperlink}, или пустой экземпляр, если ссылка равна null или пустая
    */
   public static Hyperlink create(@Nullable String link, @Nullable String params) {
-    var linkText = link == null ? "" : link;
-    if (linkText.isEmpty()) { // если ссылка пустая, то возвращаем пустой объект
-      return EMPTY;
-    }
-
-    var paramsText = params == null ? "" : params;
-    return new Hyperlink(linkText.intern(), paramsText);
+    return create(link, params, SimpleRange.EMPTY);
   }
 
   /**
@@ -76,6 +71,24 @@ public record Hyperlink(String link, String params) {
     }
   }
 
+  /**
+   * Создает новый экземпляр {@link Hyperlink} с указанными ссылкой, параметрами и областью расположения.
+   *
+   * @param link   ссылка, может быть null
+   * @param params параметры ссылки, может быть null
+   * @param range  область расположения гиперссылки
+   * @return новый экземпляр {@link Hyperlink}, или пустой экземпляр, если ссылка равна null или пустая
+   */
+  public static Hyperlink create(@Nullable String link, @Nullable String params, SimpleRange range) {
+    var linkText = link == null ? "" : link;
+    if (linkText.isEmpty()) { // если ссылка пустая, то возвращаем пустой объект
+      return EMPTY;
+    }
+
+    var paramsText = params == null ? "" : params;
+    return new Hyperlink(linkText.intern(), paramsText, range);
+  }
+
   @Override
   public boolean equals(@Nullable Object other) {
     if (this == other) {
@@ -83,7 +96,7 @@ public record Hyperlink(String link, String params) {
     } else if (!(other instanceof Hyperlink otherLink)) {
       return false;
     } else {
-      return link.equals(otherLink.link) && params.equals(otherLink.params);
+      return link.equals(otherLink.link) && params.equals(otherLink.params) && range.equals(otherLink.range);
     }
   }
 
@@ -94,6 +107,6 @@ public record Hyperlink(String link, String params) {
 
   @Override
   public int hashCode() {
-    return Objects.hash(link, params);
+    return Objects.hash(link, params, range);
   }
 }

@@ -138,8 +138,8 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
-      .hasSize(1)
-      .contains(Hyperlink.create("ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла"));
+      .hasSize(1);
+    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла");
     assertThat(methodDescription.getParameters()).hasSize(1);
     checkParameter(methodDescription.getParameters().get(0),
       "РежимДиалога", 1, "", false);
@@ -459,8 +459,8 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
-      .hasSize(1)
-      .containsExactly(Hyperlink.create("CommonModule.MyModule.MyFunc()"));
+      .hasSize(1);
+    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("CommonModule.MyModule.MyFunc");
     assertThat(methodDescription.getParameters()).hasSize(1);
     checkParameter(methodDescription.getParameters().get(0),
       "CommonModule.MyModule.MyFunc", 1, "CommonModule.MyModule.MyFunc()", true);
@@ -485,8 +485,8 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
-      .hasSize(1)
-      .containsExactly(Hyperlink.create("CommonModule.MyModule.MyFunc()"));
+      .hasSize(1);
+    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("CommonModule.MyModule.MyFunc");
     assertThat(methodDescription.getParameters()).isEmpty();
     assertThat(methodDescription.getReturnedValue()).isEmpty();
 
@@ -501,8 +501,8 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
-      .hasSize(1)
-      .containsExactly(Hyperlink.create("МойКлассныйМодуль.МойКлассныйКонструктор"));
+      .hasSize(1);
+    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("МойКлассныйМодуль.МойКлассныйКонструктор");
     assertThat(methodDescription.getParameters()).hasSize(1);
 
     var firstParameter = methodDescription.getParameters().get(0);
@@ -590,8 +590,8 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getDeprecationInfo()).isEqualTo("см. НоваяПеременная");
     assertThat(variableDescription.isDeprecated()).isTrue();
     assertThat(variableDescription.getLinks())
-      .hasSize(1)
-      .contains(Hyperlink.create("НоваяПеременная"));
+      .hasSize(1);
+    assertThat(variableDescription.getLinks().get(0).link()).isEqualTo("НоваяПеременная");
 
     assertThat(
       Objects.equals(variableDescription.getRange(), create(1, 22)))
@@ -616,8 +616,8 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getDeprecationInfo()).isEmpty();
     assertThat(variableDescription.isDeprecated()).isFalse();
     assertThat(variableDescription.getLinks())
-      .hasSize(1)
-      .contains(Hyperlink.create("НоваяПеременная"));
+      .hasSize(1);
+    assertThat(variableDescription.getLinks().get(0).link()).isEqualTo("НоваяПеременная");
 
     assertThat(
       Objects.equals(variableDescription.getRange(), create(0, 22)))
@@ -717,8 +717,9 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getDeprecationInfo()).isEmpty();
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
-      .hasSize(1)
-      .contains(Hyperlink.create("Мой.Метод(СПараметром)"));
+      .hasSize(1);
+    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("Мой.Метод");
+    assertThat(methodDescription.getLinks().get(0).params()).isEqualTo("СПараметром");
     assertThat(methodDescription.getParameters()).hasSize(1);
     assertThat(methodDescription.getReturnedValue()).isEmpty();
 
@@ -739,6 +740,36 @@ class BSLDescriptionReaderTest {
       .containsAll(methodDescription.getParameters().get(0).allElements());
   }
 
+  @Test
+  void parseHyperlinkWithShift() {
+    var exampleString = "// See CommonModule.MyModule.MyFunc()";
+    var tokens = getTokensFromString(exampleString);
+    var methodDescription = MethodDescription.create(tokens);
+
+    assertThat(methodDescription.getLinks()).hasSize(1);
+    var hyperlink = methodDescription.getLinks().get(0);
+    assertThat(hyperlink.link()).isEqualTo("CommonModule.MyModule.MyFunc");
+
+    // Проверяем, что диапазон гиперссылки учитывает сдвиг
+    // Гиперссылка начинается с 3 символа и заканчивается на 37 символе
+    assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(0, 3, 0, 37));
+  }
+
+  @Test
+  void parseHyperlinkWithLineShift() {
+    var exampleString = "\n\n// See CommonModule.MyModule.MyFunc()";
+    var tokens = getTokensFromString(exampleString);
+    var methodDescription = MethodDescription.create(tokens);
+
+    assertThat(methodDescription.getLinks()).hasSize(1);
+    var hyperlink = methodDescription.getLinks().get(0);
+    assertThat(hyperlink.link()).isEqualTo("CommonModule.MyModule.MyFunc");
+
+    // Проверяем, что диапазон гиперссылки учитывает сдвиг строк
+    // Комментарий начинается на 3-й строке (индекс 1 после токенизации), гиперссылка начинается с 3 символа и заканчивается на 37 символе
+    assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(1, 3, 1, 37));
+  }
+
   private List<Token> getTokensFromString(String exampleString) {
     var tokenizer = new BSLTokenizer(exampleString);
     return tokenizer.getTokens().stream()
@@ -752,7 +783,9 @@ class BSLDescriptionReaderTest {
                               String link,
                               boolean isHyperlink) {
     assertThat(parameter.name()).isEqualTo(name);
-    assertThat(parameter.link()).isEqualTo(Hyperlink.create(link));
+    var expectedHyperlink = Hyperlink.create(link);
+    assertThat(parameter.link().link()).isEqualTo(expectedHyperlink.link());
+    assertThat(parameter.link().params()).isEqualTo(expectedHyperlink.params());
     assertThat(parameter.types()).hasSize(countTypes);
     assertThat(parameter.isHyperlink()).isEqualTo(isHyperlink);
     assertThat(parameter.element().range().length()).isEqualTo(parameter.name().length());
@@ -769,7 +802,10 @@ class BSLDescriptionReaderTest {
     assertThat(type.variant() == TypeDescription.Variant.HYPERLINK).isEqualTo(isHyperlink);
     if (isHyperlink) {
       assertThat(type).isInstanceOf(HyperlinkTypeDescription.class);
-      assertThat(((HyperlinkTypeDescription) type).hyperlink()).isEqualTo(Hyperlink.create(link));
+      var expectedHyperlink = Hyperlink.create(link);
+      var actualHyperlink = ((HyperlinkTypeDescription) type).hyperlink();
+      assertThat(actualHyperlink.link()).isEqualTo(expectedHyperlink.link());
+      assertThat(actualHyperlink.params()).isEqualTo(expectedHyperlink.params());
     }
     assertThat(type.fields()).hasSize(countParameters);
     if (type instanceof CollectionTypeDescription colType) {
