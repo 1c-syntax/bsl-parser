@@ -47,13 +47,7 @@ public record Hyperlink(String link, String params, SimpleRange range) {
    * @return новый экземпляр {@link Hyperlink}, или пустой экземпляр, если ссылка равна null или пустая
    */
   public static Hyperlink create(@Nullable String link, @Nullable String params) {
-    var linkText = link == null ? "" : link;
-    if (linkText.isEmpty()) { // если ссылка пустая, то возвращаем пустой объект
-      return EMPTY;
-    }
-
-    var paramsText = params == null ? "" : params;
-    return new Hyperlink(linkText.intern(), paramsText, SimpleRange.EMPTY);
+    return create(link, params, SimpleRange.EMPTY);
   }
 
   /**
