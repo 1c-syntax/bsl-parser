@@ -129,7 +129,7 @@ class SimpleRangeTest {
 
   @Test
   void testIsEmpty() {
-    var emptyRange = new SimpleRange(0, 0, 0, 0);
+    var emptyRange = SimpleRange.EMPTY;
     assertThat(emptyRange.isEmpty()).isTrue();
 
     var nonEmptyRange = new SimpleRange(0, 0, 0, 1);

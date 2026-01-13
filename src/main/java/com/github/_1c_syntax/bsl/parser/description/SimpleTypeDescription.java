@@ -41,7 +41,7 @@ public class SimpleTypeDescription implements TypeDescription {
     "",
     "",
     Collections.emptyList(),
-    new DescriptionElement(SimpleRange.create(0, 0, 0, 0), DescriptionElement.Type.UNKNOWN)
+    new DescriptionElement(SimpleRange.EMPTY, DescriptionElement.Type.UNKNOWN)
   );
 
   @Accessors(fluent = true)

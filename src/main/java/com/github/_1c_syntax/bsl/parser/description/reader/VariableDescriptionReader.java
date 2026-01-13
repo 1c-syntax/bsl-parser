@@ -94,7 +94,7 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
     var reader = new VariableDescriptionReader(range);
     reader.builder
       .description(descriptionText.strip())
-      .links(ReaderUtils.readLinks(ast))
+      .links(ReaderUtils.readLinks(ast, reader.lineShift, reader.firstLineCharShift))
       .range(range)
       .trailingDescription(trailingDescription);
     reader.visitMethodDescription(ast);

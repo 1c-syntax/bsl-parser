@@ -102,7 +102,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     var reader = new MethodDescriptionReader(range);
     reader.builder
       .description(descriptionText.strip())
-      .links(ReaderUtils.readLinks(ast))
+      .links(ReaderUtils.readLinks(ast, reader.lineShift, reader.firstLineCharShift))
       .range(range);
     reader.visitMethodDescription(ast);
     return reader.builder.build();
@@ -300,11 +300,11 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     }
 
     private static TempParameterData fake() {
-      return new TempParameterData("", SimpleRange.create(0, 0, 0, 0), false);
+      return new TempParameterData("", SimpleRange.EMPTY, false);
     }
 
     private static TempParameterData empty() {
-      return new TempParameterData("", SimpleRange.create(0, 0, 0, 0), true);
+      return new TempParameterData("", SimpleRange.EMPTY, true);
     }
 
     private static TempParameterData create(@Nullable ParserRuleContext ctx) {
@@ -349,11 +349,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     }
 
     private ParameterDescription build(int lineShift, int firstLineCharShift) {
-      var newRange = SimpleRange.create(
-        range.startLine() + lineShift,
-        range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
-        range.endLine() + lineShift,
-        range.endCharacter() + (range.endLine() == 0 ? firstLineCharShift : 0));
+      var newRange = SimpleRange.shift(range, lineShift, firstLineCharShift);
       return new ParameterDescription(
         name,
         new DescriptionElement(newRange, DescriptionElement.Type.PARAMETER_NAME),
@@ -463,7 +459,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private final List<TempParameterData> fields;
     private final TypeDescription.Variant variant;
     private TempParameterTypeData valueType;
-    private Hyperlink hyperlink;
+    private Token linkToken;
+    private Token linkParamsToken;
 
     private final SimpleRange range;
 
@@ -472,7 +469,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       this.variant = variant;
       this.level = level;
       this.description = new StringJoiner("\n");
-      this.hyperlink = Hyperlink.EMPTY;
+      this.linkToken = null;
+      this.linkParamsToken = null;
       this.fields = new ArrayList<>();
       this.valueType = null;
       this.range = range;
@@ -483,7 +481,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
                                   int level) {
       this(TypeDescription.Variant.HYPERLINK, level, SimpleRange.create(link));
       this.name = link.getText();
-      this.hyperlink = Hyperlink.create(this.name, linkParams == null ? "" : linkParams.getText());
+      this.linkToken = link;
+      this.linkParamsToken = linkParams;
     }
 
     private TempParameterTypeData(Token typeName, TypeDescription.Variant variant, int level) {
@@ -544,12 +543,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
         .map(fld -> fld.build(lineShift, firstLineCharShift))
         .toList();
 
-      var newRange = SimpleRange.create(
-        range.startLine() + lineShift,
-        range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
-        range.endLine() + lineShift,
-        range.endCharacter() + (range.endLine() == 0 ? firstLineCharShift : 0));
-
+      var newRange = SimpleRange.shift(range, lineShift, firstLineCharShift);
       var element = new DescriptionElement(newRange, DescriptionElement.Type.TYPE_NAME);
 
       return switch (variant) {
@@ -560,7 +554,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
           fieldList
         );
         case HYPERLINK -> HyperlinkTypeDescription.create(
-          hyperlink, element,
+          Hyperlink.create(name, linkParamsToken == null ? "" : linkParamsToken.getText(), newRange),
+          element,
           description.toString(),
           fieldList
         );
