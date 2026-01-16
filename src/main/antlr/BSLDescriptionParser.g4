@@ -35,7 +35,9 @@ methodDescription:
         | (deprecateBlock? descriptionBlock? parametersBlock? returnsValuesBlock? examplesBlock? callOptionsBlock?)
         | (descriptionBlock? parametersBlock? returnsValuesBlock? callOptionsBlock? examplesBlock? deprecateBlock?)
         | (descriptionBlock? parametersBlock? returnsValuesBlock? examplesBlock? callOptionsBlock? deprecateBlock?)
-    ) EOF;
+    )
+    skipBlock?
+    EOF;
 
 // deprecate
 deprecateBlock: startPart DEPRECATE_KEYWORD (deprecateDescription | EOL);
@@ -100,6 +102,10 @@ returnsValuesString:
     | (startPart typeDescription)
     ;
 
+// skipBlock
+skipBlock: startPart EDT_SKIP_KEYWORD (SPACE skipKey? (SPACE ~(EOL | EOF)*)?) EOL;
+skipKey: ~(EOL | EOF | SPACE)+;
+
 returnsValue: type
     (
         (splitter typeDescription)
@@ -110,7 +116,8 @@ returnsValue: type
 
 typeDescription:
     (
-        (hyperlink | first=~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | DEPRECATE_KEYWORD | EOL | EOF | SPACE))
+        (hyperlink | first=~(RETURNS_KEYWORD | EXAMPLE_KEYWORD | CALL_OPTIONS_KEYWORD | DEPRECATE_KEYWORD
+                            | EDT_SKIP_KEYWORD | EOL | EOF | SPACE))
         (hyperlink | second=~(EOL | EOF))*
         EOL
     )
@@ -121,7 +128,7 @@ typesBlock: splitter type
     (
         (splitter typeDescription)
         | (splitter EOL)
-        | EOL
+        | (SPACE* EOL)
     )
     ;
 
@@ -129,7 +136,7 @@ type: listTypes | collectionType | hyperlinkType | simpleType;
 simpleType: typeName=(WORD | DOTSWORD) colon=COLON?;
 collectionType: collection=(WORD | DOTSWORD) SPACE OF_KEYWORD SPACE value=type;
 hyperlinkType: hyperlink;
-listTypes: listType (COMMA SPACE? listType)+;
+listTypes: listType (COMMA SPACE? listType?)+;
 listType: simpleType | collectionType | hyperlinkType;
 
 hyperlink: SEE_KEYWORD SPACE link=(WORD | DOTSWORD) (LPAREN linkParams=~EOL* RPAREN)?;

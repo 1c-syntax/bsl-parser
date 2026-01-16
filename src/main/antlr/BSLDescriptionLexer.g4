@@ -34,6 +34,7 @@ CALL_OPTIONS_KEYWORD:   'CALL OPTIONS:'                 | 'ВАРИАНТЫ ВЫ
 DEPRECATE_KEYWORD:      'DEPRECATE' | 'DEPRECATE.'      | 'УСТАРЕЛА'    | 'УСТАРЕЛА.';
 SEE_KEYWORD:            'SEE'                           | 'СМ.';
 OF_KEYWORD:             'OF'                            | 'CONTAINS'    | 'ИЗ';
+EDT_SKIP_KEYWORD:       '@skip-check';
 
 // COMMON
 EOL     : '\r'? '\n';
