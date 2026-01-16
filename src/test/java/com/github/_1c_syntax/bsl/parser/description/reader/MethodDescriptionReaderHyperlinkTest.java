@@ -66,8 +66,8 @@ class MethodDescriptionReaderHyperlinkTest {
     assertThat(hyperlink.params()).isEqualTo("");
 
     // Проверяем, что диапазон гиперссылки учитывает сдвиг строк и символов
-    // Гиперссылка должна начинаться с 3-й строки (индекс 2) и с 24-го символа (позиция "MyFunc")
-    assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(2, 24, 2, 30));
+    // Гиперссылка должна начинаться с 3-й строки и с 24-го символа (позиция "MyFunc")
+    assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(3, 24, 3, 30));
   }
 
   @Test
@@ -90,7 +90,7 @@ class MethodDescriptionReaderHyperlinkTest {
     assertThat(hyperlink.params()).isEqualTo("");
 
     // Проверяем, что диапазон гиперссылки учитывает сдвиг строк и символов
-    // Гиперссылка должна начинаться с 4-й строки (индекс 3) и с 24-го символа (позиция "MyFunc")
-    assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(3, 24, 3, 30));
+    // Гиперссылка должна начинаться с 4-й строки  и с 24-го символа (позиция "MyFunc")
+    assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(4, 24, 4, 30));
   }
 }
