@@ -19,23 +19,23 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-package com.github._1c_syntax.bsl.parser;
+package com.github._1c_syntax.bsl.parser.description.reader;
 
+import com.github._1c_syntax.bsl.parser.BSLDescriptionLexer;
+import com.github._1c_syntax.bsl.parser.BSLDescriptionParser;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Tokenizer;
 
-public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDBLParser> {
-  public SDBLTokenizer(String content) {
-    this(content, new SDBLLexer(CharStreams.fromString("")));
-  }
-
-  public SDBLTokenizer(String content, Lexer lexer) {
-    super(content, lexer, SDBLParser.class);
+class MethodDescriptionTokenizer
+  extends Tokenizer<BSLDescriptionParser.MethodDescriptionContext, BSLDescriptionParser> {
+  public MethodDescriptionTokenizer(String content) {
+    super(content + "\n",
+      new BSLDescriptionLexer(CharStreams.fromString("")),
+      BSLDescriptionParser.class);
   }
 
   @Override
-  protected SDBLParser.QueryPackageContext rootAST() {
-    return parser.queryPackage();
+  protected BSLDescriptionParser.MethodDescriptionContext rootAST() {
+    return parser.methodDescription();
   }
 }

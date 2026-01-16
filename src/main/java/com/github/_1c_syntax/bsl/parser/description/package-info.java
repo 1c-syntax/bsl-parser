@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2025
+ * Copyright (c) 2018-2026
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -22,7 +22,10 @@
 /**
  * Классы для хранения информации, прочитанной из комментариев-описаний
  */
+@ReturnValuesAreNonnullByDefault
 @ParametersAreNonnullByDefault
 package com.github._1c_syntax.bsl.parser.description;
+
+import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;

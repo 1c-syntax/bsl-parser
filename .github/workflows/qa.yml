@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: ''
+          persist-credentials: false
       - run: |
           git fetch --prune --unshallow
       - name: Set up JDK 17

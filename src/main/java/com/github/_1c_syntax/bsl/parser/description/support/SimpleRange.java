@@ -1,7 +1,7 @@
 /*
  * This file is a part of BSL Parser.
  *
- * Copyright (c) 2018-2025
+ * Copyright (c) 2018-2026
  * Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -27,35 +27,18 @@ import java.util.List;
 
 /**
  * Класс для хранения области символов
+ *
+ * @param startLine      Номер первой строки области
+ * @param startCharacter Номер первого символа области
+ * @param endLine        Номер последней строки области
+ * @param endCharacter   Номер последнего символа области
  */
-public final class SimpleRange {
+public record SimpleRange(int startLine, int startCharacter, int endLine, int endCharacter) {
 
   /**
-   * Номер первой строки области
+   * Пустая область
    */
-  private final int startLine;
-
-  /**
-   * Номер первого символа области
-   */
-  private final int startCharacter;
-
-  /**
-   * Номер последней строки области
-   */
-  private final int endLine;
-
-  /**
-   * Номер последнего символа области
-   */
-  private final int endCharacter;
-
-  public SimpleRange(int startLine, int startCharacter, int endLine, int endCharacter) {
-    this.startLine = startLine;
-    this.startCharacter = startCharacter;
-    this.endLine = endLine;
-    this.endCharacter = endCharacter;
-  }
+  public static final SimpleRange EMPTY = create(0, 0, 0, 0);
 
   /**
    * Проверяет вхождение второй области в первую
@@ -65,18 +48,7 @@ public final class SimpleRange {
    * @return Признак вхождения второй в первую
    */
   public static boolean containsRange(SimpleRange bigger, SimpleRange smaller) {
-    if (bigger.getStartLine() > smaller.getStartLine()
-      || bigger.getEndLine() < smaller.getEndLine()) {
-      return false;
-    }
-
-    if (bigger.getStartLine() == smaller.getStartLine()
-      && bigger.getStartCharacter() > smaller.getStartCharacter()) {
-      return false;
-    }
-
-    return bigger.getEndLine() != smaller.getEndLine()
-      || bigger.getEndCharacter() >= smaller.getEndCharacter();
+    return bigger.contains(smaller);
   }
 
   /**
@@ -101,6 +73,45 @@ public final class SimpleRange {
   }
 
   /**
+   * Создает область по одному токену
+   *
+   * @param token Токен, для которого нужно создать область
+   * @return Область
+   */
+  public static SimpleRange create(Token token) {
+    return create(token, token);
+  }
+
+  /**
+   * Создает область по одному токену с учетом заданного сдвига.
+   * <br/>
+   * Используется для создания области, соответствующей положению в исходном тексте на основании токена текста описания.
+   *
+   * @param token              Токен, для которого нужно создать область
+   * @param lineShift          Сдвиг номера строки. По сути - номер первой строки относительно исходного текста.
+   * @param firstLineCharShift Сдвиг первого символа. Применяется только для токенов в первой строке,
+   *                           т.к. начальная позиция анализируемого текста могла быть отличной от начала строки
+   * @return Область
+   */
+  public static SimpleRange create(Token token, int lineShift, int firstLineCharShift) {
+    int startLine = token.getLine() - 1;
+    int startChar = token.getCharPositionInLine();
+    int endChar;
+    if (token.getType() == Token.EOF) {
+      endChar = token.getCharPositionInLine();
+    } else {
+      endChar = token.getCharPositionInLine() + token.getText().length();
+    }
+    if (startLine == 0) {
+      startChar += firstLineCharShift;
+      endChar += firstLineCharShift;
+    }
+
+    startLine += lineShift;
+    return new SimpleRange(startLine, startChar, startLine, endChar);
+  }
+
+  /**
    * Создает область по списку токенов
    *
    * @param tokens Список токенов области
@@ -108,7 +119,7 @@ public final class SimpleRange {
    */
   public static SimpleRange create(List<Token> tokens) {
     if (tokens.isEmpty()) {
-      return new SimpleRange(0, 0, 0, 0);
+      return EMPTY;
     }
     var firstElement = tokens.get(0);
     var lastElement = tokens.get(tokens.size() - 1);
@@ -116,39 +127,89 @@ public final class SimpleRange {
     return create(firstElement, lastElement);
   }
 
-  public int getStartLine() {
-    return startLine;
+  /**
+   * Создает новую область {@link SimpleRange} с заданными координатами.
+   *
+   * @param startLine      номер начальной строки (начиная с 0)
+   * @param startCharacter номер начального символа в строке (начиная с 0)
+   * @param endLine        номер конечной строки (начиная с 0)
+   * @param endCharacter   номер конечного символа в строке (начиная с 0)
+   * @return новый экземпляр {@link SimpleRange}, представляющий заданный диапазон
+   */
+  public static SimpleRange create(int startLine, int startCharacter, int endLine, int endCharacter) {
+    return new SimpleRange(startLine, startCharacter, endLine, endCharacter);
   }
 
-  public int getStartCharacter() {
-    return startCharacter;
+  /**
+   * Создает новую область для строки {@link SimpleRange} с заданными координатами.
+   *
+   * @param lineNo         номер строки (начиная с 0)
+   * @param startCharacter номер начального символа в строке (начиная с 0)
+   * @param endCharacter   номер конечного символа в строке (начиная с 0)
+   * @return новый экземпляр {@link SimpleRange}, представляющий заданный диапазон
+   */
+  public static SimpleRange create(int lineNo, int startCharacter, int endCharacter) {
+    return new SimpleRange(lineNo, startCharacter, lineNo, endCharacter);
   }
 
-  public int getEndLine() {
-    return endLine;
+  /**
+   * Возвращает признак пустой области, т.е. все координаты равны 0
+   *
+   * @return признак пустой области
+   */
+  public boolean isEmpty() {
+    return startLine == 0 && startCharacter == 0
+      && endLine == 0 && endCharacter == 0;
   }
 
-  public int getEndCharacter() {
-    return endCharacter;
-  }
-
-  public String toString() {
-    return ("SimpleRange(startLine=" + startLine
-      + ", startCharacter=" + startCharacter
-      + ", endLine=" + endLine
-      + ", endCharacter=" + endCharacter + ")").intern();
-  }
-
-  public boolean equals(final Object other) {
-    if (other == this) {
-      return true;
-    } else if (!(other instanceof SimpleRange otherRange)) {
+  /**
+   * Проверяет вхождение переданной области в текущую
+   *
+   * @param smaller Вторая область
+   * @return Признак вхождения области
+   */
+  public boolean contains(SimpleRange smaller) {
+    if (startLine > smaller.startLine()
+      || endLine < smaller.endLine()) {
       return false;
-    } else {
-      return (startLine == otherRange.getStartLine()
-        && startCharacter == otherRange.getStartCharacter()
-        && endLine == otherRange.getEndLine()
-        && endCharacter == otherRange.getEndCharacter());
     }
+
+    if (startLine == smaller.startLine()
+      && startCharacter > smaller.startCharacter()) {
+      return false;
+    }
+
+    return endLine != smaller.endLine()
+      || endCharacter >= smaller.endCharacter();
+  }
+
+  /**
+   * Длина области с учетом начальной и конечной позиций. Применимо только для однострочных областей
+   *
+   * @return Длина линейной области
+   */
+  public int length() {
+    return Math.max(0, endCharacter - startCharacter);
+  }
+
+  /**
+   * Создает новый диапазон с учетом сдвигов строк и символов
+   *
+   * @param range            Диапазон, который нужно сдвинуть
+   * @param lineShift        Сдвиг номера строки
+   * @param firstLineCharShift Сдвиг первого символа для токенов в первой строке
+   * @return Новый сдвинутый диапазон
+   */
+  public static SimpleRange shift(SimpleRange range, int lineShift, int firstLineCharShift) {
+    if (lineShift == 0 && firstLineCharShift == 0) {
+      return range;
+    }
+
+    return SimpleRange.create(
+      range.startLine() + lineShift,
+      range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
+      range.endLine() + lineShift,
+      range.endCharacter() + (range.endLine() == 0 ? firstLineCharShift : 0)
+    );
   }
 }

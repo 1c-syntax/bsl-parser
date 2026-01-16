@@ -19,23 +19,25 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-package com.github._1c_syntax.bsl.parser;
+package com.github._1c_syntax.bsl.parser.description.support;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Tokenizer;
+import org.junit.jupiter.api.Test;
 
-public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDBLParser> {
-  public SDBLTokenizer(String content) {
-    this(content, new SDBLLexer(CharStreams.fromString("")));
-  }
+import static org.assertj.core.api.Assertions.assertThat;
 
-  public SDBLTokenizer(String content, Lexer lexer) {
-    super(content, lexer, SDBLParser.class);
-  }
+class DescriptionElementTest {
 
-  @Override
-  protected SDBLParser.QueryPackageContext rootAST() {
-    return parser.queryPackage();
+  @Test
+  void testDescriptionElementCreation() {
+    // Given
+    var range = new SimpleRange(0, 10, 0, 19);
+    var type = DescriptionElement.Type.PARAMETERS_KEYWORD;
+
+    // When
+    var element = new DescriptionElement(range, type);
+
+    // Then
+    assertThat(element.range()).isEqualTo(range);
+    assertThat(element.type()).isEqualTo(type);
   }
 }

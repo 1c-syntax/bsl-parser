@@ -19,23 +19,23 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Parser.
  */
-package com.github._1c_syntax.bsl.parser;
+package com.github._1c_syntax.bsl.parser.description.support;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Tokenizer;
-
-public class SDBLTokenizer extends Tokenizer<SDBLParser.QueryPackageContext, SDBLParser> {
-  public SDBLTokenizer(String content) {
-    this(content, new SDBLLexer(CharStreams.fromString("")));
-  }
-
-  public SDBLTokenizer(String content, Lexer lexer) {
-    super(content, lexer, SDBLParser.class);
-  }
-
-  @Override
-  protected SDBLParser.QueryPackageContext rootAST() {
-    return parser.queryPackage();
+/**
+ * Части описания (ключевые слова, конструкции)
+ *
+ * @param range Область расположения части описания
+ * @param type  Тип части описания
+ */
+public record DescriptionElement(SimpleRange range, Type type) {
+  public enum Type {
+    UNKNOWN,
+    RETURNS_KEYWORD,
+    EXAMPLE_KEYWORD,
+    PARAMETERS_KEYWORD,
+    CALL_OPTIONS_KEYWORD,
+    DEPRECATE_KEYWORD,
+    PARAMETER_NAME,
+    TYPE_NAME
   }
 }
