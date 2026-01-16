@@ -767,7 +767,7 @@ class BSLDescriptionReaderTest {
 
     // Проверяем, что диапазон гиперссылки учитывает сдвиг строк
     // Комментарий начинается на 3-й строке (индекс 1 после токенизации), гиперссылка начинается с 3 символа и заканчивается на 37 символе
-    assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(1, 3, 1, 37));
+    assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(2, 3, 2, 37));
   }
 
   private List<Token> getTokensFromString(String exampleString) {

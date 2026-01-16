@@ -54,8 +54,8 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
 
   private VariableDescriptionReader(SimpleRange range) {
     builder = VariableDescription.builder();
-    lineShift = Math.max(0, range.startLine() - 1);
-    firstLineCharShift = Math.max(0, range.startCharacter() - 1);
+    lineShift = Math.max(0, range.startLine());
+    firstLineCharShift = Math.max(0, range.startCharacter());
   }
 
   /**
