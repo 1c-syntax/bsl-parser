@@ -144,7 +144,7 @@ indexingItem: (parameter | column);
 indexingSet: LPAREN indexes+=indexingItem (COMMA indexes+=indexingItem)* RPAREN unique=UNIQUE?;
 
 // упорядочивание
-orderBy: ORDER_BY orders+=ordersByExpession (COMMA orders+=ordersByExpession)?;
+orderBy: ORDER_BY orders+=ordersByExpession (COMMA orders+=ordersByExpession)*;
 ordersByExpession: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY direction=DESC?))?;
 
 // итоги
