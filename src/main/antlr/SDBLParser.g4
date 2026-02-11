@@ -83,7 +83,7 @@ query:
     (FOR_UPDATE forUpdate=mdo?)?
     (
             (INDEX_BY_SETS LPAREN indexSets+=indexingSet (COMMA indexSets+=indexingSet)* RPAREN)
-        |   (INDEX_BY indexes+=indexingItem (COMMA indexes+=indexingItem)*)
+        |   (INDEX_BY indexes+=indexingItem unique=UNIQUE? (COMMA indexes+=indexingItem unique=UNIQUE?)*)
     )?
     ;
 
@@ -124,7 +124,7 @@ selectedField:
 asteriskField: (tableName=identifier DOT)* MUL;
 
 // поле выборки-выражение, алиас может быть
-expressionField: logicalExpression;
+expressionField: expression | logicalExpression;
 
 // поле выборки-поле табицы или NULL
 columnField: NULL | recordAutoNumberFunction;
@@ -140,8 +140,8 @@ inlineTableField: inlineTable=column DOT LPAREN inlineTableFields=selectedFields
 recordAutoNumberFunction: doCall=RECORDAUTONUMBER LPAREN RPAREN;
 
 // поле индексирования, может быть колонкой или параметром
-indexingItem: (parameter | column) unique=UNIQUE?;
-indexingSet: LPAREN indexes+=indexingItem (COMMA indexes+=indexingItem)* RPAREN;
+indexingItem: (parameter | column);
+indexingSet: LPAREN indexes+=indexingItem (COMMA indexes+=indexingItem)* RPAREN unique=UNIQUE?;
 
 // упорядочивание
 orderBy: ORDER_BY orders+=ordersByExpession (COMMA orders+=ordersByExpession)?;
@@ -310,7 +310,8 @@ inPredicate: (expression | (LPAREN expressionList RPAREN)) NOT* typeIn=(IN | IN_
 refsPredicate: expression REFS mdo;                                             // выражение ССЫЛКА МДО
 
 // список выражений
-expressionList: exp+=logicalExpression (COMMA exp+=logicalExpression)*;
+expressionList: exp+=expressionListItem (COMMA exp+=expressionListItem)*;
+expressionListItem: expression | logicalExpression;
 
 // перечень таблиц-источников данных для выборки
 dataSources: tables+=dataSource (COMMA tables+=dataSource)*;

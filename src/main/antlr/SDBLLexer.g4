@@ -211,7 +211,7 @@ fragment LETTER: [\p{Letter}] | '_';
 
 DECIMAL     : DIGIT+;
 FLOAT       : DIGIT+ '.' DIGIT*;
-STR         : '"' -> pushMode(STRINGS);
+STR         : '"' -> more, pushMode(STRINGS);
 INCORRECT_IDENTIFIER  : DIGIT+ LETTER (LETTER | DIGIT)*;
 IDENTIFIER  : LETTER (LETTER | DIGIT)*;
 UNKNOWN     : . -> channel(HIDDEN);
