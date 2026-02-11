@@ -7,17 +7,17 @@ plugins {
     jacoco
     idea
     antlr
-    id("org.cadixdev.licenser") version "0.6.1"
+    id("cloud.rio.license") version "0.18.0"
     id("me.qoomon.git-versioning") version "6.4.4"
     id("io.freefair.javadoc-links") version "9.2.0"
     id("io.freefair.javadoc-utf-8") version "9.2.0"
     id("io.freefair.lombok") version "9.2.0"
-    id("io.freefair.maven-central.validate-poms") version "9.2.0"
+//    id("io.freefair.maven-central.validate-poms") version "9.2.0"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("ru.vyarus.pom") version "3.0.0"
     id("org.jreleaser") version "1.21.0"
     id("org.sonarqube") version "7.2.2.6593"
-    id("me.champeau.gradle.jmh") version "0.5.3"
+    id("me.champeau.jmh") version "0.7.3"
 }
 
 repositories {
@@ -62,6 +62,8 @@ dependencies {
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
     testImplementation("org.assertj", "assertj-core", "3.27.0")
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
@@ -118,7 +120,7 @@ idea {
 
 jmh {
     jvmArgsAppend = listOf("-XX:+UseParallelGC")
-    isIncludeTests = true
+    includeTests.set(true)
     duplicateClassesStrategy = DuplicatesStrategy.WARN
     timeUnit = "s"
 }
@@ -134,12 +136,12 @@ tasks.generateGrammarSource {
     outputDirectory = file("src/main/gen/com/github/_1c_syntax/bsl/parser")
 }
 
-tasks.updateLicenseMain {
+tasks.licenseFormatMain {
     mustRunAfter(tasks.generateGrammarSource)
 }
 
-tasks.checkLicenseMain {
-    dependsOn(tasks.updateLicenseMain)
+tasks.licenseMain {
+    dependsOn(tasks.licenseFormatMain)
 }
 
 tasks.test {
@@ -173,18 +175,15 @@ tasks.javadoc {
 }
 
 license {
-    header(rootProject.file("license/HEADER.txt"))
-    newLine(false)
+    header = rootProject.file("license/HEADER.txt")
+    skipExistingHeaders = false
+    strictCheck = true
+    mapping("java", "SLASHSTAR_STYLE")
     ext["year"] = "2018-" + Calendar.getInstance().get(Calendar.YEAR)
     ext["name"] =
         "Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>"
     ext["project"] = "BSL Parser"
-    exclude("**/*.tokens")
-    exclude("**/*.interp")
-    exclude("**/*.g4")
-    exclude("**/*.bsl")
-    exclude("**/*.orig")
-    exclude("**/*.gitkeep")
+    include("**/*.java")
 }
 
 tasks.clean {
