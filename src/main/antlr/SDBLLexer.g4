@@ -52,6 +52,7 @@ BRACE: '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 
 // KEYWORDS         RU                                EN
 ALLOWED:        'РАЗРЕШЕННЫЕ'                   | 'ALLOWED';
+ADD:            'ДОБАВИТЬ'                      | 'ADD';
 AND:            'И'                             | 'AND';
 AS:             ('КАК'                          | 'AS')             -> pushMode(ID_MODE);
 ASC:            'ВОЗР'                          | 'ASC';
@@ -69,7 +70,6 @@ ESCAPE:         'СПЕЦСИМВОЛ'                    | 'ESCAPE';
 FALSE:          'ЛОЖЬ'                          | 'FALSE';
 FROM:           'ИЗ'                            | 'FROM';
 HAVING:         'ИМЕЮЩИЕ'                       | 'HAVING';
-HIERARCHY:      'ИЕРАРХИЯ'                      | 'HIERARCHY';
 INTO:           'ПОМЕСТИТЬ'                     | 'INTO';
 IS:             'ЕСТЬ'                          | 'IS';
 ISNULL:         'ЕСТЬNULL'                      | 'ISNULL';
@@ -107,11 +107,10 @@ EMPTYTABLE:         'ПУСТАЯТАБЛИЦА'                 | 'EMPTYTABLE';
 EMPTYREF:           'ПУСТАЯССЫЛКА'                  | 'EMPTYREF';
 ENDOFPERIOD:        'КОНЕЦПЕРИОДА'                  | 'ENDOFPERIOD';
 EXP:                'EXP';
-// TODO найти англ вариант GROUPEDBY:      RU_S RU_G RU_R RU_U RU_P RU_P RU_I RU_R RU_O RU_V RU_A RU_N RU_O RU_P RU_O  | УТОНИЧТЬ;
 HALFYEAR:           'ПОЛУГОДИЕ'                     | 'HALFYEAR';
 HOUR:               'ЧАС'                           | 'HOUR';
-// TODO добавить метод лев без конфликта с левым соединением LEFT:           RU_L RU_E RU_V                                                              | L E F T;
 INT:                'ЦЕЛ'                           | 'INT';
+LEFT:               'ЛЕВ'                           | 'LEFT';
 LOG:                'LOG';
 LOG10:              'LOG10';
 LOWER:              'НРЕГ'                          | 'LOWER';
@@ -122,14 +121,13 @@ MONTH:              'МЕСЯЦ'                         | 'MONTH';
 NUMBER:             'ЧИСЛО'                         | 'NUMBER';
 UNIQUE:             'УНИКАЛЬНО'                     | 'UNIQUE';
 QUARTER:            'КВАРТАЛ'                       | 'QUARTER';
-ONLY:               'ТОЛЬКО'                        | 'ONLY';
 PERIODS:            'ПЕРИОДАМИ'                     | 'PERIODS';
 REFS:               'ССЫЛКА'                        | 'REFS';
 PRESENTATION:       'ПРЕДСТАВЛЕНИЕ'                 | 'PRESENTATION';
 RECORDAUTONUMBER:   'АВТОНОМЕРЗАПИСИ'               | 'RECORDAUTONUMBER';
 REFPRESENTATION:    'ПРЕДСТАВЛЕНИЕССЫЛКИ'           | 'REFPRESENTATION';
 POW:                'POW';
-// TODO см Лев RIGHT:          RU_P RU_R RU_A RU_V                                                         | R I G H T;
+RIGHT:              'ПРАВ'                          | 'RIGHT';
 ROUND:              'ОКР'                           | 'ROUND';
 SECOND:             'СЕКУНДА'                       | 'SECOND';
 SIN:                'SIN';
@@ -179,31 +177,33 @@ TASK_TYPE:                          'ЗАДАЧА'                    | 'TASK';
 ROUTEPOINT_FIELD:                   'ТОЧКАМАРШРУТА'             |
                                     'ТОЧКИ'                     | 'ROUTEPOINT';
 
-// compex keywords          RU                          EN
-INDEX:                  'ИНДЕКСИРОВАТЬ'             | 'INDEX';
-GROUP:                  'СГРУППИРОВАТЬ'             | 'GROUP';
-ORDER:                  'УПОРЯДОЧИТЬ'               | 'ORDER';
+// compex keywords
+INDEX_BY_SETS:          ('ИНДЕКСИРОВАТЬ'    | 'INDEX')  WHITE_SPACE ('ПО'           | 'BY') WHITE_SPACE ('НАБОРАМ'      | 'SETS') ;
+INDEX_BY:               ('ИНДЕКСИРОВАТЬ'    | 'INDEX')  WHITE_SPACE ('ПО'           | 'BY');
+GROUP_BY_GROUPING_SETS: ('СГРУППИРОВАТЬ'    | 'GROUP')  WHITE_SPACE ('ПО'           | 'BY') WHITE_SPACE ('ГРУППИРУЮЩИМ' | 'GROUPING') WHITE_SPACE ('НАБОРАМ' | 'SETS');
+GROUP_BY:               ('СГРУППИРОВАТЬ'    | 'GROUP')  WHITE_SPACE ('ПО'           | 'BY');
+ORDER_BY:               ('УПОРЯДОЧИТЬ'      | 'ORDER')  WHITE_SPACE ('ПО'           | 'BY');
+FOR_UPDATE:             ('ДЛЯ'              | 'FOR')    WHITE_SPACE ('ИЗМЕНЕНИЯ'    | 'UPDATE');
 
-GROUPEDBY:              'СГРУППИРОВАНОПО'           | 'GROUPEDBY';
+RIGHT_OUTER_JOIN:       ('ПРАВОЕ'       | 'RIGHT')  WHITE_SPACE ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE ('СОЕДИНЕНИЕ' | 'JOIN');
+RIGHT_JOIN:             ('ПРАВОЕ'       | 'RIGHT')  WHITE_SPACE ('СОЕДИНЕНИЕ'   | 'JOIN');
+LEFT_OUTER_JOIN:        ('ЛЕВОЕ'        | 'LEFT')   WHITE_SPACE ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE ('СОЕДИНЕНИЕ' | 'JOIN');
+LEFT_JOIN:              ('ЛЕВОЕ'        | 'LEFT')   WHITE_SPACE ('СОЕДИНЕНИЕ'   | 'JOIN');
+FULL_OUTER_JOIN:        ('ПОЛНОЕ'       | 'FULL')   WHITE_SPACE ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE ('СОЕДИНЕНИЕ' | 'JOIN');
+FULL_JOIN:              ('ПОЛНОЕ'       | 'FULL')   WHITE_SPACE ('СОЕДИНЕНИЕ'   | 'JOIN');
+INNER_JOIN:             ('ВНУТРЕННЕЕ'   | 'INNER')  WHITE_SPACE ('СОЕДИНЕНИЕ'   | 'JOIN');
+JOIN:                   'СОЕДИНЕНИЕ'    | 'JOIN';
 
-GROUPING:               'ГРУППИРУЮЩИМ'              | 'GROUPING';
-SETS:                   'НАБОРАМ'                   | 'SETS';
+UNION_ALL:              ('ОБЪЕДИНИТЬ'   | 'UNION')  WHITE_SPACE ('ВСЕ'          | 'ALL');
+UNION:                  'ОБЪЕДИНИТЬ'    | 'UNION';
 
-RIGHT:                  'ПРАВОЕ'                    | 'RIGHT';
-LEFT:                   'ЛЕВОЕ'                     | 'LEFT';
-INNER:                  'ВНУТРЕННЕЕ'                | 'INNER';
-FULL:                   'ПОЛНОЕ'                    | 'FULL';
-JOIN:                   'СОЕДИНЕНИЕ'                | 'JOIN';
-OUTER:                  'ВНЕШНЕЕ'                   | 'OUTER';
+ONLY_HIERARCHY:         ('ТОЛЬКО'       | 'ONLY')   WHITE_SPACE ('ИЕРАРХИЯ' | 'HIERARCHY');
+HIERARCHY:              ('ИЕРАРХИЯ'     | 'HIERARCHY');
 
-FOR:                    'ДЛЯ'                       | 'FOR';
-UPDATE:                 'ИЗМЕНЕНИЯ'                 | 'UPDATE';
+IN_HIERARCHY:           ('В'            | 'IN')     WHITE_SPACE ('ИЕРАРХИИ' | 'HIERARCHY');
+IN:                     'В'             | 'IN';
 
-ALL:                    'ВСЕ'                       | 'ALL';
-UNION:                  'ОБЪЕДИНИТЬ'                | 'UNION';
-
-HIERARCHY_FOR_IN:       'ИЕРАРХИИ'                  | 'HIERARCHY';
-IN:                     'В' | 'IN';
+GROUPEDBY:              'СГРУППИРОВАНОПО' | 'GROUPEDBY';
 
 // LITERALS
 fragment DIGIT: [0-9];
