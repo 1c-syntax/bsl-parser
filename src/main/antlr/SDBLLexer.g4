@@ -28,7 +28,7 @@ options { caseInsensitive=true; }
 
 // COMMONS
 WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
-LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
+LINE_COMMENT: '//' ~[\r\n]* [\f\r\n] -> channel(HIDDEN);
 
 // SEPARATORS
 DOT: '.' -> pushMode(DOT_MODE);
@@ -178,36 +178,37 @@ ROUTEPOINT_FIELD:                   'ТОЧКАМАРШРУТА'             |
                                     'ТОЧКИ'                     | 'ROUTEPOINT';
 
 // compex keywords
-INDEX_BY_SETS:          ('ИНДЕКСИРОВАТЬ'    | 'INDEX')  WHITE_SPACE ('ПО'           | 'BY') WHITE_SPACE ('НАБОРАМ'      | 'SETS') ;
-INDEX_BY:               ('ИНДЕКСИРОВАТЬ'    | 'INDEX')  WHITE_SPACE ('ПО'           | 'BY');
-GROUP_BY_GROUPING_SETS: ('СГРУППИРОВАТЬ'    | 'GROUP')  WHITE_SPACE ('ПО'           | 'BY') WHITE_SPACE ('ГРУППИРУЮЩИМ' | 'GROUPING') WHITE_SPACE ('НАБОРАМ' | 'SETS');
-GROUP_BY:               ('СГРУППИРОВАТЬ'    | 'GROUP')  WHITE_SPACE ('ПО'           | 'BY');
-ORDER_BY:               ('УПОРЯДОЧИТЬ'      | 'ORDER')  WHITE_SPACE ('ПО'           | 'BY');
-FOR_UPDATE:             ('ДЛЯ'              | 'FOR')    WHITE_SPACE ('ИЗМЕНЕНИЯ'    | 'UPDATE');
+INDEX_BY_SETS:          ('ИНДЕКСИРОВАТЬ'    | 'INDEX')  WHITE_SPACE_COMMENT ('ПО'           | 'BY') WHITE_SPACE_COMMENT ('НАБОРАМ'      | 'SETS') ;
+INDEX_BY:               ('ИНДЕКСИРОВАТЬ'    | 'INDEX')  WHITE_SPACE_COMMENT ('ПО'           | 'BY');
+GROUP_BY_GROUPING_SETS: ('СГРУППИРОВАТЬ'    | 'GROUP')  WHITE_SPACE_COMMENT ('ПО'           | 'BY') WHITE_SPACE_COMMENT ('ГРУППИРУЮЩИМ' | 'GROUPING') WHITE_SPACE_COMMENT ('НАБОРАМ' | 'SETS');
+GROUP_BY:               ('СГРУППИРОВАТЬ'    | 'GROUP')  WHITE_SPACE_COMMENT ('ПО'           | 'BY');
+ORDER_BY:               ('УПОРЯДОЧИТЬ'      | 'ORDER')  WHITE_SPACE_COMMENT ('ПО'           | 'BY');
+FOR_UPDATE:             ('ДЛЯ'              | 'FOR')    WHITE_SPACE_COMMENT ('ИЗМЕНЕНИЯ'    | 'UPDATE');
 
-RIGHT_OUTER_JOIN:       ('ПРАВОЕ'       | 'RIGHT')  WHITE_SPACE ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE ('СОЕДИНЕНИЕ' | 'JOIN');
-RIGHT_JOIN:             ('ПРАВОЕ'       | 'RIGHT')  WHITE_SPACE ('СОЕДИНЕНИЕ'   | 'JOIN');
-LEFT_OUTER_JOIN:        ('ЛЕВОЕ'        | 'LEFT')   WHITE_SPACE ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE ('СОЕДИНЕНИЕ' | 'JOIN');
-LEFT_JOIN:              ('ЛЕВОЕ'        | 'LEFT')   WHITE_SPACE ('СОЕДИНЕНИЕ'   | 'JOIN');
-FULL_OUTER_JOIN:        ('ПОЛНОЕ'       | 'FULL')   WHITE_SPACE ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE ('СОЕДИНЕНИЕ' | 'JOIN');
-FULL_JOIN:              ('ПОЛНОЕ'       | 'FULL')   WHITE_SPACE ('СОЕДИНЕНИЕ'   | 'JOIN');
-INNER_JOIN:             ('ВНУТРЕННЕЕ'   | 'INNER')  WHITE_SPACE ('СОЕДИНЕНИЕ'   | 'JOIN');
+RIGHT_OUTER_JOIN:       ('ПРАВОЕ'       | 'RIGHT')  WHITE_SPACE_COMMENT ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE_COMMENT ('СОЕДИНЕНИЕ' | 'JOIN');
+RIGHT_JOIN:             ('ПРАВОЕ'       | 'RIGHT')  WHITE_SPACE_COMMENT ('СОЕДИНЕНИЕ'   | 'JOIN');
+LEFT_OUTER_JOIN:        ('ЛЕВОЕ'        | 'LEFT')   WHITE_SPACE_COMMENT ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE_COMMENT ('СОЕДИНЕНИЕ' | 'JOIN');
+LEFT_JOIN:              ('ЛЕВОЕ'        | 'LEFT')   WHITE_SPACE_COMMENT ('СОЕДИНЕНИЕ'   | 'JOIN');
+FULL_OUTER_JOIN:        ('ПОЛНОЕ'       | 'FULL')   WHITE_SPACE_COMMENT ('ВНЕШНЕЕ'      | 'OUTER') WHITE_SPACE_COMMENT ('СОЕДИНЕНИЕ' | 'JOIN');
+FULL_JOIN:              ('ПОЛНОЕ'       | 'FULL')   WHITE_SPACE_COMMENT ('СОЕДИНЕНИЕ'   | 'JOIN');
+INNER_JOIN:             ('ВНУТРЕННЕЕ'   | 'INNER')  WHITE_SPACE_COMMENT ('СОЕДИНЕНИЕ'   | 'JOIN');
 JOIN:                   'СОЕДИНЕНИЕ'    | 'JOIN';
 
-UNION_ALL:              ('ОБЪЕДИНИТЬ'   | 'UNION')  WHITE_SPACE ('ВСЕ'          | 'ALL');
+UNION_ALL:              ('ОБЪЕДИНИТЬ'   | 'UNION')  WHITE_SPACE_COMMENT ('ВСЕ'          | 'ALL');
 UNION:                  'ОБЪЕДИНИТЬ'    | 'UNION';
 
-ONLY_HIERARCHY:         ('ТОЛЬКО'       | 'ONLY')   WHITE_SPACE ('ИЕРАРХИЯ' | 'HIERARCHY');
+ONLY_HIERARCHY:         ('ТОЛЬКО'       | 'ONLY')   WHITE_SPACE_COMMENT ('ИЕРАРХИЯ' | 'HIERARCHY');
 HIERARCHY:              ('ИЕРАРХИЯ'     | 'HIERARCHY');
 
-IN_HIERARCHY:           ('В'            | 'IN')     WHITE_SPACE ('ИЕРАРХИИ' | 'HIERARCHY');
+IN_HIERARCHY:           ('В'            | 'IN')     WHITE_SPACE_COMMENT ('ИЕРАРХИИ' | 'HIERARCHY');
 IN:                     'В'             | 'IN';
 
 GROUPEDBY:              'СГРУППИРОВАНОПО' | 'GROUPEDBY';
 
-// LITERALS
 fragment DIGIT: [0-9];
 fragment LETTER: [\p{Letter}] | '_';
+
+fragment WHITE_SPACE_COMMENT: LINE_COMMENT? (WHITE_SPACE LINE_COMMENT?)+;
 
 DECIMAL     : DIGIT+;
 FLOAT       : DIGIT+ '.' DIGIT*;

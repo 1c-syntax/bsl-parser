@@ -64,7 +64,7 @@ selectQuery:
 subquery: main=query orderBy? (unions+=union+)?;
 
 // объединение запросов
-union: unoinType=(UNION | UNION_ALL) query orderBy?;
+union: unionType=(UNION | UNION_ALL) query orderBy?;
 
 // структура запроса
 query:
@@ -83,7 +83,7 @@ query:
     (FOR_UPDATE forUpdate=mdo?)?
     (
             (INDEX_BY_SETS LPAREN indexSets+=indexingSet (COMMA indexSets+=indexingSet)* RPAREN)
-        |   (INDEX_BY indexes+=indexingItem unique=UNIQUE? (COMMA indexes+=indexingItem unique=UNIQUE?)*)
+        |   (INDEX_BY indexes+=indexingItem UNIQUE? (COMMA indexes+=indexingItem UNIQUE?)*)
     )?
     ;
 
@@ -151,7 +151,7 @@ ordersByExpession: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY dir
 totalBy: TOTALS selectedFields? BY totalsGroups+=totalsGroup (COMMA totalsGroups+=totalsGroup)*;
 totalsGroup:
       OVERALL
-    | (expression (hierarhyType=(ONLY_HIERARCHY | HIERARCHY) | periodic)? alias?)
+    | (expression (hierarсhyType=(ONLY_HIERARCHY | HIERARCHY) | periodic)? alias?)
     ;
 // периодичность группы итогов
 periodic: PERIODS
@@ -233,7 +233,7 @@ builtInFunctions:
     | (doCall=ISNULL LPAREN first=logicalExpression COMMA second=logicalExpression RPAREN)
     | (doCall=(ACOS | ASIN | ATAN | COS | SIN | TAN | LOG | LOG10 | EXP | POW | SQRT | INT) LPAREN decimal=expression RPAREN)
     | (doCall=(LOWER | STRINGLENGTH | TRIMALL | TRIML | TRIMR | UPPER) LPAREN string=expression RPAREN)
-    | (doCall=(LEFT | RIGHT ) LPAREN string=expression COMMA stingLength=expression RPAREN)
+    | (doCall=(LEFT | RIGHT) LPAREN string=expression COMMA stringLength=expression RPAREN)
     | (doCall=ROUND LPAREN decimal=expression COMMA precise=expression RPAREN)
     | (doCall=(STOREDDATASIZE | UUID) LPAREN value=expression RPAREN)
     | (doCall=STRFIND LPAREN string=expression COMMA substring1=expression RPAREN)
@@ -465,8 +465,6 @@ identifier:
     | YEAR
     | RIGHT
     | LEFT
-    | JOIN
-    | UNION
     | ACOS
     | ASIN
     | ATAN

@@ -313,7 +313,9 @@ class SDBLParserCheckSourceTest {
   void testSelect08() {
     testParser.assertThatFile("sdbl/select08.sdbl")
       .containsRule(SDBLParser.RULE_queries, 1)
-      .containsRule(SDBLParser.RULE_dataSource, 1)
-      .containsRule(SDBLParser.RULE_builtInFunctions, 35);
+      .containsRule(SDBLParser.RULE_dataSource, 2)
+      .containsRule(SDBLParser.RULE_builtInFunctions, 37)
+      .containsRule(SDBLParser.RULE_joinPart, 1)
+      .containsRule(SDBLParser.RULE_indexingSet, 2);
   }
 }
