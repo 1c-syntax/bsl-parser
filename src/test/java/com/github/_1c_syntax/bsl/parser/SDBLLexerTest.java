@@ -77,7 +77,7 @@ class SDBLLexerTest {
     testLexer.assertThat("ИМЕЮЩИЕ").isEqualTo("HAVING").containsAll(SDBLLexer.HAVING);
     testLexer.assertThat("ИНАЧЕ").isEqualTo("ELSE").containsAll(SDBLLexer.ELSE);
     testLexer.assertThat("ИНДЕКСИРОВАТЬ BY")
-      .isEqualTo("INDEX BY").containsAll(SDBLLexer.INDEX, SDBLLexer.BY_EN);
+      .isEqualTo("INDEX BY").containsAll(SDBLLexer.INDEX, SDBLLexer.BY);
     testLexer.assertThat("ИТОГИ").isEqualTo("TOTALS").containsAll(SDBLLexer.TOTALS);
     testLexer.assertThat("КАК").isEqualTo("AS").containsAll(SDBLLexer.AS);
     testLexer.assertThat("КВАРТАЛ").isEqualTo("QUARTER").containsAll(SDBLLexer.QUARTER);
@@ -106,11 +106,11 @@ class SDBLLexerTest {
     testLexer.assertThat("ПУСТАЯТАБЛИЦА").isEqualTo("EMPTYTABLE").containsAll(SDBLLexer.EMPTYTABLE);
     testLexer.assertThat("РАЗЛИЧНЫЕ").isEqualTo("DISTINCT").containsAll(SDBLLexer.DISTINCT);
     testLexer.assertThat("РАЗРЕШЕННЫЕ").isEqualTo("ALLOWED").containsAll(SDBLLexer.ALLOWED);
-    testLexer.assertThat("Сгруппировать По").containsAll(SDBLLexer.GROUP, SDBLLexer.PO_RU);
-    testLexer.assertThat("GROUP BY").containsAll(SDBLLexer.GROUP, SDBLLexer.BY_EN);
+    testLexer.assertThat("Сгруппировать По").containsAll(SDBLLexer.GROUP, SDBLLexer.BY);
+    testLexer.assertThat("GROUP BY").containsAll(SDBLLexer.GROUP, SDBLLexer.BY);
     testLexer.assertThat("СЕКУНДА").isEqualTo("SECOND").containsAll(SDBLLexer.SECOND);
-    testLexer.assertThat("СОЕДИНЕНИЕ ПО").containsAll(SDBLLexer.JOIN, SDBLLexer.PO_RU);
-    testLexer.assertThat("JOIN ON").containsAll(SDBLLexer.JOIN, SDBLLexer.ON_EN);
+    testLexer.assertThat("СОЕДИНЕНИЕ ПО").containsAll(SDBLLexer.JOIN, SDBLLexer.BY);
+    testLexer.assertThat("JOIN ON").containsAll(SDBLLexer.JOIN, SDBLLexer.BY);
     testLexer.assertThat("СПЕЦСИМВОЛ").isEqualTo("ESCAPE").containsAll(SDBLLexer.ESCAPE);
     testLexer.assertThat("ПОДСТРОКА").isEqualTo("SUBSTRING").containsAll(SDBLLexer.SUBSTRING);
     testLexer.assertThat("СРЕДНЕЕ").isEqualTo("AVG").containsAll(SDBLLexer.AVG);
@@ -123,7 +123,7 @@ class SDBLLexerTest {
     testLexer.assertThat("ТОЛЬКО").isEqualTo("ONLY").containsAll(SDBLLexer.ONLY);
     testLexer.assertThat("УБЫВ").isEqualTo("DESC").containsAll(SDBLLexer.DESC);
     testLexer.assertThat("УПОРЯДОЧИТЬ ПО")
-      .isEqualTo("ORDER ПО").containsAll(SDBLLexer.ORDER, SDBLLexer.PO_RU);
+      .isEqualTo("ORDER ПО").containsAll(SDBLLexer.ORDER, SDBLLexer.BY);
     testLexer.assertThat("ЧАС").isEqualTo("HOUR").containsAll(SDBLLexer.HOUR);
     testLexer.assertThat("ЧИСЛО").isEqualTo("NUMBER").containsAll(SDBLLexer.NUMBER);
     testLexer.assertThat("УНИЧТОЖИТЬ").isEqualTo("DROP").containsAll(SDBLLexer.DROP);
@@ -131,6 +131,10 @@ class SDBLLexerTest {
     testLexer.assertThat("РазностьДат").isEqualTo("DateDiff").containsAll(SDBLLexer.DATEDIFF);
     testLexer.assertThat("автономерзаписи")
       .isEqualTo("RECORDAUTONUMBER").containsAll(SDBLLexer.RECORDAUTONUMBER);
+    testLexer.assertThat("Наборам")
+      .isEqualTo("sets").containsAll(SDBLLexer.SETS);
+    testLexer.assertThat("уникально")
+      .isEqualTo("UNIQUE").containsAll(SDBLLexer.UNIQUE);
 
   }
 

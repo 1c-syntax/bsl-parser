@@ -73,10 +73,10 @@ query:
     (INTO temporaryTableName=temporaryTableIdentifier)?
     (FROM from=dataSources)?
     (WHERE where=logicalExpression)?
-    (GROUP (BY_EN | PO_RU) groupBy=groupByItem)?
+    (GROUP BY groupBy=groupByItem)?
     (HAVING having=logicalExpression)?
     (FOR UPDATE forUpdate=mdo?)?
-    (INDEX (BY_EN | PO_RU) indexes+=indexingItem (COMMA indexes+=indexingItem)*)?
+    (INDEX BY indexes+=indexingItem (COMMA indexes+=indexingItem)*)?
     ;
 
 // различные ограничения выборки, для ускорения анализа развернуты все варианты
@@ -132,7 +132,7 @@ inlineTableField: inlineTable=column DOT LPAREN inlineTableFields=selectedFields
 recordAutoNumberFunction: doCall=RECORDAUTONUMBER LPAREN RPAREN;
 
 groupByItem:
-    GROUPING SET LPAREN (LPAREN groupingSet+=expressionList RPAREN (COMMA LPAREN groupingSet+=expressionList RPAREN)*) RPAREN
+    GROUPING SETS LPAREN (LPAREN groupingSet+=expressionList RPAREN (COMMA LPAREN groupingSet+=expressionList RPAREN)*) RPAREN
     | (groupBy+=expression (COMMA groupBy+=expression)*)
     ;
 
@@ -140,11 +140,11 @@ groupByItem:
 indexingItem: parameter | column;
 
 // упорядочивание
-orderBy: ORDER (BY_EN | PO_RU) orders+=ordersByExpession (COMMA orders+=ordersByExpession)?;
+orderBy: ORDER BY orders+=ordersByExpession (COMMA orders+=ordersByExpession)?;
 ordersByExpession: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY direction=DESC?))?;
 
 // итоги
-totalBy: TOTALS selectedFields? (BY_EN | PO_RU) totalsGroups+=totalsGroup (COMMA totalsGroups+=totalsGroup)*;
+totalBy: TOTALS selectedFields? BY totalsGroups+=totalsGroup (COMMA totalsGroups+=totalsGroup)*;
 totalsGroup:
       OVERALL
     | (expression ((ONLY? HIERARCHY) | periodic)? alias?)
@@ -364,7 +364,7 @@ joinPart:
         | (joinType=INNER JOIN)
         | (joinType=JOIN)
     )
-    source=dataSource (ON_EN | PO_RU) condition=logicalExpression          // имя таблицы и соединение
+    source=dataSource BY condition=logicalExpression          // имя таблицы и соединение
     ;
 
 // алиас для поля, таблицы ...
@@ -466,7 +466,7 @@ identifier:
     | ORDER
     | GROUP
     | INDEX
-    | SET
+    | SETS
     | RIGHT
     | LEFT
     | INNER
