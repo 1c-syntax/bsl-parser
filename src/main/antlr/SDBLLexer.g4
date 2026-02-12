@@ -255,7 +255,7 @@ DOT_IDENTIFIER      : IDENTIFIER -> type(IDENTIFIER), popMode;
 
 mode BRACE_MODE;
 BRACE_WHITE_SPACE   : WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
-BRACE_IDENTIFIER    : IDENTIFIER -> channel(HIDDEN);
+BRACE_IDENTIFIER    : IDENTIFIER -> channel(HIDDEN), type(IDENTIFIER);
 BRACE_START         : '{' -> pushMode(BRACE_MODE), channel(HIDDEN);
 BRACE_END           : '}' -> channel(HIDDEN), type(UNKNOWN), popMode;
 BRACE_UNKNOWN       : . -> channel(HIDDEN), type(UNKNOWN);
