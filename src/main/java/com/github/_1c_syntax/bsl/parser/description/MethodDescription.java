@@ -35,6 +35,7 @@ import org.antlr.v4.runtime.Token;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс-описание метода (процедуры или функции).
@@ -119,8 +120,8 @@ public class MethodDescription implements SourceDefinedSymbolDescription {
   }
 
   private List<DescriptionElement> computeAllElements() {
-    List<DescriptionElement> allElements = new ArrayList<>(keywords);
-    parameters.forEach(parameter -> allElements.addAll(parameter.allElements()));
+    List<DescriptionElement> allElements = new ArrayList<>(Objects.requireNonNull(keywords));
+    Objects.requireNonNull(parameters).forEach(parameter -> allElements.addAll(parameter.allElements()));
     returnedValue.forEach(type -> allElements.addAll(type.allElements()));
 
     return Collections.unmodifiableList(allElements);

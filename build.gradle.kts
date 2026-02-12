@@ -50,13 +50,13 @@ gitVersioning.apply {
 }
 
 dependencies {
-    antlr("io.github.1c-syntax", "antlr4", "0.2.0")
-
-    // stat analysis
-    compileOnly("com.github.spotbugs", "spotbugs-annotations", "4.8.6")
+    antlr("io.github.1c-syntax", "antlr4", "0.3.0-rc.2") {
+        exclude("org.antlr:antlr-runtime")
+        exclude("org.antlr:ST4")
+    }
 
     // testing
-    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.4.0")
+    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.5.0-rc.1")
 
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
@@ -181,7 +181,8 @@ license {
     mapping("java", "SLASHSTAR_STYLE")
     ext["year"] = "2018-" + Calendar.getInstance().get(Calendar.YEAR)
     ext["name"] =
-        "Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, Sergey Batanov <sergey.batanov@dmpas.ru>"
+        "Alexey Sosnoviy <labotamy@gmail.com>, Nikita Fedkin <nixel2007@gmail.com>, " +
+                "Sergey Batanov <sergey.batanov@dmpas.ru>"
     ext["project"] = "BSL Parser"
     include("**/*.java")
 }
@@ -200,7 +201,8 @@ sonar {
         property("sonar.projectKey", "1c-syntax_bsl-parser")
         property("sonar.projectName", "BSL Parser")
         property("sonar.scm.exclusions.disabled", "true")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
     }
 }
 

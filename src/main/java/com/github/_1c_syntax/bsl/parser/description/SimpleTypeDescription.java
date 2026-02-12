@@ -56,7 +56,10 @@ public class SimpleTypeDescription implements TypeDescription {
   @Accessors(fluent = true)
   DescriptionElement element;
 
-  public static TypeDescription create(String name, DescriptionElement element, String description, List<ParameterDescription> fieldList) {
+  public static TypeDescription create(String name,
+                                       DescriptionElement element,
+                                       String description,
+                                       List<ParameterDescription> fieldList) {
     if (name.isBlank() && description.isBlank()) {
       return EMPTY;
     }
