@@ -62,22 +62,21 @@ class SDBLLexerTest {
     testLexer.assertThat("ДЕНЬ").isEqualTo("DAY").containsAll(SDBLLexer.DAY);
     testLexer.assertThat("ДЕНЬГОДА").isEqualTo("DAYOFYEAR").containsAll(SDBLLexer.DAYOFYEAR);
     testLexer.assertThat("ДЕНЬНЕДЕЛИ").isEqualTo("WEEKDAY").containsAll(SDBLLexer.WEEKDAY);
-    testLexer.assertThat("ДЛЯ ИЗМЕНЕНИЯ")
-      .isEqualTo("FOR UPDATE").containsAll(SDBLLexer.FOR, SDBLLexer.UPDATE);
-    testLexer.assertThat("FOR UPDATE OF").containsAll(SDBLLexer.FOR, SDBLLexer.UPDATE, SDBLLexer.OF);
+    testLexer.assertThat("FOR ИЗМЕНЕНИЯ")
+      .isEqualTo("ДЛЯ   UPDATE").containsAll(SDBLLexer.FOR_UPDATE);
+    testLexer.assertThat("FOR UPDATE OF").containsAll(SDBLLexer.FOR_UPDATE, SDBLLexer.OF);
     testLexer.assertThat("ДОБАВИТЬКДАТЕ").isEqualTo("DATEADD").containsAll(SDBLLexer.DATEADD);
     testLexer.assertThat("ЕСТЬ").isEqualTo("IS").containsAll(SDBLLexer.IS);
     testLexer.assertThat("ЕСТЬNULL").isEqualTo("ISNULL").containsAll(SDBLLexer.ISNULL);
     testLexer.assertThat("Значение").isEqualTo("VALUE").containsAll(SDBLLexer.VALUE);
     testLexer.assertThat("И").isEqualTo("AND").containsAll(SDBLLexer.AND);
-    testLexer.assertThat("HIERARCHY").containsAll(SDBLLexer.HIERARCHY);
-    testLexer.assertThat("ИЕРАРХИЯ").containsAll(SDBLLexer.HIERARCHY);
+    testLexer.assertThat("HIERARCHY").isEqualTo("ИЕРАРХИЯ").containsAll(SDBLLexer.HIERARCHY);
     testLexer.assertThat("ИЗ").isEqualTo("FROM").containsAll(SDBLLexer.FROM);
     testLexer.assertThat("ИЛИ").isEqualTo("Or").containsAll(SDBLLexer.OR);
     testLexer.assertThat("ИМЕЮЩИЕ").isEqualTo("HAVING").containsAll(SDBLLexer.HAVING);
     testLexer.assertThat("ИНАЧЕ").isEqualTo("ELSE").containsAll(SDBLLexer.ELSE);
-    testLexer.assertThat("ИНДЕКСИРОВАТЬ BY")
-      .isEqualTo("INDEX BY").containsAll(SDBLLexer.INDEX, SDBLLexer.BY_EN);
+    testLexer.assertThat("ИНДЕКСИРОВАТЬ по")
+      .isEqualTo("INDEX \tBY").containsAll(SDBLLexer.INDEX_BY);
     testLexer.assertThat("ИТОГИ").isEqualTo("TOTALS").containsAll(SDBLLexer.TOTALS);
     testLexer.assertThat("КАК").isEqualTo("AS").containsAll(SDBLLexer.AS);
     testLexer.assertThat("КВАРТАЛ").isEqualTo("QUARTER").containsAll(SDBLLexer.QUARTER);
@@ -95,22 +94,38 @@ class SDBLLexerTest {
     testLexer.assertThat("НЕДЕЛЯ").isEqualTo("WEEK").containsAll(SDBLLexer.WEEK);
     testLexer.assertThat("ОБЩИЕ").isEqualTo("OVERALL").containsAll(SDBLLexer.OVERALL);
     testLexer.assertThat("ОБЪЕДИНИТЬ").isEqualTo("UNION").containsAll(SDBLLexer.UNION);
+    testLexer.assertThat("ОБЪЕДИНИТЬ ALL").isEqualTo("UNION ВСЕ").containsAll(SDBLLexer.UNION_ALL);
     testLexer.assertThat("ПЕРВЫЕ").isEqualTo("TOP").containsAll(SDBLLexer.TOP);
     testLexer.assertThat("ПЕРИОДАМИ").isEqualTo("PERIODS").containsAll(SDBLLexer.PERIODS);
     testLexer.assertThat("ПОДОБНО").isEqualTo("LIKE").containsAll(SDBLLexer.LIKE);
     testLexer.assertThat("ПОЛУГОДИЕ").isEqualTo("HALFYEAR").containsAll(SDBLLexer.HALFYEAR);
     testLexer.assertThat("ПОМЕСТИТЬ").isEqualTo("INTO").containsAll(SDBLLexer.INTO);
-    testLexer.assertThat("ПРАВОЕ JOIN")
-      .isEqualTo("RIGHT JOIN").containsAll(SDBLLexer.RIGHT, SDBLLexer.JOIN);
+    testLexer.assertThat("ПРАВОЕ СОЕДИНЕНИе")
+      .isEqualTo("RIGHT JOIN").containsAll(SDBLLexer.RIGHT_JOIN);
+    testLexer.assertThat("ПРАВОЕ \t OUTER\n СОЕДИНЕНИе")
+      .isEqualTo("RIGHT Внешнее   JOIN").containsAll(SDBLLexer.RIGHT_OUTER_JOIN);
+    testLexer.assertThat("левое СОЕДИНЕНИе")
+      .isEqualTo("left JOIN").containsAll(SDBLLexer.LEFT_JOIN);
+    testLexer.assertThat("Left \t OUTER\n СОЕДИНЕНИе")
+      .isEqualTo("Левое Внешнее   JOIN").containsAll(SDBLLexer.LEFT_OUTER_JOIN);
+    testLexer.assertThat("ПОЛНОЕ СОЕДИНЕНИе")
+      .isEqualTo("ПОЛНОЕ JOIN").containsAll(SDBLLexer.FULL_JOIN);
+    testLexer.assertThat("FULL \t OUTER\n СОЕДИНЕНИе")
+      .isEqualTo("FULL Внешнее   JOIN").containsAll(SDBLLexer.FULL_OUTER_JOIN);
+    testLexer.assertThat("ВНУТРЕННЕЕ СОЕДИНЕНИе")
+      .isEqualTo("INNER JOIN").containsAll(SDBLLexer.INNER_JOIN);
+    testLexer.assertThat("СОЕДИНЕНИе")
+      .isEqualTo("JOIN").containsAll(SDBLLexer.JOIN);
     testLexer.assertThat("ПРЕДСТАВЛЕНИЕ").isEqualTo("PRESENTATION").containsAll(SDBLLexer.PRESENTATION);
     testLexer.assertThat("ПУСТАЯТАБЛИЦА").isEqualTo("EMPTYTABLE").containsAll(SDBLLexer.EMPTYTABLE);
     testLexer.assertThat("РАЗЛИЧНЫЕ").isEqualTo("DISTINCT").containsAll(SDBLLexer.DISTINCT);
     testLexer.assertThat("РАЗРЕШЕННЫЕ").isEqualTo("ALLOWED").containsAll(SDBLLexer.ALLOWED);
-    testLexer.assertThat("Сгруппировать По").containsAll(SDBLLexer.GROUP, SDBLLexer.PO_RU);
-    testLexer.assertThat("GROUP BY").containsAll(SDBLLexer.GROUP, SDBLLexer.BY_EN);
+    testLexer.assertThat("Сгруппировать \nПо").isEqualTo("GROUP    BY").containsAll(SDBLLexer.GROUP_BY);
+    testLexer.assertThat("Сгруппировать \nПо grouping наборам")
+        .isEqualTo("GROUP    BY группирующим \t\n sets").containsAll(SDBLLexer.GROUP_BY_GROUPING_SETS);
     testLexer.assertThat("СЕКУНДА").isEqualTo("SECOND").containsAll(SDBLLexer.SECOND);
-    testLexer.assertThat("СОЕДИНЕНИЕ ПО").containsAll(SDBLLexer.JOIN, SDBLLexer.PO_RU);
-    testLexer.assertThat("JOIN ON").containsAll(SDBLLexer.JOIN, SDBLLexer.ON_EN);
+    testLexer.assertThat("СОЕДИНЕНИЕ ПО").containsAll(SDBLLexer.JOIN, SDBLLexer.BY);
+    testLexer.assertThat("JOIN ON").containsAll(SDBLLexer.JOIN, SDBLLexer.BY);
     testLexer.assertThat("СПЕЦСИМВОЛ").isEqualTo("ESCAPE").containsAll(SDBLLexer.ESCAPE);
     testLexer.assertThat("ПОДСТРОКА").isEqualTo("SUBSTRING").containsAll(SDBLLexer.SUBSTRING);
     testLexer.assertThat("СРЕДНЕЕ").isEqualTo("AVG").containsAll(SDBLLexer.AVG);
@@ -120,10 +135,11 @@ class SDBLLexerTest {
     testLexer.assertThat("ТИП").isEqualTo("TYPE").containsAll(SDBLLexer.TYPE);
     testLexer.assertThat("ТИПЗНАЧЕНИЯ").isEqualTo("VALUETYPE").containsAll(SDBLLexer.VALUETYPE);
     testLexer.assertThat("ТОГДА").isEqualTo("THEN").containsAll(SDBLLexer.THEN);
-    testLexer.assertThat("ТОЛЬКО").isEqualTo("ONLY").containsAll(SDBLLexer.ONLY);
+    testLexer.assertThat("ТОЛЬКО иерархия").isEqualTo("ONLY \t HIERARCHY")
+      .containsAll(SDBLLexer.ONLY_HIERARCHY);
     testLexer.assertThat("УБЫВ").isEqualTo("DESC").containsAll(SDBLLexer.DESC);
     testLexer.assertThat("УПОРЯДОЧИТЬ ПО")
-      .isEqualTo("ORDER ПО").containsAll(SDBLLexer.ORDER, SDBLLexer.PO_RU);
+      .isEqualTo("ORDER \t\t\nBY").containsAll(SDBLLexer.ORDER_BY);
     testLexer.assertThat("ЧАС").isEqualTo("HOUR").containsAll(SDBLLexer.HOUR);
     testLexer.assertThat("ЧИСЛО").isEqualTo("NUMBER").containsAll(SDBLLexer.NUMBER);
     testLexer.assertThat("УНИЧТОЖИТЬ").isEqualTo("DROP").containsAll(SDBLLexer.DROP);
@@ -131,6 +147,12 @@ class SDBLLexerTest {
     testLexer.assertThat("РазностьДат").isEqualTo("DateDiff").containsAll(SDBLLexer.DATEDIFF);
     testLexer.assertThat("автономерзаписи")
       .isEqualTo("RECORDAUTONUMBER").containsAll(SDBLLexer.RECORDAUTONUMBER);
+    testLexer.assertThat("Индексировать by   Наборам")
+      .isEqualTo("Index по sets").containsAll(SDBLLexer.INDEX_BY_SETS);
+    testLexer.assertThat("уникально")
+      .isEqualTo("UNIQUE").containsAll(SDBLLexer.UNIQUE);
+    testLexer.assertThat("Добавить")
+      .isEqualTo("ADD").containsAll(SDBLLexer.ADD);
 
   }
 
@@ -160,6 +182,8 @@ class SDBLLexerTest {
     testLexer.assertThat("UUID").isEqualTo("УникальныйиДентификатор").containsAll(SDBLLexer.UUID);
     testLexer.assertThat("STRFIND").isEqualTo("стрнайТи").containsAll(SDBLLexer.STRFIND);
     testLexer.assertThat("STRREPLACE").isEqualTo("стрЗАМЕнить").containsAll(SDBLLexer.STRREPLACE);
+    testLexer.assertThat("LEFT").isEqualTo("лев").containsAll(SDBLLexer.LEFT);
+    testLexer.assertThat("RIGHT").isEqualTo("прав").containsAll(SDBLLexer.RIGHT);
   }
 
   @Test
