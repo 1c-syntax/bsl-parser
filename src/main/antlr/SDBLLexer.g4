@@ -28,7 +28,8 @@ options { caseInsensitive=true; }
 
 // COMMONS
 WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
-LINE_COMMENT: '//' ~[\r\n]* [\f\r\n] -> channel(HIDDEN);
+LINE_COMMENT: LINE_COMMENT_BODY [\f\r\n]?-> channel(HIDDEN);
+fragment LINE_COMMENT_BODY: '//' ~[\r\n]*;
 
 // SEPARATORS
 DOT: '.' -> pushMode(DOT_MODE);
@@ -208,7 +209,7 @@ GROUPEDBY:              'СГРУППИРОВАНОПО' | 'GROUPEDBY';
 fragment DIGIT: [0-9];
 fragment LETTER: [\p{Letter}] | '_';
 
-fragment WHITE_SPACE_COMMENT: LINE_COMMENT? (WHITE_SPACE LINE_COMMENT?)+;
+fragment WHITE_SPACE_COMMENT: (LINE_COMMENT_BODY [\f\r\n])? (WHITE_SPACE (LINE_COMMENT_BODY [\f\r\n])?)+;
 
 DECIMAL     : DIGIT+;
 FLOAT       : DIGIT+ '.' DIGIT*;

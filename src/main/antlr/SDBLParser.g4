@@ -151,7 +151,7 @@ ordersByExpession: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY dir
 totalBy: TOTALS selectedFields? BY totalsGroups+=totalsGroup (COMMA totalsGroups+=totalsGroup)*;
 totalsGroup:
       OVERALL
-    | (expression (hierarсhyType=(ONLY_HIERARCHY | HIERARCHY) | periodic)? alias?)
+    | (expression (hierarchyType=(ONLY_HIERARCHY | HIERARCHY) | periodic)? alias?)
     ;
 // периодичность группы итогов
 periodic: PERIODS
@@ -237,7 +237,7 @@ builtInFunctions:
     | (doCall=ROUND LPAREN decimal=expression COMMA precise=expression RPAREN)
     | (doCall=(STOREDDATASIZE | UUID) LPAREN value=expression RPAREN)
     | (doCall=STRFIND LPAREN string=expression COMMA substring1=expression RPAREN)
-    | (doCall=STRREPLACE LPAREN string=expression COMMA substring1=expression COMMA substring1=expression RPAREN)
+    | (doCall=STRREPLACE LPAREN string=expression COMMA substring1=expression COMMA substring2=expression RPAREN)
 ;
 
 // агрегатные ф-ии
