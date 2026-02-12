@@ -209,7 +209,7 @@ GROUPEDBY:              'СГРУППИРОВАНОПО' | 'GROUPEDBY';
 fragment DIGIT: [0-9];
 fragment LETTER: [\p{Letter}] | '_';
 
-fragment WHITE_SPACE_COMMENT: (LINE_COMMENT_BODY [\f\r\n])? (WHITE_SPACE (LINE_COMMENT_BODY [\f\r\n])?)+;
+fragment WHITE_SPACE_COMMENT: (LINE_COMMENT_BODY [\f\r\n])* (WHITE_SPACE (LINE_COMMENT_BODY [\f\r\n])*)+;
 
 DECIMAL     : DIGIT+;
 FLOAT       : DIGIT+ '.' DIGIT*;

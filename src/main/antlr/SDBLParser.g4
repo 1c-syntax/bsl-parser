@@ -144,8 +144,8 @@ indexingItem: (parameter | column);
 indexingSet: LPAREN indexes+=indexingItem (COMMA indexes+=indexingItem)* RPAREN unique=UNIQUE?;
 
 // упорядочивание
-orderBy: ORDER_BY orders+=ordersByExpession (COMMA orders+=ordersByExpession)*;
-ordersByExpession: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY direction=DESC?))?;
+orderBy: ORDER_BY orders+=ordersByExpression (COMMA orders+=ordersByExpression)*;
+ordersByExpression: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY direction=DESC?))?;
 
 // итоги
 totalBy: TOTALS selectedFields? BY totalsGroups+=totalsGroup (COMMA totalsGroups+=totalsGroup)*;
@@ -362,12 +362,11 @@ externalDataSourceTable:
     | mdo DOT EDS_CUBE DOT cubeName=identifier DOT EDS_CUBE_DIMTABLE DOT tableName=identifier;
 
 // соединения таблиц
-joinPart:
-        joinType=(RIGHT_OUTER_JOIN   | RIGHT_JOIN)   source=dataSource BY condition=logicalExpression # RightJoin
-    |   joinType=(LEFT_OUTER_JOIN    | LEFT_JOIN)    source=dataSource BY condition=logicalExpression # LeftJoin
-    |   joinType=(FULL_OUTER_JOIN    | FULL_JOIN)    source=dataSource BY condition=logicalExpression # FullJoin
-    |   joinType=(INNER_JOIN         | JOIN)         source=dataSource BY condition=logicalExpression # InnerJoin
-    ;
+joinPart:   (rightJoin | leftJoin | fullJoin | innerJoin) source=dataSource BY condition=logicalExpression;
+rightJoin:  keyword=(RIGHT_OUTER_JOIN   | RIGHT_JOIN);
+leftJoin:   keyword=(LEFT_OUTER_JOIN    | LEFT_JOIN);
+fullJoin:   keyword=(FULL_OUTER_JOIN    | FULL_JOIN);
+innerJoin:  keyword=(INNER_JOIN         | JOIN);
 
 // алиас для поля, таблицы ...
 alias: AS? name=identifier;
