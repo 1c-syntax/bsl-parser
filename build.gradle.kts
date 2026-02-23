@@ -53,7 +53,10 @@ dependencies {
     antlr("io.github.1c-syntax:antlr4:0.3.0")
 
     // testing
-    testImplementation("io.github.1c-syntax:bsl-parser-testing:0.5.0")
+    testImplementation("io.github.1c-syntax:bsl-parser-testing:0.5.0") {
+        exclude("org.antlr:antlr-runtime")
+        exclude("org.antlr:ST4")
+    }
 
     testImplementation(platform("org.junit:junit-bom:6.0.3"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -199,8 +202,10 @@ sonar {
         property("sonar.projectKey", "1c-syntax_bsl-parser")
         property("sonar.projectName", "BSL Parser")
         property("sonar.scm.exclusions.disabled", "true")
-        property("sonar.coverage.jacoco.xmlReportPaths",
-            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml"
+        )
     }
 }
 
