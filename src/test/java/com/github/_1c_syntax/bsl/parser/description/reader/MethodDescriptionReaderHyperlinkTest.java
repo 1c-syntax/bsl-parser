@@ -25,9 +25,6 @@ import com.github._1c_syntax.bsl.parser.BSLParser;
 import com.github._1c_syntax.bsl.parser.BSLTokenizer;
 import com.github._1c_syntax.bsl.parser.description.HyperlinkTypeDescription;
 import com.github._1c_syntax.bsl.parser.description.MethodDescription;
-import com.github._1c_syntax.bsl.parser.description.ParameterDescription;
-import com.github._1c_syntax.bsl.parser.description.TypeDescription;
-import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
@@ -53,10 +50,10 @@ class MethodDescriptionReaderHyperlinkTest {
     var methodDescription = MethodDescription.create(tokens);
 
     assertThat(methodDescription.getParameters()).hasSize(1);
-    var parameter = methodDescription.getParameters().get(0);
+    var parameter = methodDescription.getParameters().getFirst();
     assertThat(parameter.types()).hasSize(1);
 
-    var type = parameter.types().get(0);
+    var type = parameter.types().getFirst();
     assertThat(type).isInstanceOf(HyperlinkTypeDescription.class);
 
     var hyperlinkType = (HyperlinkTypeDescription) type;
@@ -77,10 +74,10 @@ class MethodDescriptionReaderHyperlinkTest {
     var methodDescription = MethodDescription.create(tokens);
 
     assertThat(methodDescription.getParameters()).hasSize(1);
-    var parameter = methodDescription.getParameters().get(0);
+    var parameter = methodDescription.getParameters().getFirst();
     assertThat(parameter.types()).hasSize(1);
 
-    var type = parameter.types().get(0);
+    var type = parameter.types().getFirst();
     assertThat(type).isInstanceOf(HyperlinkTypeDescription.class);
 
     var hyperlinkType = (HyperlinkTypeDescription) type;

@@ -37,8 +37,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,19 +49,19 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Вспомагательный класс для чтения описания метода.
+ * Вспомогательный класс для чтения описания метода.
  */
 public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisitor<ParseTree> {
 
   private final MethodDescription.MethodDescriptionBuilder builder;
 
   /**
-   * сдвиг номера строки относительно исходного текста
+   * Сдвиг номера строки относительно исходного текста
    */
   private final int lineShift;
 
   /**
-   * сдвиг номера символа относительно исходного текста (только для первой строки)
+   * Сдвиг номера символа относительно исходного текста (только для первой строки)
    */
   private final int firstLineCharShift;
 
@@ -72,12 +72,14 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     builder = MethodDescription.builder();
     lineShift = Math.max(0, range.startLine());
     firstLineCharShift = Math.max(0, range.startCharacter());
+    lastReadParam = TempParameterData.empty();
   }
 
   /**
-   * Читает описание метода из списока токенов комментария.
+   * Читает описание метода из списка токенов комментария.
    *
    * @param comments Список токенов комментария.
+   *
    * @return Описание метода.
    */
   public static MethodDescription read(List<Token> comments) {
@@ -93,6 +95,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
    *
    * @param descriptionText Текст описания метода.
    * @param range           Область расположения исходного текста
+   *
    * @return Описание метода.
    */
   private static MethodDescription read(String descriptionText, SimpleRange range) {
@@ -109,7 +112,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
   }
 
   @Override
-  public ParseTree visitMethodDescription(BSLDescriptionParser.MethodDescriptionContext ctx) {
+  public @Nullable ParseTree visitMethodDescription(BSLDescriptionParser.MethodDescriptionContext ctx) {
     if (ctx.parametersBlock() == null) {
       builder.parameters(Collections.emptyList());
     }
@@ -124,73 +127,84 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
   @Override
   public ParseTree visitDeprecateBlock(BSLDescriptionParser.DeprecateBlockContext ctx) {
     builder.deprecated(true);
-    builder.keyword(newElement(ctx.DEPRECATE_KEYWORD(), DescriptionElement.Type.DEPRECATE_KEYWORD));
-    var deprecationDescription = ctx.deprecateDescription();
-    if (deprecationDescription != null) {
-      builder.deprecationInfo(deprecationDescription.getText().strip());
-    } else {
-      builder.deprecationInfo("");
-    }
+    Optional.ofNullable(ctx.DEPRECATE_KEYWORD())
+      .ifPresent((TerminalNode keyword) -> {
+          builder.keyword(newElement(keyword, DescriptionElement.Type.DEPRECATE_KEYWORD));
+          var deprecationDescription = ctx.deprecateDescription();
+          if (deprecationDescription != null) {
+            builder.deprecationInfo(deprecationDescription.getText().strip());
+          } else {
+            builder.deprecationInfo("");
+          }
+        }
+      );
     return ctx;
   }
 
   @Override
   public ParseTree visitDescriptionBlock(BSLDescriptionParser.DescriptionBlockContext ctx) {
-    if (ctx.descriptionString() != null) {
-      builder.purposeDescription(ctx.descriptionString().stream()
-        .map(ReaderUtils::extractText)
-        .collect(Collectors.joining("\n"))
-        .strip());
-    }
+    builder.purposeDescription(ctx.descriptionString().stream()
+      .map(ReaderUtils::extractText)
+      .collect(Collectors.joining("\n"))
+      .strip());
 
     return ctx;
   }
 
   @Override
   public ParseTree visitExamplesBlock(BSLDescriptionParser.ExamplesBlockContext ctx) {
-    builder.keyword(newElement(ctx.examplesHead().EXAMPLE_KEYWORD(), DescriptionElement.Type.EXAMPLE_KEYWORD));
-    var strings = ctx.examplesString();
-    if (strings != null) {
-      builder.examples(strings.stream()
-        .map(ReaderUtils::extractText)
-        .collect(Collectors.joining("\n"))
-        .strip());
-    }
+    Optional.ofNullable(ctx.examplesHead())
+      .map(BSLDescriptionParser.ExamplesHeadContext::EXAMPLE_KEYWORD)
+      .ifPresent((TerminalNode keyword) -> {
+          builder.keyword(newElement(keyword, DescriptionElement.Type.EXAMPLE_KEYWORD));
+          builder.examples(ctx.examplesString().stream()
+            .map(ReaderUtils::extractText)
+            .collect(Collectors.joining("\n"))
+            .strip());
+        }
+      );
     return ctx;
   }
 
   @Override
   public ParseTree visitCallOptionsBlock(BSLDescriptionParser.CallOptionsBlockContext ctx) {
-    builder.keyword(newElement(ctx.callOptionsHead().CALL_OPTIONS_KEYWORD(), DescriptionElement.Type.CALL_OPTIONS_KEYWORD));
-    var strings = ctx.callOptionsString();
-    if (strings != null) {
-      builder.callOptions(strings.stream()
-        .map(ReaderUtils::extractText)
-        .collect(Collectors.joining("\n"))
-        .strip());
-    }
+    Optional.ofNullable(ctx.callOptionsHead())
+      .map(BSLDescriptionParser.CallOptionsHeadContext::CALL_OPTIONS_KEYWORD)
+      .ifPresent((TerminalNode keyword) -> {
+          builder.keyword(newElement(keyword, DescriptionElement.Type.CALL_OPTIONS_KEYWORD));
+          builder.callOptions(ctx.callOptionsString().stream()
+            .map(ReaderUtils::extractText)
+            .collect(Collectors.joining("\n"))
+            .strip());
+        }
+      );
     return ctx;
   }
 
   @Override
   public ParseTree visitParametersBlock(BSLDescriptionParser.ParametersBlockContext ctx) {
-    builder.keyword(newElement(ctx.parametersHead().PARAMETERS_KEYWORD(), DescriptionElement.Type.PARAMETERS_KEYWORD));
-    // блок параметры есть, но самих нет
-    if (ctx.parameterString() == null || ctx.parameterString().isEmpty()) {
-      builder.parameters(Collections.emptyList());
-    } else {
-      // идем к строкам
-      lastReadParam = TempParameterData.empty();
-      super.visitParametersBlock(ctx);
-      if (!lastReadParam.isEmpty()) {
-        builder.parameter(lastReadParam.build(lineShift, firstLineCharShift));
-      }
-    }
+    Optional.ofNullable(ctx.parametersHead())
+      .map(BSLDescriptionParser.ParametersHeadContext::PARAMETERS_KEYWORD)
+      .ifPresent((TerminalNode keyword) -> {
+          builder.keyword(newElement(keyword, DescriptionElement.Type.PARAMETERS_KEYWORD));
+          // блок параметры есть, но самих нет
+          if (ctx.parameterString().isEmpty()) {
+            builder.parameters(Collections.emptyList());
+          } else {
+            // идем к строкам
+            lastReadParam = TempParameterData.empty();
+            super.visitParametersBlock(ctx);
+            if (!lastReadParam.isEmpty()) {
+              builder.parameter(lastReadParam.build(lineShift, firstLineCharShift));
+            }
+          }
+        }
+      );
     return ctx;
   }
 
   @Override
-  public ParseTree visitParameter(BSLDescriptionParser.ParameterContext ctx) {
+  public @Nullable ParseTree visitParameter(BSLDescriptionParser.ParameterContext ctx) {
     if (!lastReadParam.isEmpty()) {
       builder.parameter(lastReadParam.build(lineShift, firstLineCharShift));
     }
@@ -220,8 +234,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       return ctx;
     }
 
-    if (ctx.hyperlink() != null && !ctx.hyperlink().isEmpty()) { // считаем первой ссылкой
-      var link = ctx.hyperlink().get(0);
+    if (!ctx.hyperlink().isEmpty()) { // считаем первой ссылкой
+      var link = ctx.hyperlink().getFirst();
       lastReadParam = TempParameterData.create(link.link);
       lastReadParam.addType(link, ctx);
       return ctx;
@@ -235,38 +249,49 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
 
   @Override
   public ParseTree visitReturnsValuesBlock(BSLDescriptionParser.ReturnsValuesBlockContext ctx) {
-    builder.keyword(newElement(ctx.returnsValuesHead().RETURNS_KEYWORD(), DescriptionElement.Type.RETURNS_KEYWORD));
-    // блок возвращаемого значения есть, но самих нет
-    if (ctx.returnsValuesString() == null) {
-      builder.returnedValue(Collections.emptyList());
-    } else {
-      // идем к строкам
-      lastReadParam = TempParameterData.fake();
-      typeLevel = -1;
-      super.visitReturnsValuesBlock(ctx);
-      builder.returnedValue(lastReadParam.build(lineShift, firstLineCharShift).types());
-    }
+    Optional.ofNullable(ctx.returnsValuesHead())
+      .map(BSLDescriptionParser.ReturnsValuesHeadContext::RETURNS_KEYWORD)
+      .ifPresent((TerminalNode keyword) -> {
+          builder.keyword(newElement(keyword, DescriptionElement.Type.RETURNS_KEYWORD));
+          // блок возвращаемого значения есть, но самих нет
+          if (ctx.returnsValuesString().isEmpty()) {
+            builder.returnedValue(Collections.emptyList());
+          } else {
+            // идем к строкам
+            lastReadParam = TempParameterData.fake();
+            typeLevel = -1;
+            super.visitReturnsValuesBlock(ctx);
+            builder.returnedValue(lastReadParam.build(lineShift, firstLineCharShift).types());
+          }
+        }
+      );
     return ctx;
   }
 
   @Override
   public ParseTree visitReturnsValue(BSLDescriptionParser.ReturnsValueContext ctx) {
-    var currentLevel = ((BSLDescriptionParser.ReturnsValuesStringContext) ctx.getParent())
-      .startPart().getText().length();
+    Optional.ofNullable((BSLDescriptionParser.ReturnsValuesStringContext) ctx.getParent())
+      .map(BSLDescriptionParser.ReturnsValuesStringContext::startPart)
+      .ifPresent((BSLDescriptionParser.StartPartContext startPart) -> {
 
-    if (typeLevel == -1 || currentLevel == typeLevel) {
-      lastReadParam.addType(ctx.type(), ctx.typeDescription());
-      typeLevel = currentLevel;
-    } else {
-      var text = "";
-      if (ctx.type() != null && ctx.type().getText() != null) {
-        text += ctx.type().getText();
-      }
-      if (ctx.typeDescription() != null && ctx.typeDescription().getText() != null) {
-        text += " - " + ctx.typeDescription().getText();
-      }
-      lastReadParam.addTypeDescription(text);
-    }
+          var currentLevel = startPart.getText().length();
+          var type = ctx.type();
+          var description = ctx.typeDescription();
+          if (typeLevel == -1 || currentLevel == typeLevel) {
+            lastReadParam.addType(type, description);
+            typeLevel = currentLevel;
+          } else {
+            var text = "";
+            if (type != null) {
+              text += type.getText();
+            }
+            if (description != null) {
+              text += " - " + description.getText();
+            }
+            lastReadParam.addTypeDescription(text);
+          }
+        }
+      );
     return ctx;
   }
 
@@ -333,8 +358,9 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       } else {
         var fld = create(fieldContext.parameterName());
         fld.level = level;
-        if (fieldContext.typesBlock() != null) {
-          fld.addType(fieldContext.typesBlock().type(), fieldContext.typesBlock().typeDescription());
+        var typesBlockContext = fieldContext.typesBlock();
+        if (typesBlockContext != null) {
+          fld.addType(typesBlockContext.type(), typesBlockContext.typeDescription());
         }
 
         return fld;
@@ -343,7 +369,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
 
     private Optional<TempParameterTypeData> lastType() {
       if (!types.isEmpty()) {
-        return Optional.of(types.get(types.size() - 1));
+        return Optional.of(types.getLast());
       }
       return Optional.empty();
     }
@@ -359,81 +385,96 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       );
     }
 
-    private void addType(@Nullable BSLDescriptionParser.TypeContext paramType,
-                         @Nullable BSLDescriptionParser.TypeDescriptionContext paramDescription) {
+    private void addType(BSLDescriptionParser.@Nullable TypeContext paramType,
+                         BSLDescriptionParser.@Nullable TypeDescriptionContext paramDescription) {
       if (isEmpty() || paramType == null) {
         return;
       }
 
-      if (paramType.listTypes() != null) {
+      var listTypes = paramType.listTypes();
+      var hyperlinkType = paramType.hyperlinkType();
+      var simpleType = paramType.simpleType();
+      var collectionType = paramType.collectionType();
+      if (listTypes != null) {
         var firstDescription = paramDescription;
-        var stringTypes = paramType.listTypes().listType();
+        var stringTypes = listTypes.listType();
         for (var stringType : stringTypes) {
           addType(stringType, firstDescription);
           firstDescription = null;
         }
-      } else if (paramType.hyperlinkType() != null) {
-        addType(paramType.hyperlinkType(), paramDescription);
-      } else if (paramType.simpleType() != null) {
-        addType(paramType.simpleType(), paramDescription);
-      } else if (paramType.collectionType() != null) {
-        addType(paramType.collectionType(), paramDescription);
+      } else if (hyperlinkType != null) {
+        addType(hyperlinkType, paramDescription);
+      } else if (simpleType != null) {
+        addType(simpleType, paramDescription);
+      } else if (collectionType != null) {
+        addType(collectionType, paramDescription);
       } else {
         // noop
       }
     }
 
     private void addType(BSLDescriptionParser.ListTypeContext paramType,
-                         @Nullable BSLDescriptionParser.TypeDescriptionContext paramDescription) {
-      if (paramType.hyperlinkType() != null) {
-        addType(paramType.hyperlinkType(), paramDescription);
-      } else if (paramType.simpleType() != null) {
-        addType(paramType.simpleType(), paramDescription);
-      } else if (paramType.collectionType() != null) {
-        addType(paramType.collectionType(), paramDescription);
+                         BSLDescriptionParser.@Nullable TypeDescriptionContext paramDescription) {
+      var hyperlinkType = paramType.hyperlinkType();
+      var simpleType = paramType.simpleType();
+      var collectionType = paramType.collectionType();
+      if (hyperlinkType != null) {
+        addType(hyperlinkType, paramDescription);
+      } else if (simpleType != null) {
+        addType(simpleType, paramDescription);
+      } else if (collectionType != null) {
+        addType(collectionType, paramDescription);
       } else {
         // noop
       }
     }
 
     private void addType(BSLDescriptionParser.HyperlinkTypeContext ctx,
-                         @Nullable BSLDescriptionParser.TypeDescriptionContext description) {
-      if (ctx.hyperlink() != null) {
-        addType(ctx.hyperlink(), description);
+                         BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
+      var hyperlink = ctx.hyperlink();
+      if (hyperlink != null) {
+        addType(hyperlink, description);
       }
     }
 
     private void addType(BSLDescriptionParser.SimpleTypeContext typeContext,
-                         @Nullable BSLDescriptionParser.TypeDescriptionContext description) {
-      var lastType = new TempParameterTypeData(typeContext.typeName, TypeDescription.Variant.SIMPLE, level);
-      if (description != null) {
-        lastType.addTypeDescription(description);
+                         BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
+      if (typeContext.typeName != null) {
+        var lastType = new TempParameterTypeData(typeContext.typeName, TypeDescription.Variant.SIMPLE, level);
+        if (description != null) {
+          lastType.addTypeDescription(description);
+        }
+        types.add(lastType);
       }
-      types.add(lastType);
     }
 
     private void addType(BSLDescriptionParser.HyperlinkContext ctx,
-                         @Nullable BSLDescriptionParser.TypeDescriptionContext description) {
-      var newType = new TempParameterTypeData(
-        ctx.link,
-        ctx.linkParams,
-        level);
-      if (description != null) {
-        newType.addTypeDescription(description);
+                         BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
+      if (ctx.link != null) {
+        var newType = new TempParameterTypeData(
+          ctx.link,
+          ctx.linkParams,
+          level);
+        if (description != null) {
+          newType.addTypeDescription(description);
+        }
+        types.add(newType);
       }
-      types.add(newType);
     }
 
     private void addType(BSLDescriptionParser.CollectionTypeContext typeContext,
-                         @Nullable BSLDescriptionParser.TypeDescriptionContext description) {
-      var newType = new TempParameterTypeData(typeContext.collection, TypeDescription.Variant.COLLECTION, level);
-      if (typeContext.type() != null) {
-        newType.addType(typeContext.type());
+                         BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
+      if (typeContext.collection != null) {
+        var newType = new TempParameterTypeData(typeContext.collection, TypeDescription.Variant.COLLECTION, level);
+        var type = typeContext.type();
+        if (type != null) {
+          newType.addType(type);
+        }
+        if (description != null) {
+          newType.addTypeDescription(description);
+        }
+        types.add(newType);
       }
-      if (description != null) {
-        newType.addTypeDescription(description);
-      }
-      types.add(newType);
     }
 
     private void addTypeDescription(BSLDescriptionParser.TypeDescriptionContext typeDescription) {
@@ -458,9 +499,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private final int level;
     private final List<TempParameterData> fields;
     private final TypeDescription.Variant variant;
-    private TempParameterTypeData valueType;
-    private Token linkToken;
-    private Token linkParamsToken;
+    private @Nullable TempParameterTypeData valueType;
+    private @Nullable Token linkParamsToken;
 
     private final SimpleRange range;
 
@@ -469,7 +509,6 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       this.variant = variant;
       this.level = level;
       this.description = new StringJoiner("\n");
-      this.linkToken = null;
       this.linkParamsToken = null;
       this.fields = new ArrayList<>();
       this.valueType = null;
@@ -481,7 +520,6 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
                                   int level) {
       this(TypeDescription.Variant.HYPERLINK, level, SimpleRange.create(link));
       this.name = link.getText();
-      this.linkToken = link;
       this.linkParamsToken = linkParams;
     }
 
@@ -491,13 +529,11 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     }
 
     private void addTypeDescription(BSLDescriptionParser.TypeDescriptionContext typeDescription) {
-      if (typeDescription.getText() != null) {
-        var lastField = lastField();
-        if (lastField.isPresent()) {
-          lastField.get().addTypeDescription(typeDescription);
-        } else {
-          this.description.add(typeDescription.getText().strip());
-        }
+      var lastField = lastField();
+      if (lastField.isPresent()) {
+        lastField.get().addTypeDescription(typeDescription);
+      } else {
+        this.description.add(typeDescription.getText().strip());
       }
     }
 
@@ -514,7 +550,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
 
     private Optional<TempParameterData> lastField() {
       if (!fields.isEmpty()) {
-        return Optional.of(fields.get(fields.size() - 1));
+        return Optional.of(fields.getLast());
       }
       return Optional.empty();
     }

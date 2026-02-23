@@ -22,10 +22,7 @@
 /**
  * Классы для хранения информации, прочитанной из комментариев-описаний
  */
-@ReturnValuesAreNonnullByDefault
-@ParametersAreNonnullByDefault
+@NullMarked
 package com.github._1c_syntax.bsl.parser.description;
 
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;

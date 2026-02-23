@@ -71,34 +71,34 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getParameters()).hasSize(9);
     checkParameter(methodDescription.getParameters().get(0),
       "ПараметрыВыполнения", 1, "ДлительныеОперации.ПараметрыВыполненияПроцедуры", true);
-    checkType(methodDescription.getParameters().get(0).types().get(0),
+    checkType(methodDescription.getParameters().get(0).types().getFirst(),
       "ДлительныеОперации.ПараметрыВыполненияПроцедуры",
       "", 0, "ДлительныеОперации.ПараметрыВыполненияПроцедуры", true);
     checkParameter(methodDescription.getParameters().get(1), "ИмяПроцедуры", 1, "", false);
-    checkType(methodDescription.getParameters().get(1).types().get(0),
+    checkType(methodDescription.getParameters().get(1).types().getFirst(),
       "Строка", """
         имя экспортной процедуры общего модуля, модуля менеджера объекта
         или модуля обработки, которую необходимо выполнить в фоне.
         Например, "МойОбщийМодуль.МояПроцедура", "Отчеты.ЗагруженныеДанные.Сформировать"
         или "Обработки.ЗагрузкаДанных.МодульОбъекта.Загрузить".""", 0, "", false);
     checkParameter(methodDescription.getParameters().get(2), "Параметр1", 1, "", false);
-    checkType(methodDescription.getParameters().get(2).types().get(0),
+    checkType(methodDescription.getParameters().get(2).types().getFirst(),
       "Произвольный", "произвольные параметры вызова процедуры. Количество параметров может быть от 0 до 7.",
       0, "", false);
     checkParameter(methodDescription.getParameters().get(3), "Параметр2", 1, "", false);
     checkParameter(methodDescription.getParameters().get(4), "Параметр3", 1, "", false);
     checkParameter(methodDescription.getParameters().get(7), "Параметр6", 1, "", false);
     checkParameter(methodDescription.getParameters().get(8), "Параметр7", 1, "", false);
-    checkType(methodDescription.getParameters().get(8).types().get(0),
+    checkType(methodDescription.getParameters().get(8).types().getFirst(),
       "Произвольный", "", 0, "", false);
 
     assertThat(methodDescription.getRange()).isEqualTo(create(76, 39));
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
-    checkType(methodDescription.getReturnedValue().get(0), "Структура", "параметры выполнения задания:",
+    checkType(methodDescription.getReturnedValue().getFirst(), "Структура", "параметры выполнения задания:",
       5, "", false);
-    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(0),
+    checkParameter(methodDescription.getReturnedValue().getFirst().fields().getFirst(),
       "Статус", 1, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).fields().get(0).types().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst().fields().getFirst().types().getFirst(),
       "Строка", """
         "Выполняется", если задание еще не завершилось;
         "Выполнено", если задание было успешно выполнено;
@@ -107,8 +107,8 @@ class BSLDescriptionReaderTest {
       0, "", false);
 
     assertThat(methodDescription.getElements()).hasSize(33);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(15, 3, 13));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(15, 3, 13));
     assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
     assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(32, 3, 25));
     assertThat(methodDescription.getElements().get(2).type()).isEqualTo(DescriptionElement.Type.EXAMPLE_KEYWORD);
@@ -125,8 +125,8 @@ class BSLDescriptionReaderTest {
       .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
 
     assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getParameters().get(0).allElements())
-      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
+      .containsAll(methodDescription.getParameters().getFirst().allElements())
+      .containsAll(methodDescription.getReturnedValue().getFirst().allElements());
   }
 
   @Test
@@ -139,11 +139,11 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
       .hasSize(1);
-    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла");
+    assertThat(methodDescription.getLinks().getFirst().link()).isEqualTo("ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла");
     assertThat(methodDescription.getParameters()).hasSize(1);
-    checkParameter(methodDescription.getParameters().get(0),
+    checkParameter(methodDescription.getParameters().getFirst(),
       "РежимДиалога", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(0),
+    checkType(methodDescription.getParameters().getFirst().types().getFirst(),
       "РежимДиалогаВыбораФайла", "режим работы конструируемого диалога выбора файлов.",
       0, "", false);
 
@@ -151,13 +151,13 @@ class BSLDescriptionReaderTest {
       Objects.equals(methodDescription.getRange(), create(7, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
-    checkType(methodDescription.getReturnedValue().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst(),
       "ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла", "",
       0, "ФайловаяСистемаКлиент.ПараметрыЗагрузкиФайла", true);
 
     assertThat(methodDescription.getElements()).hasSize(5);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(2, 3, 13));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(2, 3, 13));
     assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
     assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(5, 3, 25));
 
@@ -170,8 +170,8 @@ class BSLDescriptionReaderTest {
       .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
 
     assertThat(methodDescription.getElements()).hasSize(5)
-      .containsAll(methodDescription.getParameters().get(0).allElements())
-      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
+      .containsAll(methodDescription.getParameters().getFirst().allElements())
+      .containsAll(methodDescription.getReturnedValue().getFirst().allElements());
   }
 
   @Test
@@ -199,22 +199,22 @@ class BSLDescriptionReaderTest {
       .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
       .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
 
-    checkParameter(methodDescription.getParameters().get(0),
+    checkParameter(methodDescription.getParameters().getFirst(),
       "КлючОбъекта", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(0),
+    checkType(methodDescription.getParameters().getFirst().types().getFirst(),
       "Строка",
       "см. синтакс-помощник платформы.", 0, "", false);
     checkParameter(methodDescription.getParameters().get(1), "КлючНастроек", 1, "", false);
-    checkType(methodDescription.getParameters().get(1).types().get(0),
+    checkType(methodDescription.getParameters().get(1).types().getFirst(),
       "Строка", "см. синтакс-помощник платформы.", 0, "", false);
     checkParameter(methodDescription.getParameters().get(2), "ЗначениеПоУмолчанию", 1, "", false);
-    checkType(methodDescription.getParameters().get(2).types().get(0),
+    checkType(methodDescription.getParameters().get(2).types().getFirst(),
       "Произвольный", "значение, которое возвращается, если настройки не существуют.\n" +
         "Если не указано, возвращается значение Неопределено.",
       0, "", false);
     checkParameter(methodDescription.getParameters().get(3), "ОписаниеНастроек", 1, "", false);
     checkParameter(methodDescription.getParameters().get(4), "ИмяПользователя", 1, "", false);
-    checkType(methodDescription.getParameters().get(4).types().get(0),
+    checkType(methodDescription.getParameters().get(4).types().getFirst(),
       "Строка", "см. синтакс-помощник платформы.", 0, "", false);
 
     assertThat(
@@ -224,15 +224,15 @@ class BSLDescriptionReaderTest {
       .hasSize(1)
       .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
       .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
-    checkType(methodDescription.getReturnedValue().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst(),
       "Произвольный", "см. синтакс-помощник платформы.", 0, "", false);
 
     assertThat(methodDescription.getElements())
       .hasSize(13)
-      .containsAll(methodDescription.getParameters().get(0).allElements())
-      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(13, 3, 13));
+      .containsAll(methodDescription.getParameters().getFirst().allElements())
+      .containsAll(methodDescription.getReturnedValue().getFirst().allElements());
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(13, 3, 13));
     assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
     assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(21, 3, 25));
   }
@@ -247,29 +247,29 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getCallOptions()).isEmpty();
     assertThat(methodDescription.getLinks()).isEmpty();
     assertThat(methodDescription.getParameters()).hasSize(3);
-    checkParameter(methodDescription.getParameters().get(0),
+    checkParameter(methodDescription.getParameters().getFirst(),
       "П1", 2, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(0),
+    checkType(methodDescription.getParameters().getFirst().types().getFirst(),
       "Дата", "Описание даты/числа", 0, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(1),
+    checkType(methodDescription.getParameters().getFirst().types().get(1),
       "Число", "", 0, "", false);
     checkParameter(methodDescription.getParameters().get(1), "П2", 1, "", false);
-    checkType(methodDescription.getParameters().get(1).types().get(0),
+    checkType(methodDescription.getParameters().get(1).types().getFirst(),
       "Число", "Описание числа", 0, "", false);
     checkParameter(methodDescription.getParameters().get(2), "П3", 1, "", false);
-    checkType(methodDescription.getParameters().get(2).types().get(0),
+    checkType(methodDescription.getParameters().get(2).types().getFirst(),
       "Строка", "Описание строки", 0, "", false);
 
     assertThat(
       Objects.equals(methodDescription.getRange(), create(10, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
-    checkType(methodDescription.getReturnedValue().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst(),
       "Строка", "вернувшаяся строка", 0, "", false);
 
     assertThat(methodDescription.getElements()).hasSize(10);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(3, 3, 13));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(3, 3, 13));
     assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
     assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(8, 3, 25));
 
@@ -282,8 +282,8 @@ class BSLDescriptionReaderTest {
       .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
 
     assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getParameters().get(0).allElements())
-      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
+      .containsAll(methodDescription.getParameters().getFirst().allElements())
+      .containsAll(methodDescription.getReturnedValue().getFirst().allElements());
   }
 
   @Test
@@ -302,8 +302,8 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
 
     assertThat(methodDescription.getElements()).hasSize(36);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(10, 3, 13));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(10, 3, 13));
     assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
     assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(50, 3, 25));
     assertThat(methodDescription.getElements().get(2).type()).isEqualTo(DescriptionElement.Type.CALL_OPTIONS_KEYWORD);
@@ -323,28 +323,28 @@ class BSLDescriptionReaderTest {
       Objects.equals(methodDescription.getRange(), create(329, 2)))
       .isTrue();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
-    checkType(methodDescription.getReturnedValue().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst(),
       "Структура", "настройки (дополнительные свойства) отчета, хранящиеся в данных формы:",
       10, "", false);
 
-    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(0),
+    checkParameter(methodDescription.getReturnedValue().getFirst().fields().getFirst(),
       "ФормироватьСразу", 1, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).fields().get(0).types().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst().fields().getFirst().types().getFirst(),
       "Булево", """
         значение по умолчанию для флажка "Формировать сразу".
         Когда флажок включен, то отчет будет формироваться после открытия,
         после выбора пользовательских настроек, после выбора другого варианта отчета.""",
       0, "", false);
 
-    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(1),
+    checkParameter(methodDescription.getReturnedValue().getFirst().fields().get(1),
       "ВыводитьСуммуВыделенныхЯчеек", 1, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).fields().get(1).types().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst().fields().get(1).types().getFirst(),
       "Булево", "если Истина, то в отчете будет выводиться поле автосуммы.",
       0, "", false);
 
-    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(4),
+    checkParameter(methodDescription.getReturnedValue().getFirst().fields().get(4),
       "РазрешеноВыбиратьИНастраиватьВариантыБезСохранения", 1, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).fields().get(4).types().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst().fields().get(4).types().getFirst(),
       "Булево", """
         если Истина,
         то есть возможность выбора и настройки предопределенных вариантов отчета, но без возможности сохранения
@@ -352,12 +352,12 @@ class BSLDescriptionReaderTest {
         у которых есть несколько вариантов.""",
       0, "", false);
 
-    checkParameter(methodDescription.getReturnedValue().get(0).fields().get(5),
+    checkParameter(methodDescription.getReturnedValue().getFirst().fields().get(5),
       "ПараметрыРасположенияЭлементовУправления", 2, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).fields().get(5).types().get(0),
+    checkType(methodDescription.getReturnedValue().getFirst().fields().get(5).types().getFirst(),
       "Структура", "варианты:",
       0, "", false);
-    checkType(methodDescription.getReturnedValue().get(0).fields().get(5).types().get(1),
+    checkType(methodDescription.getReturnedValue().getFirst().fields().get(5).types().get(1),
       "Неопределено", """
         Неопределено - параметры элементов управления общей формы отчетов "по умолчанию".
         Структура - с именами настройки в коллекции НастройкиКомпоновкиДанных свойства Настройки
@@ -365,15 +365,15 @@ class BSLDescriptionReaderTest {
       2, "", false);
 
     assertThat(methodDescription.getElements()).hasSize(69);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(14, 3, 25));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(14, 3, 25));
 
     assertThat(methodDescription.getReturnedValue())
       .allMatch(type -> type.element().type() == DescriptionElement.Type.TYPE_NAME)
       .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
 
     assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
+      .containsAll(methodDescription.getReturnedValue().getFirst().allElements());
   }
 
   @Test
@@ -398,32 +398,32 @@ class BSLDescriptionReaderTest {
 
     assertThat(methodDescription.getReturnedValue()).isEmpty();
     assertThat(methodDescription.getParameters()).hasSize(1);
-    var firstParameter = methodDescription.getParameters().get(0);
+    var firstParameter = methodDescription.getParameters().getFirst();
     checkParameter(firstParameter,
       "Входной", 1, "", false);
 
-    checkType(firstParameter.types().get(0),
+    checkType(firstParameter.types().getFirst(),
       "Структура", "настройки (дополнительные свойства) отчета, хранящиеся в данных формы:",
       10, "", false);
 
-    checkParameter(firstParameter.types().get(0).fields().get(0),
+    checkParameter(firstParameter.types().getFirst().fields().getFirst(),
       "ФормироватьСразу", 1, "", false);
-    checkType(firstParameter.types().get(0).fields().get(0).types().get(0),
+    checkType(firstParameter.types().getFirst().fields().getFirst().types().getFirst(),
       "Булево", """
         значение по умолчанию для флажка "Формировать сразу".
         Когда флажок включен, то отчет будет формироваться после открытия,
         после выбора пользовательских настроек, после выбора другого варианта отчета.""",
       0, "", false);
 
-    checkParameter(firstParameter.types().get(0).fields().get(1),
+    checkParameter(firstParameter.types().getFirst().fields().get(1),
       "ВыводитьСуммуВыделенныхЯчеек", 1, "", false);
-    checkType(firstParameter.types().get(0).fields().get(1).types().get(0),
+    checkType(firstParameter.types().getFirst().fields().get(1).types().getFirst(),
       "Булево", "если Истина, то в отчете будет выводиться поле автосуммы.",
       0, "", false);
 
-    checkParameter(firstParameter.types().get(0).fields().get(4),
+    checkParameter(firstParameter.types().getFirst().fields().get(4),
       "РазрешеноВыбиратьИНастраиватьВариантыБезСохранения", 1, "", false);
-    checkType(firstParameter.types().get(0).fields().get(4).types().get(0),
+    checkType(firstParameter.types().getFirst().fields().get(4).types().getFirst(),
       "Булево", """
         если Истина,
         то есть возможность выбора и настройки предопределенных вариантов отчета, но без возможности сохранения
@@ -431,9 +431,9 @@ class BSLDescriptionReaderTest {
         у которых есть несколько вариантов.""",
       0, "", false);
 
-    checkParameter(firstParameter.types().get(0).fields().get(5),
+    checkParameter(firstParameter.types().getFirst().fields().get(5),
       "ПараметрыРасположенияЭлементовУправления", 2, "", false);
-    checkType(firstParameter.types().get(0).fields().get(5).types().get(1),
+    checkType(firstParameter.types().getFirst().fields().get(5).types().get(1),
       "Неопределено", """
         Неопределено - параметры элементов управления общей формы отчетов "по умолчанию".
         Структура - с именами настройки в коллекции НастройкиКомпоновкиДанных свойства Настройки
@@ -441,15 +441,15 @@ class BSLDescriptionReaderTest {
       2, "", false);
 
     assertThat(methodDescription.getElements()).hasSize(70);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(14, 3, 13));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(14, 3, 13));
 
     assertThat(methodDescription.getParameters())
       .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
       .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
 
     assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getParameters().get(0).allElements());
+      .containsAll(methodDescription.getParameters().getFirst().allElements());
   }
 
   @Test
@@ -460,22 +460,22 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
       .hasSize(1);
-    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("CommonModule.MyModule.MyFunc");
+    assertThat(methodDescription.getLinks().getFirst().link()).isEqualTo("CommonModule.MyModule.MyFunc");
     assertThat(methodDescription.getParameters()).hasSize(1);
-    checkParameter(methodDescription.getParameters().get(0),
+    checkParameter(methodDescription.getParameters().getFirst(),
       "CommonModule.MyModule.MyFunc", 1, "CommonModule.MyModule.MyFunc()", true);
     assertThat(methodDescription.getReturnedValue()).isEmpty();
 
     assertThat(methodDescription.getElements()).hasSize(3);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(0, 3, 13));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(0, 3, 13));
 
     assertThat(methodDescription.getParameters())
       .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
       .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
 
     assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getParameters().get(0).allElements());
+      .containsAll(methodDescription.getParameters().getFirst().allElements());
   }
 
   @Test
@@ -486,7 +486,7 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
       .hasSize(1);
-    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("CommonModule.MyModule.MyFunc");
+    assertThat(methodDescription.getLinks().getFirst().link()).isEqualTo("CommonModule.MyModule.MyFunc");
     assertThat(methodDescription.getParameters()).isEmpty();
     assertThat(methodDescription.getReturnedValue()).isEmpty();
 
@@ -502,29 +502,29 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
       .hasSize(1);
-    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("МойКлассныйМодуль.МойКлассныйКонструктор");
+    assertThat(methodDescription.getLinks().getFirst().link()).isEqualTo("МойКлассныйМодуль.МойКлассныйКонструктор");
     assertThat(methodDescription.getParameters()).hasSize(1);
 
-    var firstParameter = methodDescription.getParameters().get(0);
+    var firstParameter = methodDescription.getParameters().getFirst();
 
     checkParameter(firstParameter,
       "Параметр", 1, "", false);
-    checkType(firstParameter.types().get(0),
+    checkType(firstParameter.types().getFirst(),
       "Массив<МойКлассныйМодуль.МойКлассныйКонструктор>", "Моё классное описание",
       0, "", false);
 
     assertThat(methodDescription.getReturnedValue()).isEmpty();
 
     assertThat(methodDescription.getElements()).hasSize(3);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(0, 9, 19));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(0, 9, 19));
 
     assertThat(methodDescription.getParameters())
       .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
       .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
 
     assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getParameters().get(0).allElements());
+      .containsAll(methodDescription.getParameters().getFirst().allElements());
   }
 
   @Test
@@ -552,7 +552,7 @@ class BSLDescriptionReaderTest {
     var exampleString = "// Описание переменной";
     var exampleString2 = "// Висячее Описание переменной";
     var tokens = getTokensFromString(exampleString);
-    var token = getTokensFromString(exampleString2).get(0);
+    var token = getTokensFromString(exampleString2).getFirst();
     var variableDescription = VariableDescription.create(tokens, Optional.of(token));
 
     assertThat(variableDescription).isNotNull();
@@ -591,14 +591,14 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.isDeprecated()).isTrue();
     assertThat(variableDescription.getLinks())
       .hasSize(1);
-    assertThat(variableDescription.getLinks().get(0).link()).isEqualTo("НоваяПеременная");
+    assertThat(variableDescription.getLinks().getFirst().link()).isEqualTo("НоваяПеременная");
 
     assertThat(
       Objects.equals(variableDescription.getRange(), create(1, 22)))
       .isTrue();
 
     assertThat(variableDescription.getElements()).hasSize(1);
-    var elem = variableDescription.getElements().get(0);
+    var elem = variableDescription.getElements().getFirst();
     assertThat(elem.range()).isEqualTo(SimpleRange.create(0, 3, 12));
     assertThat(elem.type()).isEqualTo(DescriptionElement.Type.DEPRECATE_KEYWORD);
   }
@@ -617,7 +617,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.isDeprecated()).isFalse();
     assertThat(variableDescription.getLinks())
       .hasSize(1);
-    assertThat(variableDescription.getLinks().get(0).link()).isEqualTo("НоваяПеременная");
+    assertThat(variableDescription.getLinks().getFirst().link()).isEqualTo("НоваяПеременная");
 
     assertThat(
       Objects.equals(variableDescription.getRange(), create(0, 22)))
@@ -649,30 +649,30 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getLinks()).isEmpty();
     assertThat(methodDescription.getParameters()).hasSize(2);
 
-    checkParameter(methodDescription.getParameters().get(0),
+    checkParameter(methodDescription.getParameters().getFirst(),
       "ФункцияРазворачивания", 2, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(0),
+    checkType(methodDescription.getParameters().getFirst().types().getFirst(),
       "Строка", "функция разворачивания.", 0, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(1),
+    checkType(methodDescription.getParameters().getFirst().types().get(1),
       "ОписаниеОповещения", """
         В случае передачи Строки формируется служебное описание оповещения, в контексте которого заданы переменные
         "Результат", "ДополнительныеПараметры", "Элемент".
         В случае передачи ОписанияОповещения обработчик данного описания должен содержать два параметра
         (имена произвольные):""", 2, "", false);
 
-    checkParameter(methodDescription.getParameters().get(0).types().get(1).fields().get(0),
+    checkParameter(methodDescription.getParameters().getFirst().types().get(1).fields().getFirst(),
       "Результат", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(1).fields().get(0).types().get(0),
+    checkType(methodDescription.getParameters().getFirst().types().get(1).fields().getFirst().types().getFirst(),
       "ПроцессорКоллекций", "Переменная, в которую должен быть\n" +
         "помещен результат работы функции в виде ПроцессораКоллекций.", 0, "", false);
 
-    checkParameter(methodDescription.getParameters().get(0).types().get(1).fields().get(1),
+    checkParameter(methodDescription.getParameters().getFirst().types().get(1).fields().get(1),
       "ДополнительныеПараметры", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(1).fields().get(1).types().get(0),
+    checkType(methodDescription.getParameters().getFirst().types().get(1).fields().get(1).types().getFirst(),
       "Структура", "Структура параметров, передаваемая функции разворачивания.", 0, "", false);
 
     checkParameter(methodDescription.getParameters().get(1), "ДополнительныеПараметры", 1, "", false);
-    checkType(methodDescription.getParameters().get(1).types().get(0),
+    checkType(methodDescription.getParameters().get(1).types().getFirst(),
       "Структура", """
         Структура дополнительных параметров, передаваемая функции разворачивания.
         Служит для передачи дополнительных данных из прикладного кода в функцию разворачивания.
@@ -682,13 +682,13 @@ class BSLDescriptionReaderTest {
       Objects.equals(methodDescription.getRange(), create(75, 20)))
       .isFalse();
     assertThat(methodDescription.getReturnedValue()).hasSize(1);
-    checkType(methodDescription.getReturnedValue().get(0), "ПроцессорКоллекций",
+    checkType(methodDescription.getReturnedValue().getFirst(), "ПроцессорКоллекций",
       "Инстанс класса \"ПроцессорКоллекций\".",
       0, "", false);
 
     assertThat(methodDescription.getElements()).hasSize(13);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(5, 3, 13));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(5, 3, 13));
     assertThat(methodDescription.getElements().get(1).type()).isEqualTo(DescriptionElement.Type.RETURNS_KEYWORD);
     assertThat(methodDescription.getElements().get(1).range()).isEqualTo(SimpleRange.create(19, 3, 25));
     assertThat(methodDescription.getElements().get(2).type()).isEqualTo(DescriptionElement.Type.EXAMPLE_KEYWORD);
@@ -703,8 +703,8 @@ class BSLDescriptionReaderTest {
       .allMatch(type -> methodDescription.getRange().contains(type.element().range()));
 
     assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getParameters().get(0).allElements())
-      .containsAll(methodDescription.getReturnedValue().get(0).allElements());
+      .containsAll(methodDescription.getParameters().getFirst().allElements())
+      .containsAll(methodDescription.getReturnedValue().getFirst().allElements());
   }
 
   @Test
@@ -718,26 +718,26 @@ class BSLDescriptionReaderTest {
     assertThat(methodDescription.getExamples()).isEmpty();
     assertThat(methodDescription.getLinks())
       .hasSize(1);
-    assertThat(methodDescription.getLinks().get(0).link()).isEqualTo("Мой.Метод");
-    assertThat(methodDescription.getLinks().get(0).params()).isEqualTo("СПараметром");
+    assertThat(methodDescription.getLinks().getFirst().link()).isEqualTo("Мой.Метод");
+    assertThat(methodDescription.getLinks().getFirst().params()).isEqualTo("СПараметром");
     assertThat(methodDescription.getParameters()).hasSize(1);
     assertThat(methodDescription.getReturnedValue()).isEmpty();
 
-    checkParameter(methodDescription.getParameters().get(0),
+    checkParameter(methodDescription.getParameters().getFirst(),
       "Параметр", 1, "", false);
-    checkType(methodDescription.getParameters().get(0).types().get(0),
+    checkType(methodDescription.getParameters().getFirst().types().getFirst(),
       "Список<Массив<Список<Мой.Метод>>>", "", 0, "", false);
 
     assertThat(methodDescription.getElements()).hasSize(3);
-    assertThat(methodDescription.getElements().get(0).type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
-    assertThat(methodDescription.getElements().get(0).range()).isEqualTo(SimpleRange.create(0, 3, 13));
+    assertThat(methodDescription.getElements().getFirst().type()).isEqualTo(DescriptionElement.Type.PARAMETERS_KEYWORD);
+    assertThat(methodDescription.getElements().getFirst().range()).isEqualTo(SimpleRange.create(0, 3, 13));
 
     assertThat(methodDescription.getParameters())
       .allMatch(parameter -> parameter.element().type() == DescriptionElement.Type.PARAMETER_NAME)
       .allMatch(parameter -> methodDescription.getRange().contains(parameter.element().range()));
 
     assertThat(methodDescription.getElements())
-      .containsAll(methodDescription.getParameters().get(0).allElements());
+      .containsAll(methodDescription.getParameters().getFirst().allElements());
   }
 
   @Test
@@ -747,7 +747,7 @@ class BSLDescriptionReaderTest {
     var methodDescription = MethodDescription.create(tokens);
 
     assertThat(methodDescription.getLinks()).hasSize(1);
-    var hyperlink = methodDescription.getLinks().get(0);
+    var hyperlink = methodDescription.getLinks().getFirst();
     assertThat(hyperlink.link()).isEqualTo("CommonModule.MyModule.MyFunc");
 
     // Проверяем, что диапазон гиперссылки учитывает сдвиг
@@ -762,7 +762,7 @@ class BSLDescriptionReaderTest {
     var methodDescription = MethodDescription.create(tokens);
 
     assertThat(methodDescription.getLinks()).hasSize(1);
-    var hyperlink = methodDescription.getLinks().get(0);
+    var hyperlink = methodDescription.getLinks().getFirst();
     assertThat(hyperlink.link()).isEqualTo("CommonModule.MyModule.MyFunc");
 
     // Проверяем, что диапазон гиперссылки учитывает сдвиг строк

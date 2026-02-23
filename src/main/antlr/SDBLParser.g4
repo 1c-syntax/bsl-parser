@@ -64,19 +64,27 @@ selectQuery:
 subquery: main=query orderBy? (unions+=union+)?;
 
 // объединение запросов
-union: UNION ALL? query orderBy?;
+union: unionType=(UNION | UNION_ALL) query orderBy?;
 
 // структура запроса
 query:
     SELECT limitations?
     columns=selectedFields
-    (INTO temporaryTableName=temporaryTableIdentifier)?
+    ((INTO | ADD) temporaryTableName=temporaryTableIdentifier)?
     (FROM from=dataSources)?
     (WHERE where=logicalExpression)?
-    (GROUP (BY_EN | PO_RU) groupBy=groupByItem)?
+    (
+            (GROUP_BY_GROUPING_SETS LPAREN
+                (LPAREN groupingSet+=expressionList RPAREN (COMMA LPAREN groupingSet+=expressionList RPAREN)*)
+            RPAREN)
+        |   (GROUP_BY groupBy+=expression (COMMA groupBy+=expression)*)
+    )?
     (HAVING having=logicalExpression)?
-    (FOR UPDATE forUpdate=mdo?)?
-    (INDEX (BY_EN | PO_RU) indexes+=indexingItem (COMMA indexes+=indexingItem)*)?
+    (FOR_UPDATE forUpdate=mdo?)?
+    (
+            (INDEX_BY_SETS LPAREN indexSets+=indexingSet (COMMA indexSets+=indexingSet)* RPAREN)
+        |   (INDEX_BY indexes+=indexingItem UNIQUE? (COMMA indexes+=indexingItem UNIQUE?)*)
+    )?
     ;
 
 // различные ограничения выборки, для ускорения анализа развернуты все варианты
@@ -116,7 +124,7 @@ selectedField:
 asteriskField: (tableName=identifier DOT)* MUL;
 
 // поле выборки-выражение, алиас может быть
-expressionField: logicalExpression;
+expressionField: expression | logicalExpression;
 
 // поле выборки-поле табицы или NULL
 columnField: NULL | recordAutoNumberFunction;
@@ -131,23 +139,19 @@ inlineTableField: inlineTable=column DOT LPAREN inlineTableFields=selectedFields
 // функция автономерзаписи может быть использована только как поле выборки
 recordAutoNumberFunction: doCall=RECORDAUTONUMBER LPAREN RPAREN;
 
-groupByItem:
-    GROUPING SET LPAREN (LPAREN groupingSet+=expressionList RPAREN (COMMA LPAREN groupingSet+=expressionList RPAREN)*) RPAREN
-    | (groupBy+=expression (COMMA groupBy+=expression)*)
-    ;
-
 // поле индексирования, может быть колонкой или параметром
-indexingItem: parameter | column;
+indexingItem: (parameter | column);
+indexingSet: LPAREN indexes+=indexingItem (COMMA indexes+=indexingItem)* RPAREN unique=UNIQUE?;
 
 // упорядочивание
-orderBy: ORDER (BY_EN | PO_RU) orders+=ordersByExpession (COMMA orders+=ordersByExpession)?;
-ordersByExpession: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY direction=DESC?))?;
+orderBy: ORDER_BY orders+=ordersByExpression (COMMA orders+=ordersByExpression)*;
+ordersByExpression: expression (direction=(ASC | DESC) | (hierarchy=HIERARCHY direction=DESC?))?;
 
 // итоги
-totalBy: TOTALS selectedFields? (BY_EN | PO_RU) totalsGroups+=totalsGroup (COMMA totalsGroups+=totalsGroup)*;
+totalBy: TOTALS selectedFields? BY totalsGroups+=totalsGroup (COMMA totalsGroups+=totalsGroup)*;
 totalsGroup:
       OVERALL
-    | (expression ((ONLY? HIERARCHY) | periodic)? alias?)
+    | (expression (hierarchyType=(ONLY_HIERARCHY | HIERARCHY) | periodic)? alias?)
     ;
 // периодичность группы итогов
 periodic: PERIODS
@@ -225,14 +229,15 @@ builtInFunctions:
     | (doCall=(BEGINOFPERIOD | ENDOFPERIOD) LPAREN date=expression COMMA periodType=(MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR | TENDAYS | HALFYEAR) RPAREN)
     | (doCall=DATEADD LPAREN date=expression COMMA periodType=(SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR | TENDAYS | HALFYEAR) COMMA count=expression RPAREN)
     | (doCall=DATEDIFF LPAREN firstdate=expression COMMA seconddate=expression COMMA periodType=(SECOND | MINUTE | HOUR | DAY | MONTH | QUARTER | YEAR) RPAREN)
-    | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION | GROUPEDBY) LPAREN value=expression RPAREN)
+    | (doCall=(VALUETYPE | PRESENTATION | REFPRESENTATION | GROUPEDBY | STRING) LPAREN value=expression RPAREN)
     | (doCall=ISNULL LPAREN first=logicalExpression COMMA second=logicalExpression RPAREN)
     | (doCall=(ACOS | ASIN | ATAN | COS | SIN | TAN | LOG | LOG10 | EXP | POW | SQRT | INT) LPAREN decimal=expression RPAREN)
     | (doCall=(LOWER | STRINGLENGTH | TRIMALL | TRIML | TRIMR | UPPER) LPAREN string=expression RPAREN)
+    | (doCall=(LEFT | RIGHT) LPAREN string=expression COMMA stringLength=expression RPAREN)
     | (doCall=ROUND LPAREN decimal=expression COMMA precise=expression RPAREN)
     | (doCall=(STOREDDATASIZE | UUID) LPAREN value=expression RPAREN)
     | (doCall=STRFIND LPAREN string=expression COMMA substring1=expression RPAREN)
-    | (doCall=STRREPLACE LPAREN string=expression COMMA substring1=expression COMMA substring1=expression RPAREN)
+    | (doCall=STRREPLACE LPAREN string=expression COMMA substring1=expression COMMA substring2=expression RPAREN)
 ;
 
 // агрегатные ф-ии
@@ -301,11 +306,12 @@ isNullPredicate: expression IS NOT? NULL;                                       
 // сравнение выражений
 comparePredicate: expression compareOperation=(LESS | LESS_OR_EQUAL | GREATER | GREATER_OR_EQUAL | ASSIGN | NOT_EQUAL) expression;
 betweenPredicate: expression BETWEEN expression AND expression;                                 // выражение МЕЖДУ выражение1 И выражение2
-inPredicate: (expression | (LPAREN expressionList RPAREN)) NOT* IN HIERARCHY_FOR_IN? LPAREN (subquery | expressionList) RPAREN;     // выражение В (подзапрос/список)
+inPredicate: (expression | (LPAREN expressionList RPAREN)) NOT* typeIn=(IN | IN_HIERARCHY) LPAREN (subquery | expressionList) RPAREN;     // выражение В (подзапрос/список)
 refsPredicate: expression REFS mdo;                                             // выражение ССЫЛКА МДО
 
 // список выражений
-expressionList: exp+=logicalExpression (COMMA exp+=logicalExpression)*;
+expressionList: exp+=expressionListItem (COMMA exp+=expressionListItem)*;
+expressionListItem: expression | logicalExpression;
 
 // перечень таблиц-источников данных для выборки
 dataSources: tables+=dataSource (COMMA tables+=dataSource)*;
@@ -356,16 +362,11 @@ externalDataSourceTable:
     | mdo DOT EDS_CUBE DOT cubeName=identifier DOT EDS_CUBE_DIMTABLE DOT tableName=identifier;
 
 // соединения таблиц
-joinPart:
-    (   // тип соединения
-          (joinType=RIGHT outerJoin=OUTER? JOIN)
-        | (joinType=LEFT outerJoin=OUTER? JOIN)
-        | (joinType=FULL outerJoin=OUTER? JOIN)
-        | (joinType=INNER JOIN)
-        | (joinType=JOIN)
-    )
-    source=dataSource (ON_EN | PO_RU) condition=logicalExpression          // имя таблицы и соединение
-    ;
+joinPart:   (rightJoin | leftJoin | fullJoin | innerJoin) source=dataSource BY condition=logicalExpression;
+rightJoin:  keyword=(RIGHT_OUTER_JOIN   | RIGHT_JOIN);
+leftJoin:   keyword=(LEFT_OUTER_JOIN    | LEFT_JOIN);
+fullJoin:   keyword=(FULL_OUTER_JOIN    | FULL_JOIN);
+innerJoin:  keyword=(INNER_JOIN         | JOIN);
 
 // алиас для поля, таблицы ...
 alias: AS? name=identifier;
@@ -424,7 +425,6 @@ identifier:
     | SELECT
     | TOTALS
     | UNION
-    | UPDATE
     | AVG
     | BEGINOFPERIOD
     | BOOLEAN
@@ -446,7 +446,6 @@ identifier:
     | MONTH
     | NUMBER
     | QUARTER
-    | ONLY
     | PERIODS
     | REFS
     | PRESENTATION
@@ -463,20 +462,8 @@ identifier:
     | WEEK
     | WEEKDAY
     | YEAR
-    | ORDER
-    | GROUP
-    | INDEX
-    | SET
     | RIGHT
     | LEFT
-    | INNER
-    | FULL
-    | JOIN
-    | OUTER
-    | FOR
-    | UPDATE
-    | ALL
-    | UNION
     | ACOS
     | ASIN
     | ATAN

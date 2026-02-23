@@ -43,12 +43,12 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
   private final VariableDescription.VariableDescriptionBuilder builder;
 
   /**
-   * сдвиг номера строки относительно исходного текста
+   * Сдвиг номера строки относительно исходного текста
    */
   private final int lineShift;
 
   /**
-   * сдвиг номера символа относительно исходного текста (только для первой строки)
+   * Сдвиг номера символа относительно исходного текста (только для первой строки)
    */
   private final int firstLineCharShift;
 
@@ -62,6 +62,7 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
    * Читает описание переменной из списка токенов комментария.
    *
    * @param comments Список токенов комментария.
+   *
    * @return Описание переменной.
    */
   public static VariableDescription read(List<Token> comments) {
@@ -73,6 +74,7 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
    *
    * @param comments        Список токенов комментария.
    * @param trailingComment Висячий комментарий.
+   *
    * @return Описание переменной.
    */
   public static VariableDescription read(List<Token> comments, Optional<Token> trailingComment) {
@@ -104,27 +106,28 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
   @Override
   public ParseTree visitDeprecateBlock(BSLDescriptionParser.DeprecateBlockContext ctx) {
     builder.deprecated(true);
-    builder.element(new DescriptionElement(
-      SimpleRange.create(ctx.DEPRECATE_KEYWORD().getSymbol(), lineShift, firstLineCharShift),
-      DescriptionElement.Type.DEPRECATE_KEYWORD)
-    );
+    Optional.ofNullable(ctx.DEPRECATE_KEYWORD())
+      .ifPresent(keyword -> builder.element(new DescriptionElement(
+        SimpleRange.create(keyword.getSymbol(), lineShift, firstLineCharShift),
+        DescriptionElement.Type.DEPRECATE_KEYWORD)
+      ));
+
     var deprecationDescription = ctx.deprecateDescription();
     if (deprecationDescription != null) {
       builder.deprecationInfo(deprecationDescription.getText().strip());
     } else {
       builder.deprecationInfo("");
     }
+
     return ctx;
   }
 
   @Override
   public ParseTree visitDescriptionBlock(BSLDescriptionParser.DescriptionBlockContext ctx) {
-    if (ctx.descriptionString() != null) {
-      builder.purposeDescription(ctx.descriptionString().stream()
-        .map(ReaderUtils::extractText)
-        .collect(Collectors.joining("\n"))
-        .strip());
-    }
+    builder.purposeDescription(ctx.descriptionString().stream()
+      .map(ReaderUtils::extractText)
+      .collect(Collectors.joining("\n"))
+      .strip());
 
     return ctx;
   }
