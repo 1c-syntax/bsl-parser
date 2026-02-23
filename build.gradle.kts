@@ -1,5 +1,5 @@
-import java.util.Calendar
 import org.jreleaser.model.Active.*
+import java.util.*
 
 plugins {
     `java-library`

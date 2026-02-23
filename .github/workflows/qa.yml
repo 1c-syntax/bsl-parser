@@ -18,10 +18,10 @@ jobs:
           persist-credentials: false
       - run: |
           git fetch --prune --unshallow
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'adopt'
       - name: SonarCloud Scan
         run: ./gradlew check sonar
