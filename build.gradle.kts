@@ -50,19 +50,20 @@ gitVersioning.apply {
 }
 
 dependencies {
-    antlr("io.github.1c-syntax", "antlr4", "0.3.0-rc.2") {
+    antlr("io.github.1c-syntax:antlr4:0.3.0-rc.2") {
         exclude("org.antlr:antlr-runtime")
         exclude("org.antlr:ST4")
     }
 
     // testing
-    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.5.0-rc.1")
+    testImplementation("io.github.1c-syntax:bsl-parser-testing:0.5.0-rc.1")
 
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
-    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
-    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
-    testImplementation("org.assertj", "assertj-core", "3.27.0")
+    testImplementation(platform("org.junit:junit-bom:6.0.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testImplementation("org.assertj:assertj-core:3.27.7")
 
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
