@@ -59,7 +59,7 @@ class SDBLTokenizerTest {
     assertThat(queries)
       .isNotNull()
       .hasSize(1);
-    SDBLParser.QueriesContext query = queries.get(0);
+    SDBLParser.QueriesContext query = queries.getFirst();
     assertThat(query.getStart().getType()).isEqualTo(SDBLParser.SELECT);
     assertThat(query.getStop().getType()).isEqualTo(SDBLParser.IDENTIFIER);
   }

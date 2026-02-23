@@ -40,9 +40,10 @@ class BSLParserWithChildrenTest {
 
   @Test
   void testPreproc_Expression() {
-    var content = testParser.assertThat("#Если (Клиент Или (НЕ Клиент)) И НЕ Клиент Тогда\n" +
-      "#ИначеЕсли ((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент)))) Тогда\n" +
-      "#КонецЕсли");
+    var content = testParser.assertThat("""
+      #Если (Клиент Или (НЕ Клиент)) И НЕ Клиент Тогда
+      #ИначеЕсли ((((Не (ВебКлиент))) И ((НЕ МобильныйКлиент)))) Тогда
+      #КонецЕсли""");
 
     var file = testParser.parser().file();
     content.matches(file);
@@ -50,7 +51,7 @@ class BSLParserWithChildrenTest {
     var preprocessors = file.preprocessor();
     assertThat(preprocessors).isNotNull().hasSize(3);
 
-    var preproc_if = preprocessors.get(0);
+    var preproc_if = preprocessors.getFirst();
     var preproc_elif = preprocessors.get(1);
     var preproc_endif = preprocessors.get(2);
     content.matches(preproc_if.preproc_if());
@@ -99,7 +100,7 @@ class BSLParserWithChildrenTest {
     var listSubs = subs.sub();
     listSubs.forEach(content::matches);
 
-    var func = listSubs.get(0);
+    var func = listSubs.getFirst();
     content.matches(func);
 
     assertThat(func.getText())
@@ -139,7 +140,7 @@ class BSLParserWithChildrenTest {
     var listSubs = subs.sub();
     listSubs.forEach(content::matches);
 
-    var method = listSubs.get(0);
+    var method = listSubs.getFirst();
     content.matches(method);
 
     if (method.function() == null) {
@@ -178,7 +179,7 @@ class BSLParserWithChildrenTest {
     var listSubs = subs.sub();
     listSubs.forEach(content::matches);
 
-    var proc = listSubs.get(0);
+    var proc = listSubs.getFirst();
     content.matches(proc);
 
     var subCodeblock = proc.procedure().subCodeBlock();
@@ -239,7 +240,7 @@ class BSLParserWithChildrenTest {
     var listSubs = subs.sub();
     listSubs.forEach(content::matches);
 
-    var proc = listSubs.get(0);
+    var proc = listSubs.getFirst();
     content.matches(proc);
 
     var param = proc.procedure().procDeclaration().paramList().param(1);
@@ -317,7 +318,7 @@ class BSLParserWithChildrenTest {
         .isNotNull()
         .hasSize(1);
 
-    var mainAnnotation = moduleVar.annotation().get(0);
+    var mainAnnotation = moduleVar.annotation().getFirst();
     assertThat(mainAnnotation.annotationParams()).isNotNull();
     assertThat(mainAnnotation.annotationParams().annotationParam())
         .isNotNull()
@@ -365,7 +366,7 @@ class BSLParserWithChildrenTest {
         .isNotNull()
         .hasSize(1);
 
-    var annotation = procDeclaration.annotation().get(0);
+    var annotation = procDeclaration.annotation().getFirst();
     assertThat(annotation.annotationParams()).isNotNull();
     assertThat(annotation.annotationParams().annotationParam())
         .isNotNull()
@@ -404,7 +405,7 @@ class BSLParserWithChildrenTest {
         .isNotNull()
         .hasSize(1);
 
-    var annotation = param.annotation().get(0);
+    var annotation = param.annotation().getFirst();
     assertThat(annotation.annotationParams()).isNotNull();
     assertThat(annotation.annotationParams().annotationParam())
         .isNotNull()
@@ -428,7 +429,7 @@ class BSLParserWithChildrenTest {
     assertThat(file.fileCodeBlock().codeBlock()).isNotNull();
     assertThat(file.fileCodeBlock().codeBlock().statement()).isNotNull().hasSize(1);
 
-    var statement = file.fileCodeBlock().codeBlock().statement().get(0);
+    var statement = file.fileCodeBlock().codeBlock().statement().getFirst();
     assertThat(statement).isNotNull();
     assertThat(statement.compoundStatement()).isNotNull();
     assertThat(statement.compoundStatement().raiseStatement()).isNotNull();

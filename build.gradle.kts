@@ -1,5 +1,5 @@
-import java.util.Calendar
 import org.jreleaser.model.Active.*
+import java.util.*
 
 plugins {
     `java-library`
@@ -50,25 +50,26 @@ gitVersioning.apply {
 }
 
 dependencies {
-    antlr("io.github.1c-syntax", "antlr4", "0.3.0-rc.2") {
+    antlr("io.github.1c-syntax:antlr4:0.3.0")
+
+    // testing
+    testImplementation("io.github.1c-syntax:bsl-parser-testing:0.5.0") {
         exclude("org.antlr:antlr-runtime")
         exclude("org.antlr:ST4")
     }
 
-    // testing
-    testImplementation("io.github.1c-syntax", "bsl-parser-testing", "0.5.0-rc.1")
+    testImplementation(platform("org.junit:junit-bom:6.0.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    testImplementation("org.assertj:assertj-core:3.27.7")
 
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
-    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
-    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
-    testImplementation("org.assertj", "assertj-core", "3.27.0")
-
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     withSourcesJar()
     withJavadocJar()
 }
@@ -201,8 +202,10 @@ sonar {
         property("sonar.projectKey", "1c-syntax_bsl-parser")
         property("sonar.projectName", "BSL Parser")
         property("sonar.scm.exclusions.disabled", "true")
-        property("sonar.coverage.jacoco.xmlReportPaths",
-            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml"
+        )
     }
 }
 

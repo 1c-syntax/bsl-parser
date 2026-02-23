@@ -200,36 +200,40 @@ class BSLParserMatchesTest {
 
   @Test
   void testPreprocInsertBreakCondition() {
-    testParser.assertThat("If true or false\n" +
-      "    #If Server Then\n" +
-      "        Or true\n" +
-      "    #EndIf\n" +
-      "    Then\n" +
-      "EndIf;").matches(testParser.parser().ifBranch());
+    testParser.assertThat("""
+      If true or false
+          #If Server Then
+              Or true
+          #EndIf
+          Then
+      EndIf;""").matches(testParser.parser().ifBranch());
 
-    testParser.assertThat("while (true \n" +
-      "    #If Server Then\n" +
-      "        Or true\n" +
-      "    #EndIf\n" +
-      "    ) do\n" +
-      "enddo;").matches(testParser.parser().whileStatement());
+    testParser.assertThat("""
+      while (true\s
+          #If Server Then
+              Or true
+          #EndIf
+          ) do
+      enddo;""").matches(testParser.parser().whileStatement());
 
-    testParser.assertThat("a = false \n" +
-      "    #If Server Then\n" +
-      "        Or true\n" +
-      "    #else\n" +
-      "        Or false\n" +
-      "    #EndIf\n" +
-      "    and true;").matches(testParser.parser().statement());
+    testParser.assertThat("""
+      a = false\s
+          #If Server Then
+              Or true
+          #else
+              Or false
+          #EndIf
+          and true;""").matches(testParser.parser().statement());
   }
 
   @Test
   void testPreprocBreakString() {
-    testParser.assertThat("\"выбрать\n" +
-      "#Удаление\n" +
-      "|часть строки\n" +
-      "#КонецУдаления\n" +
-      "|конец строки\"").matches(testParser.parser().multilineString());
+    testParser.assertThat("""
+      "выбрать
+      #Удаление
+      |часть строки
+      #КонецУдаления
+      |конец строки\"""").matches(testParser.parser().multilineString());
   }
 
   @ParameterizedTest
@@ -417,13 +421,15 @@ class BSLParserMatchesTest {
 
   @Test
   void tesForEach() {
-    testParser.assertThat("Для каждого Переменная Из Коллекция Цикл\n" +
-      "\t\n" +
-      "КонецЦикла;").matches(testParser.parser().forEachStatement());
+    testParser.assertThat("""
+      Для каждого Переменная Из Коллекция Цикл
+      \t
+      КонецЦикла;""").matches(testParser.parser().forEachStatement());
 
-    testParser.assertThat("For Each varible In collection Do\n" +
-      "\n" +
-      "EndDo;").matches(testParser.parser().forEachStatement());
+    testParser.assertThat("""
+      For Each varible In collection Do
+      
+      EndDo;""").matches(testParser.parser().forEachStatement());
   }
 
   @Test
