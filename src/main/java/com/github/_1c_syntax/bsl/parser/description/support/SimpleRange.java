@@ -121,8 +121,8 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
     if (tokens.isEmpty()) {
       return EMPTY;
     }
-    var firstElement = tokens.get(0);
-    var lastElement = tokens.get(tokens.size() - 1);
+    var firstElement = tokens.getFirst();
+    var lastElement = tokens.getLast();
 
     return create(firstElement, lastElement);
   }

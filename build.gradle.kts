@@ -50,13 +50,10 @@ gitVersioning.apply {
 }
 
 dependencies {
-    antlr("io.github.1c-syntax:antlr4:0.3.0-rc.2") {
-        exclude("org.antlr:antlr-runtime")
-        exclude("org.antlr:ST4")
-    }
+    antlr("io.github.1c-syntax:antlr4:0.3.0")
 
     // testing
-    testImplementation("io.github.1c-syntax:bsl-parser-testing:0.5.0-rc.1")
+    testImplementation("io.github.1c-syntax:bsl-parser-testing:0.5.0")
 
     testImplementation(platform("org.junit:junit-bom:6.0.3"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -68,8 +65,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     withSourcesJar()
     withJavadocJar()
 }

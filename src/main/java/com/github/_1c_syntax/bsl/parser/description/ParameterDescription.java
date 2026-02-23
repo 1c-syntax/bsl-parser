@@ -54,7 +54,7 @@ public record ParameterDescription(String name, DescriptionElement element, List
    */
   public boolean isHyperlink() {
     return types.size() == 1
-      && types.get(0).variant() == TypeDescription.Variant.HYPERLINK;
+      && types.getFirst().variant() == TypeDescription.Variant.HYPERLINK;
   }
 
   /**
@@ -63,7 +63,7 @@ public record ParameterDescription(String name, DescriptionElement element, List
    * @return Содержимое гиперссылки
    */
   public Hyperlink link() {
-    return (isHyperlink()) ? ((HyperlinkTypeDescription) types.get(0)).hyperlink() : Hyperlink.EMPTY;
+    return (isHyperlink()) ? ((HyperlinkTypeDescription) types.getFirst()).hyperlink() : Hyperlink.EMPTY;
   }
 
   /**

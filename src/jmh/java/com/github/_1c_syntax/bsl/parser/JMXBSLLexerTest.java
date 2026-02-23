@@ -25,8 +25,8 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.UnicodeCharStream;
-import org.apache.commons.io.IOUtils;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Tokenizer;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;
@@ -40,7 +40,6 @@ import org.openjdk.jmh.util.ClassUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 
 @BenchmarkMode(Mode.SampleTime)
 @Warmup(iterations = 2) // число итераций для прогрева нашей функции
@@ -67,7 +66,7 @@ public class JMXBSLLexerTest {
     final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     try (InputStream inputStream = classLoader.getResourceAsStream("Module.bsl")) {
       assert inputStream != null;
-      content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+//      content = IOUtils.toString(inputStream.toString(), StandardCharsets.UTF_8);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -87,9 +86,9 @@ public class JMXBSLLexerTest {
     var tokenizer = new Tokenizer<>(content, lexer, parserClass) {
 
       @Override
-      protected BSLParserRuleContext rootAST() {
+      protected ParserRuleContext rootAST() {
         try {
-          return (BSLParserRuleContext) parserRootASTMethod.invoke(parser);
+          return (ParserRuleContext) parserRootASTMethod.invoke(parser);
         } catch (IllegalAccessException | InvocationTargetException e) {
           throw new RuntimeException("Error: ", e);
         }
