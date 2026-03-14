@@ -90,6 +90,9 @@ class BSLLexerTest {
     testLexer.assertThat(BSLLexer.PREPROCESSOR_MODE, "Использовать oint/api/grpc")
       .containsAll(BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER)
       .tokenHasText(2, "oint/api/grpc");
+    testLexer.assertThat(BSLLexer.PREPROCESSOR_MODE, "Использовать lib//comment")
+      .containsAll(BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER)
+      .tokenHasText(2, "lib");
   }
 
   @Test
