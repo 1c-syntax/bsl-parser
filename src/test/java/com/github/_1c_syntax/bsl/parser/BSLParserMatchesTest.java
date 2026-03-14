@@ -99,7 +99,8 @@ class BSLParserMatchesTest {
   @ParameterizedTest
   @ValueSource(strings =
     {
-      "#Использовать lib", "#Использовать \"./lib\"", "#Использовать lib-name", "#Использовать 1lib"
+      "#Использовать lib", "#Использовать \"./lib\"", "#Использовать lib-name", "#Использовать 1lib",
+      "#Использовать oint/api/grpc"
     }
   )
   void testUse(String inputString) {
