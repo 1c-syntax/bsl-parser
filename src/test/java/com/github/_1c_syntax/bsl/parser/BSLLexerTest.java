@@ -93,6 +93,8 @@ class BSLLexerTest {
     testLexer.assertThat(BSLLexer.PREPROCESSOR_MODE, "Использовать lib//comment")
       .containsAll(BSLLexer.PREPROC_USE_KEYWORD, BSLLexer.PREPROC_IDENTIFIER)
       .tokenHasText(2, "lib");
+    testLexer.assertThat(BSLLexer.PREPROCESSOR_MODE, "Использовать lib//comment", BSLLexer.HIDDEN)
+      .containsAll(BSLLexer.WHITE_SPACE, BSLLexer.LINE_COMMENT);
   }
 
   @Test
