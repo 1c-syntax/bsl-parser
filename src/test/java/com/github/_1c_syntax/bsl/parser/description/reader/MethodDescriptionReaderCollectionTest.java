@@ -74,4 +74,37 @@ class MethodDescriptionReaderCollectionTest {
       .containsExactly("Число", "Строка");
     assertThat(collection.name()).isEqualToIgnoringCase("Массив<Число, Строка>");
   }
+
+  @Test
+  void singleValueTypeIsPreservedInParameters() {
+    var src = "// Параметры:\n//  Парам - Массив из Число\n";
+    var description = MethodDescription.create(getTokens(src));
+    var params = description.getParameters();
+    assertThat(params).hasSize(1);
+    var types = params.getFirst().types();
+    assertThat(types).hasSize(1);
+    var collection = (CollectionTypeDescription) types.getFirst();
+    assertThat(collection.collectionName()).isEqualToIgnoringCase("Массив");
+    assertThat(collection.valueTypes())
+      .extracting(TypeDescription::name)
+      .containsExactly("Число");
+  }
+
+  @Test
+  void multipleValueTypesArePreservedInParameters() {
+    var src = "// Параметры:\n//  Парам - Массив из Число, Строка\n";
+    var description = MethodDescription.create(getTokens(src));
+    var params = description.getParameters();
+    assertThat(params).hasSize(1);
+    var types = params.getFirst().types();
+    assertThat(types).hasSize(1);
+    var collection = (CollectionTypeDescription) types.getFirst();
+    assertThat(collection.collectionName()).isEqualToIgnoringCase("Массив");
+    assertThat(collection.valueTypes())
+      .as("в параметрах оба value-типа должны быть сохранены, как и в returns")
+      .extracting(TypeDescription::name)
+      .containsExactly("Число", "Строка");
+    assertThat(collection.name()).isEqualToIgnoringCase("Массив<Число, Строка>");
+  }
+
 }

@@ -586,11 +586,9 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
         case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList);
         case COLLECTION -> CollectionTypeDescription.create(
           name, element, description.toString(),
-          valueTypes.isEmpty()
-            ? List.<TypeDescription>of(SimpleTypeDescription.EMPTY)
-            : valueTypes.stream()
-                .map(vt -> vt.build(lineShift, firstLineCharShift))
-                .toList(),
+          valueTypes.stream()
+            .map(vt -> vt.build(lineShift, firstLineCharShift))
+            .toList(),
           fieldList
         );
         case HYPERLINK -> HyperlinkTypeDescription.create(
