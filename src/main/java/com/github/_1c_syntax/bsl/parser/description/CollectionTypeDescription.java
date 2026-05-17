@@ -28,6 +28,7 @@ import lombok.Value;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Класс для хранения описания типа коллекции.
@@ -52,10 +53,13 @@ public class CollectionTypeDescription implements TypeDescription {
   String collectionName;
 
   /**
-   * Значение элемента коллекции
+   * Список значений типов элементов коллекции.
+   * <p>
+   * Соответствует записям вида {@code Массив из Тип1, Тип2}. Для коллекций
+   * без указания типов значений список пустой.
    */
   @Accessors(fluent = true)
-  TypeDescription valueType;
+  List<TypeDescription> valueTypes;
 
   /**
    * Элемент описания имени коллекции
@@ -66,12 +70,17 @@ public class CollectionTypeDescription implements TypeDescription {
   public static TypeDescription create(String collectionName,
                                        DescriptionElement element,
                                        String description,
-                                       TypeDescription valueType,
+                                       List<TypeDescription> valueTypes,
                                        List<ParameterDescription> fieldList) {
-    var valueTypeString = valueType.name();
+    var meaningfulValues = valueTypes.stream()
+      .filter(vt -> !vt.name().isEmpty())
+      .collect(Collectors.toUnmodifiableList());
+    var joined = meaningfulValues.stream()
+      .map(TypeDescription::name)
+      .collect(Collectors.joining(", "));
     var name = collectionName;
-    if (!valueTypeString.isEmpty()) {
-      name += "<" + valueTypeString + ">";
+    if (!joined.isEmpty()) {
+      name += "<" + joined + ">";
     }
 
     return new CollectionTypeDescription(
@@ -79,7 +88,7 @@ public class CollectionTypeDescription implements TypeDescription {
       description.strip(),
       fieldList,
       collectionName.strip().intern(),
-      valueType,
+      meaningfulValues,
       element
     );
   }

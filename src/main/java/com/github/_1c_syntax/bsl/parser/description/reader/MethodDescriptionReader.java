@@ -499,7 +499,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private final int level;
     private final List<TempParameterData> fields;
     private final TypeDescription.Variant variant;
-    private @Nullable TempParameterTypeData valueType;
+    private final List<TempParameterTypeData> valueTypes;
     private @Nullable Token linkParamsToken;
 
     private final SimpleRange range;
@@ -511,7 +511,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       this.description = new StringJoiner("\n");
       this.linkParamsToken = null;
       this.fields = new ArrayList<>();
-      this.valueType = null;
+      this.valueTypes = new ArrayList<>();
       this.range = range;
     }
 
@@ -571,7 +571,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private void addType(BSLDescriptionParser.TypeContext type) {
       var fakeParam = TempParameterData.fake();
       fakeParam.addType(type, null);
-      fakeParam.lastType().ifPresent(lastType -> valueType = lastType);
+      valueTypes.addAll(fakeParam.types);
     }
 
     private TypeDescription build(int lineShift, int firstLineCharShift) {
@@ -586,7 +586,9 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
         case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList);
         case COLLECTION -> CollectionTypeDescription.create(
           name, element, description.toString(),
-          valueType == null ? SimpleTypeDescription.EMPTY : valueType.build(lineShift, firstLineCharShift),
+          valueTypes.stream()
+            .map(vt -> vt.build(lineShift, firstLineCharShift))
+            .toList(),
           fieldList
         );
         case HYPERLINK -> HyperlinkTypeDescription.create(
