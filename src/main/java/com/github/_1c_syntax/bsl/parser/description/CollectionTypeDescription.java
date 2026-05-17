@@ -67,23 +67,6 @@ public class CollectionTypeDescription implements TypeDescription {
   @Accessors(fluent = true)
   DescriptionElement element;
 
-  /**
-   * Удобный аксессор для случая «одно значение типа элементов»: первый элемент
-   * {@link #valueTypes}, либо {@link SimpleTypeDescription#EMPTY} если список
-   * пустой. Оставлен для обратной совместимости со старым API.
-   */
-  public TypeDescription valueType() {
-    return valueTypes.isEmpty() ? SimpleTypeDescription.EMPTY : valueTypes.get(0);
-  }
-
-  public static TypeDescription create(String collectionName,
-                                       DescriptionElement element,
-                                       String description,
-                                       TypeDescription valueType,
-                                       List<ParameterDescription> fieldList) {
-    return create(collectionName, element, description, List.of(valueType), fieldList);
-  }
-
   public static TypeDescription create(String collectionName,
                                        DescriptionElement element,
                                        String description,
