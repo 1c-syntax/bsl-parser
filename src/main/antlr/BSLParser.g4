@@ -237,9 +237,9 @@ string           : (STRING | multilineString)+;
 statement
      : (
         (
-            ( label (callStatement | waitStatement | compoundStatement | assignment | preprocessor)?)
+            ( label (assignment | callStatement | waitStatement | compoundStatement | preprocessor)?)
             |
-            (callStatement | waitStatement | compoundStatement | assignment| preprocessor)
+            (assignment | callStatement | waitStatement | compoundStatement | preprocessor)
         )
         SEMICOLON?
     )
