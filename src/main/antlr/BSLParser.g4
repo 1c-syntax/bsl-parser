@@ -26,6 +26,18 @@ options {
     incremental = true;
 }
 
+@parser::members {
+  /**
+   * Семантический предикат для incompleteAccess: трактовать DOT как
+   * висячую точку только если следующий за ней токен НЕ IDENTIFIER.
+   * Это защищает обычные обращения {@code А.Свойство} от ошибочного
+   * выбора альтернативы incompleteAccess из-за неоднозначности грамматики.
+   */
+  protected boolean dotIsTrailing() {
+    return _input.LA(1) != IDENTIFIER;
+  }
+}
+
 // ROOT
 file: shebang? moduleAnnotations? preprocessor* moduleVars? preprocessor* (fileCodeBlockBeforeSub subs)? fileCodeBlock EOF;
 
@@ -237,9 +249,9 @@ string           : (STRING | multilineString)+;
 statement
      : (
         (
-            ( label (callStatement | waitStatement | compoundStatement | assignment | preprocessor)?)
+            ( label (assignment | callStatement | waitStatement | compoundStatement | preprocessor)?)
             |
-            (callStatement | waitStatement | compoundStatement | assignment| preprocessor)
+            (assignment | callStatement | waitStatement | compoundStatement | preprocessor)
         )
         SEMICOLON?
     )
@@ -274,7 +286,7 @@ lValue           : (IDENTIFIER | globalMethodCall) acceptor?;
 accessCall       : DOT methodCall;
 accessIndex      : LBRACK expression RBRACK;
 accessProperty   : DOT IDENTIFIER;
-incompleteAccess : DOT;
+incompleteAccess : {dotIsTrailing()}? DOT;
 doCall           : LPAREN callParamList RPAREN;
 
 compoundStatement
