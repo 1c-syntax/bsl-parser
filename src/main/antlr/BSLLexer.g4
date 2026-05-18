@@ -28,13 +28,31 @@ channels {
 
 options { caseInsensitive=true; }
 
+@lexer::members {
+  /**
+   * После точки переключаемся в DOT_MODE (где любой идентификатор-подобный токен,
+   * включая ключевые слова, лексится как IDENTIFIER — для поддержки {@code Объект.Свойство},
+   * где Свойство может называться как зарезервированное слово) только если за точкой
+   * непосредственно следует символ начала идентификатора (буква или подчёркивание).
+   *
+   * Для случаев trailing-dot ({@code Х.<EOL>}, {@code Х.)}, {@code Х.;}, {@code Х. КлючевоеСлово})
+   * остаёмся в default mode — это позволяет парсеру правильно распознать incompleteAccess
+   * и продолжить разбор следующих токенов.
+   */
+  private boolean shouldEnterDotMode() {
+    int c = getInputStream().LA(1);
+    if (c <= 0) return false;
+    return Character.isLetter(c) || c == '_';
+  }
+}
+
 // commons
 fragment DIGIT: [0-9];
 LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
 
 // separators
-DOT: '.' -> pushMode(DOT_MODE);
+DOT: '.' { if (shouldEnterDotMode()) pushMode(DOT_MODE); };
 LBRACK: '[';
 RBRACK: ']';
 LPAREN: '(';
@@ -221,7 +239,7 @@ Async_LINE_COMMENT: LINE_COMMENT -> type(LINE_COMMENT), channel(HIDDEN);
 Async_WHITE_SPACE: WHITE_SPACE -> type(WHITE_SPACE), channel(HIDDEN);
 
 // separators
-Async_DOT: DOT -> type(DOT), pushMode(DOT_MODE);
+Async_DOT: DOT { if (shouldEnterDotMode()) pushMode(DOT_MODE); } -> type(DOT);
 Async_LBRACK: LBRACK -> type(LBRACK);
 Async_RBRACK: RBRACK -> type(RBRACK);
 Async_LPAREN: LPAREN -> type(LPAREN);
