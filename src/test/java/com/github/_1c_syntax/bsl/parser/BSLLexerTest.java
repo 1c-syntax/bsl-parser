@@ -218,9 +218,13 @@ class BSLLexerTest {
   void testExecute() {
     testLexer.assertThat("Выполнить").containsAll(BSLLexer.EXECUTE_KEYWORD);
     testLexer.assertThat("Запрос.Выполнить")
-      .isEqualTo("Запрос.  Выполнить")
-      .isEqualTo("Запрос.  \nВыполнить")
       .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    // После DOT+whitespace ключевое слово не лексится как property (DOT_MODE не активируется,
+    // если за точкой не следует сразу буква).
+    testLexer.assertThat("Запрос.  Выполнить")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.EXECUTE_KEYWORD);
+    testLexer.assertThat("Запрос.  \nВыполнить")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.EXECUTE_KEYWORD);
   }
 
   @Test

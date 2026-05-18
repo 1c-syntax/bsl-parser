@@ -192,7 +192,7 @@ forEachStatement  : FOR_KEYWORD EACH_KEYWORD IDENTIFIER IN_KEYWORD expression DO
 tryStatement      : TRY_KEYWORD tryCodeBlock EXCEPT_KEYWORD exceptCodeBlock ENDTRY_KEYWORD;
 returnStatement   : RETURN_KEYWORD expression?;
 executeStatement  : EXECUTE_KEYWORD (doCall | callParamList);
-callStatement     : ((IDENTIFIER | globalMethodCall) modifier* accessCall) | globalMethodCall;
+callStatement     : ((IDENTIFIER | globalMethodCall) modifier* (accessCall | incompleteAccess)) | globalMethodCall;
 waitStatement     : waitExpression;
 
 labelName         : IDENTIFIER;
@@ -268,12 +268,13 @@ methodCall       : methodName doCall;
 globalMethodCall : methodName doCall;
 methodName       : IDENTIFIER;
 complexIdentifier: (IDENTIFIER | newExpression | ternaryOperator | globalMethodCall) modifier*;
-modifier         : accessProperty | accessIndex | accessCall;
+modifier         : accessProperty | accessIndex | accessCall | incompleteAccess;
 acceptor         : modifier* (accessProperty | accessIndex);
 lValue           : (IDENTIFIER | globalMethodCall) acceptor?;
 accessCall       : DOT methodCall;
 accessIndex      : LBRACK expression RBRACK;
 accessProperty   : DOT IDENTIFIER;
+incompleteAccess : DOT;
 doCall           : LPAREN callParamList RPAREN;
 
 compoundStatement

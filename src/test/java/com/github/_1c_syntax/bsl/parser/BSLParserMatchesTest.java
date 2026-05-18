@@ -644,7 +644,9 @@ class BSLParserMatchesTest {
   @ParameterizedTest
   @ValueSource(strings =
     {
-      "Сообщить(А, 1)", "А.А[1].А(А)", "А.А()", "А.А(А)", "А(А).А()", "А(А).А.А().А()"
+      "Сообщить(А, 1)", "А.А[1].А(А)", "А.А()", "А.А(А)", "А(А).А()", "А(А).А.А().А()",
+      // Trailing dot recovery for incomplete property access (e.g. user typing 'А.<CURSOR>')
+      "А.", "А.А.", "А.А().", "А[1]."
     }
   )
   void TestCallStatement(String inputString) {
@@ -654,6 +656,78 @@ class BSLParserMatchesTest {
   @Test
   void TestCallStatement() {
     testParser.assertThat("ВызватьИсключение А").noMatches(testParser.parser().callStatement());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      // Trailing dot recovery in expression context (RHS of assignment, method arguments, conditions)
+      "А.", "А.А.", "А.А().", "А[1].", "А.Б.В.", "А.Б()[1]."
+    }
+  )
+  void testComplexIdentifierTrailingDot(String inputString) {
+    testParser.assertThat(inputString).matches(testParser.parser().complexIdentifier());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      "А.", "А.Б.", "А.Б().", "А[1].",
+      // в арифметике / логике
+      "А. + 1", "1 + А.", "А.Б. * 2",
+      // вложенные вызовы
+      "Х(А.)", "Х(А., Б)", "Х(А, Б.)", "Х(А., Б.)", "Х(А.Б., В())",
+      // индексация и цепочки
+      "А[Б.]", "А.Б[В.].Г.",
+      // тернарный, NEW
+      "?(А., 1, 2)", "?(А, Б., В)", "?(А, Б, В.)",
+      "Новый Структура(А.)"
+    }
+  )
+  void testExpressionTrailingDot(String inputString) {
+    testParser.assertThat(inputString).matches(testParser.parser().expression());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      // присваивания: правая часть
+      "А = Б.", "А = Б.В.", "А = Б.В().", "А = Б. + 1", "А = 1 + Б.",
+      "А = Б(В.);", "А = Б(В., Г);",
+      // если / иначеесли
+      "Если А. Тогда КонецЕсли;",
+      "Если А.Б. Тогда КонецЕсли;",
+      "Если А. И Б Тогда КонецЕсли;",
+      "Если А Тогда ИначеЕсли Б. Тогда КонецЕсли;",
+      // цикл
+      "Пока А. Цикл КонецЦикла;",
+      "Для Каждого Х Из А. Цикл КонецЦикла;",
+      // возврат / вызвать исключение
+      "Возврат А.;",
+      "ВызватьИсключение А.;",
+      // вызов как statement (callStatement)
+      "Сообщить(А.);",
+      "Сообщить(А.Б.);",
+      "Сообщить(А., Б);",
+      "А.Б.В();",
+      "А.;",
+      "А.Б.;",
+      // вложенные скобки
+      "Сообщить((А.));",
+      "Сообщить((А. + 1));"
+    }
+  )
+  void testStatementTrailingDot(String inputString) {
+    testParser.assertThat(inputString).matches(testParser.parser().statement());
+  }
+
+  @Test
+  void testIncompleteAccessNode() {
+    // Trailing dot must be parsed as a standalone rule node (IncompleteAccessContext),
+    // not as a bare DOT terminal or via error recovery.
+    testParser.assertThat(".").matches(testParser.parser().incompleteAccess());
+    testParser.assertThat("А.").containsRule(BSLParser.RULE_incompleteAccess, 1);
+    testParser.assertThat("А = Б.").containsRule(BSLParser.RULE_incompleteAccess, 1);
   }
 
   @Test
