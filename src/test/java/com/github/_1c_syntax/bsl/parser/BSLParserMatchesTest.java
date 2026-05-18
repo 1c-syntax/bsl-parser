@@ -644,7 +644,9 @@ class BSLParserMatchesTest {
   @ParameterizedTest
   @ValueSource(strings =
     {
-      "Сообщить(А, 1)", "А.А[1].А(А)", "А.А()", "А.А(А)", "А(А).А()", "А(А).А.А().А()"
+      "Сообщить(А, 1)", "А.А[1].А(А)", "А.А()", "А.А(А)", "А(А).А()", "А(А).А.А().А()",
+      // Trailing dot recovery for incomplete property access (e.g. user typing 'А.<CURSOR>')
+      "А.", "А.А.", "А.А().", "А[1]."
     }
   )
   void TestCallStatement(String inputString) {
@@ -654,6 +656,123 @@ class BSLParserMatchesTest {
   @Test
   void TestCallStatement() {
     testParser.assertThat("ВызватьИсключение А").noMatches(testParser.parser().callStatement());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      // Trailing dot recovery in expression context (RHS of assignment, method arguments, conditions)
+      "А.", "А.А.", "А.А().", "А[1].", "А.Б.В.", "А.Б()[1]."
+    }
+  )
+  void testComplexIdentifierTrailingDot(String inputString) {
+    testParser.assertThat(inputString).matches(testParser.parser().complexIdentifier());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      "А.", "А.Б.", "А.Б().", "А[1].",
+      // в арифметике / логике
+      "А. + 1", "1 + А.", "А.Б. * 2",
+      // вложенные вызовы
+      "Х(А.)", "Х(А., Б)", "Х(А, Б.)", "Х(А., Б.)", "Х(А.Б., В())",
+      // индексация и цепочки
+      "А[Б.]", "А.Б[В.].Г.",
+      // тернарный, NEW
+      "?(А., 1, 2)", "?(А, Б., В)", "?(А, Б, В.)",
+      "Новый Структура(А.)"
+    }
+  )
+  void testExpressionTrailingDot(String inputString) {
+    testParser.assertThat(inputString).matches(testParser.parser().expression());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      // присваивания: правая часть
+      "А = Б.", "А = Б.В.", "А = Б.В().", "А = Б. + 1", "А = 1 + Б.",
+      "А = Б(В.);", "А = Б(В., Г);",
+      // если / иначеесли
+      "Если А. Тогда КонецЕсли;",
+      "Если А.Б. Тогда КонецЕсли;",
+      "Если А. И Б Тогда КонецЕсли;",
+      "Если А Тогда ИначеЕсли Б. Тогда КонецЕсли;",
+      // цикл
+      "Пока А. Цикл КонецЦикла;",
+      "Для Каждого Х Из А. Цикл КонецЦикла;",
+      // возврат / вызвать исключение
+      "Возврат А.;",
+      "ВызватьИсключение А.;",
+      // вызов как statement (callStatement)
+      "Сообщить(А.);",
+      "Сообщить(А.Б.);",
+      "Сообщить(А., Б);",
+      "А.Б.В();",
+      "А.;",
+      "А.Б.;",
+      // вложенные скобки
+      "Сообщить((А.));",
+      "Сообщить((А. + 1));"
+    }
+  )
+  void testStatementTrailingDot(String inputString) {
+    testParser.assertThat(inputString).matches(testParser.parser().statement());
+  }
+
+  @Test
+  void testIncompleteAccessNode() {
+    // Trailing dot must be parsed as a standalone rule node (IncompleteAccessContext),
+    // not as a bare DOT terminal or via error recovery.
+    testParser.assertThat(".").matches(testParser.parser().incompleteAccess());
+    testParser.assertThat("А.").containsRule(BSLParser.RULE_incompleteAccess, 1);
+    testParser.assertThat("А = Б.").containsRule(BSLParser.RULE_incompleteAccess, 1);
+  }
+
+  /**
+   * Regression coverage: PR introducing {@code incompleteAccess} as an alternative
+   * in {@code callStatement} / {@code modifier} caused a parser ambiguity. Inputs like
+   * {@code А.Свойство = Х;} were parsed as {@code callStatement(А.) ; assignment(Свойство = Х;)}
+   * instead of a single {@code assignment(А.Свойство = Х)} statement, because the
+   * parser tried {@code callStatement} before {@code assignment} in the {@code statement}
+   * rule. The grammar must always prefer the longer assignment match for these inputs.
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      "А.Б = 1;",
+      "А.Б.В = 1;",
+      "А.Б[1] = 1;",
+      "А[0].Б = 1;",
+      "А.Б = В.Г;",
+      "А.Б = Метод();",
+      "А.Б = ?(Условие, 1, 2);"
+    }
+  )
+  void testMemberAssignmentNotParsedAsCallStatement(String inputString) {
+    testParser.assertThat(inputString)
+      .containsRule(BSLParser.RULE_assignment, 1)
+      .containsRule(BSLParser.RULE_callStatement, 0)
+      .containsRule(BSLParser.RULE_incompleteAccess, 0);
+  }
+
+  /**
+   * Regression coverage for module-level scope: same ambiguity but inside file code
+   * blocks (no enclosing sub).
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      "А.Б = 1;",
+      "А.Б.В = Неопределенно;"
+    }
+  )
+  void testMemberAssignmentFile(String inputString) {
+    testParser.assertThat(inputString)
+      .containsRule(BSLParser.RULE_assignment, 1)
+      .containsRule(BSLParser.RULE_callStatement, 0)
+      .matches(testParser.parser().file());
   }
 
   @Test
