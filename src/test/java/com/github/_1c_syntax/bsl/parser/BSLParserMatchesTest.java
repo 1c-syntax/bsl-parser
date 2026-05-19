@@ -775,6 +775,30 @@ class BSLParserMatchesTest {
       .matches(testParser.parser().file());
   }
 
+  /**
+   * Regression: trailing dot at end of statement followed by next statement on a
+   * different (later) line must NOT be absorbed into an lvalue chain
+   * crossing the line boundary. {@code A.B.\n\nC = D();} is two statements:
+   * {@code callStatement(A.B.)} + {@code assignment(C = D())}, not a single
+   * {@code assignment(A.B.C = D())}.
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      "А.Б.\n\nС = Д();",
+      "А.\nБ = 1;",
+      "А.Б().\nВ = 1;",
+      "А[0].\nБ = 1;"
+    }
+  )
+  void testTrailingDotDoesNotCrossLineBoundary(String inputString) {
+    testParser.assertThat("Процедура Тест()\n" + inputString + "\nКонецПроцедуры")
+      .containsRule(BSLParser.RULE_assignment, 1)
+      .containsRule(BSLParser.RULE_callStatement, 1)
+      .containsRule(BSLParser.RULE_incompleteAccess, 1)
+      .matches(testParser.parser().file());
+  }
+
   @Test
   void TestTryStatement() {
     testParser.assertThat("Попытка Исключение КонецПопытки").matches(testParser.parser().tryStatement());
