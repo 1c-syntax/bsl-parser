@@ -224,7 +224,33 @@ class BSLLexerTest {
     testLexer.assertThat("Запрос.  Выполнить")
       .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.EXECUTE_KEYWORD);
     testLexer.assertThat("Запрос.  \nВыполнить")
-      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.EXECUTE_KEYWORD);
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.EXECUTE_KEYWORD);
+  }
+
+  @Test
+  void testTrailingDot() {
+    // DOT, за которым (после необязательных пробелов) идёт перевод строки,
+    // лексится как DOT_TRAILING. Это нужно парсеру: такая точка не образует
+    // accessProperty/accessCall со следующим идентификатором (следующий
+    // statement не должен "затягиваться" в lvalue-цепочку текущего).
+    testLexer.assertThat("А.\nБ")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IDENTIFIER);
+    testLexer.assertThat("А.  \nБ")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IDENTIFIER);
+    testLexer.assertThat("А.\r\nБ")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IDENTIFIER);
+    // Линейный комментарий после точки тоже считается trailing.
+    testLexer.assertThat("А. //коммент\nБ")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IDENTIFIER);
+    // Регрессионный кейс: chained-call в стиле "Объект\n  .Метод()" —
+    // DOT и идентификатор на одной строке, обычный DOT.
+    testLexer.assertThat("А\n  .Б")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    // На одной строке после DOT — обычный DOT.
+    testLexer.assertThat("А.Б")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    testLexer.assertThat("А.")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT);
   }
 
   @Test
@@ -538,6 +564,8 @@ class BSLLexerTest {
         || BSLLexer.ANNOTATION_UNKNOWN == i
         || BSLLexer.PREPROC_DELETE_ANY == i
         || BSLLexer.UNKNOWN == i
+        || BSLLexer.DOT_TRAILING == i
+        || BSLLexer.Async_DOT == i // в runtime всегда переписывается на DOT или DOT_TRAILING
         || BSLLexer.PREPROC_NATIVE == i) {
         Assertions.assertThat(tokenTypes).doesNotContain(i);
       } else {

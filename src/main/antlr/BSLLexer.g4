@@ -21,6 +21,10 @@
  */
 lexer grammar BSLLexer;
 
+tokens {
+    DOT_TRAILING
+}
+
 channels {
     // для хранения удаленного блока
     PREPROC_DELETE_CHANNEL
@@ -44,6 +48,36 @@ options { caseInsensitive=true; }
     if (c <= 0) return false;
     return Character.isLetter(c) || c == '_';
   }
+
+  /**
+   * Возвращает {@code true}, если непосредственно после точки в потоке встречается
+   * перевод строки (с возможными пробелами/табуляциями перед ним). Такой токен —
+   * trailing-dot, который не должен формировать {@code accessProperty}/{@code accessCall}
+   * со следующим идентификатором: иначе парсер «затянет» идентификатор следующего
+   * statement в lvalue-цепочку.
+   * <p>
+   * Случай chained-call ({@code Объект\n  .Метод()}) не страдает: на новой строке стоит
+   * именно DOT, а после него идентификатор/метод — на той же строке, что и DOT.
+   * <p>
+   * Линейные комментарии ({@code //...}) тоже считаем переводом строки, т.к. они
+   * обязательно завершаются {@code EOL}.
+   */
+  private boolean isTrailingDot() {
+    int k = 1;
+    while (true) {
+      int c = getInputStream().LA(k);
+      if (c <= 0) return false;
+      if (c == '\n' || c == '\r') return true;
+      if (c == ' ' || c == '\t' || c == '\f') {
+        k++;
+        continue;
+      }
+      if (c == '/' && getInputStream().LA(k + 1) == '/') {
+        return true;
+      }
+      return false;
+    }
+  }
 }
 
 // commons
@@ -52,7 +86,13 @@ LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
 
 // separators
-DOT: '.' { if (shouldEnterDotMode()) pushMode(DOT_MODE); };
+DOT: '.' {
+  if (isTrailingDot()) {
+    setType(DOT_TRAILING);
+  } else if (shouldEnterDotMode()) {
+    pushMode(DOT_MODE);
+  }
+};
 LBRACK: '[';
 RBRACK: ']';
 LPAREN: '(';
@@ -239,7 +279,14 @@ Async_LINE_COMMENT: LINE_COMMENT -> type(LINE_COMMENT), channel(HIDDEN);
 Async_WHITE_SPACE: WHITE_SPACE -> type(WHITE_SPACE), channel(HIDDEN);
 
 // separators
-Async_DOT: DOT { if (shouldEnterDotMode()) pushMode(DOT_MODE); } -> type(DOT);
+Async_DOT: DOT {
+  if (isTrailingDot()) {
+    setType(DOT_TRAILING);
+  } else {
+    setType(DOT);
+    if (shouldEnterDotMode()) pushMode(DOT_MODE);
+  }
+};
 Async_LBRACK: LBRACK -> type(LBRACK);
 Async_RBRACK: RBRACK -> type(RBRACK);
 Async_LPAREN: LPAREN -> type(LPAREN);

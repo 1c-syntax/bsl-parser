@@ -274,7 +274,7 @@ lValue           : (IDENTIFIER | globalMethodCall) acceptor?;
 accessCall       : DOT methodCall;
 accessIndex      : LBRACK expression RBRACK;
 accessProperty   : DOT IDENTIFIER;
-incompleteAccess : DOT;
+incompleteAccess : DOT | DOT_TRAILING;
 doCall           : LPAREN callParamList RPAREN;
 
 compoundStatement
