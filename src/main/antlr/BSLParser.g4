@@ -31,13 +31,14 @@ file: shebang? moduleAnnotations? preprocessor* moduleVars? preprocessor* (fileC
 
 // moduleAnnotations
 preproc_native   : HASH PREPROC_NATIVE;
+preproc_stack    : HASH PREPROC_STACK;
 usedLib          : (PREPROC_STRING | PREPROC_IDENTIFIER);
 use              : HASH PREPROC_USE_KEYWORD usedLib;
 
 moduleAnnotations
     :
-     (preproc_native use*)
-     | (use+ preproc_native? use*)
+     ((preproc_native | preproc_stack) use*)
+     | (use+ (preproc_native | preproc_stack)? use*)
     ;
 
 // preprocessor

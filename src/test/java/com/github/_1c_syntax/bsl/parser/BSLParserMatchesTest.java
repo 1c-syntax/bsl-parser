@@ -77,6 +77,11 @@ class BSLParserMatchesTest {
   }
 
   @Test
+  void testStack() {
+    testParser.assertThat("#stack").matches(testParser.parser().preproc_stack());
+  }
+
+  @Test
   void testNativeFile() {
     testParser.assertThat("""
       #native
@@ -89,7 +94,7 @@ class BSLParserMatchesTest {
   @ParameterizedTest
   @ValueSource(strings =
     {
-      "#Использовать А", "#Использовать \".\"", "#native"
+      "#Использовать А", "#Использовать \".\"", "#native", "#stack"
     }
   )
   void testModuleAnnotations(String inputString) {

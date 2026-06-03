@@ -196,6 +196,7 @@ PREPROC_RPAREN: RPAREN;
 
 PREPROC_STRING: '"' (~["\n\r])* '"';
 PREPROC_NATIVE: 'NATIVE';
+PREPROC_STACK: 'STACK';
 PREPROC_USE_KEYWORD: ('ИСПОЛЬЗОВАТЬ' | 'USE') -> pushMode(USE_MODE);
 PREPROC_REGION: ('ОБЛАСТЬ' | 'REGION') -> pushMode(REGION_MODE);
 PREPROC_END_REGION: 'КОНЕЦОБЛАСТИ' | 'ENDREGION';
