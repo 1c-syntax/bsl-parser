@@ -98,7 +98,7 @@ class BSLLexerTest {
   }
 
   @Test
-  void testPreprocNative() {
+  void testPreprocNativeAndStack() {
     testLexer.assertThat(BSLLexer.PREPROCESSOR_MODE, "native").containsAll(BSLLexer.PREPROC_NATIVE);
     testLexer.assertThat(BSLLexer.PREPROCESSOR_MODE, "stack").containsAll(BSLLexer.PREPROC_STACK);
   }
