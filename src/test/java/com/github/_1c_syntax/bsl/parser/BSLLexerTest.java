@@ -98,6 +98,12 @@ class BSLLexerTest {
   }
 
   @Test
+  void testPreprocNative() {
+    testLexer.assertThat(BSLLexer.PREPROCESSOR_MODE, "native").containsAll(BSLLexer.PREPROC_NATIVE);
+    testLexer.assertThat(BSLLexer.PREPROCESSOR_MODE, "stack").containsAll(BSLLexer.PREPROC_STACK);
+  }
+
+  @Test
   void testPreproc_LineComment() {
     testLexer.assertThat("#КонецОбласти // Концевой комментарий")
       .containsAll(BSLLexer.HASH, BSLLexer.PREPROC_END_REGION);
@@ -566,7 +572,8 @@ class BSLLexerTest {
         || BSLLexer.UNKNOWN == i
         || BSLLexer.DOT_TRAILING == i
         || BSLLexer.Async_DOT == i // в runtime всегда переписывается на DOT или DOT_TRAILING
-        || BSLLexer.PREPROC_NATIVE == i) {
+        || BSLLexer.PREPROC_NATIVE == i
+        || BSLLexer.PREPROC_STACK == i) {
         Assertions.assertThat(tokenTypes).doesNotContain(i);
       } else {
         Assertions.assertThat(tokenTypes).contains(i);

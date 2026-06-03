@@ -71,9 +71,24 @@ class BSLParserMatchesTest {
     testParser.assertThat("# А").noMatches(testParser.parser().shebang());
   }
 
-  @Test
-  void testNative() {
-    testParser.assertThat("#native").matches(testParser.parser().preproc_native());
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      "#native"
+    }
+  )
+  void testNative(String inputString) {
+    testParser.assertThat(inputString).matches(testParser.parser().preproc_native());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      "#stack"
+    }
+  )
+  void testStack(String inputString) {
+    testParser.assertThat(inputString).matches(testParser.parser().preproc_stack());
   }
 
   @Test
@@ -89,7 +104,7 @@ class BSLParserMatchesTest {
   @ParameterizedTest
   @ValueSource(strings =
     {
-      "#Использовать А", "#Использовать \".\"", "#native"
+      "#Использовать А", "#Использовать \".\"", "#native", "#stack"
     }
   )
   void testModuleAnnotations(String inputString) {
