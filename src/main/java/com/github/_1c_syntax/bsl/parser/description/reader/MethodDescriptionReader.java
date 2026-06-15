@@ -217,7 +217,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     if (lastReadParam.isEmpty()) {
       return ctx;
     }
-    lastReadParam.addType(ctx.type(), ctx.typeDescription());
+    lastReadParam.addContinuationType(ctx.type(), ctx.typeDescription());
     return ctx;
   }
 
@@ -413,6 +413,25 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       }
     }
 
+    /**
+     * Добавить дополнительный тип из continuation-строки вида {@code - Тип - описание},
+     * относящейся к составному типу (std453 п.5.2.5, 5.3). Если последний тип уже
+     * содержит поля (т.е. мы внутри списка свойств структуры), то тип принадлежит
+     * самому глубокому активному полю, а не верхнеуровневому списку типов.
+     */
+    private void addContinuationType(BSLDescriptionParser.@Nullable TypeContext paramType,
+                                     BSLDescriptionParser.@Nullable TypeDescriptionContext paramDescription) {
+      if (isEmpty() || paramType == null) {
+        return;
+      }
+      var lastType = lastType();
+      if (lastType.isPresent() && lastType.get().hasFields()) {
+        lastType.get().addContinuationType(paramType, paramDescription);
+      } else {
+        addType(paramType, paramDescription);
+      }
+    }
+
     private void addType(BSLDescriptionParser.ListTypeContext paramType,
                          BSLDescriptionParser.@Nullable TypeDescriptionContext paramDescription) {
       var hyperlinkType = paramType.hyperlinkType();
@@ -553,6 +572,19 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
         return Optional.of(fields.getLast());
       }
       return Optional.empty();
+    }
+
+    private boolean hasFields() {
+      return !fields.isEmpty();
+    }
+
+    /**
+     * Передать дополнительный тип из continuation-строки самому глубокому активному
+     * полю (по образцу {@link #addTypeDescription}, который так же спускается в поля).
+     */
+    private void addContinuationType(BSLDescriptionParser.TypeContext type,
+                                     BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
+      lastField().ifPresent(field -> field.addContinuationType(type, description));
     }
 
     private void addField(BSLDescriptionParser.FieldContext fieldContext) {
