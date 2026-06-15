@@ -770,6 +770,63 @@ class BSLDescriptionReaderTest {
     assertThat(hyperlink.range()).isEqualTo(SimpleRange.create(2, 3, 2, 37));
   }
 
+  @Test
+  void parseStructureReturnFieldWithMultilineType() {
+    // given: возвращается Структура, у первого поля тип задан на двух строках
+    // (составной тип, std453 п.5.3 — каждый тип с новой строки и с дефиса).
+    var methodDescription = parseMethodDescriptionString("""
+      // Возвращаемое значение:
+      //  Структура:
+      //   * Подпись - ДвоичныеДанные - результат подписания.
+      //             - Строка - подписанный КонвертXML.
+      //   * Комментарий - Строка - комментарий.
+      //   * ДатаПодписи - Дата - дата подписи.
+      """);
+
+    // when / then: ровно один тип возврата (Структура) со всеми тремя полями,
+    // а continuation-строка типа не должна "разрезать" структуру на второй тип.
+    assertThat(methodDescription.getReturnedValue()).hasSize(1);
+    var structure = methodDescription.getReturnedValue().getFirst();
+    assertThat(structure.name()).isEqualTo("Структура");
+    assertThat(structure.fields())
+      .extracting(ParameterDescription::name)
+      .containsExactly("Подпись", "Комментарий", "ДатаПодписи");
+    // у поля Подпись — оба типа из многострочного составного описания.
+    assertThat(structure.fields().getFirst().types())
+      .extracting(TypeDescription::name)
+      .containsExactly("ДвоичныеДанные", "Строка");
+  }
+
+  @Test
+  void parseStructureReturnFieldWithMultilineTypeAndSubfields() {
+    // given: у поля continuation-тип (второй тип на новой строке) несёт собственные подполя (**).
+    var methodDescription = parseMethodDescriptionString("""
+      // Возвращаемое значение:
+      //  Структура:
+      //   * Данные - Строка - произвольные данные.
+      //            - Структура - поля формы:
+      //       ** Ключ - Строка - имя поля.
+      //       ** Значение - Строка - значение поля.
+      //   * Прочее - Булево - признак.
+      """);
+
+    // then: один тип возврата со всеми полями верхнего уровня.
+    assertThat(methodDescription.getReturnedValue()).hasSize(1);
+    var structure = methodDescription.getReturnedValue().getFirst();
+    assertThat(structure.fields())
+      .extracting(ParameterDescription::name)
+      .containsExactly("Данные", "Прочее");
+
+    // оба типа поля Данные на месте, подполя висят на continuation-типе Структура.
+    var dataField = structure.fields().getFirst();
+    assertThat(dataField.types())
+      .extracting(TypeDescription::name)
+      .containsExactly("Строка", "Структура");
+    assertThat(dataField.types().get(1).fields())
+      .extracting(ParameterDescription::name)
+      .containsExactly("Ключ", "Значение");
+  }
+
   private List<Token> getTokensFromString(String exampleString) {
     var tokenizer = new BSLTokenizer(exampleString);
     return tokenizer.getTokens().stream()
