@@ -578,6 +578,92 @@ class BSLDescriptionReaderTest {
   }
 
   @Test
+  void parseVariableDescriptionWithType() {
+    var exampleString = "// Строка - описание переменной";
+    var tokens = getTokensFromString(exampleString);
+    var variableDescription = VariableDescription.create(tokens);
+
+    assertThat(variableDescription).isNotNull();
+    assertThat(variableDescription.getDescription()).isEqualTo(exampleString);
+    assertThat(variableDescription.getDeprecationInfo()).isEmpty();
+    assertThat(variableDescription.isDeprecated()).isFalse();
+    assertThat(variableDescription.getLinks()).isEmpty();
+
+    assertThat(variableDescription.getElements()).hasSize(1);
+    var typeElement = variableDescription.getElements().getFirst();
+    assertThat(typeElement.type()).isEqualTo(DescriptionElement.Type.TYPE_NAME);
+    // "// " занимает 3 символа, тип "Строка" длиной 6 символов
+    assertThat(typeElement.range()).isEqualTo(SimpleRange.create(0, 3, 9));
+    assertThat(typeElement.range().length()).isEqualTo("Строка".length());
+  }
+
+  @Test
+  void parseVariableDescriptionWithQualifiedType() {
+    var exampleString = "// СправочникСсылка.Контрагенты - описание";
+    var tokens = getTokensFromString(exampleString);
+    var variableDescription = VariableDescription.create(tokens);
+
+    assertThat(variableDescription.getElements()).hasSize(1);
+    var typeElement = variableDescription.getElements().getFirst();
+    assertThat(typeElement.type()).isEqualTo(DescriptionElement.Type.TYPE_NAME);
+    // составной (квалифицированный) тип разбирается целиком
+    assertThat(typeElement.range().length()).isEqualTo("СправочникСсылка.Контрагенты".length());
+    assertThat(typeElement.range()).isEqualTo(
+      SimpleRange.create(0, 3, 3 + "СправочникСсылка.Контрагенты".length()));
+  }
+
+  @Test
+  void parseVariableDescriptionWithTypeWithoutSeparator() {
+    var exampleString = "// Строка";
+    var tokens = getTokensFromString(exampleString);
+    var variableDescription = VariableDescription.create(tokens);
+
+    assertThat(variableDescription.getElements()).hasSize(1);
+    var typeElement = variableDescription.getElements().getFirst();
+    assertThat(typeElement.type()).isEqualTo(DescriptionElement.Type.TYPE_NAME);
+    assertThat(typeElement.range()).isEqualTo(SimpleRange.create(0, 3, 9));
+  }
+
+  @Test
+  void parseVariableDescriptionFreeTextWithoutType() {
+    // регресс: свободный текст без типа не должен порождать ложный TYPE_NAME
+    var exampleString = "// Описание переменной";
+    var tokens = getTokensFromString(exampleString);
+    var variableDescription = VariableDescription.create(tokens);
+
+    assertThat(variableDescription.getPurposeDescription()).contains("Описание переменной");
+    assertThat(variableDescription.getElements())
+      .noneMatch(element -> element.type() == DescriptionElement.Type.TYPE_NAME);
+    assertThat(variableDescription.getElements()).isEmpty();
+  }
+
+  @Test
+  void parseTrailingVariableDescriptionWithType() {
+    // Перем Стр; // Строка - описание
+    // Висячий комментарий начинается не со столбца 0, range типа должен быть абсолютным.
+    var leadingComment = "// Ведущее описание";
+    var trailingSource = "Перем Стр; // Строка - описание";
+    var tokens = getTokensFromString(leadingComment);
+    var trailingToken = getTokensFromString(trailingSource).getFirst();
+
+    var variableDescription = VariableDescription.create(tokens, Optional.of(trailingToken));
+
+    assertThat(variableDescription.getTrailingDescription()).isPresent();
+    var trailing = variableDescription.getTrailingDescription().get();
+
+    assertThat(trailing.getElements()).hasSize(1);
+    var typeElement = trailing.getElements().getFirst();
+    assertThat(typeElement.type()).isEqualTo(DescriptionElement.Type.TYPE_NAME);
+    assertThat(typeElement.range().length()).isEqualTo("Строка".length());
+
+    // startCharacter должен быть абсолютным: "Перем Стр; " (11) + "// " (3) = 14
+    var typeStart = trailingSource.indexOf("Строка");
+    assertThat(typeElement.range().startCharacter()).isEqualTo(typeStart);
+    assertThat(typeElement.range())
+      .isEqualTo(SimpleRange.create(0, typeStart, typeStart + "Строка".length()));
+  }
+
+  @Test
   void parseVariableDescription3() {
     var exampleString = "// Устарела. см. НоваяПеременная\n// Описание переменной";
     var tokens = getTokensFromString(exampleString);

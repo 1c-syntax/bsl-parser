@@ -39,6 +39,18 @@ methodDescription:
     skipBlock?
     EOF;
 
+// структура описания переменной
+// тип переменной указывается в начале первой значимой строки до разделителя " - "
+// (например: "// Строка - описание" или "// СправочникСсылка.Контрагенты - описание").
+// Используется отдельным разбором для извлечения элемента типа, не затрагивая разбор methodDescription.
+variableDescription:
+    deprecateBlock?
+    variableType?
+    .*?
+    EOF;
+
+variableType: startPart returnsValue;
+
 // deprecate
 deprecateBlock: startPart DEPRECATE_KEYWORD (deprecateDescription | EOL);
 deprecateDescription: (hyperlink | ~(EOL | EOF))+ EOL;

@@ -28,6 +28,7 @@ import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -100,7 +101,66 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
       .range(range)
       .trailingDescription(trailingDescription);
     reader.visitMethodDescription(ast);
+
+    // Отдельный разбор первой значимой строки описания для извлечения типа переменной
+    // (нотация «тип в начале»). Координаты элементов абсолютные, как и у DEPRECATE_KEYWORD.
+    var typeTokenizer = new VariableDescriptionTokenizer(descriptionText);
+    var variableType = requireNonNull(typeTokenizer.getAst()).variableType();
+    if (variableType != null) {
+      reader.readType(variableType);
+    }
+
     return reader.builder.build();
+  }
+
+  /**
+   * Извлекает элементы типа переменной из разобранной первой строки описания и добавляет их
+   * в строящееся описание как элементы типа {@link DescriptionElement.Type#TYPE_NAME}.
+   */
+  private void readType(BSLDescriptionParser.VariableTypeContext ctx) {
+    var returnsValue = ctx.returnsValue();
+    if (returnsValue != null) {
+      addTypeElements(returnsValue.type());
+    }
+  }
+
+  private void addTypeElements(BSLDescriptionParser.@Nullable TypeContext type) {
+    if (type == null) {
+      return;
+    }
+    var listTypes = type.listTypes();
+    var collectionType = type.collectionType();
+    var simpleType = type.simpleType();
+    if (listTypes != null) {
+      listTypes.listType().forEach(this::addListTypeElement);
+    } else if (collectionType != null) {
+      addCollectionTypeElement(collectionType);
+    } else if (simpleType != null) {
+      addTypeElement(simpleType.typeName);
+    }
+    // hyperlinkType намеренно пропускается — это ссылка, она уже учтена в links,
+    // а не объявление типа переменной.
+  }
+
+  private void addListTypeElement(BSLDescriptionParser.ListTypeContext ctx) {
+    if (ctx.collectionType() != null) {
+      addCollectionTypeElement(ctx.collectionType());
+    } else if (ctx.simpleType() != null) {
+      addTypeElement(ctx.simpleType().typeName);
+    }
+  }
+
+  private void addCollectionTypeElement(BSLDescriptionParser.CollectionTypeContext ctx) {
+    addTypeElement(ctx.collection);
+    addTypeElements(ctx.type());
+  }
+
+  private void addTypeElement(@Nullable Token token) {
+    if (token != null) {
+      builder.element(new DescriptionElement(
+        SimpleRange.create(token, lineShift, firstLineCharShift),
+        DescriptionElement.Type.TYPE_NAME));
+    }
   }
 
   @Override
