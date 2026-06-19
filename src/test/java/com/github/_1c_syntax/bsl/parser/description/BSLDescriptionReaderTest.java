@@ -613,6 +613,58 @@ class BSLDescriptionReaderTest {
   }
 
   @Test
+  void parseVariableDescriptionWithCollectionType() {
+    var exampleString = "// Массив из Строка - описание";
+    var tokens = getTokensFromString(exampleString);
+    var variableDescription = VariableDescription.create(tokens);
+
+    // тип-коллекция: элементы и для имени коллекции, и для типа значения
+    assertThat(variableDescription.getElements())
+      .hasSize(2)
+      .allMatch(element -> element.type() == DescriptionElement.Type.TYPE_NAME);
+
+    var collectionElement = variableDescription.getElements().getFirst();
+    assertThat(collectionElement.range())
+      .isEqualTo(SimpleRange.create(0, 3, 3 + "Массив".length()));
+
+    var valueElement = variableDescription.getElements().get(1);
+    var valueStart = exampleString.indexOf("Строка");
+    assertThat(valueElement.range())
+      .isEqualTo(SimpleRange.create(0, valueStart, valueStart + "Строка".length()));
+  }
+
+  @Test
+  void parseVariableDescriptionWithTypeList() {
+    var exampleString = "// Строка, Число - описание";
+    var tokens = getTokensFromString(exampleString);
+    var variableDescription = VariableDescription.create(tokens);
+
+    // перечисление типов через запятую — элемент на каждый тип
+    assertThat(variableDescription.getElements())
+      .hasSize(2)
+      .allMatch(element -> element.type() == DescriptionElement.Type.TYPE_NAME);
+
+    assertThat(variableDescription.getElements().getFirst().range())
+      .isEqualTo(SimpleRange.create(0, 3, 3 + "Строка".length()));
+
+    var secondStart = exampleString.indexOf("Число");
+    assertThat(variableDescription.getElements().get(1).range())
+      .isEqualTo(SimpleRange.create(0, secondStart, secondStart + "Число".length()));
+  }
+
+  @Test
+  void parseVariableDescriptionWithLinkType() {
+    // тип-гиперссылка (См.) не должен порождать TYPE_NAME — это ссылка, она учтена в links
+    var exampleString = "// См. МойМодуль.МойТип - описание";
+    var tokens = getTokensFromString(exampleString);
+    var variableDescription = VariableDescription.create(tokens);
+
+    assertThat(variableDescription.getLinks()).hasSize(1);
+    assertThat(variableDescription.getElements())
+      .noneMatch(element -> element.type() == DescriptionElement.Type.TYPE_NAME);
+  }
+
+  @Test
   void parseVariableDescriptionWithTypeWithoutSeparator() {
     var exampleString = "// Строка";
     var tokens = getTokensFromString(exampleString);
