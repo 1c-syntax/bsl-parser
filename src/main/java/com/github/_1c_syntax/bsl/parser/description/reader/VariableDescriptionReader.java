@@ -23,6 +23,9 @@ package com.github._1c_syntax.bsl.parser.description.reader;
 
 import com.github._1c_syntax.bsl.parser.BSLDescriptionParser;
 import com.github._1c_syntax.bsl.parser.BSLDescriptionParserBaseVisitor;
+import com.github._1c_syntax.bsl.parser.description.CollectionTypeDescription;
+import com.github._1c_syntax.bsl.parser.description.SimpleTypeDescription;
+import com.github._1c_syntax.bsl.parser.description.TypeDescription;
 import com.github._1c_syntax.bsl.parser.description.VariableDescription;
 import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
@@ -31,6 +34,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -114,53 +118,99 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
   }
 
   /**
-   * Извлекает элементы типа переменной из разобранной первой строки описания и добавляет их
-   * в строящееся описание как элементы типа {@link DescriptionElement.Type#TYPE_NAME}.
+   * Извлекает типы переменной из разобранной первой строки описания (нотация «тип в начале»),
+   * регистрирует их как {@link TypeDescription} (для {@link VariableDescription#getTypes()}) и
+   * добавляет соответствующие элементы типа {@link DescriptionElement.Type#TYPE_NAME}
+   * (для {@link VariableDescription#getElements()}).
    */
   private void readType(BSLDescriptionParser.VariableTypeContext ctx) {
     var returnsValue = ctx.returnsValue();
-    if (returnsValue != null) {
-      addTypeElements(returnsValue.type());
+    if (returnsValue == null) {
+      return;
+    }
+    for (var type : buildTypes(returnsValue.type())) {
+      builder.type(type);
+      addTypeElements(type);
     }
   }
 
-  private void addTypeElements(BSLDescriptionParser.@Nullable TypeContext type) {
+  private List<TypeDescription> buildTypes(BSLDescriptionParser.@Nullable TypeContext type) {
     if (type == null) {
-      return;
+      return List.of();
     }
     var listTypes = type.listTypes();
     var collectionType = type.collectionType();
     var simpleType = type.simpleType();
     if (listTypes != null) {
-      listTypes.listType().forEach(this::addListTypeElement);
-    } else if (collectionType != null) {
-      addCollectionTypeElement(collectionType);
-    } else if (simpleType != null) {
-      addTypeElement(simpleType.typeName);
+      return listTypes.listType().stream()
+        .map(this::buildListType)
+        .filter(Objects::nonNull)
+        .toList();
+    }
+    if (collectionType != null) {
+      return toList(buildCollectionType(collectionType));
+    }
+    if (simpleType != null) {
+      return toList(buildSimpleType(simpleType));
     }
     // hyperlinkType намеренно пропускается — это ссылка, она уже учтена в links,
     // а не объявление типа переменной.
+    return List.of();
   }
 
-  private void addListTypeElement(BSLDescriptionParser.ListTypeContext ctx) {
+  private @Nullable TypeDescription buildListType(BSLDescriptionParser.ListTypeContext ctx) {
     if (ctx.collectionType() != null) {
-      addCollectionTypeElement(ctx.collectionType());
-    } else if (ctx.simpleType() != null) {
-      addTypeElement(ctx.simpleType().typeName);
+      return buildCollectionType(ctx.collectionType());
+    }
+    if (ctx.simpleType() != null) {
+      return buildSimpleType(ctx.simpleType());
+    }
+    return null;
+  }
+
+  private @Nullable TypeDescription buildCollectionType(BSLDescriptionParser.CollectionTypeContext ctx) {
+    if (ctx.collection == null) {
+      return null;
+    }
+    return CollectionTypeDescription.create(
+      ctx.collection.getText(),
+      newTypeElement(ctx.collection),
+      "",
+      buildTypes(ctx.type()),
+      List.of());
+  }
+
+  private @Nullable TypeDescription buildSimpleType(BSLDescriptionParser.SimpleTypeContext ctx) {
+    if (ctx.typeName == null) {
+      return null;
+    }
+    return SimpleTypeDescription.create(
+      ctx.typeName.getText(),
+      newTypeElement(ctx.typeName),
+      "",
+      List.of());
+  }
+
+  private DescriptionElement newTypeElement(Token token) {
+    return new DescriptionElement(
+      SimpleRange.create(token, lineShift, firstLineCharShift),
+      DescriptionElement.Type.TYPE_NAME);
+  }
+
+  /**
+   * Добавляет в общий список элементов имя самого типа и имена типов значений коллекции,
+   * чтобы {@link VariableDescription#getElements()} покрывал все имена типов в описании
+   * (в том числе вложенные в {@code Массив из ...}).
+   */
+  private void addTypeElements(TypeDescription type) {
+    builder.element(type.element());
+    if (type instanceof CollectionTypeDescription collection) {
+      collection.valueTypes().forEach(this::addTypeElements);
     }
   }
 
-  private void addCollectionTypeElement(BSLDescriptionParser.CollectionTypeContext ctx) {
-    addTypeElement(ctx.collection);
-    addTypeElements(ctx.type());
-  }
-
-  private void addTypeElement(@Nullable Token token) {
-    if (token != null) {
-      builder.element(new DescriptionElement(
-        SimpleRange.create(token, lineShift, firstLineCharShift),
-        DescriptionElement.Type.TYPE_NAME));
-    }
+  private static List<TypeDescription> toList(@Nullable TypeDescription type) {
+    return type == null ? List.of() : List.of(type);
   }
 
   @Override

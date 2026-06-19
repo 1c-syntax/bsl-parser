@@ -74,6 +74,16 @@ public class VariableDescription implements SourceDefinedSymbolDescription {
   SimpleRange range;
 
   /**
+   * Список типов переменной, извлечённых из описания (нотация «тип в начале»).
+   * <p>
+   * Аналогичен {@link MethodDescription#getReturnedValue()}: каждый элемент несёт имя типа
+   * ({@link TypeDescription#name()}) и его область в исходном тексте ({@link TypeDescription#element()}).
+   * Если тип в описании не указан (свободный текст), список пуст.
+   */
+  @Singular
+  List<TypeDescription> types;
+
+  /**
    * Описание "висячего" комментария
    */
   Optional<VariableDescription> trailingDescription;

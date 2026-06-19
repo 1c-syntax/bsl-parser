@@ -595,6 +595,13 @@ class BSLDescriptionReaderTest {
     // "// " занимает 3 символа, тип "Строка" длиной 6 символов
     assertThat(typeElement.range()).isEqualTo(SimpleRange.create(0, 3, 9));
     assertThat(typeElement.range().length()).isEqualTo("Строка".length());
+
+    // удобный аксессор: тип доступен напрямую, без вырезания имени из текста по диапазону
+    assertThat(variableDescription.getTypes()).hasSize(1);
+    var type = variableDescription.getTypes().getFirst();
+    assertThat(type.name()).isEqualTo("Строка");
+    assertThat(type.variant()).isEqualTo(TypeDescription.Variant.SIMPLE);
+    assertThat(type.element()).isEqualTo(typeElement);
   }
 
   @Test
@@ -610,6 +617,9 @@ class BSLDescriptionReaderTest {
     assertThat(typeElement.range().length()).isEqualTo("СправочникСсылка.Контрагенты".length());
     assertThat(typeElement.range()).isEqualTo(
       SimpleRange.create(0, 3, 3 + "СправочникСсылка.Контрагенты".length()));
+
+    assertThat(variableDescription.getTypes()).hasSize(1);
+    assertThat(variableDescription.getTypes().getFirst().name()).isEqualTo("СправочникСсылка.Контрагенты");
   }
 
   @Test
@@ -631,6 +641,17 @@ class BSLDescriptionReaderTest {
     var valueStart = exampleString.indexOf("Строка");
     assertThat(valueElement.range())
       .isEqualTo(SimpleRange.create(0, valueStart, valueStart + "Строка".length()));
+
+    // getTypes(): один тип-коллекция с именем, включающим тип значения, и областью имени коллекции
+    assertThat(variableDescription.getTypes()).hasSize(1);
+    var collectionType = variableDescription.getTypes().getFirst();
+    assertThat(collectionType.variant()).isEqualTo(TypeDescription.Variant.COLLECTION);
+    assertThat(collectionType.name()).isEqualTo("Массив<Строка>");
+    assertThat(collectionType.element()).isEqualTo(collectionElement);
+    assertThat(collectionType).isInstanceOfSatisfying(CollectionTypeDescription.class, ct -> {
+      assertThat(ct.collectionName()).isEqualTo("Массив");
+      assertThat(ct.valueTypes()).extracting(TypeDescription::name).containsExactly("Строка");
+    });
   }
 
   @Test
@@ -650,6 +671,10 @@ class BSLDescriptionReaderTest {
     var secondStart = exampleString.indexOf("Число");
     assertThat(variableDescription.getElements().get(1).range())
       .isEqualTo(SimpleRange.create(0, secondStart, secondStart + "Число".length()));
+
+    assertThat(variableDescription.getTypes())
+      .extracting(TypeDescription::name)
+      .containsExactly("Строка", "Число");
   }
 
   @Test
@@ -662,6 +687,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getLinks()).hasSize(1);
     assertThat(variableDescription.getElements())
       .noneMatch(element -> element.type() == DescriptionElement.Type.TYPE_NAME);
+    assertThat(variableDescription.getTypes()).isEmpty();
   }
 
   @Test
@@ -687,6 +713,7 @@ class BSLDescriptionReaderTest {
     assertThat(variableDescription.getElements())
       .noneMatch(element -> element.type() == DescriptionElement.Type.TYPE_NAME);
     assertThat(variableDescription.getElements()).isEmpty();
+    assertThat(variableDescription.getTypes()).isEmpty();
   }
 
   @Test
@@ -713,6 +740,12 @@ class BSLDescriptionReaderTest {
     assertThat(typeElement.range().startCharacter()).isEqualTo(typeStart);
     assertThat(typeElement.range())
       .isEqualTo(SimpleRange.create(0, typeStart, typeStart + "Строка".length()));
+
+    // getTypes() висячего описания тоже доступен, с абсолютной областью имени типа
+    assertThat(trailing.getTypes()).hasSize(1);
+    var type = trailing.getTypes().getFirst();
+    assertThat(type.name()).isEqualTo("Строка");
+    assertThat(type.element().range()).isEqualTo(typeElement.range());
   }
 
   @Test
