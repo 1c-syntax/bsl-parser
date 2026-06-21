@@ -50,7 +50,7 @@ gitVersioning.apply {
 }
 
 dependencies {
-    antlr("io.github.1c-syntax:antlr4:0.3.0")
+    antlr("io.github.1c-syntax:antlr4:0.4.0")
 
     // testing
     testImplementation("io.github.1c-syntax:bsl-parser-testing:0.5.0") {
