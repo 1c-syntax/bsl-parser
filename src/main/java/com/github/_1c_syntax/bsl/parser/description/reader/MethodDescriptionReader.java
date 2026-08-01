@@ -61,17 +61,18 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
   private final int lineShift;
 
   /**
-   * Сдвиг номера символа относительно исходного текста (только для первой строки)
+   * Сдвиг номера символа на каждой строке исходного текста: строки описания могут
+   * иметь отступ, и у каждой он свой
    */
-  private final int firstLineCharShift;
+  private final int[] charShifts;
 
   private TempParameterData lastReadParam;
   private int typeLevel = -1;
 
-  private MethodDescriptionReader(SimpleRange range) {
+  private MethodDescriptionReader(SimpleRange range, int[] charShifts) {
     builder = MethodDescription.builder();
     lineShift = Math.max(0, range.startLine());
-    firstLineCharShift = Math.max(0, range.startCharacter());
+    this.charShifts = charShifts;
     lastReadParam = TempParameterData.empty();
   }
 
@@ -87,7 +88,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       .map(Token::getText)
       .collect(Collectors.joining("\n"));
 
-    return read(description, SimpleRange.create(comments));
+    return read(description, SimpleRange.create(comments), ReaderUtils.charShifts(comments));
   }
 
   /**
@@ -99,13 +100,17 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
    * @return Описание метода.
    */
   private static MethodDescription read(String descriptionText, SimpleRange range) {
+    return read(descriptionText, range, new int[]{Math.max(0, range.startCharacter())});
+  }
+
+  private static MethodDescription read(String descriptionText, SimpleRange range, int[] charShifts) {
     var tokenizer = new MethodDescriptionTokenizer(descriptionText);
     var ast = requireNonNull(tokenizer.getAst());
 
-    var reader = new MethodDescriptionReader(range);
+    var reader = new MethodDescriptionReader(range, charShifts);
     reader.builder
       .description(descriptionText.strip())
-      .links(ReaderUtils.readLinks(ast, reader.lineShift, reader.firstLineCharShift))
+      .links(ReaderUtils.readLinks(ast, reader.lineShift, reader.charShifts))
       .range(range);
     reader.visitMethodDescription(ast);
     return reader.builder.build();
@@ -195,7 +200,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
             lastReadParam = TempParameterData.empty();
             super.visitParametersBlock(ctx);
             if (!lastReadParam.isEmpty()) {
-              builder.parameter(lastReadParam.build(lineShift, firstLineCharShift));
+              builder.parameter(lastReadParam.build(lineShift, charShifts));
             }
           }
         }
@@ -206,7 +211,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
   @Override
   public @Nullable ParseTree visitParameter(BSLDescriptionParser.ParameterContext ctx) {
     if (!lastReadParam.isEmpty()) {
-      builder.parameter(lastReadParam.build(lineShift, firstLineCharShift));
+      builder.parameter(lastReadParam.build(lineShift, charShifts));
     }
     lastReadParam = TempParameterData.create(ctx);
     return super.visitParameter(ctx);
@@ -261,7 +266,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
             lastReadParam = TempParameterData.fake();
             typeLevel = -1;
             super.visitReturnsValuesBlock(ctx);
-            builder.returnedValue(lastReadParam.build(lineShift, firstLineCharShift).types());
+            builder.returnedValue(lastReadParam.build(lineShift, charShifts).types());
           }
         }
       );
@@ -301,7 +306,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
 
   private DescriptionElement newElement(Token token, DescriptionElement.Type type) {
     return new DescriptionElement(
-      SimpleRange.create(token, lineShift, firstLineCharShift),
+      SimpleRange.create(token, lineShift, charShifts),
       type);
   }
 
@@ -374,13 +379,13 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       return Optional.empty();
     }
 
-    private ParameterDescription build(int lineShift, int firstLineCharShift) {
-      var newRange = SimpleRange.shift(range, lineShift, firstLineCharShift);
+    private ParameterDescription build(int lineShift, int[] charShifts) {
+      var newRange = SimpleRange.shift(range, lineShift, charShifts);
       return new ParameterDescription(
         name,
         new DescriptionElement(newRange, DescriptionElement.Type.PARAMETER_NAME),
         types.stream()
-          .map(type -> type.build(lineShift, firstLineCharShift))
+          .map(type -> type.build(lineShift, charShifts))
           .toList()
       );
     }
@@ -606,12 +611,12 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       valueTypes.addAll(fakeParam.types);
     }
 
-    private TypeDescription build(int lineShift, int firstLineCharShift) {
+    private TypeDescription build(int lineShift, int[] charShifts) {
       var fieldList = fields.stream()
-        .map(fld -> fld.build(lineShift, firstLineCharShift))
+        .map(fld -> fld.build(lineShift, charShifts))
         .toList();
 
-      var newRange = SimpleRange.shift(range, lineShift, firstLineCharShift);
+      var newRange = SimpleRange.shift(range, lineShift, charShifts);
       var element = new DescriptionElement(newRange, DescriptionElement.Type.TYPE_NAME);
 
       return switch (variant) {
@@ -619,7 +624,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
         case COLLECTION -> CollectionTypeDescription.create(
           name, element, description.toString(),
           valueTypes.stream()
-            .map(vt -> vt.build(lineShift, firstLineCharShift))
+            .map(vt -> vt.build(lineShift, charShifts))
             .toList(),
           fieldList
         );
