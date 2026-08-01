@@ -83,28 +83,16 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
   }
 
   /**
-   * Создает область по одному токену с учетом заданного сдвига.
+   * Создает область по одному токену с учетом заданных сдвигов.
    * <br/>
    * Используется для создания области, соответствующей положению в исходном тексте на основании токена текста описания.
    *
-   * @param token              Токен, для которого нужно создать область
-   * @param lineShift          Сдвиг номера строки. По сути - номер первой строки относительно исходного текста.
-   * @param firstLineCharShift Сдвиг первого символа. Применяется только для токенов в первой строке,
-   *                           т.к. начальная позиция анализируемого текста могла быть отличной от начала строки
-   * @return Область
-   */
-  public static SimpleRange create(Token token, int lineShift, int firstLineCharShift) {
-    return create(token, lineShift, new int[]{firstLineCharShift});
-  }
-
-  /**
-   * Создает область по токену с учетом сдвигов.
-   *
-   * @param token      Токен
+   * @param token      Токен, для которого нужно создать область
    * @param lineShift  Сдвиг номера строки. По сути - номер первой строки относительно исходного текста.
-   * @param charShifts Сдвиг первого символа на каждой строке исходного текста: строки описания
-   *                   могут иметь отступ, и у каждой он свой. Строки за пределами массива не сдвигаются.
-   * @return Созданная область
+   * @param charShifts Сдвиг первого символа на каждой строке исходного текста: строка описания
+   *                   начинается там, где стоит её комментарий, и отступ у каждой свой.
+   *                   Строки за пределами массива не сдвигаются.
+   * @return Область
    */
   public static SimpleRange create(Token token, int lineShift, int[] charShifts) {
     int startLine = token.getLine() - 1;
@@ -215,17 +203,6 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
     return Math.max(0, endCharacter - startCharacter);
   }
 
-  /**
-   * Создает новый диапазон с учетом сдвигов строк и символов
-   *
-   * @param range            Диапазон, который нужно сдвинуть
-   * @param lineShift        Сдвиг номера строки
-   * @param firstLineCharShift Сдвиг первого символа для токенов в первой строке
-   * @return Новый сдвинутый диапазон
-   */
-  public static SimpleRange shift(SimpleRange range, int lineShift, int firstLineCharShift) {
-    return shift(range, lineShift, new int[]{firstLineCharShift});
-  }
 
   /**
    * Создает новый диапазон с учетом сдвига строк и построчных сдвигов символов

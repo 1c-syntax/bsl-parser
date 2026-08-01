@@ -66,19 +66,11 @@ public class ReaderUtils {
   }
 
   /**
-   * Извлекает все ссылки из всех подчиненных узлов указанного
-   *
-   * @param ast                Корневой узел дерева для извлечения ссылок
-   * @param lineShift          Сдвиг строк для корректировки позиций
-   * @param firstLineCharShift Сдвиг символов в первой строке для корректировки позиций
-   *
-   * @return Список ссылок
-   */
-  /**
    * Сдвиг символов на каждой строке описания: строка описания начинается там, где стоит
    * её комментарий, и отступ у каждой свой.
    *
    * @param comments Токены комментариев описания
+   *
    * @return Сдвиг на каждую строку описания
    */
   public int[] charShifts(List<Token> comments) {
@@ -87,6 +79,15 @@ public class ReaderUtils {
       .toArray();
   }
 
+  /**
+   * Извлекает все ссылки из всех подчиненных узлов указанного
+   *
+   * @param ast        Корневой узел дерева для извлечения ссылок
+   * @param lineShift  Сдвиг строк для корректировки позиций
+   * @param charShifts Сдвиг символов на каждой строке для корректировки позиций
+   *
+   * @return Список ссылок
+   */
   public List<Hyperlink> readLinks(ParserRuleContext ast, int lineShift, int[] charShifts) {
     Collection<BSLDescriptionParser.HyperlinkContext> links =
       Trees.findAllRuleNodes(ast, BSLDescriptionParser.RULE_hyperlink);
