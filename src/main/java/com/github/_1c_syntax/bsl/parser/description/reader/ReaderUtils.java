@@ -27,6 +27,7 @@ import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import lombok.experimental.UtilityClass;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.Trees;
 
 import java.util.Collection;
@@ -73,7 +74,20 @@ public class ReaderUtils {
    *
    * @return Список ссылок
    */
-  public List<Hyperlink> readLinks(ParserRuleContext ast, int lineShift, int firstLineCharShift) {
+  /**
+   * Сдвиг символов на каждой строке описания: строка описания начинается там, где стоит
+   * её комментарий, и отступ у каждой свой.
+   *
+   * @param comments Токены комментариев описания
+   * @return Сдвиг на каждую строку описания
+   */
+  public int[] charShifts(List<Token> comments) {
+    return comments.stream()
+      .mapToInt(Token::getCharPositionInLine)
+      .toArray();
+  }
+
+  public List<Hyperlink> readLinks(ParserRuleContext ast, int lineShift, int[] charShifts) {
     Collection<BSLDescriptionParser.HyperlinkContext> links =
       Trees.findAllRuleNodes(ast, BSLDescriptionParser.RULE_hyperlink);
     if (!links.isEmpty()) {
@@ -83,7 +97,7 @@ public class ReaderUtils {
             var link = hyperlinkContext.link == null ? "" : hyperlinkContext.link.getText();
             var params = hyperlinkContext.linkParams == null ? "" : hyperlinkContext.linkParams.getText();
             var range = SimpleRange.create(hyperlinkContext.getStart(), hyperlinkContext.getStop());
-            var shiftedRange = SimpleRange.shift(range, lineShift, firstLineCharShift);
+            var shiftedRange = SimpleRange.shift(range, lineShift, charShifts);
             return Hyperlink.create(link, params, shiftedRange);
           })
         .toList();
