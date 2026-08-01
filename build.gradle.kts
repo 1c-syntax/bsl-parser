@@ -13,9 +13,9 @@ plugins {
     id("io.freefair.javadoc-utf-8") version "9.5.0"
     id("io.freefair.lombok") version "9.5.0"
 //    id("io.freefair.maven-central.validate-poms") version "9.2.0"
-    id("com.github.ben-manes.versions") version "0.54.0"
+    id("com.github.ben-manes.versions") version "0.57.0"
     id("ru.vyarus.pom") version "3.0.0"
-    id("org.jreleaser") version "1.24.0"
+    id("org.jreleaser") version "1.25.0"
     id("org.sonarqube") version "7.3.1.8318"
     id("me.champeau.jmh") version "0.7.3"
 }
@@ -58,7 +58,7 @@ dependencies {
         exclude("org.antlr:ST4")
     }
 
-    testImplementation(platform("org.junit:junit-bom:6.1.0"))
+    testImplementation(platform("org.junit:junit-bom:6.1.2"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
     testImplementation("org.assertj:assertj-core:3.27.7")

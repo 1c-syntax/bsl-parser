@@ -199,10 +199,10 @@ class SimpleRangeTest {
     token.setText("test");
 
     int lineShift = 2;
-    int firstLineCharShift = 3;
+    int[] charShifts = {3};
 
     // when
-    var result = SimpleRange.create(token, lineShift, firstLineCharShift);
+    var result = SimpleRange.create(token, lineShift, charShifts);
 
     // then
     assertThat(result.startLine()).isEqualTo(2); // 1 - 1 + 2
@@ -220,14 +220,14 @@ class SimpleRangeTest {
     token.setText("test");
 
     int lineShift = 2;
-    int firstLineCharShift = 3;
+    int[] charShifts = {3};
 
     // when
-    var result = SimpleRange.create(token, lineShift, firstLineCharShift);
+    var result = SimpleRange.create(token, lineShift, charShifts);
 
     // then
     assertThat(result.startLine()).isEqualTo(3); // 2 - 1 + 2
-    assertThat(result.startCharacter()).isEqualTo(5); // no shift for non-first line
+    assertThat(result.startCharacter()).isEqualTo(5); // для строки без своего сдвига он нулевой
     assertThat(result.endLine()).isEqualTo(3); // same as startLine
     assertThat(result.endCharacter()).isEqualTo(9); // 5 + 4 (length of "test")
   }
@@ -240,10 +240,10 @@ class SimpleRangeTest {
     token.setCharPositionInLine(5);
 
     int lineShift = 2;
-    int firstLineCharShift = 3;
+    int[] charShifts = {3};
 
     // when
-    var result = SimpleRange.create(token, lineShift, firstLineCharShift);
+    var result = SimpleRange.create(token, lineShift, charShifts);
 
     // then
     assertThat(result.startLine()).isEqualTo(2); // 1 - 1 + 2

@@ -83,17 +83,18 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
   }
 
   /**
-   * Создает область по одному токену с учетом заданного сдвига.
+   * Создает область по одному токену с учетом заданных сдвигов.
    * <br/>
    * Используется для создания области, соответствующей положению в исходном тексте на основании токена текста описания.
    *
-   * @param token              Токен, для которого нужно создать область
-   * @param lineShift          Сдвиг номера строки. По сути - номер первой строки относительно исходного текста.
-   * @param firstLineCharShift Сдвиг первого символа. Применяется только для токенов в первой строке,
-   *                           т.к. начальная позиция анализируемого текста могла быть отличной от начала строки
+   * @param token      Токен, для которого нужно создать область
+   * @param lineShift  Сдвиг номера строки. По сути - номер первой строки относительно исходного текста.
+   * @param charShifts Сдвиг первого символа на каждой строке исходного текста: строка описания
+   *                   начинается там, где стоит её комментарий, и отступ у каждой свой.
+   *                   Строки за пределами массива не сдвигаются.
    * @return Область
    */
-  public static SimpleRange create(Token token, int lineShift, int firstLineCharShift) {
+  public static SimpleRange create(Token token, int lineShift, int[] charShifts) {
     int startLine = token.getLine() - 1;
     int startChar = token.getCharPositionInLine();
     int endChar;
@@ -102,13 +103,23 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
     } else {
       endChar = token.getCharPositionInLine() + token.getText().length();
     }
-    if (startLine == 0) {
-      startChar += firstLineCharShift;
-      endChar += firstLineCharShift;
-    }
+    var charShift = charShiftOf(charShifts, startLine);
+    startChar += charShift;
+    endChar += charShift;
 
     startLine += lineShift;
     return new SimpleRange(startLine, startChar, startLine, endChar);
+  }
+
+  /**
+   * Сдвиг символов для строки исходного текста.
+   *
+   * @param charShifts Сдвиги по строкам
+   * @param line       Номер строки в исходном тексте
+   * @return Сдвиг; ноль, если для строки он не задан
+   */
+  private static int charShiftOf(int[] charShifts, int line) {
+    return line >= 0 && line < charShifts.length ? charShifts[line] : 0;
   }
 
   /**
@@ -192,24 +203,27 @@ public record SimpleRange(int startLine, int startCharacter, int endLine, int en
     return Math.max(0, endCharacter - startCharacter);
   }
 
+
   /**
-   * Создает новый диапазон с учетом сдвигов строк и символов
+   * Создает новый диапазон с учетом сдвига строк и построчных сдвигов символов
    *
-   * @param range            Диапазон, который нужно сдвинуть
-   * @param lineShift        Сдвиг номера строки
-   * @param firstLineCharShift Сдвиг первого символа для токенов в первой строке
+   * @param range      Диапазон, который нужно сдвинуть
+   * @param lineShift  Сдвиг номера строки
+   * @param charShifts Сдвиг первого символа на каждой строке исходного текста
    * @return Новый сдвинутый диапазон
    */
-  public static SimpleRange shift(SimpleRange range, int lineShift, int firstLineCharShift) {
-    if (lineShift == 0 && firstLineCharShift == 0) {
+  public static SimpleRange shift(SimpleRange range, int lineShift, int[] charShifts) {
+    var startShift = charShiftOf(charShifts, range.startLine());
+    var endShift = charShiftOf(charShifts, range.endLine());
+    if (lineShift == 0 && startShift == 0 && endShift == 0) {
       return range;
     }
 
     return SimpleRange.create(
       range.startLine() + lineShift,
-      range.startCharacter() + (range.startLine() == 0 ? firstLineCharShift : 0),
+      range.startCharacter() + startShift,
       range.endLine() + lineShift,
-      range.endCharacter() + (range.endLine() == 0 ? firstLineCharShift : 0)
+      range.endCharacter() + endShift
     );
   }
 }

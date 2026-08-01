@@ -53,14 +53,15 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
   private final int lineShift;
 
   /**
-   * Сдвиг номера символа относительно исходного текста (только для первой строки)
+   * Сдвиг номера символа на каждой строке исходного текста: строки описания могут
+   * иметь отступ, и у каждой он свой
    */
-  private final int firstLineCharShift;
+  private final int[] charShifts;
 
-  private VariableDescriptionReader(SimpleRange range) {
+  private VariableDescriptionReader(SimpleRange range, int[] charShifts) {
     builder = VariableDescription.builder();
     lineShift = Math.max(0, range.startLine());
-    firstLineCharShift = Math.max(0, range.startCharacter());
+    this.charShifts = charShifts;
   }
 
   /**
@@ -89,19 +90,28 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
 
     return read(description,
       SimpleRange.create(comments),
-      trailingComment.map(List::of).map(VariableDescription::create));
+      trailingComment.map(List::of).map(VariableDescription::create),
+      ReaderUtils.charShifts(comments));
   }
 
   private static VariableDescription read(String descriptionText,
                                           SimpleRange range,
                                           Optional<VariableDescription> trailingDescription) {
+    return read(descriptionText, range, trailingDescription,
+      new int[]{Math.max(0, range.startCharacter())});
+  }
+
+  private static VariableDescription read(String descriptionText,
+                                          SimpleRange range,
+                                          Optional<VariableDescription> trailingDescription,
+                                          int[] charShifts) {
     var tokenizer = new MethodDescriptionTokenizer(descriptionText);
     var ast = requireNonNull(tokenizer.getAst());
 
-    var reader = new VariableDescriptionReader(range);
+    var reader = new VariableDescriptionReader(range, charShifts);
     reader.builder
       .description(descriptionText.strip())
-      .links(ReaderUtils.readLinks(ast, reader.lineShift, reader.firstLineCharShift))
+      .links(ReaderUtils.readLinks(ast, reader.lineShift, reader.charShifts))
       .range(range)
       .trailingDescription(trailingDescription);
     reader.visitMethodDescription(ast);
@@ -193,7 +203,7 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
 
   private DescriptionElement newTypeElement(Token token) {
     return new DescriptionElement(
-      SimpleRange.create(token, lineShift, firstLineCharShift),
+      SimpleRange.create(token, lineShift, charShifts),
       DescriptionElement.Type.TYPE_NAME);
   }
 
@@ -218,7 +228,7 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
     builder.deprecated(true);
     Optional.ofNullable(ctx.DEPRECATE_KEYWORD())
       .ifPresent(keyword -> builder.element(new DescriptionElement(
-        SimpleRange.create(keyword.getSymbol(), lineShift, firstLineCharShift),
+        SimpleRange.create(keyword.getSymbol(), lineShift, charShifts),
         DescriptionElement.Type.DEPRECATE_KEYWORD)
       ));
 
