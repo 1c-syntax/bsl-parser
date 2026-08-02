@@ -465,6 +465,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
                          BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
       if (typeContext.typeName != null) {
         var lastType = new TempParameterTypeData(typeContext.typeName, TypeDescription.Variant.SIMPLE, level);
+        lastType.setHyperlink(typeContext.hyperlink());
         if (description != null) {
           lastType.addTypeDescription(description);
         }
@@ -525,6 +526,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private final TypeDescription.Variant variant;
     private final List<TempParameterTypeData> valueTypes;
     private @Nullable Token linkParamsToken;
+    private @Nullable Token hyperlinkToken;
+    private @Nullable Token hyperlinkParamsToken;
 
     private final SimpleRange range;
 
@@ -550,6 +553,35 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private TempParameterTypeData(Token typeName, TypeDescription.Variant variant, int level) {
       this(variant, level, SimpleRange.create(typeName));
       this.name = typeName.getText();
+    }
+
+    /**
+     * Запомнить ссылку, уточняющую тип: {@code СтрокаТабличнойЧасти: См. Справочник.Товары.ЕдиницыИзмерения}.
+     *
+     * @param hyperlink Узел ссылки
+     */
+    /**
+     * Собрать ссылку, уточняющую тип.
+     *
+     * @param lineShift  Сдвиг номера строки
+     * @param charShifts Сдвиг символов по строкам
+     *
+     * @return Ссылка; {@code null}, если тип ссылкой не уточнён
+     */
+    private @Nullable Hyperlink buildHyperlink(int lineShift, int[] charShifts) {
+      if (hyperlinkToken == null) {
+        return null;
+      }
+      var params = hyperlinkParamsToken == null ? "" : hyperlinkParamsToken.getText();
+      return Hyperlink.create(hyperlinkToken.getText(), params,
+        SimpleRange.create(hyperlinkToken, lineShift, charShifts));
+    }
+
+    private void setHyperlink(BSLDescriptionParser.@Nullable HyperlinkContext hyperlink) {
+      if (hyperlink != null && hyperlink.link != null) {
+        this.hyperlinkToken = hyperlink.link;
+        this.hyperlinkParamsToken = hyperlink.linkParams;
+      }
     }
 
     private void addTypeDescription(BSLDescriptionParser.TypeDescriptionContext typeDescription) {
@@ -620,7 +652,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       var element = new DescriptionElement(newRange, DescriptionElement.Type.TYPE_NAME);
 
       return switch (variant) {
-        case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList);
+        case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList,
+          buildHyperlink(lineShift, charShifts));
         case COLLECTION -> CollectionTypeDescription.create(
           name, element, description.toString(),
           valueTypes.stream()
