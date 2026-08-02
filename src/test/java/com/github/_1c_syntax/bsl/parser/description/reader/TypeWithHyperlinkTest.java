@@ -79,10 +79,14 @@ class TypeWithHyperlinkTest {
     var types = description.getParameters().stream()
       .flatMap(parameter -> parameter.types().stream())
       .toList();
-    assertThat(types).isNotEmpty();
     assertThat(types)
-      .filteredOn(type -> type.hyperlink() != null)
-      .allSatisfy(type -> assertThat(type.variant()).isEqualTo(TypeDescription.Variant.HYPERLINK));
+      .filteredOn(type -> type.variant() == TypeDescription.Variant.HYPERLINK)
+      .singleElement()
+      .satisfies(type ->
+        assertThat(type.hyperlink().link()).isEqualTo("Справочник.Товары.ЕдиницыИзмерения"));
+    assertThat(types)
+      .filteredOn(type -> type.variant() == TypeDescription.Variant.SIMPLE)
+      .allSatisfy(type -> assertThat(type.hyperlink()).isNull());
   }
 
   @Test
