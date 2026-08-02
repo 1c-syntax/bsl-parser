@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Тип, уточнённый ссылкой: {@code СтрокаТабличнойЧасти: См. Справочник.Товары.ЕдиницыИзмерения}.
  * Голова говорит, чем значение является, ссылка — откуда взять его состав.
  */
-class TypeWithReferenceTest {
+class TypeWithHyperlinkTest {
 
   private List<Token> getTokens(String example) {
     var tokenizer = new BSLTokenizer(example);
@@ -47,7 +47,7 @@ class TypeWithReferenceTest {
   }
 
   @Test
-  void typeRefinedByReferenceKeepsBothParts() {
+  void typeRefinedByHyperlinkKeepsBothParts() {
     // given
     var src = "// Параметры:\n//  Объект - СтрокаТабличнойЧасти: См. Справочник.Товары.ЕдиницыИзмерения\n";
 
@@ -62,30 +62,29 @@ class TypeWithReferenceTest {
         assertThat(parameter.types()).singleElement().satisfies(type -> {
           assertThat(type.variant()).isEqualTo(TypeDescription.Variant.SIMPLE);
           assertThat(type.name()).isEqualTo("СтрокаТабличнойЧасти");
-          assertThat(type.reference())
-            .isPresent()
-            .hasValueSatisfying(reference ->
-              assertThat(reference.link()).isEqualTo("Справочник.Товары.ЕдиницыИзмерения"));
+          assertThat(type.hyperlink()).isNotNull();
+          assertThat(type.hyperlink().link()).isEqualTo("Справочник.Товары.ЕдиницыИзмерения");
         });
       });
   }
 
   @Test
-  void referenceWithoutColonIsNotATypeReference() {
+  void hyperlinkWithoutColonDoesNotRefineType() {
     // given: разделителем в этой записи служит двоеточие, без него это не уточнение типа.
     var src = "// Параметры:\n//  Объект - СтрокаТабличнойЧасти См. Справочник.Товары.ЕдиницыИзмерения\n";
 
     // when
     var description = MethodDescription.create(getTokens(src));
 
-    // then
+    // then: простого типа, уточнённого ссылкой, здесь нет — ссылка сама по себе.
     assertThat(description.getParameters())
       .allSatisfy(parameter -> assertThat(parameter.types())
-        .allSatisfy(type -> assertThat(type.reference()).isEmpty()));
+        .filteredOn(type -> type.variant() == TypeDescription.Variant.SIMPLE)
+        .allSatisfy(type -> assertThat(type.hyperlink()).isNull()));
   }
 
   @Test
-  void plainTypeHasNoReference() {
+  void plainTypeHasNoHyperlink() {
     // given
     var src = "// Параметры:\n//  Объект - СтрокаТабличнойЧасти\n";
 
@@ -97,6 +96,6 @@ class TypeWithReferenceTest {
       .singleElement()
       .satisfies(parameter -> assertThat(parameter.types())
         .singleElement()
-        .satisfies(type -> assertThat(type.reference()).isEmpty()));
+        .satisfies(type -> assertThat(type.hyperlink()).isNull()));
   }
 }

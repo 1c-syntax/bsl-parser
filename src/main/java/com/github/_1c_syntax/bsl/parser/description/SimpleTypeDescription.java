@@ -32,7 +32,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
 
 /**
  * Описание простого типа
@@ -64,7 +64,8 @@ public class SimpleTypeDescription implements TypeDescription {
    * Ссылка, уточняющая тип; {@code null}, если тип ссылкой не уточнён
    */
   @Nullable
-  Hyperlink typeReference;
+  @Accessors(fluent = true)
+  Hyperlink hyperlink;
 
   public static TypeDescription create(String name,
                                        DescriptionElement element,
@@ -77,7 +78,7 @@ public class SimpleTypeDescription implements TypeDescription {
                                        DescriptionElement element,
                                        String description,
                                        List<ParameterDescription> fieldList,
-                                       @Nullable Hyperlink typeReference) {
+                                       @Nullable Hyperlink hyperlink) {
     if (name.isBlank() && description.isBlank()) {
       return EMPTY;
     }
@@ -86,17 +87,12 @@ public class SimpleTypeDescription implements TypeDescription {
       description.strip(),
       fieldList,
       element,
-      typeReference
+      hyperlink
     );
   }
 
   @Override
   public Variant variant() {
     return Variant.SIMPLE;
-  }
-
-  @Override
-  public Optional<Hyperlink> reference() {
-    return Optional.ofNullable(typeReference);
   }
 }

@@ -24,11 +24,11 @@ package com.github._1c_syntax.bsl.parser.description;
 import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
 
 import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Описание типа параметра, прочитанного из описания метода
@@ -70,13 +70,15 @@ public interface TypeDescription {
   DescriptionElement element();
 
   /**
-   * Ссылка, уточняющая тип: запись вида {@code СтрокаТабличнойЧасти: См. Справочник.Товары.ЕдиницыИзмерения},
-   * где имя типа говорит, чем значение является, а ссылка — откуда взять его состав.
+   * Ссылка типа: у гиперссылочного типа это он сам, у простого — уточнение записью вида
+   * {@code СтрокаТабличнойЧасти: См. Справочник.Товары.ЕдиницыИзмерения}, где имя типа
+   * говорит, чем значение является, а ссылка — откуда взять его состав.
    *
-   * @return Ссылка; пусто, если тип ссылкой не уточнён
+   * @return Ссылка; {@code null}, если у типа ссылки нет
    */
-  default Optional<Hyperlink> reference() {
-    return Optional.empty();
+  @Nullable
+  default Hyperlink hyperlink() {
+    return null;
   }
 
   /**

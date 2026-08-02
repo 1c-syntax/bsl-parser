@@ -465,8 +465,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
                          BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
       if (typeContext.typeName != null) {
         var lastType = new TempParameterTypeData(typeContext.typeName, TypeDescription.Variant.SIMPLE, level);
-        if (typeContext.reference != null) {
-          lastType.setReference(typeContext.reference);
+        if (typeContext.hyperlink() != null) {
+          lastType.setHyperlink(typeContext.hyperlink());
         }
         if (description != null) {
           lastType.addTypeDescription(description);
@@ -528,8 +528,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private final TypeDescription.Variant variant;
     private final List<TempParameterTypeData> valueTypes;
     private @Nullable Token linkParamsToken;
-    private @Nullable Token referenceToken;
-    private @Nullable Token referenceParamsToken;
+    private @Nullable Token hyperlinkToken;
+    private @Nullable Token hyperlinkParamsToken;
 
     private final SimpleRange range;
 
@@ -560,12 +560,12 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     /**
      * Запомнить ссылку, уточняющую тип: {@code СтрокаТабличнойЧасти: См. Справочник.Товары.ЕдиницыИзмерения}.
      *
-     * @param reference Узел ссылки
+     * @param hyperlink Узел ссылки
      */
-    private void setReference(BSLDescriptionParser.HyperlinkContext reference) {
-      if (reference.link != null) {
-        this.referenceToken = reference.link;
-        this.referenceParamsToken = reference.linkParams;
+    private void setHyperlink(BSLDescriptionParser.HyperlinkContext hyperlink) {
+      if (hyperlink.link != null) {
+        this.hyperlinkToken = hyperlink.link;
+        this.hyperlinkParamsToken = hyperlink.linkParams;
       }
     }
 
@@ -638,10 +638,10 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
 
       return switch (variant) {
         case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList,
-          referenceToken == null ? null : Hyperlink.create(
-            referenceToken.getText(),
-            referenceParamsToken == null ? "" : referenceParamsToken.getText(),
-            SimpleRange.create(referenceToken, lineShift, charShifts)));
+          hyperlinkToken == null ? null : Hyperlink.create(
+            hyperlinkToken.getText(),
+            hyperlinkParamsToken == null ? "" : hyperlinkParamsToken.getText(),
+            SimpleRange.create(hyperlinkToken, lineShift, charShifts)));
         case COLLECTION -> CollectionTypeDescription.create(
           name, element, description.toString(),
           valueTypes.stream()
