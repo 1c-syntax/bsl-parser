@@ -71,6 +71,20 @@ class TypeWithReferenceTest {
   }
 
   @Test
+  void referenceWithoutColonIsNotATypeReference() {
+    // given: разделителем в этой записи служит двоеточие, без него это не уточнение типа.
+    var src = "// Параметры:\n//  Объект - СтрокаТабличнойЧасти См. Справочник.Товары.ЕдиницыИзмерения\n";
+
+    // when
+    var description = MethodDescription.create(getTokens(src));
+
+    // then
+    assertThat(description.getParameters())
+      .allSatisfy(parameter -> assertThat(parameter.types())
+        .allSatisfy(type -> assertThat(type.reference()).isEmpty()));
+  }
+
+  @Test
   void plainTypeHasNoReference() {
     // given
     var src = "// Параметры:\n//  Объект - СтрокаТабличнойЧасти\n";
