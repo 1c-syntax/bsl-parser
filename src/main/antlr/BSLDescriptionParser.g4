@@ -145,7 +145,7 @@ typesBlock: splitter type
     ;
 
 type: listTypes | collectionType | hyperlinkType | simpleType;
-simpleType: typeName=(WORD | DOTSWORD) colon=COLON?;
+simpleType: typeName=(WORD | DOTSWORD) colon=COLON? (SPACE? reference=hyperlink)?;
 collectionType: collection=(WORD | DOTSWORD) SPACE OF_KEYWORD SPACE value=type;
 hyperlinkType: hyperlink;
 listTypes: listType (COMMA SPACE? listType?)+;

@@ -465,6 +465,9 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
                          BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
       if (typeContext.typeName != null) {
         var lastType = new TempParameterTypeData(typeContext.typeName, TypeDescription.Variant.SIMPLE, level);
+        if (typeContext.reference != null) {
+          lastType.setReference(typeContext.reference);
+        }
         if (description != null) {
           lastType.addTypeDescription(description);
         }
@@ -525,6 +528,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private final TypeDescription.Variant variant;
     private final List<TempParameterTypeData> valueTypes;
     private @Nullable Token linkParamsToken;
+    private @Nullable Token referenceToken;
+    private @Nullable Token referenceParamsToken;
 
     private final SimpleRange range;
 
@@ -550,6 +555,18 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     private TempParameterTypeData(Token typeName, TypeDescription.Variant variant, int level) {
       this(variant, level, SimpleRange.create(typeName));
       this.name = typeName.getText();
+    }
+
+    /**
+     * Запомнить ссылку, уточняющую тип: {@code СтрокаТабличнойЧасти: См. Справочник.Товары.ЕдиницыИзмерения}.
+     *
+     * @param reference Узел ссылки
+     */
+    private void setReference(BSLDescriptionParser.HyperlinkContext reference) {
+      if (reference.link != null) {
+        this.referenceToken = reference.link;
+        this.referenceParamsToken = reference.linkParams;
+      }
     }
 
     private void addTypeDescription(BSLDescriptionParser.TypeDescriptionContext typeDescription) {
@@ -620,7 +637,11 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
       var element = new DescriptionElement(newRange, DescriptionElement.Type.TYPE_NAME);
 
       return switch (variant) {
-        case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList);
+        case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList,
+          referenceToken == null ? null : Hyperlink.create(
+            referenceToken.getText(),
+            referenceParamsToken == null ? "" : referenceParamsToken.getText(),
+            SimpleRange.create(referenceToken, lineShift, charShifts)));
         case COLLECTION -> CollectionTypeDescription.create(
           name, element, description.toString(),
           valueTypes.stream()
