@@ -29,7 +29,6 @@ import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,7 +42,7 @@ class TypeWithHyperlinkTest {
     var tokenizer = new BSLTokenizer(example);
     return tokenizer.getTokens().stream()
       .filter(token -> token.getType() == BSLParser.LINE_COMMENT)
-      .collect(Collectors.toList());
+      .toList();
   }
 
   @Test
@@ -76,11 +75,14 @@ class TypeWithHyperlinkTest {
     // when
     var description = MethodDescription.create(getTokens(src));
 
-    // then: простого типа, уточнённого ссылкой, здесь нет — ссылка сама по себе.
-    assertThat(description.getParameters())
-      .allSatisfy(parameter -> assertThat(parameter.types())
-        .filteredOn(type -> type.variant() == TypeDescription.Variant.SIMPLE)
-        .allSatisfy(type -> assertThat(type.hyperlink()).isNull()));
+    // then: ссылка осталась сама по себе — уточнённого ею простого типа не появилось.
+    var types = description.getParameters().stream()
+      .flatMap(parameter -> parameter.types().stream())
+      .toList();
+    assertThat(types).isNotEmpty();
+    assertThat(types)
+      .filteredOn(type -> type.hyperlink() != null)
+      .allSatisfy(type -> assertThat(type.variant()).isEqualTo(TypeDescription.Variant.HYPERLINK));
   }
 
   @Test

@@ -465,9 +465,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
                          BSLDescriptionParser.@Nullable TypeDescriptionContext description) {
       if (typeContext.typeName != null) {
         var lastType = new TempParameterTypeData(typeContext.typeName, TypeDescription.Variant.SIMPLE, level);
-        if (typeContext.hyperlink() != null) {
-          lastType.setHyperlink(typeContext.hyperlink());
-        }
+        lastType.setHyperlink(typeContext.hyperlink());
         if (description != null) {
           lastType.addTypeDescription(description);
         }
@@ -562,8 +560,25 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
      *
      * @param hyperlink Узел ссылки
      */
-    private void setHyperlink(BSLDescriptionParser.HyperlinkContext hyperlink) {
-      if (hyperlink.link != null) {
+    /**
+     * Собрать ссылку, уточняющую тип.
+     *
+     * @param lineShift  Сдвиг номера строки
+     * @param charShifts Сдвиг символов по строкам
+     *
+     * @return Ссылка; {@code null}, если тип ссылкой не уточнён
+     */
+    private @Nullable Hyperlink buildHyperlink(int lineShift, int[] charShifts) {
+      if (hyperlinkToken == null) {
+        return null;
+      }
+      var params = hyperlinkParamsToken == null ? "" : hyperlinkParamsToken.getText();
+      return Hyperlink.create(hyperlinkToken.getText(), params,
+        SimpleRange.create(hyperlinkToken, lineShift, charShifts));
+    }
+
+    private void setHyperlink(BSLDescriptionParser.@Nullable HyperlinkContext hyperlink) {
+      if (hyperlink != null && hyperlink.link != null) {
         this.hyperlinkToken = hyperlink.link;
         this.hyperlinkParamsToken = hyperlink.linkParams;
       }
@@ -638,10 +653,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
 
       return switch (variant) {
         case SIMPLE -> SimpleTypeDescription.create(name, element, description.toString(), fieldList,
-          hyperlinkToken == null ? null : Hyperlink.create(
-            hyperlinkToken.getText(),
-            hyperlinkParamsToken == null ? "" : hyperlinkParamsToken.getText(),
-            SimpleRange.create(hyperlinkToken, lineShift, charShifts)));
+          buildHyperlink(lineShift, charShifts));
         case COLLECTION -> CollectionTypeDescription.create(
           name, element, description.toString(),
           valueTypes.stream()
