@@ -22,14 +22,17 @@
 package com.github._1c_syntax.bsl.parser.description;
 
 import com.github._1c_syntax.bsl.parser.description.support.DescriptionElement;
+import com.github._1c_syntax.bsl.parser.description.support.Hyperlink;
 import com.github._1c_syntax.bsl.parser.description.support.SimpleRange;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+
 
 /**
  * Описание простого типа
@@ -41,7 +44,8 @@ public class SimpleTypeDescription implements TypeDescription {
     "",
     "",
     Collections.emptyList(),
-    new DescriptionElement(SimpleRange.EMPTY, DescriptionElement.Type.UNKNOWN)
+    new DescriptionElement(SimpleRange.EMPTY, DescriptionElement.Type.UNKNOWN),
+    null
   );
 
   @Accessors(fluent = true)
@@ -56,10 +60,25 @@ public class SimpleTypeDescription implements TypeDescription {
   @Accessors(fluent = true)
   DescriptionElement element;
 
+  /**
+   * Ссылка, уточняющая тип; {@code null}, если тип ссылкой не уточнён
+   */
+  @Nullable
+  @Accessors(fluent = true)
+  Hyperlink hyperlink;
+
   public static TypeDescription create(String name,
                                        DescriptionElement element,
                                        String description,
                                        List<ParameterDescription> fieldList) {
+    return create(name, element, description, fieldList, null);
+  }
+
+  public static TypeDescription create(String name,
+                                       DescriptionElement element,
+                                       String description,
+                                       List<ParameterDescription> fieldList,
+                                       @Nullable Hyperlink hyperlink) {
     if (name.isBlank() && description.isBlank()) {
       return EMPTY;
     }
@@ -67,7 +86,8 @@ public class SimpleTypeDescription implements TypeDescription {
       name.strip().intern(),
       description.strip(),
       fieldList,
-      element
+      element,
+      hyperlink
     );
   }
 
