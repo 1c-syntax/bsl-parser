@@ -30,7 +30,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +44,7 @@ class DescriptionSplitterDashTest {
     var tokenizer = new BSLTokenizer(example);
     return tokenizer.getTokens().stream()
       .filter(token -> token.getType() == BSLParser.LINE_COMMENT)
-      .collect(Collectors.toList());
+      .toList();
   }
 
   @ParameterizedTest(name = "разделитель {0}")
