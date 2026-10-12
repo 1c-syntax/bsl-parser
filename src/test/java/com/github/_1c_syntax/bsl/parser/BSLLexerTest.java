@@ -229,25 +229,35 @@ class BSLLexerTest {
     // если за точкой не следует сразу буква).
     testLexer.assertThat("Запрос.  Выполнить")
       .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.EXECUTE_KEYWORD);
+    // Перенос обращения на следующую строку: метод, названный как ключевое слово, —
+    // продолжение обращения (Запрос.<EOL>Выполнить()).
     testLexer.assertThat("Запрос.  \nВыполнить")
-      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.EXECUTE_KEYWORD);
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test
   void testTrailingDot() {
-    // DOT, за которым (после необязательных пробелов) идёт перевод строки,
-    // лексится как DOT_TRAILING. Это нужно парсеру: такая точка не образует
-    // accessProperty/accessCall со следующим идентификатором (следующий
-    // statement не должен "затягиваться" в lvalue-цепочку текущего).
-    testLexer.assertThat("А.\nБ")
-      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IDENTIFIER);
-    testLexer.assertThat("А.  \nБ")
-      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IDENTIFIER);
-    testLexer.assertThat("А.\r\nБ")
-      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IDENTIFIER);
-    // Линейный комментарий после точки тоже считается trailing.
-    testLexer.assertThat("А. //коммент\nБ")
-      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IDENTIFIER);
+    // DOT, за которым (после необязательных пробелов и комментариев) идёт перевод строки,
+    // а за ним продолжения обращения быть не может, лексится как DOT_TRAILING —
+    // недописанное обращение. Парсер разбирает его как incompleteAccess.
+    testLexer.assertThat("А.\nКонецЕсли")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.ENDIF_KEYWORD);
+    testLexer.assertThat("А.  \nВозврат")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.RETURN_KEYWORD);
+    testLexer.assertThat("А.\r\n\tЕсли")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.IF_KEYWORD);
+    testLexer.assertThat("А. //коммент\nИ Б")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.AND_KEYWORD, BSLLexer.IDENTIFIER);
+    // Дальше не слово: знак, директива препроцессора, конец файла.
+    testLexer.assertThat("Ф(А.\n)")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.LPAREN, BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING,
+        BSLLexer.RPAREN);
+    testLexer.assertThat("А.\n;")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.SEMICOLON);
+    testLexer.assertThat("А.\n\t#КонецЕсли")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING, BSLLexer.HASH, BSLLexer.PREPROC_ENDIF_KEYWORD);
+    testLexer.assertThat("А.\n")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT_TRAILING);
     // Регрессионный кейс: chained-call в стиле "Объект\n  .Метод()" —
     // DOT и идентификатор на одной строке, обычный DOT.
     testLexer.assertThat("А\n  .Б")
@@ -257,6 +267,27 @@ class BSLLexerTest {
       .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
     testLexer.assertThat("А.")
       .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT);
+  }
+
+  @Test
+  void testDotBeforeLineContinuation() {
+    // Обращение, перенесённое на следующую строку после точки, — корректный код: пробелы,
+    // переводы строк и комментарии в языке незначимы. Отступ роли не играет.
+    testLexer.assertThat("А.\nБ")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    testLexer.assertThat("\t\tА.\r\nБ")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    testLexer.assertThat("А. //коммент\n\t// ещё\n\n    _Б")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    // После точки слово лексится как IDENTIFIER, даже если совпадает с ключевым словом,
+    // которым бывает назван член.
+    testLexer.assertThat("А.\n\tВыполнить")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    testLexer.assertThat("А.\nПо")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
+    // Слово, лишь начинающееся как ключевое, — тоже продолжение.
+    testLexer.assertThat("А.\nЕслиНужно")
+      .containsAll(BSLLexer.IDENTIFIER, BSLLexer.DOT, BSLLexer.IDENTIFIER);
   }
 
   @Test

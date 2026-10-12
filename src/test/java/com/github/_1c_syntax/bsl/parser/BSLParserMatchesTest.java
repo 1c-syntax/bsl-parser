@@ -781,26 +781,55 @@ class BSLParserMatchesTest {
   }
 
   /**
-   * Regression: trailing dot at end of statement followed by next statement on a
-   * different (later) line must NOT be absorbed into an lvalue chain
-   * crossing the line boundary. {@code A.B.\n\nC = D();} is two statements:
-   * {@code callStatement(A.B.)} + {@code assignment(C = D())}, not a single
-   * {@code assignment(A.B.C = D())}.
+   * Недописанное обращение в конце строки, за которым идёт то, чем обращение продолжиться
+   * не может (оператор, конец блока, знак), разбирается как incompleteAccess и не затягивает
+   * следующий оператор в цепочку.
    */
   @ParameterizedTest
   @ValueSource(strings =
     {
-      "А.Б.\n\nС = Д();",
-      "А.\nБ = 1;",
-      "А.Б().\nВ = 1;",
-      "А[0].\nБ = 1;"
+      "А.Б.\n\nВозврат;",
+      "А.\nЕсли Истина Тогда\nКонецЕсли;",
+      "А.Б().\nВызватьИсключение \"\";",
+      "А[0].\nДля Каждого Б Из В Цикл\nКонецЦикла;"
     }
   )
-  void testTrailingDotDoesNotCrossLineBoundary(String inputString) {
+  void testTrailingDotBeforeStatementKeyword(String inputString) {
     testParser.assertThat("Процедура Тест()\n" + inputString + "\nКонецПроцедуры")
-      .containsRule(BSLParser.RULE_assignment, 1)
       .containsRule(BSLParser.RULE_callStatement, 1)
       .containsRule(BSLParser.RULE_incompleteAccess, 1)
+      .matches(testParser.parser().file());
+  }
+
+  /** Недописанное обращение в условии перед связкой и перед концом блока. */
+  @Test
+  void testTrailingDotInsideBlock() {
+    testParser.assertThat("Процедура Тест()\n\tЕсли А.\n\t\tИ Б Тогда\n\t\tВ.\n\tКонецЕсли;\nКонецПроцедуры")
+      .containsRule(BSLParser.RULE_incompleteAccess, 2)
+      .containsRule(BSLParser.RULE_ifStatement, 1)
+      .matches(testParser.parser().file());
+  }
+
+  /**
+   * Обращение, перенесённое на следующую строку после точки, — корректный код: пробелы,
+   * переводы строк и комментарии в языке незначимы, и платформа такой код компилирует.
+   * В том числе {@code А.<EOL>Б = 1;} — это присваивание свойству {@code А.Б}.
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {
+      "\tЕсли Не Модуль.\n\t\t\tПроверитьПодключение(\"\", Истина) Тогда\n\t\tА = 1;\n\tКонецЕсли;",
+      "\tА = Модуль.\n\t\tМетод();",
+      "\tМодуль.\n\tМетод();",
+      "\tА = Процессор.\n\t\tФильтровать().\n\t\tПолучить();",
+      "\tА = Модуль. // комментарий\n// ещё комментарий\nВыполнить();",
+      "\tФ(Данные.Ссылка.\n\tПолучитьОбъект());",
+      "А.\nБ = 1;"
+    }
+  )
+  void testDotBeforeLineContinuation(String inputString) {
+    testParser.assertThat("Процедура Тест()\n" + inputString + "\nКонецПроцедуры")
+      .containsRule(BSLParser.RULE_incompleteAccess, 0)
       .matches(testParser.parser().file());
   }
 

@@ -51,10 +51,8 @@ options { caseInsensitive=true; }
 
   /**
    * Возвращает {@code true}, если непосредственно после точки в потоке встречается
-   * перевод строки (с возможными пробелами/табуляциями перед ним). Такой токен —
-   * trailing-dot, который не должен формировать {@code accessProperty}/{@code accessCall}
-   * со следующим идентификатором: иначе парсер «затянет» идентификатор следующего
-   * statement в lvalue-цепочку.
+   * перевод строки (с возможными пробелами/табуляциями перед ним). Продолжается ли за ним
+   * обращение или точка недописана (trailing-dot), решает {@link #isLineContinuation()}.
    * <p>
    * Случай chained-call ({@code Объект\n  .Метод()}) не страдает: на новой строке стоит
    * именно DOT, а после него идентификатор/метод — на той же строке, что и DOT.
@@ -79,6 +77,84 @@ options { caseInsensitive=true; }
       return false;
     }
   }
+
+  /**
+   * Слова, с которых продолжение обращения начаться не может: они открывают или закрывают
+   * оператор либо связывают условия. Перед ними точка в конце строки — недописанное обращение.
+   * Слова, которые бывают именами членов ({@code Выполнить}, {@code По}, {@code Из}),
+   * сюда не входят.
+   */
+  private static final java.util.Set<String> NOT_CONTINUING_WORDS = java.util.Set.of(
+    "ЕСЛИ", "ИНАЧЕЕСЛИ", "ИНАЧЕ", "КОНЕЦЕСЛИ", "ТОГДА",
+    "ДЛЯ", "КАЖДОГО", "ПОКА", "ЦИКЛ", "КОНЕЦЦИКЛА",
+    "ПОПЫТКА", "ИСКЛЮЧЕНИЕ", "КОНЕЦПОПЫТКИ",
+    "ВОЗВРАТ", "ПРОДОЛЖИТЬ", "ПРЕРВАТЬ", "ВЫЗВАТЬИСКЛЮЧЕНИЕ", "ПЕРЕЙТИ",
+    "ПЕРЕМ", "ПРОЦЕДУРА", "ФУНКЦИЯ", "КОНЕЦПРОЦЕДУРЫ", "КОНЕЦФУНКЦИИ",
+    "И", "ИЛИ", "НЕ", "АСИНХ", "ЖДАТЬ",
+    "IF", "ELSIF", "ELSE", "ENDIF", "THEN",
+    "FOR", "EACH", "WHILE", "DO", "ENDDO",
+    "TRY", "EXCEPT", "ENDTRY",
+    "RETURN", "CONTINUE", "BREAK", "RAISE", "GOTO",
+    "VAR", "PROCEDURE", "FUNCTION", "ENDPROCEDURE", "ENDFUNCTION",
+    "AND", "OR", "NOT", "ASYNC", "AWAIT"
+  );
+
+  /**
+   * Продолжается ли обращение после перевода строки, стоящего за точкой.
+   * <p>
+   * Пробелы, переводы строк и комментарии в языке незначимы, и обращение, перенесённое на
+   * следующую строку после точки ({@code ВызовСервера.<EOL>    ПроверитьПодключение()}),
+   * — корректный код. Поэтому продолжением считается любое слово, которым может начинаться
+   * имя члена. Недописанным обращение остаётся, только если продолжения быть не может:
+   * дальше не слово (знак, директива препроцессора, конец файла) либо слово, которое
+   * открывает или закрывает оператор ({@link #NOT_CONTINUING_WORDS}).
+   *
+   * @return {@code true}, если за переводом строки идёт продолжение обращения.
+   */
+  private boolean isLineContinuation() {
+    var input = getInputStream();
+    int k = 1;
+    while (true) {
+      int c = input.LA(k);
+      if (c <= 0) {
+        return false;
+      }
+      if (c == '\n' || c == '\r' || c == ' ' || c == '\t' || c == '\f') {
+        k++;
+      } else if (c == '/' && input.LA(k + 1) == '/') {
+        while (input.LA(k) > 0 && input.LA(k) != '\n' && input.LA(k) != '\r') {
+          k++;
+        }
+      } else if (Character.isLetter(c) || c == '_') {
+        var word = new StringBuilder();
+        while (Character.isLetterOrDigit(input.LA(k)) || input.LA(k) == '_') {
+          word.appendCodePoint(input.LA(k));
+          k++;
+        }
+        return !NOT_CONTINUING_WORDS.contains(word.toString().toUpperCase(java.util.Locale.ROOT));
+      } else {
+        return false;
+      }
+    }
+  }
+
+  /**
+   * Тип точки и режим после неё: trailing-dot, перенос обращения на следующую строку либо
+   * обычная точка.
+   */
+  private void onDot() {
+    if (!isTrailingDot()) {
+      setType(DOT);
+      if (shouldEnterDotMode()) {
+        pushMode(DOT_MODE);
+      }
+    } else if (isLineContinuation()) {
+      setType(DOT);
+      pushMode(DOT_MODE);
+    } else {
+      setType(DOT_TRAILING);
+    }
+  }
 }
 
 // commons
@@ -87,13 +163,7 @@ LINE_COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
 WHITE_SPACE: [ \t\f\r\n]+ -> channel(HIDDEN);
 
 // separators
-DOT: '.' {
-  if (isTrailingDot()) {
-    setType(DOT_TRAILING);
-  } else if (shouldEnterDotMode()) {
-    pushMode(DOT_MODE);
-  }
-};
+DOT: '.' { onDot(); };
 LBRACK: '[';
 RBRACK: ']';
 LPAREN: '(';
@@ -264,7 +334,9 @@ USE_STRING : PREPROC_STRING -> type(PREPROC_STRING), popMode;
 USE_IDENTIFIER : USE_SEGMENT ('/' USE_SEGMENT)* -> type(PREPROC_IDENTIFIER), popMode;
 
 mode DOT_MODE;
-DOT_WHITE_SPACE: PREPROC_WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
+// Перевод строки и комментарии — для обращения, перенесённого на следующую строку после точки.
+DOT_WHITE_SPACE: WHITE_SPACE -> channel(HIDDEN), type(WHITE_SPACE);
+DOT_LINE_COMMENT: LINE_COMMENT -> channel(HIDDEN), type(LINE_COMMENT);
 DOT_IDENTIFIER : IDENTIFIER -> type(IDENTIFIER), popMode;
 
 mode PREPROC_DELETE_MODE;
@@ -281,14 +353,7 @@ Async_LINE_COMMENT: LINE_COMMENT -> type(LINE_COMMENT), channel(HIDDEN);
 Async_WHITE_SPACE: WHITE_SPACE -> type(WHITE_SPACE), channel(HIDDEN);
 
 // separators
-Async_DOT: DOT {
-  if (isTrailingDot()) {
-    setType(DOT_TRAILING);
-  } else {
-    setType(DOT);
-    if (shouldEnterDotMode()) pushMode(DOT_MODE);
-  }
-};
+Async_DOT: DOT { onDot(); };
 Async_LBRACK: LBRACK -> type(LBRACK);
 Async_RBRACK: RBRACK -> type(RBRACK);
 Async_LPAREN: LPAREN -> type(LPAREN);
