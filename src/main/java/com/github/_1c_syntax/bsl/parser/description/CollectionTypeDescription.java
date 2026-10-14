@@ -85,7 +85,7 @@ public class CollectionTypeDescription implements TypeDescription {
 
     return new CollectionTypeDescription(
       name.strip().intern(),
-      description.strip(),
+      description.strip().intern(),
       fieldList,
       collectionName.strip().intern(),
       meaningfulValues,

@@ -109,8 +109,10 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
     var ast = requireNonNull(tokenizer.getAst());
 
     var reader = new VariableDescriptionReader(range, charShifts);
+    // Тексты описаний интернируются, как и имена типов: типовые описания (БСП) повторяются
+    // в тысячах модулей слово в слово.
     reader.builder
-      .description(descriptionText.strip())
+      .description(descriptionText.strip().intern())
       .links(ReaderUtils.readLinks(ast, reader.lineShift, reader.charShifts))
       .range(range)
       .trailingDescription(trailingDescription);
@@ -234,7 +236,7 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
 
     var deprecationDescription = ctx.deprecateDescription();
     if (deprecationDescription != null) {
-      builder.deprecationInfo(deprecationDescription.getText().strip());
+      builder.deprecationInfo(deprecationDescription.getText().strip().intern());
     } else {
       builder.deprecationInfo("");
     }
@@ -247,7 +249,8 @@ public final class VariableDescriptionReader extends BSLDescriptionParserBaseVis
     builder.purposeDescription(ctx.descriptionString().stream()
       .map(ReaderUtils::extractText)
       .collect(Collectors.joining("\n"))
-      .strip());
+      .strip()
+      .intern());
 
     return ctx;
   }

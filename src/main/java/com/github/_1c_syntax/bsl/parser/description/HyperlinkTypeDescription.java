@@ -63,7 +63,7 @@ public class HyperlinkTypeDescription implements TypeDescription {
                                        List<ParameterDescription> fieldList) {
     return new HyperlinkTypeDescription(
       hyperlink.link(),
-      description.strip(),
+      description.strip().intern(),
       fieldList,
       hyperlink,
       element

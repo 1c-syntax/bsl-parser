@@ -9,14 +9,14 @@ plugins {
     antlr
     id("cloud.rio.license") version "0.18.0"
     id("me.qoomon.git-versioning") version "6.4.4"
-    id("io.freefair.javadoc-links") version "9.5.0"
-    id("io.freefair.javadoc-utf-8") version "9.5.0"
-    id("io.freefair.lombok") version "9.5.0"
+    id("io.freefair.javadoc-links") version "9.8.0"
+    id("io.freefair.javadoc-utf-8") version "9.8.0"
+    id("io.freefair.lombok") version "9.8.0"
 //    id("io.freefair.maven-central.validate-poms") version "9.2.0"
-    id("com.github.ben-manes.versions") version "0.57.0"
+    id("com.github.ben-manes.versions") version "0.65.0"
     id("ru.vyarus.pom") version "3.0.0"
-    id("org.jreleaser") version "1.25.0"
-    id("org.sonarqube") version "7.3.1.8318"
+    id("org.jreleaser") version "1.26.0"
+    id("org.sonarqube") version "7.5.0.8588"
     id("me.champeau.jmh") version "0.7.3"
 }
 
@@ -58,7 +58,7 @@ dependencies {
         exclude("org.antlr:ST4")
     }
 
-    testImplementation(platform("org.junit:junit-bom:6.1.2"))
+    testImplementation(platform("org.junit:junit-bom:6.1.3"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
     testImplementation("org.assertj:assertj-core:3.27.7")
