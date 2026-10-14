@@ -108,8 +108,10 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     var ast = requireNonNull(tokenizer.getAst());
 
     var reader = new MethodDescriptionReader(range, charShifts);
+    // Тексты описаний интернируются, как и имена типов: типовые описания (БСП) повторяются
+    // в тысячах модулей слово в слово.
     reader.builder
-      .description(descriptionText.strip())
+      .description(descriptionText.strip().intern())
       .links(ReaderUtils.readLinks(ast, reader.lineShift, reader.charShifts))
       .range(range);
     reader.visitMethodDescription(ast);
@@ -137,7 +139,7 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
           builder.keyword(newElement(keyword, DescriptionElement.Type.DEPRECATE_KEYWORD));
           var deprecationDescription = ctx.deprecateDescription();
           if (deprecationDescription != null) {
-            builder.deprecationInfo(deprecationDescription.getText().strip());
+            builder.deprecationInfo(deprecationDescription.getText().strip().intern());
           } else {
             builder.deprecationInfo("");
           }
@@ -151,7 +153,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
     builder.purposeDescription(ctx.descriptionString().stream()
       .map(ReaderUtils::extractText)
       .collect(Collectors.joining("\n"))
-      .strip());
+      .strip()
+      .intern());
 
     return ctx;
   }
@@ -165,7 +168,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
           builder.examples(ctx.examplesString().stream()
             .map(ReaderUtils::extractText)
             .collect(Collectors.joining("\n"))
-            .strip());
+            .strip()
+            .intern());
         }
       );
     return ctx;
@@ -180,7 +184,8 @@ public final class MethodDescriptionReader extends BSLDescriptionParserBaseVisit
           builder.callOptions(ctx.callOptionsString().stream()
             .map(ReaderUtils::extractText)
             .collect(Collectors.joining("\n"))
-            .strip());
+            .strip()
+            .intern());
         }
       );
     return ctx;

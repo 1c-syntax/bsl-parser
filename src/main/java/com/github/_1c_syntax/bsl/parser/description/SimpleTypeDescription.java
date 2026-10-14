@@ -84,7 +84,7 @@ public class SimpleTypeDescription implements TypeDescription {
     }
     return new SimpleTypeDescription(
       name.strip().intern(),
-      description.strip(),
+      description.strip().intern(),
       fieldList,
       element,
       hyperlink
