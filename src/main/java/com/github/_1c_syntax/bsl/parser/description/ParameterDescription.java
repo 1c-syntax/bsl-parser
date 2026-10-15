@@ -43,7 +43,9 @@ public record ParameterDescription(String name, DescriptionElement element, List
    */
   public ParameterDescription(String name, DescriptionElement element, List<TypeDescription> types) {
     this.name = name.strip().intern();
-    this.types = Collections.unmodifiableList(types);
+    // Копия, а не обёртка: неизменяемый список из одного-двух типов — это один объект без
+    // массива, а параметров с описанием в большом проекте сотни тысяч.
+    this.types = List.copyOf(types);
     this.element = element;
   }
 
