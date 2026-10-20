@@ -8,7 +8,7 @@ plugins {
     idea
     antlr
     id("cloud.rio.license") version "0.18.0"
-    id("me.qoomon.git-versioning") version "6.4.4"
+    id("me.qoomon.git-versioning") version "7.0.0"
     id("io.freefair.javadoc-links") version "9.8.0"
     id("io.freefair.javadoc-utf-8") version "9.8.0"
     id("io.freefair.lombok") version "9.8.0"
