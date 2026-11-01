@@ -22,12 +22,34 @@
 package com.github._1c_syntax.bsl.parser.description.support;
 
 /**
- * Части описания (ключевые слова, конструкции)
+ * Части описания (ключевые слова, конструкции).
+ * <p>
+ * Область хранится числами, а {@link SimpleRange} собирается при обращении: элементов описаний в
+ * большом проекте миллионы, и отдельный объект области на каждый стоил больше самого элемента.
  *
- * @param range Область расположения части описания
- * @param type  Тип части описания
+ * @param startLine      Строка начала области расположения части описания
+ * @param startCharacter Символ начала области
+ * @param endLine        Строка конца области
+ * @param endCharacter   Символ конца области
+ * @param type           Тип части описания
  */
-public record DescriptionElement(SimpleRange range, Type type) {
+public record DescriptionElement(int startLine, int startCharacter, int endLine, int endCharacter, Type type) {
+
+  /**
+   * @param range Область расположения части описания
+   * @param type  Тип части описания
+   */
+  public DescriptionElement(SimpleRange range, Type type) {
+    this(range.startLine(), range.startCharacter(), range.endLine(), range.endCharacter(), type);
+  }
+
+  /**
+   * @return Область расположения части описания
+   */
+  public SimpleRange range() {
+    return new SimpleRange(startLine, startCharacter, endLine, endCharacter);
+  }
+
   public enum Type {
     UNKNOWN,
     RETURNS_KEYWORD,
