@@ -24,6 +24,8 @@ package com.github._1c_syntax.bsl.parser;
 import com.github._1c_syntax.bsl.parser.testing.TestParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class SDBLParserCheckSourceTest {
 
@@ -337,5 +339,43 @@ class SDBLParserCheckSourceTest {
       .containsRule(SDBLParser.RULE_innerJoin, 0)
       .containsRule(SDBLParser.RULE_fullJoin, 0)
       .containsRule(SDBLParser.RULE_indexingSet, 2);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+    "ВЫБРАТЬ Т.Поле ИЗ Справочник.Партии.Остатки КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ Документ.Заказ.Обороты КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ Документ.Заказ.СрезПоследних КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ Задача.Поручение.Остатки КАК Т",
+    "SELECT T.Field FROM Catalog.Lots.Balance AS T"
+  })
+  void testTabularSectionNamedAsVirtualTable(String query) {
+    testParser.assertThat(query)
+      .containsRule(SDBLParser.RULE_table, 1)
+      .containsRule(SDBLParser.RULE_virtualTable, 0);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрСведений.Курсы.СрезПоследних(&Дата) КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрСведений.Курсы.СрезПервых КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрНакопления.Товары.Остатки КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрНакопления.Товары.Обороты(&Начало, &Конец) КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрНакопления.Товары.ОстаткиИОбороты(, , , , ) КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрБухгалтерии.Хозрасчетный.Остатки(&Дата) КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрБухгалтерии.Хозрасчетный.Субконто КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрБухгалтерии.Хозрасчетный.ДвиженияССубконто(&Начало, &Конец) КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрБухгалтерии.Хозрасчетный.ОборотыДтКт(&Начало, &Конец) КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрРасчета.Начисления.ФактическийПериодДействия КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ РегистрРасчета.Начисления.ДанныеГрафика КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ Последовательность.Документы.Границы КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ Задача.Поручение.ЗадачиПоИсполнителю КАК Т",
+    "ВЫБРАТЬ Т.Поле ИЗ КритерийОтбора.Связи(&Значение) КАК Т",
+    "SELECT T.Field FROM AccumulationRegister.Goods.Balance(&Date) AS T"
+  })
+  void testVirtualTable(String query) {
+    testParser.assertThat(query)
+      .containsRule(SDBLParser.RULE_virtualTable, 1)
+      .containsRule(SDBLParser.RULE_table, 0);
   }
 }
