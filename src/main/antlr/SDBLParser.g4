@@ -28,6 +28,30 @@ options {
     tokenVocab = SDBLLexer;
 }
 
+@members {
+    // Есть ли у вида объекта метаданных виртуальная таблица с таким именем (см. правило virtualTable).
+    private static boolean isVirtualTableOf(int mdoType, int virtualTableName) {
+        return switch (mdoType) {
+            case INFORMATION_REGISTER_TYPE -> virtualTableName == SLICELAST_VT
+                || virtualTableName == SLICEFIRST_VT;
+            case ACCUMULATION_REGISTER_TYPE -> virtualTableName == BALANCE_VT
+                || virtualTableName == TURNOVERS_VT
+                || virtualTableName == BALANCE_AND_TURNOVERS_VT;
+            case ACCOUNTING_REGISTER_TYPE -> virtualTableName == BALANCE_VT
+                || virtualTableName == TURNOVERS_VT
+                || virtualTableName == BALANCE_AND_TURNOVERS_VT
+                || virtualTableName == EXT_DIMENSIONS_VT
+                || virtualTableName == RECORDS_WITH_EXT_DIMENSIONS_VT
+                || virtualTableName == DR_CR_TURNOVERS_VT;
+            case CALCULATION_REGISTER_TYPE -> virtualTableName == ACTUAL_ACTION_PERIOD_VT
+                || virtualTableName == SCHEDULE_DATA_VT;
+            case SEQUENCE_TYPE -> virtualTableName == BOUNDARIES_VT;
+            case TASK_TYPE -> virtualTableName == TASK_BY_PERFORMER_VT;
+            default -> false;
+        };
+    }
+}
+
 // ROOT
 // основная структура пакета запросов:
 // Пакет состоит из запросов (мин 1) разделенных ; и в конце тоже допустима ;
@@ -333,8 +357,13 @@ table:
     ;
 
 // источник-виртуальная таблица
+// Имя виртуальной таблицы допустимо только у вида объекта, у которого она есть в платформе. Иначе это
+// табличная часть с таким же именем (Справочник.Партии.Остатки): identifier допускает токены *_VT, и без
+// проверки источник подходил бы и под table, и под virtualTable, а ANTLR выбирал бы первую альтернативу
+// dataSource. LT(1) — вид объекта, LT(5) — имя таблицы: mdo занимает три токена (вид, точка, имя),
+// за ним идёт точка.
 virtualTable:
-     (mdo DOT virtualTableName=(
+     ({isVirtualTableOf(_input.LT(1).getType(), _input.LT(5).getType())}? mdo DOT virtualTableName=(
               SLICELAST_VT
             | SLICEFIRST_VT
             | BOUNDARIES_VT
